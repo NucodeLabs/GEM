@@ -5,5 +5,4 @@ import javafx.scene.control.MenuBar;
 
 public class AppViewController {
 
-    public MenuBar mainMenuBar;
 }
