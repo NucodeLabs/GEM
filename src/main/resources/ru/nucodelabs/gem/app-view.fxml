@@ -14,89 +14,69 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppViewController">
+<BorderPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppViewController">
    <top>
-      <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <MenuBar>
-              <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Create" />
-                        <MenuItem mnemonicParsing="false" text="Open" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button mnemonicParsing="false" text="Inverse" />
-                  <Button layoutX="10.0" layoutY="12.0" mnemonicParsing="false" text="Button" />
-              </items>
-            </ToolBar>
-         </children>
-      </VBox>
+       <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
+           <MenuBar>
+               <Menu mnemonicParsing="false" text="File">
+                   <MenuItem mnemonicParsing="false" text="Create" />
+                   <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" onAction="#onMenuFileOpen" text="Open" />
+                   <MenuItem mnemonicParsing="false" text="Close" />
+               </Menu>
+               <Menu mnemonicParsing="false" text="Edit">
+                   <MenuItem mnemonicParsing="false" text="Delete" />
+               </Menu>
+               <Menu mnemonicParsing="false" text="Help">
+                   <MenuItem mnemonicParsing="false" text="About" />
+               </Menu>
+           </MenuBar>
+           <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <Button fx:id="inverseButton" mnemonicParsing="false" text="Inverse" />
+               <Button layoutX="10.0" layoutY="12.0" mnemonicParsing="false" text="Button" />
+           </ToolBar>
+       </VBox>
    </top>
    <right>
-      <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Model" BorderPane.alignment="TOP_RIGHT">
-         <content>
-            <TableView>
-              <columns>
-                <TableColumn minWidth="20.0" prefWidth="-1.0" text="Ro" />
-                <TableColumn minWidth="20.0" prefWidth="-1.0" text="h" />
-                  <TableColumn minWidth="20.0" prefWidth="-1.0" text="z" />
-              </columns>
-               <columnResizePolicy>
+       <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Model" BorderPane.alignment="TOP_RIGHT">
+           <TableView>
+               <columns>
+                   <TableColumn minWidth="20.0" prefWidth="-1.0" text="Ro" />
+                   <TableColumn minWidth="20.0" prefWidth="-1.0" text="h" />
+                   <TableColumn minWidth="20.0" prefWidth="-1.0" text="z" />
+               </columns>
+              <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </TableView>
-         </content>
-      </TitledPane>
+              </columnResizePolicy>
+           </TableView>
+       </TitledPane>
    </right>
    <center>
-      <VBox prefHeight="633.0" prefWidth="659.0">
-         <children>
-            <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Pseudo-section">
-               <content>
-                  <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="BOTTOM">
-                    <xAxis>
-                      <NumberAxis label="X, m" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis label="sp, m" side="LEFT" />
-                    </yAxis>
-                  </StackedAreaChart>
-               </content></TitledPane>
-            <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Section">
-               <content>
-                  <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                    <xAxis>
-                      <NumberAxis label="X, m" side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis label="Z, m" side="LEFT" />
-                    </yAxis>
-                  </StackedAreaChart>
-               </content></TitledPane>
-         </children>
-      </VBox>
+       <VBox prefHeight="633.0" prefWidth="659.0">
+           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Pseudo-section">
+               <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="BOTTOM">
+                   <xAxis>
+                       <NumberAxis label="X, m" />
+                   </xAxis>
+                   <yAxis>
+                       <NumberAxis label="sp, m" side="LEFT" />
+                   </yAxis>
+               </StackedAreaChart>
+           </TitledPane>
+           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Section">
+               <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                   <xAxis>
+                       <NumberAxis label="X, m" side="BOTTOM" />
+                   </xAxis>
+                   <yAxis>
+                       <NumberAxis label="Z, m" side="LEFT" />
+                   </yAxis>
+               </StackedAreaChart>
+           </TitledPane>
+       </VBox>
    </center>
    <bottom>
-      <TitledPane collapsible="false" prefHeight="244.0" prefWidth="1000.0" text="Model Editor" BorderPane.alignment="CENTER">
-         <content>
-            <ListView orientation="HORIZONTAL" />
-         </content>
-      </TitledPane>
+       <TitledPane collapsible="false" prefHeight="244.0" prefWidth="1000.0" text="Model Editor" BorderPane.alignment="CENTER">
+           <ListView orientation="HORIZONTAL" />
+       </TitledPane>
    </bottom>
 </BorderPane>

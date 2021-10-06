@@ -1,8 +1,10 @@
 package ru.nucodelabs.gem;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,5 +25,8 @@ public class App extends Application {
         primaryStage.setTitle("GEM - Main Window");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+
+
     }
 }
