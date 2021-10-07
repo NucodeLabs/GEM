@@ -8,7 +8,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class App extends Application {
 
@@ -18,15 +20,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"));
+        ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", Locale.ROOT);
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);
 
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
         primaryStage.setTitle("GEM - Main Window");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
-
     }
 }

@@ -24,9 +24,17 @@ public class AppViewController {
     @FXML
     public void onMenuFileOpen() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choose STT file");
+        chooser.setTitle("Choose files for interpretation");
+
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("EXP - Экспериментальные данные", "*.EXP", "*.exp"),
+                new FileChooser.ExtensionFilter("STT - Установки", "*.STT", "*.stt"),
+                new FileChooser.ExtensionFilter("MOD - Модели", "*.MOD", "*.mod")
+                );
         File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
+        Files.STTFile inp = new Files.STTFile();
     }
+
 
 
 }

@@ -18,26 +18,31 @@
    <top>
        <VBox prefWidth="100.0" BorderPane.alignment="CENTER">
            <MenuBar>
-               <Menu mnemonicParsing="false" text="File">
-                   <MenuItem mnemonicParsing="false" text="Create" />
-                   <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" onAction="#onMenuFileOpen" text="Open" />
-                   <MenuItem mnemonicParsing="false" text="Close" />
+               <Menu mnemonicParsing="false" text="%menuFile">
+                   <MenuItem mnemonicParsing="false" text="Создать" />
+                   <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" onAction="#onMenuFileOpen" text="Открыть" />
+               <Menu mnemonicParsing="false" text="Интерпретация">
+                 <items>
+                   <MenuItem mnemonicParsing="false" text="Открыть STT-файл" />
+                 </items>
                </Menu>
-               <Menu mnemonicParsing="false" text="Edit">
+               <MenuItem mnemonicParsing="false" text="Закрыть" />
+               </Menu>
+               <Menu mnemonicParsing="false" text="Редактировать">
                    <MenuItem mnemonicParsing="false" text="Delete" />
                </Menu>
-               <Menu mnemonicParsing="false" text="Help">
+               <Menu mnemonicParsing="false" text="Помощь">
                    <MenuItem mnemonicParsing="false" text="About" />
                </Menu>
            </MenuBar>
            <ToolBar prefHeight="40.0" prefWidth="200.0">
-               <Button fx:id="inverseButton" mnemonicParsing="false" text="Inverse" />
-               <Button layoutX="10.0" layoutY="12.0" mnemonicParsing="false" text="Button" />
+               <Button fx:id="inverseButton" mnemonicParsing="false" text="Обратная задача" />
+               <Button layoutX="10.0" layoutY="12.0" mnemonicParsing="false" text="Кнопка" />
            </ToolBar>
        </VBox>
    </top>
    <right>
-       <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Model" BorderPane.alignment="TOP_RIGHT">
+       <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Модель" BorderPane.alignment="TOP_RIGHT">
            <TableView>
                <columns>
                    <TableColumn minWidth="20.0" prefWidth="-1.0" text="Ro" />
@@ -52,7 +57,7 @@
    </right>
    <center>
        <VBox prefHeight="633.0" prefWidth="659.0">
-           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Pseudo-section">
+           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Псевдо-разрез">
                <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="BOTTOM">
                    <xAxis>
                        <NumberAxis label="X, m" />
@@ -62,7 +67,7 @@
                    </yAxis>
                </StackedAreaChart>
            </TitledPane>
-           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Section">
+           <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Разрез">
                <StackedAreaChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                    <xAxis>
                        <NumberAxis label="X, m" side="BOTTOM" />
@@ -75,7 +80,7 @@
        </VBox>
    </center>
    <bottom>
-       <TitledPane collapsible="false" prefHeight="244.0" prefWidth="1000.0" text="Model Editor" BorderPane.alignment="CENTER">
+       <TitledPane collapsible="false" prefHeight="244.0" prefWidth="1000.0" text="Модель" BorderPane.alignment="CENTER">
            <ListView orientation="HORIZONTAL" />
        </TitledPane>
    </bottom>
