@@ -20,7 +20,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", Locale.ROOT);
+        ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);
 
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
