@@ -28,6 +28,62 @@ public class Files {
 
     public static class EXPFile {
         private String STTFileName;
+        public class Passport {
+            private String number;
+            private String date;
+            private String weather;
+            private String operator;
+            private String interpreter;
+            private String checked;
+
+            public String getNumber() {
+                return number;
+            }
+
+            public String getDate() {
+                return date;
+            }
+
+            public String getWeather() {
+                return weather;
+            }
+
+            public String getOperator() {
+                return operator;
+            }
+
+            public String getInterpreter() {
+                return interpreter;
+            }
+
+            public String getChecked() {
+                return checked;
+            }
+
+            public void setNumber(String number) {
+                this.number = number;
+            }
+
+            public void setDate(String date) {
+                this.date = date;
+            }
+
+            public void setOperator(String operator) {
+                this.operator = operator;
+            }
+
+            public void setWeather(String weather) {
+                this.weather = weather;
+            }
+
+            public void setInterpreter(String interpreter) {
+                this.interpreter = interpreter;
+            }
+
+            public void setChecked(String checked) {
+                this.checked = checked;
+            }
+        }
         private ArrayList<Double> amperage = new ArrayList<>(0); // Ток, мА
         private ArrayList<Double> voltage = new ArrayList<>(0); // Напряжение, мВ
         private ArrayList<Double> resistanceApp = new ArrayList<>(0); // Сопротивление кажущееся, Ом * м
