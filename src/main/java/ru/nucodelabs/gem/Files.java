@@ -29,12 +29,12 @@ public class Files {
     public static class EXPFile {
         private String STTFileName;
         public class Passport {
-            private String number;
-            private String date;
-            private String weather;
-            private String operator;
-            private String interpreter;
-            private String checked;
+            private String number; // Номер установки
+            private String date; // Дата
+            private String weather; // Погода
+            private String operator; // Оператор
+            private String interpreter; // Интерпретатор
+            private String checked; // Проверил
 
             public String getNumber() {
                 return number;
