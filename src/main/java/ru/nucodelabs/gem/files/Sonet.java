@@ -1,9 +1,11 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.files;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class Files {
+public class Sonet {
+    private Sonet() {
+    } // чтобы нельзя было создать экземпляр класса Sonet
 
     public static class STTFile {
         private ArrayList<Double> AB_2 = new ArrayList<>(0); // AB/2, м
@@ -28,6 +30,7 @@ public class Files {
 
     public static class EXPFile {
         private String STTFileName;
+
         public class Passport {
             private String number; // Номер установки
             private String date; // Дата
@@ -84,6 +87,7 @@ public class Files {
                 this.checked = checked;
             }
         }
+
         private ArrayList<Double> amperage = new ArrayList<>(0); // Ток, мА
         private ArrayList<Double> voltage = new ArrayList<>(0); // Напряжение, мВ
         private ArrayList<Double> resistanceApp = new ArrayList<>(0); // Сопротивление кажущееся, Ом * м
@@ -178,21 +182,21 @@ public class Files {
         }
     }
 
-    public static STTFile readSTT(File file) {
-        STTFile res = new STTFile();
-
+    public static Sonet.STTFile readSTT(File file) {
+        Sonet.STTFile res = new Sonet.STTFile();
+// sample code
         return res;
     }
 
-    public static EXPFile readEXP(File file) {
-        EXPFile res = new EXPFile();
-
+    public static Sonet.EXPFile readEXP(File file) {
+        Sonet.EXPFile res = new Sonet.EXPFile();
+// sample code
         return res;
     }
 
-    public static MODFile readMOD(File file) {
-        MODFile res = new MODFile();
-
+    public static Sonet.MODFile readMOD(File file) {
+        Sonet.MODFile res = new Sonet.MODFile();
+// sample code
         return res;
     }
 }
