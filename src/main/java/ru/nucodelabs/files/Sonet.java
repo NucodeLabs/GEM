@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.files;
+package ru.nucodelabs.files;
 
 import java.io.File;
 import java.util.ArrayList;

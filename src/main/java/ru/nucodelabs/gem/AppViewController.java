@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import ru.nucodelabs.gem.files.Sonet;
+import ru.nucodelabs.files.Sonet;
 
 import java.io.File;
 
