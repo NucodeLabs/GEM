@@ -33,11 +33,11 @@ javafx {
 }
 
 dependencies {
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {
     useJUnitPlatform()
+    systemProperty "java.library.path", file("${project(":forwardsolver").buildDir}/lib/main/debug").absolutePath
 }
