@@ -1,9 +1,17 @@
 package ru.nucodelabs.gem;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nucodelabs.files.Sonet;
 import ru.nucodelabs.gem.ForwardSolver;
 
+<<<<<<< HEAD
 import java.util.Arrays;
+=======
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+>>>>>>> a02708a24d6210b2f2d964f6bde515b28ff5754d
 
 import static java.lang.Math.pow;
 
@@ -37,5 +45,11 @@ public class ForwardSolverTest {
 
         RoK = ForwardSolver.solve(Ro, Th, Nlay, Raz, Nraz);
         Arrays.stream(RoK).forEach(System.out::println);
+    }
+    @Test
+    void test_CHITA_STT() throws FileNotFoundException {
+        File file = new File ("src/test/resources/CHITA.STT");
+        Sonet.STTFile stt = Sonet.readSTT(file);
+        Assertions.assertEquals(stt.getAB_2().get(20), 1.5e+003);
     }
 }

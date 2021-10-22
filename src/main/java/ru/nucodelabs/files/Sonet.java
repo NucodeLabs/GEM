@@ -1,7 +1,10 @@
 package ru.nucodelabs.files;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class Sonet {
     private Sonet() {
@@ -181,21 +184,83 @@ public class Sonet {
         }
     }
 
-    public static Sonet.STTFile readSTT(File file) {
+    public static Sonet.STTFile readSTT(File file) throws FileNotFoundException {
         Sonet.STTFile res = new Sonet.STTFile();
-// sample code
+        Scanner sc = new Scanner(file).useLocale(Locale.US);
+        ArrayList<ArrayList<Double>> arrList = null;
+        arrList = columnParser(sc);
+        for (ArrayList<Double> numList : arrList) {
+            if (numList.size() > 0) res.AB_2.add(numList.get(0));
+            if (numList.size() > 1) res.MN_2.add(numList.get(1));
+        }
+        sc.close();
         return res;
     }
 
-    public static Sonet.EXPFile readEXP(File file) {
+    public static Sonet.EXPFile readEXP(File file) throws FileNotFoundException {
         Sonet.EXPFile res = new Sonet.EXPFile();
-// sample code
+        Scanner sc = new Scanner(file).useLocale(Locale.US);
+        res.STTFileName = sc.nextLine();
+        readPassport(sc, res);
+        ArrayList<ArrayList<Double>> arrList = null;
+        if (sc.hasNext("\\$")){
+            sc.next();
+            arrList = columnParser(sc);
+        }
+        assert arrList != null; // Чтоб компилятор не агрился
+        for (ArrayList<Double> numList : arrList) {
+            if (numList.size() > 0) res.amperage.add(numList.get(0));
+            if (numList.size() > 1) res.voltage.add(numList.get(1));
+            if (numList.size() > 2) res.resistanceApp.add(numList.get(2));
+            if (numList.size() > 3) res.errorResistanceApp.add(numList.get(3));
+            if (numList.size() > 4) res.polarizationApp.add(numList.get(4));
+            if (numList.size() > 5) res.errorPolarizationApp.add(numList.get(5));
+        }
+        sc.close();
         return res;
     }
 
-    public static Sonet.MODFile readMOD(File file) {
+    public static Sonet.MODFile readMOD(File file) throws FileNotFoundException {
         Sonet.MODFile res = new Sonet.MODFile();
-// sample code
+        Scanner sc = new Scanner(file).useLocale(Locale.US);
+        ArrayList<ArrayList<Double>> arrList = null;
+        arrList = columnParser(sc);
+        for (ArrayList<Double> numList : arrList) {
+            if (numList.size() > 0) res.resistance.add(numList.get(0));
+            if (numList.size() > 1) res.power.add(numList.get(1));
+            if (numList.size() > 1) res.polarization.add(numList.get(1));
+        }
+        sc.close();
         return res;
+    }
+
+    private static void readPassport(Scanner sc, Sonet.EXPFile res){
+        ArrayList<String> strList = new ArrayList<>();
+        while (sc.hasNextLine() && !sc.hasNext("\\$") && strList.size() < 6){
+            strList.add(sc.nextLine());
+        }
+        if (strList.size() > 0) res.number = strList.get(0);
+        if (strList.size() > 1) res.date = strList.get(1);
+        if (strList.size() > 2) res.weather = strList.get(2);
+        if (strList.size() > 3) res.operator = strList.get(3);
+        if (strList.size() > 4) res.interpreter = strList.get(4);
+        if (strList.size() > 5) res.checked = strList.get(5);
+    }
+
+    private static ArrayList<ArrayList<Double>> columnParser(Scanner sc){
+        ArrayList<ArrayList<Double>> arrList = new ArrayList<>();
+        while (sc.hasNextLine() && !sc.hasNext("\\$") && !sc.hasNext("-1.0")){
+            String str = sc.nextLine();
+            String[] strList = str.split("\s+");
+            ArrayList<Double> numList = new ArrayList<>();
+            for (String st : strList) {
+                if (!st.isEmpty()) {
+                    numList.add(Double.parseDouble(st));
+                }
+            }
+            arrList.add(numList);
+        }
+        sc.nextLine();
+        return arrList;
     }
 }
