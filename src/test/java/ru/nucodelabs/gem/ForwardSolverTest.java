@@ -1,17 +1,11 @@
 package ru.nucodelabs.gem;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.files.Sonet;
-import ru.nucodelabs.gem.ForwardSolver;
-
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
->>>>>>> a02708a24d6210b2f2d964f6bde515b28ff5754d
+
 
 import static java.lang.Math.pow;
 
