@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.nucodelabs.files.Sonet;
 
 import java.io.IOException;
 import java.util.Locale;
