@@ -3,6 +3,8 @@ package ru.nucodelabs.gem;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.gem.ForwardSolver;
 
+import java.util.Arrays;
+
 import static java.lang.Math.pow;
 
 public class ForwardSolverTest {
@@ -34,6 +36,6 @@ public class ForwardSolverTest {
         Th[Nlay-1] = 1.e+10;
 
         RoK = ForwardSolver.solve(Ro, Th, Nlay, Raz, Nraz);
-        System.out.println(RoK);
+        Arrays.stream(RoK).forEach(System.out::println);
     }
 }
