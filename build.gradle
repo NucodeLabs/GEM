@@ -24,7 +24,7 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'ru.nucodelabs.gem'
-    mainClass = 'ru.nucodelabs.gem.HelloApplication'
+    mainClass = 'ru.nucodelabs.gem.App'
 }
 
 javafx {
@@ -39,5 +39,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    systemProperty "java.library.path", file("${project(":forwardsolver").buildDir}/lib/main/debug").absolutePath
+    systemProperty "java.library.path", file("${project(":forwardsolver").projectDir}/").absolutePath
 }
+
+//test.dependsOn ':forwardsolver:linkDebug'
