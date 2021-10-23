@@ -1,10 +1,7 @@
 package ru.nucodelabs.gem;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.nucodelabs.files.Sonet;
+
 import java.util.Arrays;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 
 import static java.lang.Math.pow;
@@ -12,7 +9,7 @@ import static java.lang.Math.pow;
 public class ForwardSolverTest {
 
     @Test
-    void test() {
+    void test_JNI() {
         int Nraz = 40;
         int Nlay = 3;
         double Raz[] = new double[Nraz]; /* Distances           */
@@ -39,11 +36,5 @@ public class ForwardSolverTest {
 
         RoK = ForwardSolver.solve(Ro, Th, Nlay, Raz, Nraz);
         Arrays.stream(RoK).forEach(System.out::println);
-    }
-    @Test
-    void test_CHITA_STT() throws FileNotFoundException {
-        File file = new File ("src/test/resources/CHITA.STT");
-        Sonet.STTFile stt = Sonet.readSTT(file);
-        Assertions.assertEquals(stt.getAB_2().get(20), 1.5e+003);
     }
 }

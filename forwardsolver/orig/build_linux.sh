@@ -5,4 +5,4 @@ src/VESER.c \
 -fvisibility=default \
 -I src \
 -o \
-libves.so
+../src/main/lib/libves.so

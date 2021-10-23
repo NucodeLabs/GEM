@@ -1,16 +1,12 @@
 package ru.nucodelabs.gem;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.nucodelabs.files.Sonet;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class App extends Application {
