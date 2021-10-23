@@ -1,9 +1,5 @@
 package ru.nucodelabs.files.sonet;
 
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.MODFile;
-import ru.nucodelabs.files.sonet.STTFile;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -17,35 +13,43 @@ public class Sonet {
     public static STTFile readSTT(File file) throws FileNotFoundException {
         STTFile res = new STTFile();
         Scanner sc = new Scanner(file).useLocale(Locale.US);
-        ArrayList<ArrayList<Double>> arrList;
-        arrList = columnParser(sc);
-        for (ArrayList<Double> numList : arrList) {
-            if (numList.size() > 0) res.getAB_2().add(numList.get(0));
-            if (numList.size() > 1) res.getMN_2().add(numList.get(1));
-        }
+
+        ArrayList<ArrayList<Double>> numbers = columnReader(sc, new STTFile().getColumnCnt());
+
+        res.getAB_2().addAll(
+                numbers.stream().map(s -> s.get(0)).toList());
+        res.getMN_2().addAll(
+                numbers.stream().map(s -> s.get(1)).toList());
+
         sc.close();
         return res;
     }
 
     public static EXPFile readEXP(File file) throws FileNotFoundException {
         EXPFile res = new EXPFile();
-        Scanner sc = new Scanner(file).useLocale(Locale.US);
+        Scanner sc = new Scanner(file, "Cp866").useLocale(Locale.US);
         res.setSTTFileName(sc.nextLine());
         readPassport(sc, res);
-        ArrayList<ArrayList<Double>> arrList = null;
+        ArrayList<ArrayList<Double>> numbers = null;
         if (sc.hasNext("\\$")) {
             sc.next();
-            arrList = columnParser(sc);
+            numbers = columnReader(sc, new EXPFile().getColumnCnt());
         }
-        assert arrList != null; // Чтоб компилятор не агрился
-        for (ArrayList<Double> numList : arrList) {
-            if (numList.size() > 0) res.getAmperage().add(numList.get(0));
-            if (numList.size() > 1) res.getVoltage().add(numList.get(1));
-            if (numList.size() > 2) res.getResistanceApp().add(numList.get(2));
-            if (numList.size() > 3) res.getErrorResistanceApp().add(numList.get(3));
-            if (numList.size() > 4) res.getPolarizationApp().add(numList.get(4));
-            if (numList.size() > 5) res.getErrorPolarizationApp().add(numList.get(5));
-        }
+        assert numbers != null;
+
+        res.getAmperage().addAll(
+                numbers.stream().map(s -> s.get(0)).toList());
+        res.getVoltage().addAll(
+                numbers.stream().map(s -> s.get(1)).toList());
+        res.getResistanceApp().addAll(
+                numbers.stream().map(s -> s.get(2)).toList());
+        res.getErrorResistanceApp().addAll(
+                numbers.stream().map(s -> s.get(3)).toList());
+        res.getPolarizationApp().addAll(
+                numbers.stream().map(s -> s.get(4)).toList());
+        res.getErrorPolarizationApp().addAll(
+                numbers.stream().map(s -> s.get(5)).toList());
+
         sc.close();
         return res;
     }
@@ -53,13 +57,16 @@ public class Sonet {
     public static MODFile readMOD(File file) throws FileNotFoundException {
         MODFile res = new MODFile();
         Scanner sc = new Scanner(file).useLocale(Locale.US);
-        ArrayList<ArrayList<Double>> arrList;
-        arrList = columnParser(sc);
-        for (ArrayList<Double> numList : arrList) {
-            if (numList.size() > 0) res.getResistance().add(numList.get(0));
-            if (numList.size() > 1) res.getPower().add(numList.get(1));
-            if (numList.size() > 1) res.getPolarization().add(numList.get(1));
-        }
+
+        ArrayList<ArrayList<Double>> numbers = columnReader(sc, new MODFile().getColumnCnt());
+
+        res.getResistance().addAll(
+                numbers.stream().map(s -> s.get(0)).toList());
+        res.getPower().addAll(
+                numbers.stream().map(s -> s.get(1)).toList());
+        res.getPolarization().addAll(
+                numbers.stream().map(s -> s.get(2)).toList());
+
         sc.close();
         return res;
     }
@@ -77,20 +84,22 @@ public class Sonet {
         if (strList.size() > 5) res.setChecked(strList.get(5));
     }
 
-    private static ArrayList<ArrayList<Double>> columnParser(Scanner sc) {
-        ArrayList<ArrayList<Double>> arrList = new ArrayList<>();
+    private static ArrayList<ArrayList<Double>> columnReader(Scanner sc, int colCnt) {
+        ArrayList<ArrayList<Double>> res = new ArrayList<>();
         while (sc.hasNextLine() && !sc.hasNext("\\$") && !sc.hasNext("-1.0")) {
             String str = sc.nextLine();
-            String[] strList = str.split("\s+");
+            Scanner strSc = new Scanner(str).useLocale(Locale.US);
             ArrayList<Double> numList = new ArrayList<>();
-            for (String st : strList) {
-                if (!st.isEmpty()) {
-                    numList.add(Double.parseDouble(st));
+            for (int i = 0; i < colCnt; i++) {
+                if (strSc.hasNext()) {
+                    numList.add(strSc.nextDouble());
+                } else {
+                    numList.add(0d);
                 }
             }
-            arrList.add(numList);
+            res.add(numList);
+            strSc.close();
         }
-        sc.nextLine();
-        return arrList;
+        return res;
     }
 }
