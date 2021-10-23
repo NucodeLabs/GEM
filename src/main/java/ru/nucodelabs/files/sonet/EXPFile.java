@@ -1,25 +1,19 @@
 package ru.nucodelabs.files.sonet;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class EXPFile {
     public EXPFile() {
     }
 
-    public EXPFile(File file) throws FileNotFoundException {
-        Sonet.readSTT(file);
-    }
+    private String STTFileName = "";
 
-    private String STTFileName;
-
-    private String number; // Номер установки
-    private String date; // Дата
-    private String weather; // Погода
-    private String operator; // Оператор
-    private String interpreter; // Интерпретатор
-    private String checked; // Проверил
+    private String number = ""; // Номер установки
+    private String date = ""; // Дата
+    private String weather = ""; // Погода
+    private String operator = ""; // Оператор
+    private String interpreter = ""; // Интерпретатор
+    private String checked = ""; // Проверил
 
     public String getNumber() {
         return number;
@@ -76,6 +70,10 @@ public class EXPFile {
     private ArrayList<Double> errorResistanceApp = new ArrayList<>(0); // Погрешность, %
     private ArrayList<Double> polarizationApp = new ArrayList<>(0); // Поляризация кажущаяся, %
     private ArrayList<Double> errorPolarizationApp = new ArrayList<>(0); // Погрешность, %
+
+    public int getColumnCnt() {
+        return 6;
+    }
 
     public ArrayList<Double> getAmperage() {
         return amperage;
