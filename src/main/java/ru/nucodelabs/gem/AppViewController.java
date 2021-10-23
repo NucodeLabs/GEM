@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import ru.nucodelabs.files.Sonet;
+import ru.nucodelabs.files.sonet.STTFile;
 
 import java.io.File;
 
@@ -30,9 +30,8 @@ public class AppViewController {
 //                new FileChooser.ExtensionFilter("MOD - Модели", "*.MOD", "*.mod")
 //                );
         File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
-        Sonet.STTFile inp = new Sonet.STTFile();
+        STTFile inp = new STTFile();
     }
-
 
 
 }

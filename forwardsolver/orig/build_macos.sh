@@ -2,7 +2,7 @@
 src/VESER.c \
 -arch x86_64 \
 -fPIC \
--shared \
+-dynamiclib \
 -fvisibility=default \
 -I src \
 -o \
