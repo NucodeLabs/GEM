@@ -23,8 +23,25 @@ public class SonetTest {
     }
 
     @Test
-    void readEXP_BURM_EXP() throws FileNotFoundException {
+    void readEXP_test() throws FileNotFoundException {
         File file = new File("data/BURM1.EXP");
         EXPFile exp = Sonet.readEXP(file);
+        System.out.println(exp.getSTTFileName());
+        System.out.println(exp.getNumber());
+        System.out.println(exp.getDate());
+        System.out.println(exp.getWeather());
+        System.out.println(exp.getOperator());
+        System.out.println(exp.getInterpreter());
+        System.out.println(exp.getChecked());
+        for (int i = 0; i < exp.getResistanceApp().size(); i++) {
+            System.out.println(
+                    exp.getAmperage().get(i).toString() + "   "
+                            + exp.getVoltage().get(i).toString() + "   "
+                            + exp.getResistanceApp().get(i).toString() + "   "
+                            + exp.getErrorResistanceApp().get(i).toString() + "   "
+                            + exp.getPolarizationApp().get(i).toString() + "   "
+                            + exp.getErrorPolarizationApp().get(i).toString()
+            );
+        }
     }
 }
