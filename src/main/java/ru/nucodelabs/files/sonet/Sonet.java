@@ -88,6 +88,9 @@ public class Sonet {
         ArrayList<ArrayList<Double>> res = new ArrayList<>();
         while (sc.hasNextLine() && !sc.hasNext("\\$") && !sc.hasNext("-1.0")) {
             String str = sc.nextLine();
+            if (str.isBlank()) {
+                continue;
+            }
             Scanner strSc = new Scanner(str).useLocale(Locale.US);
             ArrayList<Double> numList = new ArrayList<>();
             for (int i = 0; i < colCnt; i++) {
