@@ -39,7 +39,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    systemProperty "java.library.path", file("${project(":forwardsolver").projectDir}/").absolutePath
+    systemProperty "java.library.path", file("${project(":forwardsolver").projectDir}/src/main/lib/").absolutePath
 }
 
 //test.dependsOn ':forwardsolver:linkDebug'

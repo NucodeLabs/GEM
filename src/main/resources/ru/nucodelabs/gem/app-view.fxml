@@ -13,8 +13,8 @@
                         <MenuItem mnemonicParsing="false" text="%create"/>
                         <Menu mnemonicParsing="false" text="%open">
                             <items>
-                                <MenuItem fx:id="menuFileOpenSTT" mnemonicParsing="false" onAction="#onMenuFileOpenSTT"
-                                          text="STT"/>
+                                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP"
+                                          text="EXP "/>
                             </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" text="%close"/>

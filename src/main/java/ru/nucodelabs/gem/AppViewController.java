@@ -17,10 +17,10 @@ public class AppViewController {
 
     @FXML
     public VBox mainPane;
-    public MenuItem menuFileOpenSTT;
+    public MenuItem menuFileOpenEXP;
     public TitledPane vesPane;
 
-    public void onMenuFileOpenSTT() {
+    public void onMenuFileOpenEXP() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose files for interpretation");
         chooser.getExtensionFilters().addAll(
@@ -30,14 +30,32 @@ public class AppViewController {
         EXPFile openedEXP = new EXPFile();
         STTFile openedSTT = new STTFile();
         Path openedFilePath = file.toPath();
+
         try {
             openedEXP = Sonet.readEXP(file);
-//            openedSTT = Sonet.readSTT();
 
-        } catch (FileNotFoundException noFile) {
-            System.out.println("Error: STT file not found.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: EXP file not found!");
+            System.out.println(e);
+            e.printStackTrace();
         }
-//        double[] resApp = ForwardSolver.solve(opened.);
+
+        try {
+            openedSTT = Sonet.readSTT(new File(
+                    openedFilePath.getParent().toString()
+                            + File.separator
+                            + openedEXP.getSTTFileName()));
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: No .STT file not found!");
+            System.out.println("Put corresponding .STT file in same directory.");
+            System.out.println(e);
+            e.printStackTrace();
+        }
+
+
+//        double[] resApp = ForwardSolver.ves(
+//                openedEXP.getResistance(),
+//        );
     }
 
 

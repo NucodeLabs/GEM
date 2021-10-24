@@ -21,3 +21,4 @@ sh build_linux.sh
 Output file is `libves.so`, located in root of this folder.
 
 ## Windows
+who cares about Windows?
