@@ -1,9 +1,15 @@
 /usr/bin/clang \
 src/VESER.c \
--arch x86_64 \
+-O3 \
+-x \
+c \
+-arch \
+x86_64 \
 -fPIC \
 -dynamiclib \
 -fvisibility=default \
--I src \
+-I \
+src \
+-install_name libves.dylib \
 -o \
-../src/main/lib/libves.dylib
+libves.dylib

@@ -1,0 +1,94 @@
+{
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "Build 'ves' dynamic library (macOS)",
+      "command": "/usr/bin/clang",
+      "args": [
+        "${workspaceFolder}/orig/src/VESER.c",
+        "-O3",
+        "-x",
+        "c",
+        "-arch",
+        "x86_64",
+        "-fPIC",
+        "-dynamiclib",
+        "-fvisibility=default",
+        "-I",
+        "${workspaceFolder}/orig/src/headers",
+        "-install_name",
+        "libves.dylib",
+        "-o",
+        "${workspaceFolder}/src/main/lib/libves.dylib"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "detail": "macOS x86_64"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Build 'ves' dynamic library (Linux)",
+      "command": "/usr/bin/gcc",
+      "args": [
+        "${workspaceFolder}/orig/src/VESER.c",
+        "-O3",
+        "-x",
+        "c",
+        "-fPIC",
+        "-shared",
+        "-fvisibility=default",
+        "-I",
+        "${workspaceFolder}/orig/src/headers",
+        "-o",
+        "${workspaceFolder}/src/main/lib/libves.so"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "detail": "GNU/Linux x86_64"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Build JNI-ready wrapper",
+      "command": "/usr/bin/clang",
+      "dependsOn": "Build 'ves' dynamic library (macOS)",
+      "args": [
+        "-O3",
+        "-arch",
+        "x86_64",
+        "-x",
+        "c",
+        "-fPIC",
+        "-dynamiclib",
+        "${workspaceFolder}/src/main/c/forwardsolver.c",
+        "-I",
+        "~/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home/include",
+        "-I",
+        "~/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home/include/darwin",
+        "-rpath",
+        "@loader_path",
+        "-o",
+        "${workspaceFolder}/src/main/lib/libforwardsolver.dylib"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "macOS x86_64"
+    }
+  ],
+  "version": "2.0.0"
+}
