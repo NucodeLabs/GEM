@@ -97,7 +97,7 @@ public class Sonet {
                 if (strSc.hasNext()) {
                     numList.add(strSc.nextDouble());
                 } else {
-                    numList.add(0d);
+                    numList.add(null);
                 }
             }
             res.add(numList);
