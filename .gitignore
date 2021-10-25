@@ -245,7 +245,6 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/git,macos,java,gradle,intellij,linux,windows
 .settings/
-.vscode/settings.json
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 

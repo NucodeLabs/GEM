@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -38,5 +39,6 @@ public class ForwardSolverTest {
 
         RoK = ForwardSolver.ves(Ro, Th, Nlay, Raz, Nraz);
         RoK.forEach(System.out::println);
+        Assertions.assertEquals(Nraz, RoK.size());
     }
 }

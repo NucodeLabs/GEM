@@ -6,6 +6,7 @@ c \
 -fPIC \
 -shared \
 -fvisibility=default \
--I src \
+-I \
+src \
 -o \
 libves.so
