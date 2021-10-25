@@ -1,12 +1,18 @@
-#include <dlfcn.h>
 #include <stdlib.h>
 
 #include <jni.h>
 
 #if defined(__APPLE__)
-  #define LIBVES_NAME "libves.dylib"
+    #include <dlfcn.h>
+    #define LIBVES_NAME "libves.dylib"
 #elif defined(__linux__)
-  #define LIBVES_NAME "libves.so"
+    #include <dlfcn.h>
+    #define LIBVES_NAME "libves.so"
+#elif defined(_MSC_VER)
+    #include <windows.h>
+    #define LIBVES_NAME "forwardsolver\\src\\main\\lib\\ves.dll"
+#else 
+    #define LIBVES_NAME "unsupported_os_NO_DL_FOUND"
 #endif
 
 JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_gem_ForwardSolver_solve(
@@ -24,12 +30,6 @@ JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_gem_ForwardSolver_solve(
     double* raz = (*env)->GetDoubleArrayElements(env, AB_2, 0);
     int razCnt = (int) distCnt;
 
-    void* dlHandle = dlopen(LIBVES_NAME, RTLD_NOW);
-    if (dlHandle == NULL) {
-        printf("DLL NOT OPENED !!!\n%s\n", dlerror());
-        exit(0);
-    }
-
     typedef void (*vesType)(
         double*,
         double*,
@@ -39,11 +39,33 @@ JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_gem_ForwardSolver_solve(
         double*
     );
 
-    vesType Ves = (vesType)dlsym(dlHandle, "Ves");
+#if defined(_MSC_VER)
+    HMODULE dlHandle = LoadLibrary(LIBVES_NAME); 
+ 
+    if (dlHandle == NULL) {
+        fprintf(stderr, "DLL NOT OPENED!!!\nERRCODE = %ld\n", GetLastError());
+        exit(0);
+    } 
+
+    vesType Ves = (vesType)GetProcAddress(dlHandle, "Ves");
     if (Ves == NULL) {
-        printf("FUNCTION NOT LOADED !!!\n");
+        fprintf(stderr, "FUNCTION NOT LOADED!!!\nERRCODE = %ld\n", GetLastError());
+        exit(0);
+    } 
+#else 
+    void* dlHandle = dlopen(LIBVES_NAME, RTLD_NOW);
+    
+    if (dlHandle == NULL) {
+        fprintf(stderr, "DLL NOT OPENED !!!\n%s\n", dlerror());
         exit(0);
     }
+
+    vesType Ves = (vesType)dlsym(dlHandle, "Ves");
+    if (Ves == NULL) {
+        fprintf(stderr, "FUNCTION NOT LOADED !!!\n%s\n", dlerror());
+        exit(0);
+    }
+#endif
 
     double* resApp = (double*)malloc(sizeof(double) * razCnt);
     Ves(

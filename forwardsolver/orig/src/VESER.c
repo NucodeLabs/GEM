@@ -4,8 +4,6 @@
 
 #include "VES.H"
 
-#define EXPORT __attribute__((visibility("default")))
-
 int long_of_row;  /* Длина насчитанного ряда пространственных частот */
 int Nk[ NRF];     /* Массив индексов интерполяции */
 _FPREC A[MAXEXPERIMENT*NPOLINOM];
@@ -61,7 +59,7 @@ return 0;
 /*                                                                       */
 /*    Veser - процедура расчета прямой задачи ВЭЗ                        */
 /*                                                                       */
-EXPORT void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz,
+void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz,
 				 int Nraz, _FPREC *Roker)
 /* _FPREC *Rom;      Удельное сопротивление */
 /* _FPREC *Hm;       Мощность */
