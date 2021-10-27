@@ -48,7 +48,7 @@
         ],
         "problemMatcher": "$gcc"
       },
-      "windows": {
+      "windows-cl": {
         "command": "cl.exe",
         "args": [
           "${cwd}\\forwardsolver.cpp",
@@ -59,8 +59,27 @@
           "/I.",
           "/I\"${config:java.home}\\include\"",
           "/I\"${config:java.home}\\include\\win32\"",
-          "/Fe\"{$cwd}\\build\\lib\\forwardsolver.dll\""
-        ]
+          "/Fe\"${cwd}\\build\\lib\\forwardsolver.dll\""
+        ],
+        "problemMatcher": "$msCompile"
+      },
+      "windows": {
+        "command": "C:\\Program Files\\LLVM\\bin\\clang.exe",
+        "args": [
+          "${cwd}\\forwardsolver.cpp",
+          "${cwd}\\VESER.C",
+          "-O3",
+          "-shared",
+          "-I",
+          "${cwd}",
+          "-I",
+          "${config:java.home}\\include",
+          "-I",
+          "${config:java.home}\\include\\win32",
+          "-o",
+          "${cwd}\\build\\lib\\forwardsolver.dll"
+        ],
+        "problemMatcher": "$gcc"
       }
     }
   ],

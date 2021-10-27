@@ -1,5 +1,5 @@
 {
-  "java.home": "~/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home",
+  "java.home": "C:\\Users\\vadim\\.jdks\\openjdk-17.0.1",
   "files.associations": {
     "TEST.C": "cpp",
     "VESER.C": "cpp"
