@@ -251,4 +251,4 @@ gradle-app.setting
 *.out
 *.gch
 *.o
-/.forwardsolver/
+.forwardsolver/
