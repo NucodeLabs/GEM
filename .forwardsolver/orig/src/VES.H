@@ -1,5 +1,5 @@
-#ifndef FORWARDSOLVER_VES_H
-#define FORWARDSOLVER_VES_H
+#ifndef VES_H__
+#define VES_H__
 #define _FPREC double         /* Определение плавающего типа        */
 
 #ifndef PI
@@ -20,13 +20,7 @@
 /* Nraz                               */
 /* Roker      Кажущееся сопротивление */
 
-#if defined(_MSC_VER)
-    #define EXPORT __declspec(dllexport)
-#else
-    #define EXPORT __attribute__((visibility("default")))
-#endif
-
-EXPORT void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz, int Nraz,
+void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz, int Nraz,
           _FPREC *Roker);
 
-#endif //FORWARDSOLVER_VES_H
+#endif // VES_H__

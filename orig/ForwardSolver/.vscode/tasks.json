@@ -1,0 +1,68 @@
+{
+  "tasks": [
+    {
+      "label": "forwardsolver (JNI)",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "detail": "forwardsolver.dll / libforwardsolver.dylib / libforwardsolver.so",
+      "osx": {
+        "command": "/usr/bin/clang",
+        "args": [
+          "${cwd}/forwardsolver.cpp",
+          "${cwd}/VESER.C",
+          "-O3",
+          "-arch",
+          "x86_64",
+          "-fPIC",
+          "-dynamiclib",
+          "-I",
+          "${cwd}",
+          "-I",
+          "${config:java.home}/include",
+          "-I",
+          "${config:java.home}/include/darwin",
+          "-o",
+          "${cwd}/build/lib/libforwardsolver.dylib"
+        ],
+        "problemMatcher": "$gcc"
+      },
+      "linux": {
+        "command": "/usr/bin/gcc",
+        "args": [
+          "${cwd}/forwardsolver.cpp",
+          "${cwd}/VESER.C",
+          "-O3",
+          "-fPIC",
+          "-shared",
+          "-I",
+          "${cwd}",
+          "-I",
+          "${config:java.home}/include",
+          "-I",
+          "${config:java.home}/include/linux",
+          "-o",
+          "${cwd}/build/lib/libforwardsolver.so"
+        ],
+        "problemMatcher": "$gcc"
+      },
+      "windows": {
+        "command": "cl.exe",
+        "args": [
+          "${cwd}\\forwardsolver.cpp",
+          "${cwd}\\VESER.C",
+          "/MD",
+          "/O2",
+          "/LD",
+          "/I.",
+          "/I\"${config:java.home}\\include\"",
+          "/I\"${config:java.home}\\include\\win32\"",
+          "/Fe\"{$cwd}\\build\\lib\\forwardsolver.dll\""
+        ]
+      }
+    }
+  ],
+  "version": "2.0.0"
+}

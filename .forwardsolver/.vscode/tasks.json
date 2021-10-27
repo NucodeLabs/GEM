@@ -2,8 +2,8 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "forwardsolver (JNI-ready)",
-      "dependsOn": "ves",
+      "label": "(old) forwardsolver (JNI-ready)",
+      "dependsOn": "(old) ves",
       "group": "build",
       "detail": "forwardsolver.dll / libforwardsolver.dylib / libforwardsolver.so",
       "options": {
@@ -73,7 +73,7 @@
     },
     {
       "type": "shell",
-      "label": "ves",
+      "label": "(old) ves",
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -129,6 +129,63 @@
         "problemMatcher": [
           "$gcc"
         ]
+      }
+    },
+    {
+      "label": "forwardsolver (JNI)",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "detail": "forwardsolver.dll / libforwardsolver.dylib / libforwardsolver.so",
+      "osx": {
+        "command": "/usr/bin/clang",
+        "args": [
+          "${workspaceFolder}/src/main/c/forwardsolver.c",
+          "${workspaceFolder}/orig/src/VESER.c",
+          "-O3",
+          "-arch",
+          "x86_64",
+          "-x",
+          "c",
+          "-fPIC",
+          "-dynamiclib",
+          "-I",
+          "${workspaceFolder}/orig/src",
+          "-I",
+          "${workspaceFolder}/src/main/headers",
+          "-I",
+          "${config:java.home}/include",
+          "-I",
+          "${config:java.home}/include/darwin",
+          "-rpath",
+          "@loader_path",
+          "-o",
+          "${workspaceFolder}/src/main/lib/libforwardsolver.dylib"
+        ],
+        "problemMatcher": "$gcc"
+      },
+      "linux": {
+        "command": "/usr/bin/gcc",
+        "args": [
+          "${workspaceFolder}/src/main/c/forwardsolver.c",
+          "${workspaceFolder}/orig/",
+          "-O3",
+          "-x",
+          "c",
+          "-fPIC",
+          "-shared",
+          "-I",
+          "${config:java.home}/include",
+          "-I",
+          "${config:java.home}/include/linux",
+          "-ldl",
+          "-Wl,-rpath=forwardsolver/src/main/lib",
+          "-o",
+          "${workspaceFolder}/src/main/lib/libforwardsolver.so"
+        ],
+        "problemMatcher": "$gcc"
       }
     }
   ],

@@ -251,4 +251,4 @@ gradle-app.setting
 *.out
 *.gch
 *.o
-/orig/ForwardSolver/.vscode/
+/.forwardsolver/
