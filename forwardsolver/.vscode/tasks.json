@@ -62,7 +62,7 @@
           "-I",
           "${config:java.home}/include/linux",
           "-ldl",
-          "-Wl,-rpath=.",
+          "-Wl,-rpath=forwardsolver/src/main/lib",
           "-o",
           "${workspaceFolder}/src/main/lib/libforwardsolver.so"
         ],
