@@ -1,3 +1,5 @@
+import org.gradle.internal.jvm.Jvm
+
 plugins {
     id 'java'
     id 'application'
@@ -29,12 +31,13 @@ application {
 
 javafx {
     version = "17"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    modules = ['javafx.controls', 'javafx.fxml']
 }
 
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    implementation 'eu.hansolo.fx:charts:17.0.1'
 }
 
 test {
@@ -42,4 +45,59 @@ test {
     systemProperty "java.library.path", file("orig/ForwardSolver/build/lib/").absolutePath
 }
 
-//test.dependsOn ':forwardsolver:linkDebug'
+task forwardSolver(type: Exec) {
+    workingDir "orig/ForwardSolver"
+    if (osdetector.os == "osx") {
+        commandLine "/usr/bin/clang",
+                "${workingDir}/forwardsolver.cpp",
+                "${workingDir}/VESER.C",
+                "-O3",
+                "-arch",
+                "x86_64",
+                "-fPIC",
+                "-dynamiclib",
+                "-I",
+                "${workingDir}",
+                "-I",
+                "${Jvm.current().javaHome}/include",
+                "-I",
+                "${Jvm.current().javaHome}/include/darwin",
+                "-o",
+                "${workingDir}/build/lib/libforwardsolver.dylib"
+    } else if (osdetector.os == "linux") {
+        commandLine "/usr/bin/gcc",
+                "${workingDir}/forwardsolver.cpp",
+                "${workingDir}/VESER.C",
+                "-O3",
+                "-fPIC",
+                "-shared",
+                "-I",
+                "${workingDir}",
+                "-I",
+                "${Jvm.current().javaHome}/include",
+                "-I",
+                "${Jvm.current().javaHome}/include/linux",
+                "-o",
+                "${workingDir}/build/lib/libforwardsolver.so"
+    } else {
+        commandLine "C:\\Program Files\\LLVM\\bin\\clang.exe",
+                "${workingDir}\\forwardsolver.cpp",
+                "${workingDir}\\VESER.C",
+                "-O3",
+                "-shared",
+                "-I",
+                "${workingDir}",
+                "-I",
+                "${Jvm.current().javaHome}\\include",
+                "-I",
+                "${Jvm.current().javaHome}\\include\\win32",
+                "-o",
+                "${workingDir}\\build\\lib\\forwardsolver.dll"
+        doLast {
+            file("${workingDir}/build/lib/forwardsolver.exp").delete()
+            file("${workingDir}/build/lib/forwardsolver.lib").delete()
+        }
+    }
+
+}
+test.dependsOn 'forwardSolver'
