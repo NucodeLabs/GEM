@@ -31,13 +31,13 @@ application {
 
 javafx {
     version = "17"
-    modules = ['javafx.controls', 'javafx.fxml']
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
 }
 
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation 'eu.hansolo.fx:charts:17.0.1'
+    implementation("eu.hansolo.fx:charts:17.0.1")
 }
 
 test {
@@ -47,6 +47,9 @@ test {
 
 task forwardSolver(type: Exec) {
     workingDir "orig/ForwardSolver"
+    doFirst {
+        mkdir "${workingDir}/build/lib"
+    }
     if (osdetector.os == "osx") {
         commandLine "/usr/bin/clang",
                 "${workingDir}/forwardsolver.cpp",
@@ -100,4 +103,5 @@ task forwardSolver(type: Exec) {
     }
 
 }
+
 test.dependsOn 'forwardSolver'
