@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ru.nucodelabs.gem.AppViewController">
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppViewController">
     <children>
         <MenuBar>
             <menus>
                 <Menu mnemonicParsing="false" text="%file">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="%create"/>
+                        <MenuItem mnemonicParsing="false" text="%create" />
                         <Menu mnemonicParsing="false" text="%open">
                             <items>
-                                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP"
-                                          text="EXP "/>
+                                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="Открыть файл EXP" />
                             </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" text="%close"/>
+                        <MenuItem mnemonicParsing="false" text="%close" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About"/>
+                        <MenuItem mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
             </menus>
@@ -36,24 +38,16 @@
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                     <children>
-                        <SplitPane dividerPositions="0.48205445544554454" prefHeight="160.0" prefWidth="200.0"
-                                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.48205445544554454" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                     <children>
-                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0"
-                                                    text="%pseudoSection" AnchorPane.bottomAnchor="0.0"
-                                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%pseudoSection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                     <children>
-                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0"
-                                                    text="%geoSection" AnchorPane.bottomAnchor="0.0"
-                                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%geoSection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -62,23 +56,47 @@
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                     <children>
-                        <SplitPane dividerPositions="0.6714108910891089" AnchorPane.bottomAnchor="0.0"
-                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.6714108910891089" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                     <children>
-                                        <TitledPane fx:id="vesPane" collapsible="false" prefHeight="200.0"
-                                                    prefWidth="200.0" text="%ves" AnchorPane.bottomAnchor="0.0"
-                                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                        <TitledPane fx:id="vesPane" collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%ves" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <LineChart fx:id="vesCurve">
+                                      <xAxis>
+                                        <NumberAxis label="AB/2" prefHeight="26.0" prefWidth="481.0" side="BOTTOM">
+                                             <cursor>
+                                                <Cursor fx:constant="DEFAULT" />
+                                             </cursor>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                          </NumberAxis>
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis cache="true" label="Rk" prefHeight="128.0" prefWidth="20.0" side="LEFT" tickLabelFill="#070707" tickLength="5.0" tickUnit="10.0">
+                                             <tickLabelFont>
+                                                <Font size="9.0" />
+                                             </tickLabelFont></NumberAxis>
+                                      </yAxis>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                    </LineChart>
+                                 </content></TitledPane>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                     <children>
-                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0"
-                                                    text="%modelTable" AnchorPane.bottomAnchor="0.0"
-                                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                        <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%modelTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <TableView fx:id="vesTable" prefHeight="200.0" prefWidth="200.0">
+                                      <columns>
+                                        <TableColumn prefWidth="75.0" text="C1" />
+                                        <TableColumn prefWidth="75.0" text="C2" />
+                                      </columns>
+                                    </TableView>
+                                 </content></TitledPane>
                                     </children>
                                 </AnchorPane>
                             </items>
