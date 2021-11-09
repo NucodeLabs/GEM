@@ -15,6 +15,7 @@ repositories {
 
 ext {
     junitVersion = '5.8.1'
+    platformName = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 }
 
 sourceCompatibility = '17'
@@ -38,6 +39,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     implementation("eu.hansolo.fx:charts:17.0.1")
+    implementation("org.openjfx:javafx-base:${platformName}")
+    implementation("org.openjfx:javafx-controls:${platformName}")
+    implementation("org.openjfx:javafx-fxml:${platformName}")
 }
 
 test {

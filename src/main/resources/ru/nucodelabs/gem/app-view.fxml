@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ru.nucodelabs.gem.AppViewController">
+      fx:controller="ru.nucodelabs.gem.AppController">
     <children>
         <MenuBar>
             <menus>
