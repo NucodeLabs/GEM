@@ -2,6 +2,7 @@ package ru.nucodelabs.gem;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -19,8 +20,8 @@ public class App extends Application {
     public void start(Stage primaryStage) throws IOException {
         ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);
-
-        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, 1280, 720);
 
         primaryStage.setTitle("GEM - Main Window");
         primaryStage.setScene(scene);
