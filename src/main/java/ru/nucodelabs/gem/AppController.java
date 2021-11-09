@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -13,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
-public class AppViewController {
+public class AppController {
 
     @FXML
     public VBox mainPane;
@@ -27,17 +28,25 @@ public class AppViewController {
                 new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
         );
         File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
+//      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
+        if (file == null) {
+            return;
+        }
+
         EXPFile openedEXP = new EXPFile();
         STTFile openedSTT = new STTFile();
         Path openedFilePath = file.toPath();
 
         try {
             openedEXP = Sonet.readEXP(file);
-
         } catch (FileNotFoundException e) {
-            System.out.println("Error: EXP file not found!");
-            System.out.println(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("File not found!");
+            alert.setContentText(e.getMessage());
+            alert.show();
             e.printStackTrace();
+            return;
         }
 
         try {
@@ -46,16 +55,16 @@ public class AppViewController {
                             + File.separator
                             + openedEXP.getSTTFileName()));
         } catch (FileNotFoundException e) {
-            System.out.println("Error: No .STT file not found!");
-            System.out.println("Put corresponding .STT file in same directory.");
-            System.out.println(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("STT file not found!");
+            alert.setContentText(e.getMessage());
+            alert.show();
             e.printStackTrace();
+            return;
         }
 
 
-//        double[] resApp = ForwardSolver.ves(
-//                openedEXP.getResistance(),
-//        );
     }
 
 
