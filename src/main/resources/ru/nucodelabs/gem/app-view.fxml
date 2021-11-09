@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 <VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ru.nucodelabs.gem.AppController">
     <children>
         <MenuBar>
@@ -14,7 +19,7 @@
                         <Menu mnemonicParsing="false" text="%open">
                             <items>
                                 <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP"
-                                          text="EXP "/>
+                                          text="EXP"/>
                             </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" text="%close"/>
@@ -70,7 +75,35 @@
                                         <TitledPane fx:id="vesPane" collapsible="false" prefHeight="200.0"
                                                     prefWidth="200.0" text="%ves" AnchorPane.bottomAnchor="0.0"
                                                     AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                                    AnchorPane.topAnchor="0.0">
+                                            <content>
+                                                <LineChart fx:id="vesCurve">
+                                                    <xAxis>
+                                                        <NumberAxis label="AB/2" prefHeight="26.0" prefWidth="481.0"
+                                                                    side="BOTTOM">
+                                                            <cursor>
+                                                                <Cursor fx:constant="DEFAULT"/>
+                                                            </cursor>
+                                                            <opaqueInsets>
+                                                                <Insets/>
+                                                            </opaqueInsets>
+                                                        </NumberAxis>
+                                                    </xAxis>
+                                                    <yAxis>
+                                                        <NumberAxis cache="true" label="Rk" prefHeight="128.0"
+                                                                    prefWidth="20.0" side="LEFT" tickLabelFill="#070707"
+                                                                    tickLength="5.0" tickUnit="10.0">
+                                                            <tickLabelFont>
+                                                                <Font size="9.0"/>
+                                                            </tickLabelFont>
+                                                        </NumberAxis>
+                                                    </yAxis>
+                                                    <opaqueInsets>
+                                                        <Insets/>
+                                                    </opaqueInsets>
+                                                </LineChart>
+                                            </content>
+                                        </TitledPane>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -78,7 +111,16 @@
                                         <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0"
                                                     text="%modelTable" AnchorPane.bottomAnchor="0.0"
                                                     AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                    AnchorPane.topAnchor="0.0"/>
+                                                    AnchorPane.topAnchor="0.0">
+                                            <content>
+                                                <TableView fx:id="vesTable" prefHeight="200.0" prefWidth="200.0">
+                                                    <columns>
+                                                        <TableColumn prefWidth="75.0" text="C1"/>
+                                                        <TableColumn prefWidth="75.0" text="C2"/>
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </TitledPane>
                                     </children>
                                 </AnchorPane>
                             </items>

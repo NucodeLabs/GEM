@@ -1,8 +1,11 @@
 package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -13,6 +16,7 @@ import ru.nucodelabs.files.sonet.Sonet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class AppController {
 
@@ -20,7 +24,13 @@ public class AppController {
     public VBox mainPane;
     public MenuItem menuFileOpenEXP;
     public TitledPane vesPane;
+    @FXML
+    public LineChart vesCurve;
 
+    @FXML
+    public TableView vesTable;
+
+    @FXML
     public void onMenuFileOpenEXP() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose files for interpretation");
@@ -63,9 +73,25 @@ public class AppController {
             e.printStackTrace();
             return;
         }
+        makeCurve(openedSTT, openedEXP);
 
 
     }
 
+    public void makeCurve(STTFile openedSTT, EXPFile openedEXP) {
+        vesCurve.getData().clear();
+        vesCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
+    }
 
+    private XYChart.Series makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
+        XYChart.Series pointsSeries = new XYChart.Series<>();
+        ArrayList<Double> arrayAB_2 = openedSTT.getAB_2();
+        ArrayList<Double> arrayRes = openedEXP.getResistanceApp();
+
+        for (int i = 0; i < arrayAB_2.size(); i++) {
+            pointsSeries.getData().add(new XYChart.Data<>(Math.log(arrayAB_2.get(i)), Math.log(arrayRes.get(i))));
+        }
+
+        return pointsSeries;
+    }
 }
