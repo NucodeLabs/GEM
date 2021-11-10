@@ -1,10 +1,10 @@
 package ru.nucodelabs.gem;
 
-public class TablePair {
+public class ModelTable {
     public double spacing;
     public double resistance;
 
-    public TablePair(double spacing, double resistance) {
+    public ModelTable(double spacing, double resistance) {
         setSpacing(spacing);
         setResistance(resistance);
     }

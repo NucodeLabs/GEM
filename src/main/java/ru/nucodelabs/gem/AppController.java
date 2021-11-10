@@ -2,7 +2,6 @@ package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
@@ -72,26 +71,7 @@ public class AppController {
             e.printStackTrace();
             return;
         }
-        makeCurve(openedSTT, openedEXP);
-
-
+        ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
     }
 
-    public void makeCurve(STTFile openedSTT, EXPFile openedEXP) {
-        vesCurve.getData().clear();
-        vesCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
-    }
-
-    private XYChart.Series makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
-        XYChart.Series pointsSeries = new XYChart.Series<>();
-
-        for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
-            pointsSeries.getData().add(
-                    new XYChart.Data<>(
-                            openedSTT.getAB_2().get(i),
-                            openedEXP.getErrorResistanceApp().get(i)));
-        }
-
-        return pointsSeries;
-    }
 }
