@@ -108,4 +108,4 @@ task forwardSolver(type: Exec) {
 
 }
 
-test.dependsOn 'forwardSolver'
+//test.dependsOn 'forwardSolver'

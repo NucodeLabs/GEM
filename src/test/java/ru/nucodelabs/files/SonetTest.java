@@ -81,4 +81,12 @@ public class SonetTest {
             );
         }
     }
+
+    @Test
+    void readEXP_test1() throws FileNotFoundException {
+        System.out.println("SonetTest.readEXP_test");
+        File file = new File("data/BURM4.EXP");
+        EXPFile exp = Sonet.readEXP(file);
+        System.out.println("SonetTest.readEXP_test");
+    }
 }

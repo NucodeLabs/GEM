@@ -11,19 +11,17 @@ public class ExperimentalCurve {
 
     protected static void makeCurve(LineChart<Double, Double> vesCurve, STTFile openedSTT, EXPFile openedEXP) {
         vesCurve.getData().clear();
-        vesCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
+        vesCurve.getData().add(makeCurveData(openedSTT, openedEXP));
     }
 
     protected static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
         XYChart.Series<Double, Double> pointsSeries = new XYChart.Series<>();
 
         for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
-            pointsSeries.getData().add(
-                    new XYChart.Data<>(
-                            log10(openedSTT.getAB_2().get(i)),
-                            log10(openedEXP.getResistanceApp().get(i))));
+            double dotX = log10(openedSTT.getAB_2().get(i));
+            double dotY = log10(openedEXP.getResistanceApp().get(i));
+            pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
-
         return pointsSeries;
     }
 }
