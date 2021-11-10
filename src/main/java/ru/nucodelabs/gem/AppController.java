@@ -16,7 +16,6 @@ import ru.nucodelabs.files.sonet.Sonet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 public class AppController {
 
@@ -85,11 +84,12 @@ public class AppController {
 
     private XYChart.Series makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
         XYChart.Series pointsSeries = new XYChart.Series<>();
-        ArrayList<Double> arrayAB_2 = openedSTT.getAB_2();
-        ArrayList<Double> arrayRes = openedEXP.getResistanceApp();
 
-        for (int i = 0; i < arrayAB_2.size(); i++) {
-            pointsSeries.getData().add(new XYChart.Data<>(Math.log(arrayAB_2.get(i)), Math.log(arrayRes.get(i))));
+        for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
+            pointsSeries.getData().add(
+                    new XYChart.Data<>(
+                            openedSTT.getAB_2().get(i),
+                            openedEXP.getErrorResistanceApp().get(i)));
         }
 
         return pointsSeries;
