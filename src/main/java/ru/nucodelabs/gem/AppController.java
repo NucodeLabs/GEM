@@ -23,10 +23,11 @@ public class AppController {
     public MenuItem menuFileOpenEXP;
     public TitledPane vesPane;
     @FXML
-    public LineChart vesCurve;
+    public LineChart<Double, Double> vesCurve;
+    public LineChart<Double, Double> inaccuracyCurve;
 
     @FXML
-    public TableView vesTable;
+    public TableView<Double> vesTable;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -41,8 +42,8 @@ public class AppController {
             return;
         }
 
-        EXPFile openedEXP = new EXPFile();
-        STTFile openedSTT = new STTFile();
+        EXPFile openedEXP;
+        STTFile openedSTT;
         Path openedFilePath = file.toPath();
 
         try {
@@ -72,6 +73,7 @@ public class AppController {
             return;
         }
         ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
+        InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
     }
 
 }

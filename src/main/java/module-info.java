@@ -1,3 +1,4 @@
+
 module ru.nucodelabs.gem {
     requires javafx.controls;
     requires javafx.fxml;
@@ -6,4 +7,6 @@ module ru.nucodelabs.gem {
 
     opens ru.nucodelabs.gem to javafx.fxml;
     exports ru.nucodelabs.gem;
+    exports ru.nucodelabs.files.sonet;
+
 }
