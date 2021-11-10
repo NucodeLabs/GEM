@@ -7,11 +7,11 @@ import ru.nucodelabs.files.sonet.STTFile;
 
 import static java.lang.Math.log10;
 
-public class ExperimentalCurve {
+public class InaccuracyCurve {
 
-    protected static void makeCurve(LineChart<Double, Double> vesCurve, STTFile openedSTT, EXPFile openedEXP) {
-        vesCurve.getData().clear();
-        vesCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
+    protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, STTFile openedSTT, EXPFile openedEXP) {
+        inaccuracyCurve.getData().clear();
+        inaccuracyCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
     }
 
     protected static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
@@ -21,7 +21,7 @@ public class ExperimentalCurve {
             pointsSeries.getData().add(
                     new XYChart.Data<>(
                             log10(openedSTT.getAB_2().get(i)),
-                            log10(openedEXP.getResistanceApp().get(i))));
+                            openedEXP.getErrorResistanceApp().get(i)));
         }
 
         return pointsSeries;
