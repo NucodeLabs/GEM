@@ -1,0 +1,26 @@
+#vesCurve .chart-series-line {
+    -fx-stroke: transparent;
+}
+
+#vesCurve .default-color0.chart-line-symbol {
+    -fx-background-color: green;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 5px;
+    -fx-pref-height: 5px;
+}
+
+#vesCurve .default-color1.chart-line-symbol {
+    -fx-background-color: red;
+}
+
+#vesCurve .default-color2.chart-line-symbol {
+    -fx-background-color: blue;
+}
+
+#vesCurve .chart-line-symbol {
+    -fx-stroke-width: 0;
+    -fx-background-radius: 0;
+    -fx-pref-width: 7px;
+    -fx-pref-height: 2px;
+}
+
