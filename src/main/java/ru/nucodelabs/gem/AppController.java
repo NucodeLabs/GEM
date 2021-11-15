@@ -72,6 +72,7 @@ public class AppController {
             e.printStackTrace();
             return;
         }
+        App.primaryStage.setTitle(file.getName() + " - GEM");
         ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
         InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
     }

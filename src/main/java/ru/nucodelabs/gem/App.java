@@ -16,13 +16,16 @@ public class App extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+    static public Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        App.primaryStage = primaryStage;
         ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 1280, 720);
+        scene.getStylesheets().add(App.class.getResource("experimental-curve.css").toExternalForm());
 
         Image icon = new Image("nu.png");
         primaryStage.getIcons().add(icon);
