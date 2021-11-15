@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
+<?import javafx.scene.text.Font?>
+<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.nucodelabs.gem.AppController">
     <MenuBar>
         <Menu mnemonicParsing="false" text="%file">
-            <MenuItem mnemonicParsing="false" text="%create" />
+            <MenuItem mnemonicParsing="false" text="%create"/>
             <Menu mnemonicParsing="false" text="%open">
-                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP" />
+                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP"/>
             </Menu>
-            <MenuItem mnemonicParsing="false" text="%close" />
+            <MenuItem mnemonicParsing="false" text="%close"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%edit">
-            <MenuItem mnemonicParsing="false" text="Delete" />
+            <MenuItem mnemonicParsing="false" text="Delete"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%help">
             <MenuItem mnemonicParsing="false" text="About" />
@@ -37,21 +38,28 @@
         <AnchorPane minHeight="300.0">
             <SplitPane dividerPositions="0.68" minHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <AnchorPane minHeight="300.0">
-                    <SplitPane dividerPositions="0.2" minHeight="200.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <AnchorPane maxHeight="120.0" minHeight="120.0" prefHeight="120.0" SplitPane.resizableWithParent="false">
-                            <TitledPane alignment="BOTTOM_LEFT" collapsible="false" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" text="%inaccuracy" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <SplitPane dividerPositions="0.2" minHeight="200.0" orientation="VERTICAL"
+                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                               AnchorPane.topAnchor="0.0">
+                        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="120.0" prefHeight="120.0"
+                                    SplitPane.resizableWithParent="false">
+                            <TitledPane alignment="BOTTOM_LEFT" collapsible="false" maxHeight="1.7976931348623157E308"
+                                        minHeight="120.0" prefHeight="120.0" text="%inaccuracy"
+                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <opaqueInsets>
-                                    <Insets />
+                                    <Insets/>
                                 </opaqueInsets>
-                                <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="100.0" minHeight="100.0" prefHeight="100.0">
+                                <LineChart fx:id="inaccuracyCurve" legendVisible="false"
+                                           maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="100.0">
                                     <xAxis>
-                                        <NumberAxis side="BOTTOM" />
+                                        <NumberAxis side="BOTTOM"/>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis side="LEFT" />
+                                        <NumberAxis side="LEFT"/>
                                     </yAxis>
                                     <opaqueInsets>
-                                        <Insets />
+                                        <Insets/>
                                     </opaqueInsets>
                                     <padding>
                                         <Insets left="-8.0" />
