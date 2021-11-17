@@ -16,7 +16,6 @@ public class ExperimentalCurve {
         vesCurve.getData().add(makeCurveData(openedSTT, openedEXP));
         vesCurve.getData().add(makeCurveErrorUpper(openedSTT, openedEXP));
         vesCurve.getData().add(makeCurveErrorLower(openedSTT, openedEXP));
-
     }
 
     protected static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {

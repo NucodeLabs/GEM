@@ -2,9 +2,11 @@ package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
@@ -13,6 +15,8 @@ import ru.nucodelabs.files.sonet.Sonet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 public class AppController {
 
@@ -26,6 +30,8 @@ public class AppController {
     public MenuItem menuFileOpenMOD;
     public TitledPane inaccuracyPane;
     public SplitPane vesSplitPane;
+    public NumberAxis vesCurveAxisY;
+    public NumberAxis vesCurveAxisX;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -80,6 +86,24 @@ public class AppController {
             alert.show();
             return;
         }
+        StringConverter<Number> formatter = new StringConverter<Number>() {
+            @Override
+            public String toString(Number object) {
+                DecimalFormat format = new DecimalFormat();
+                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
+                formatSymbols.setDecimalSeparator(',');
+                formatSymbols.setGroupingSeparator('\'');
+                return ("10^(" + format.format(object.doubleValue()) + ")");
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        };
+
+        vesCurveAxisY.setTickLabelFormatter(formatter);
+        vesCurveAxisX.setTickLabelFormatter(formatter);
     }
 
     @FXML

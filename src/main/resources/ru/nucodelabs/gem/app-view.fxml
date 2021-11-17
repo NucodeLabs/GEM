@@ -7,8 +7,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="485.0" prefWidth="812.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ru.nucodelabs.gem.AppController">
+      prefHeight="485.0" prefWidth="812.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
     <MenuBar>
         <Menu mnemonicParsing="false" text="%file">
             <MenuItem mnemonicParsing="false" text="%create"/>
@@ -76,7 +76,8 @@
                                            centerShape="false" legendVisible="false" minHeight="100.0"
                                            scaleShape="false">
                                     <xAxis>
-                                        <NumberAxis label="AB/2" prefHeight="26.0" prefWidth="481.0" side="BOTTOM">
+                                        <NumberAxis fx:id="vesCurveAxisX" label="AB/2, m" prefHeight="26.0"
+                                                    prefWidth="481.0" side="BOTTOM">
                                             <cursor>
                                                 <Cursor fx:constant="DEFAULT"/>
                                             </cursor>
@@ -86,9 +87,12 @@
                                         </NumberAxis>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis cache="true" label="Rk" prefHeight="128.0" prefWidth="20.0" side="LEFT" tickLabelFill="#070707" tickLength="5.0" tickUnit="10.0">
+                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false"
+                                                    label="ρₐₚₚ, Ohm‧m" prefHeight="128.0" prefWidth="20.0" side="LEFT"
+                                                    tickLabelFill="#070707" tickLength="5.0" tickUnit="10.0"
+                                                    upperBound="1000.0">
                                             <tickLabelFont>
-                                                <Font size="9.0" />
+                                                <Font size="9.0"/>
                                             </tickLabelFont>
                                         </NumberAxis>
                                     </yAxis>
@@ -96,7 +100,7 @@
                                         <Insets />
                                     </opaqueInsets>
                                     <padding>
-                                        <Insets bottom="10.0" />
+                                        <Insets bottom="20.0" left="40.0"/>
                                     </padding>
                                 </LineChart>
                             </TitledPane>
