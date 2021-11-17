@@ -25,7 +25,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 1280, 720);
-        scene.getStylesheets().add(App.class.getResource("style.css").toExternalForm());
+//        scene.getStylesheets().add(App.class.getResource("style.css").toExternalForm());
 
         Image icon = new Image("nu.png");
         primaryStage.getIcons().add(icon);
