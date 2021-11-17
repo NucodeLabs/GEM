@@ -2,10 +2,7 @@ package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import ru.nucodelabs.files.sonet.EXPFile;
@@ -22,12 +19,12 @@ public class AppController {
     public VBox mainPane;
     public MenuItem menuFileOpenEXP;
     public TitledPane vesPane;
-    @FXML
     public LineChart<Double, Double> vesCurve;
     public LineChart<Double, Double> inaccuracyCurve;
-
-    @FXML
     public TableView<Double> vesTable;
+    public MenuItem menuFileOpenMOD;
+    public TitledPane inaccuracyPane;
+    public SplitPane vesSplitPane;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -82,7 +79,9 @@ public class AppController {
             alert.show();
             return;
         }
-
     }
 
+    @FXML
+    public void onMenuFileOpenMOD() {
+    }
 }
