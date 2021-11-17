@@ -54,7 +54,6 @@ public class AppController {
             alert.setHeaderText("File not found!");
             alert.setContentText(e.getMessage());
             alert.show();
-            e.printStackTrace();
             return;
         }
 
@@ -69,12 +68,21 @@ public class AppController {
             alert.setHeaderText("STT file not found!");
             alert.setContentText(e.getMessage());
             alert.show();
-            e.printStackTrace();
             return;
         }
-        App.primaryStage.setTitle(file.getName() + " - GEM");
-        ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
-        InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
+        try {
+            App.primaryStage.setTitle(file.getName() + " - GEM");
+            ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
+            InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
+        } catch (IndexOutOfBoundsException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Cannot open files");
+            alert.setHeaderText("STT and EXP files lines mismatch");
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+
     }
 
 }
