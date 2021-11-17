@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import ru.nucodelabs.files.sonet.EXPFile;
+import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.Sonet;
 
@@ -29,7 +30,7 @@ public class AppController {
     @FXML
     public void onMenuFileOpenEXP() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choose files for interpretation");
+        chooser.setTitle("Выберите файл полевых данных для интерпретации");
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
         );
@@ -83,5 +84,28 @@ public class AppController {
 
     @FXML
     public void onMenuFileOpenMOD() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Выберите файл модели");
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("EXP - Данные модели", "*.MOD", "*.mod")
+        );
+        File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        MODFile openedMOD;
+        try {
+            openedMOD = Sonet.readMOD(file);
+        } catch (FileNotFoundException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("File not found!");
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+
+
     }
 }
