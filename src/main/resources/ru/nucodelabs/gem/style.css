@@ -10,18 +10,18 @@
     -fx-label-padding: 0 0 -15 0;
 }
 
-#vesCurve .default-color0.chart-line-symbol {
+#vesCurve .chart-line-symbol.series0 {
     -fx-background-color: green;
     -fx-background-radius: 50%;
     -fx-pref-width: 5px;
     -fx-pref-height: 5px;
 }
 
-#vesCurve .default-color1.chart-line-symbol {
+#vesCurve .chart-line-symbol.series1 {
     -fx-background-color: red;
 }
 
-#vesCurve .default-color2.chart-line-symbol {
+#vesCurve .chart-line-symbol.series2 {
     -fx-background-color: blue;
 }
 
