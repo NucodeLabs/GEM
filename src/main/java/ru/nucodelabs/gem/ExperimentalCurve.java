@@ -6,6 +6,7 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
 import static java.lang.Math.log10;
+import static java.lang.Math.max;
 
 public class ExperimentalCurve {
 
@@ -21,7 +22,7 @@ public class ExperimentalCurve {
 
         for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
             double dotX = log10(openedSTT.getAB_2().get(i));
-            double dotY = log10(openedEXP.getResistanceApp().get(i));
+            double dotY = max(log10(openedEXP.getResistanceApp().get(i)), 0);
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
         return pointsSeries;
@@ -34,7 +35,7 @@ public class ExperimentalCurve {
             double dotX = log10(openedSTT.getAB_2().get(i));
             double resistance = openedEXP.getResistanceApp().get(i);
             double error = openedEXP.getErrorResistanceApp().get(i) / 100f;
-            double dotY = log10(resistance + resistance * error);
+            double dotY = max(log10(resistance + resistance * error), 0);
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
         return pointsSeries;
@@ -47,7 +48,7 @@ public class ExperimentalCurve {
             double dotX = log10(openedSTT.getAB_2().get(i));
             double resistance = openedEXP.getResistanceApp().get(i);
             double error = openedEXP.getErrorResistanceApp().get(i) / 100f;
-            double dotY = log10(resistance - resistance * error);
+            double dotY = max(log10(resistance - resistance * error), 0);
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
         return pointsSeries;
