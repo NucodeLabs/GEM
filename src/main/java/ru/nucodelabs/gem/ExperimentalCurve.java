@@ -12,9 +12,11 @@ public class ExperimentalCurve {
 
     protected static void makeCurve(LineChart<Double, Double> vesCurve, STTFile openedSTT, EXPFile openedEXP) {
         vesCurve.getData().clear();
+
         vesCurve.getData().add(makeCurveData(openedSTT, openedEXP));
         vesCurve.getData().add(makeCurveErrorUpper(openedSTT, openedEXP));
         vesCurve.getData().add(makeCurveErrorLower(openedSTT, openedEXP));
+
     }
 
     protected static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
