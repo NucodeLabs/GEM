@@ -3,11 +3,11 @@
 }
 
 #vesCurve #vesCurveAxisY .axis-label {
-    -fx-label-padding: -70 0 0 0;
+    -fx-label-padding: -75 0 0 0;
 }
 
 #vesCurve #vesCurveAxisX .axis-label {
-    -fx-label-padding: 0 0 -25 0;
+    -fx-label-padding: 0 0 -15 0;
 }
 
 #vesCurve .default-color0.chart-line-symbol {
