@@ -42,3 +42,7 @@
     -fx-pref-height: 4px;
 }
 
+#inaccuracyCurve .chart-series-line {
+    -fx-stroke: Orange;
+    -fx-stroke-width: 10px;
+}
