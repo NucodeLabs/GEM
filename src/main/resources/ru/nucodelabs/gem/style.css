@@ -33,6 +33,18 @@
     -fx-border-radius: 0 0 100px 100px;
 }
 
+#vesCurve .chart-line-symbol.series3 {
+    -fx-background-color: Orchid;
+    -fx-border-color: rgba(0, 0, 0, 0.5);
+    -fx-pref-width: 7px;
+    -fx-pref-height: 7px;
+}
+
+#vesCurve .chart-series-line.series3 {
+    -fx-stroke: rgba(0, 0, 0, 0.4);
+    -fx-stroke-width: 2px;
+}
+
 #vesCurve .chart-line-symbol {
     -fx-border-width: 1px; /* можно сделать 0, чтобы обводки не было */
     -fx-border-color: black;
@@ -43,6 +55,17 @@
 }
 
 #inaccuracyCurve .chart-series-line {
-    -fx-stroke: Orange;
-    -fx-stroke-width: 10px;
+    -fx-stroke: Red;
+    -fx-stroke-width: 2px;
+    -fx-stroke-line-cap: butt;
+    -fx-stroke-line-join: miter;
+    -fx-stroke-type: centered;
+    -fx-stroke-miter-limit: 0.1;
+}
+
+#inaccuracyCurve .chart-line-symbol {
+    -fx-border-width: 0;
+    -fx-pref-width: 15px;
+    -fx-pref-height: 3px;
+    -fx-background-color: Red;
 }

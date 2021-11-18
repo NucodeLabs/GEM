@@ -12,13 +12,13 @@ import static java.lang.Math.log10;
 
 public class InaccuracyCurve {
 
-    protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, STTFile openedSTT, EXPFile openedEXP) {
+    protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, STTFile openedSTT, EXPFile openedEXP, List<Double> solvedResistance) {
         inaccuracyCurve.getData().clear();
-        inaccuracyCurve.getData().addAll(makeCurveData(openedSTT, openedEXP));
-        inaccuracyCurve.setCreateSymbols(false);
+        inaccuracyCurve.getData().addAll(makeCurveData(openedSTT, openedEXP, solvedResistance));
+//        inaccuracyCurve.setCreateSymbols(false);
     }
 
-    protected static List<XYChart.Series<Double, Double>> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
+    protected static List<XYChart.Series<Double, Double>> makeCurveData(STTFile openedSTT, EXPFile openedEXP, List<Double> solvedResistance) {
         List<XYChart.Series<Double, Double>> res = new ArrayList<>();
 
         for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
@@ -27,7 +27,7 @@ public class InaccuracyCurve {
                     log10(openedSTT.getAB_2().get(i)),
                     0d));
             double dotX = log10(openedSTT.getAB_2().get(i));
-            double dotY = openedEXP.getErrorResistanceApp().get(i);
+            double dotY = solvedResistance.get(i) - openedEXP.getResistanceApp().get(i);
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
             res.add(pointsSeries);
         }

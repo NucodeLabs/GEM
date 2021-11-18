@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.stream.DoubleStream;
 
 import static java.lang.Math.pow;
 
@@ -16,7 +17,6 @@ public class ForwardSolverTest {
         double Raz[] = new double[Nraz]; /* Distances           */
         double Ro[] = new double[Nlay];  /* Layers resistivites */
         double Th[] = new double[Nlay];  /* Layers thicknesses  */
-        ArrayList<Double> RoK; /* Apparent resistivity*/
         int i;
         double sr;
         sr = 4./(double)(Nraz-1);
@@ -37,7 +37,11 @@ public class ForwardSolverTest {
         }
         Th[Nlay - 1] = 1.e+10;
 
-        RoK = ForwardSolver.ves(Ro, Th, Nlay, Raz, Nraz);
+        /* Apparent resistivity*/
+        ArrayList<Double> RoK = new ArrayList<>(ForwardSolver.ves(
+                DoubleStream.of(Ro).boxed().toList(),
+                DoubleStream.of(Th).boxed().toList(),
+                DoubleStream.of(Raz).boxed().toList()));
         RoK.forEach(System.out::println);
         Assertions.assertEquals(Nraz, RoK.size());
     }

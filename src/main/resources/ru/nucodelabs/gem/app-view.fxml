@@ -65,7 +65,7 @@
                                         <Insets/>
                                     </opaqueInsets>
                                     <padding>
-                                        <Insets left="-8.0" />
+                                        <Insets left="40.0"/>
                                     </padding>
                                 </LineChart>
                             </TitledPane>
