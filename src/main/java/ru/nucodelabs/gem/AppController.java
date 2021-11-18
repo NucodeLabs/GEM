@@ -85,6 +85,11 @@ public class AppController {
 
             ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
             InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
+
+            if (!vesCurve.isVisible() || !inaccuracyCurve.isVisible()) {
+                vesCurve.setVisible(true);
+                inaccuracyCurve.setVisible(true);
+            }
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Cannot open files");

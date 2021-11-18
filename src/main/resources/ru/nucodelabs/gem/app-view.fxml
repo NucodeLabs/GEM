@@ -52,12 +52,14 @@
                                     <Insets/>
                                 </opaqueInsets>
                                 <LineChart fx:id="inaccuracyCurve" legendVisible="false"
-                                           maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="100.0">
+                                           maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="100.0"
+                                           visible="false">
                                     <xAxis>
-                                        <NumberAxis side="BOTTOM"/>
+                                        <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false"/>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis side="LEFT"/>
+                                        <NumberAxis forceZeroInRange="false" lowerBound="-100.0" side="LEFT"
+                                                    tickLabelsVisible="false"/>
                                     </yAxis>
                                     <opaqueInsets>
                                         <Insets/>
@@ -74,7 +76,7 @@
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false"
                                            centerShape="false" legendVisible="false" minHeight="100.0"
-                                           scaleShape="false">
+                                           scaleShape="false" visible="false">
                                     <xAxis>
                                         <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m"
                                                     prefHeight="26.0" prefWidth="481.0" side="BOTTOM">
