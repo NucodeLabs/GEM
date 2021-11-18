@@ -18,7 +18,7 @@ public class ExperimentalCurve {
         vesCurve.getData().add(makeCurveErrorLower(openedSTT, openedEXP));
     }
 
-    protected static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
+    private static XYChart.Series<Double, Double> makeCurveData(STTFile openedSTT, EXPFile openedEXP) {
         XYChart.Series<Double, Double> pointsSeries = new XYChart.Series<>();
 
         for (int i = 0; i < openedSTT.getAB_2().size(); i++) {

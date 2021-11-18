@@ -22,6 +22,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AppController {
+    protected static final int EXP_CURVE_SERIES_CNT = 3;
+    protected static final int VES_CURVE_SERIES_CNT = 4;
+
+    EXPFile openedEXP;
+    STTFile openedSTT;
+    MODFile openedMOD;
 
     @FXML
     public VBox mainPane;
@@ -49,8 +55,6 @@ public class AppController {
             return;
         }
 
-        EXPFile openedEXP;
-        STTFile openedSTT;
         Path openedFilePath = file.toPath();
 
         try {
@@ -84,11 +88,9 @@ public class AppController {
             vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
 
             ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
-            InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
 
-            if (!vesCurve.isVisible() || !inaccuracyCurve.isVisible()) {
+            if (!vesCurve.isVisible()) {
                 vesCurve.setVisible(true);
-                inaccuracyCurve.setVisible(true);
             }
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -112,7 +114,6 @@ public class AppController {
             return;
         }
 
-        MODFile openedMOD;
         try {
             openedMOD = Sonet.readMOD(file);
         } catch (FileNotFoundException e) {
@@ -123,10 +124,20 @@ public class AppController {
             alert.show();
             return;
         }
+
+        try {
+            TheoreticalCurve.makeCurve(vesCurve, openedSTT, openedMOD);
+            if (!inaccuracyCurve.isVisible()) {
+                inaccuracyCurve.setVisible(true);
+            }
+            InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP, TheoreticalCurve.solvedResistance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected static StringConverter<Number> powerOf10Formatter = new StringConverter<Number>() {
-        Function<String, String> toUpperIndex = string -> {
+        final Function<String, String> toUpperIndex = string -> {
             ArrayList<Character> resChars = new ArrayList<Character>();
             for (int i = 0; i < string.length(); i++) {
                 char c = string.charAt(i);

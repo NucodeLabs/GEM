@@ -22,7 +22,7 @@ sourceCompatibility = '17'
 targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+        options.encoding = 'UTF-8'
 }
 
 application {
@@ -70,7 +70,7 @@ task forwardSolver(type: Exec) {
                 "-I",
                 "${Jvm.current().javaHome}/include/darwin",
                 "-o",
-                "${workingDir}/build/lib/libforwardsolver.dylib"
+                "${projectDir}/lib/libforwardsolver.dylib"
     } else if (osdetector.os == "linux") {
         commandLine "/usr/bin/gcc",
                 "${workingDir}/forwardsolver.cpp",
@@ -85,7 +85,7 @@ task forwardSolver(type: Exec) {
                 "-I",
                 "${Jvm.current().javaHome}/include/linux",
                 "-o",
-                "${workingDir}/build/lib/libforwardsolver.so"
+                "${projectDir}/lib/libforwardsolver.so"
     } else {
         commandLine "C:\\Program Files\\LLVM\\bin\\clang.exe",
                 "${workingDir}\\forwardsolver.cpp",
@@ -99,13 +99,11 @@ task forwardSolver(type: Exec) {
                 "-I",
                 "${Jvm.current().javaHome}\\include\\win32",
                 "-o",
-                "${workingDir}\\build\\lib\\forwardsolver.dll"
+                "${projectDir}\\lib\\forwardsolver.dll"
         doLast {
-            file("${workingDir}/build/lib/forwardsolver.exp").delete()
-            file("${workingDir}/build/lib/forwardsolver.lib").delete()
+            file("${projectDir}/lib/forwardsolver.exp").delete()
+            file("${workingDir}/lib/forwardsolver.lib").delete()
         }
     }
 
 }
-
-//test.dependsOn 'forwardSolver'
