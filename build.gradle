@@ -52,7 +52,7 @@ test {
 task forwardSolver(type: Exec) {
     workingDir "orig/ForwardSolver"
     doFirst {
-        mkdir "${workingDir}/build/lib"
+        mkdir "${projectDir}/lib"
     }
     if (osdetector.os == "osx") {
         commandLine "/usr/bin/clang",
