@@ -17,6 +17,9 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class AppController {
 
@@ -76,6 +79,10 @@ public class AppController {
         }
         try {
             App.primaryStage.setTitle(file.getName() + " - GEM");
+
+            vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
+            vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
+
             ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
             InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP);
         } catch (IndexOutOfBoundsException e) {
@@ -86,24 +93,6 @@ public class AppController {
             alert.show();
             return;
         }
-        StringConverter<Number> formatter = new StringConverter<Number>() {
-            @Override
-            public String toString(Number object) {
-                DecimalFormat format = new DecimalFormat();
-                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
-                formatSymbols.setDecimalSeparator(',');
-                formatSymbols.setGroupingSeparator('\'');
-                return ("10^(" + format.format(object.doubleValue()) + ")");
-            }
-
-            @Override
-            public Number fromString(String string) {
-                return null;
-            }
-        };
-
-        vesCurveAxisY.setTickLabelFormatter(formatter);
-        vesCurveAxisX.setTickLabelFormatter(formatter);
     }
 
     @FXML
@@ -129,7 +118,69 @@ public class AppController {
             alert.show();
             return;
         }
-
-
     }
+
+    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<Number>() {
+        Function<String, String> toUpperIndex = string -> {
+            ArrayList<Character> resChars = new ArrayList<Character>();
+            for (int i = 0; i < string.length(); i++) {
+                char c = string.charAt(i);
+                switch (c) {
+                    case '1':
+                        resChars.add('¹');
+                        break;
+                    case '2':
+                        resChars.add('²');
+                        break;
+                    case '3':
+                        resChars.add('³');
+                        break;
+                    case '4':
+                        resChars.add('⁴');
+                        break;
+                    case '5':
+                        resChars.add('⁵');
+                        break;
+                    case '6':
+                        resChars.add('⁶');
+                        break;
+                    case '7':
+                        resChars.add('⁷');
+                        break;
+                    case '8':
+                        resChars.add('⁸');
+                        break;
+                    case '9':
+                        resChars.add('⁹');
+                        break;
+                    case '0':
+                        resChars.add('⁰');
+                        break;
+                    case '.':
+                        resChars.add('\u0387');
+                        break;
+                    default:
+                        resChars.add(c);
+                }
+            }
+            return resChars
+                    .stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining());
+        };
+
+        @Override
+        public String toString(Number object) {
+            DecimalFormat format = new DecimalFormat();
+            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
+            formatSymbols.setDecimalSeparator(',');
+            formatSymbols.setGroupingSeparator('\'');
+            return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
+        }
+
+        @Override
+        public Number fromString(String string) {
+            return null;
+        }
+    };
 }
