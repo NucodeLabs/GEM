@@ -11,7 +11,8 @@
 }
 
 #vesCurve .chart-line-symbol.series0 {
-    -fx-background-color: green;
+    -fx-background-color: LightGreen;
+    -fx-border-color: MediumSeaGreen;
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;
     -fx-pref-width: 6px;
@@ -19,13 +20,15 @@
 }
 
 #vesCurve .chart-line-symbol.series1 {
-    -fx-background-color: red;
+    -fx-background-color: LightCoral;
+    -fx-border-color: FireBrick;
     -fx-background-radius: 100px 100px 0 0;
     -fx-border-radius: 100px 100px 0 0;
 }
 
 #vesCurve .chart-line-symbol.series2 {
-    -fx-background-color: blue;
+    -fx-background-color: LightBlue;
+    -fx-border-color: CornflowerBlue;
     -fx-background-radius: 0 0 100px 100px;
     -fx-border-radius: 0 0 100px 100px;
 }

@@ -173,8 +173,8 @@ public class AppController {
         public String toString(Number object) {
             DecimalFormat format = new DecimalFormat();
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
-            formatSymbols.setDecimalSeparator(',');
-            formatSymbols.setGroupingSeparator('\'');
+            formatSymbols.setDecimalSeparator('.');
+            format.setDecimalFormatSymbols(formatSymbols);
             return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
         }
 
