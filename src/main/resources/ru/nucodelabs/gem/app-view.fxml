@@ -92,8 +92,7 @@
                                     <yAxis>
                                         <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false"
                                                     label="ρₐₚₚ, Ohm‧m" prefHeight="128.0" prefWidth="20.0" side="LEFT"
-                                                    tickLabelFill="#070707" tickLength="5.0" tickUnit="10.0"
-                                                    upperBound="1000.0">
+                                                    tickLabelFill="#070707">
                                             <tickLabelFont>
                                                 <Font size="14.0"/>
                                             </tickLabelFont>
