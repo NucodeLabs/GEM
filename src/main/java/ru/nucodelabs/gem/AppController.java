@@ -82,16 +82,7 @@ public class AppController {
             return;
         }
         try {
-            App.primaryStage.setTitle(file.getName() + " - GEM");
-
-            vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
-            vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
-
             ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
-
-            if (!vesCurve.isVisible()) {
-                vesCurve.setVisible(true);
-            }
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Cannot open files");
@@ -100,6 +91,19 @@ public class AppController {
             alert.show();
             return;
         }
+
+        App.primaryStage.setTitle(file.getName() + " - GEM");
+
+        vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
+        vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
+
+        if (!vesCurve.isVisible()) {
+            vesCurve.setVisible(true);
+        }
+
+        if (menuFileOpenMOD.isDisable()) {
+            menuFileOpenMOD.setDisable(false);
+        }
     }
 
     @FXML
@@ -107,7 +111,7 @@ public class AppController {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл модели");
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("EXP - Данные модели", "*.MOD", "*.mod")
+                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
         );
         File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
         if (file == null) {

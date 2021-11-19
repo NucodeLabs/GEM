@@ -14,7 +14,8 @@
             <MenuItem mnemonicParsing="false" text="%create"/>
             <Menu mnemonicParsing="false" text="%open">
                 <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP"/>
-                <MenuItem fx:id="menuFileOpenMOD" mnemonicParsing="false" onAction="#onMenuFileOpenMOD" text="MOD"/>
+                <MenuItem fx:id="menuFileOpenMOD" disable="true" mnemonicParsing="false" onAction="#onMenuFileOpenMOD"
+                          text="MOD"/>
             </Menu>
             <MenuItem mnemonicParsing="false" text="%close"/>
         </Menu>
