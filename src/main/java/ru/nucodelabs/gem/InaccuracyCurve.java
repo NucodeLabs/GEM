@@ -23,7 +23,7 @@ public class InaccuracyCurve {
 
         for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
             XYChart.Series<Double, Double> pointsSeries = new XYChart.Series<>();
-            pointsSeries.getData().add(new XYChart.Data<Double, Double>(
+            pointsSeries.getData().add(new XYChart.Data<>(
                     log10(openedSTT.getAB_2().get(i)),
                     0d));
             double dotX = log10(openedSTT.getAB_2().get(i));
