@@ -2,8 +2,6 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.STTFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +10,31 @@ import static java.lang.Math.log10;
 
 public class InaccuracyCurve {
 
-    protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, STTFile openedSTT, EXPFile openedEXP, List<Double> solvedResistance) {
+    protected static void makeCurve(
+            LineChart<Double, Double> inaccuracyCurve,
+            List<Double> AB_2,
+            List<Double> resistanceApp,
+            List<Double> errResistanceApp,
+            List<Double> solvedResistance) {
         inaccuracyCurve.getData().clear();
-        inaccuracyCurve.getData().addAll(makeCurveData(openedSTT, openedEXP, solvedResistance));
+        inaccuracyCurve.getData().addAll(makeCurveData(AB_2, resistanceApp, errResistanceApp, solvedResistance));
 //        inaccuracyCurve.setCreateSymbols(false);
     }
 
-    protected static List<XYChart.Series<Double, Double>> makeCurveData(STTFile openedSTT, EXPFile openedEXP, List<Double> solvedResistance) {
+    protected static List<XYChart.Series<Double, Double>> makeCurveData(
+            List<Double> AB_2,
+            List<Double> resistanceApp,
+            List<Double> errResistanceApp,
+            List<Double> solvedResistance) {
         List<XYChart.Series<Double, Double>> res = new ArrayList<>();
 
-        for (int i = 0; i < openedSTT.getAB_2().size(); i++) {
+        for (int i = 0; i < AB_2.size(); i++) {
             XYChart.Series<Double, Double> pointsSeries = new XYChart.Series<>();
             pointsSeries.getData().add(new XYChart.Data<>(
-                    log10(openedSTT.getAB_2().get(i)),
+                    log10(AB_2.get(i)),
                     0d));
-            double dotX = log10(openedSTT.getAB_2().get(i));
-            double dotY = solvedResistance.get(i) - openedEXP.getResistanceApp().get(i);
+            double dotX = log10(AB_2.get(i));
+            double dotY = solvedResistance.get(i) - resistanceApp.get(i);
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
             res.add(pointsSeries);
         }

@@ -21,7 +21,6 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 //        System.out.println(System.getProperty("user.dir"));
-        System.setProperty("java.library.path", "./lib");
         App.primaryStage = primaryStage;
         ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"), bundle);

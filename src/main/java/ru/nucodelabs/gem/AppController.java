@@ -82,7 +82,7 @@ public class AppController {
             return;
         }
         try {
-            ExperimentalCurve.makeCurve(vesCurve, openedSTT, openedEXP);
+            ExperimentalCurve.makeCurve(vesCurve, openedSTT.getAB_2(), openedEXP.getResistanceApp(), openedEXP.getErrorResistanceApp());
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Cannot open files");
@@ -130,11 +130,15 @@ public class AppController {
         }
 
         try {
-            TheoreticalCurve.makeCurve(vesCurve, openedSTT, openedMOD);
+            TheoreticalCurve.makeCurve(vesCurve, openedSTT.getAB_2(), openedMOD.getResistance(), openedMOD.getPower());
             if (!inaccuracyCurve.isVisible()) {
                 inaccuracyCurve.setVisible(true);
             }
-            InaccuracyCurve.makeCurve(inaccuracyCurve, openedSTT, openedEXP, TheoreticalCurve.solvedResistance);
+            InaccuracyCurve.makeCurve(inaccuracyCurve,
+                    openedSTT.getAB_2(),
+                    openedEXP.getResistanceApp(),
+                    openedEXP.getErrorResistanceApp(),
+                    TheoreticalCurve.getSolvedResistance());
         } catch (Exception e) {
             e.printStackTrace();
         }
