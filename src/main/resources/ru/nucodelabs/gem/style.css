@@ -34,10 +34,11 @@
 }
 
 #vesCurve .chart-line-symbol.series3 {
-    -fx-background-color: Orchid;
-    -fx-border-color: rgba(0, 0, 0, 0.5);
-    -fx-pref-width: 7px;
-    -fx-pref-height: 7px;
+    -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-pref-width: 3px;
+    -fx-pref-height: 3px;
 }
 
 #vesCurve .chart-series-line.series3 {
