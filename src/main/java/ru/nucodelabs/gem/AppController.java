@@ -140,47 +140,24 @@ public class AppController {
         }
     }
 
-    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<Number>() {
+    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
-            ArrayList<Character> resChars = new ArrayList<Character>();
+            ArrayList<Character> resChars = new ArrayList<>();
             for (int i = 0; i < string.length(); i++) {
                 char c = string.charAt(i);
                 switch (c) {
-                    case '1':
-                        resChars.add('¹');
-                        break;
-                    case '2':
-                        resChars.add('²');
-                        break;
-                    case '3':
-                        resChars.add('³');
-                        break;
-                    case '4':
-                        resChars.add('⁴');
-                        break;
-                    case '5':
-                        resChars.add('⁵');
-                        break;
-                    case '6':
-                        resChars.add('⁶');
-                        break;
-                    case '7':
-                        resChars.add('⁷');
-                        break;
-                    case '8':
-                        resChars.add('⁸');
-                        break;
-                    case '9':
-                        resChars.add('⁹');
-                        break;
-                    case '0':
-                        resChars.add('⁰');
-                        break;
-                    case '.':
-                        resChars.add('\u0387');
-                        break;
-                    default:
-                        resChars.add(c);
+                    case '1' -> resChars.add('¹');
+                    case '2' -> resChars.add('²');
+                    case '3' -> resChars.add('³');
+                    case '4' -> resChars.add('⁴');
+                    case '5' -> resChars.add('⁵');
+                    case '6' -> resChars.add('⁶');
+                    case '7' -> resChars.add('⁷');
+                    case '8' -> resChars.add('⁸');
+                    case '9' -> resChars.add('⁹');
+                    case '0' -> resChars.add('⁰');
+                    case '.' -> resChars.add('\u0387');
+                    default -> resChars.add(c);
                 }
             }
             return resChars
