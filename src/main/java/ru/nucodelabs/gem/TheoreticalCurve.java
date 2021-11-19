@@ -15,14 +15,6 @@ public class TheoreticalCurve {
     protected static List<Double> solvedResistance;
 
     protected static void makeCurve(LineChart<Double, Double> vesCurve, STTFile openedSTT, MODFile openedMOD) {
-        if (vesCurve.getData().size() < AppController.EXP_CURVE_SERIES_CNT) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Не возможно открыть модель");
-            alert.setHeaderText("Нет экспериментальных данных");
-            alert.setContentText("Сначала откройте EXP и STT-файлы");
-            alert.show();
-            return;
-        }
         if (vesCurve.getData().size() > AppController.EXP_CURVE_SERIES_CNT) {
             vesCurve.getData().remove(AppController.EXP_CURVE_SERIES_CNT);
         }
