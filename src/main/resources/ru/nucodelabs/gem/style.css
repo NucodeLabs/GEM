@@ -66,7 +66,8 @@
 
 #inaccuracyCurve .chart-line-symbol {
     -fx-border-width: 0;
-    -fx-pref-width: 15px;
+    -fx-background-radius: 0;
+    -fx-pref-width: 10px;
     -fx-pref-height: 3px;
     -fx-background-color: Red;
 }
