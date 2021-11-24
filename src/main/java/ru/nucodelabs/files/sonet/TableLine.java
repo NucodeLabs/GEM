@@ -26,7 +26,7 @@ public class TableLine {
         this.rangeMN = rangeMNProperty();
         this.amperage = amperageProperty();
         this.voltage = voltageProperty();
-        this.resistivity = resistivityProperty();
+        this.resistivity = resistanceAppProperty();
         this.resistivityError = resistivityErrorProperty();
         this.polarization = polarizationProperty();
         this.polarizationError = polarizationErrorProperty();
@@ -34,34 +34,34 @@ public class TableLine {
 
     //Range AB
 
-    public double getRangeAB() {
+    public double getAB_2() {
         return rangeAB.get();
     }
 
-    public void setRangeAB(double rangeAB) {
+    public void setAB_2(double rangeAB) {
         this.rangeAB.set(rangeAB);
     }
 
     public SimpleDoubleProperty rangeABProperty() {
         if (rangeAB == null) {
-            setRangeAB(0.0);
+            setAB_2(0.0);
         }
         return rangeAB;
     }
 
     //Range MN
 
-    public double getRangeMN() {
+    public double getMN_2() {
         return rangeMN.get();
     }
 
-    public void setRangeMN(double rangeMN) {
+    public void setMN_2(double rangeMN) {
         this.rangeMN.set(rangeMN);
     }
 
     public SimpleDoubleProperty rangeMNProperty() {
         if (rangeMN == null) {
-            setRangeMN(0.0);
+            setMN_2(0.0);
         }
         return rangeMN;
     }
@@ -102,68 +102,68 @@ public class TableLine {
 
     //Resistivity
 
-    public SimpleDoubleProperty resistivityProperty() {
+    public SimpleDoubleProperty resistanceAppProperty() {
         if (resistivity == null) {
-            setResistivity(0.0);
+            setResistanceApp(0.0);
         }
         return resistivity;
     }
 
-    public double getResistivity() {
+    public double getResistanceApp() {
         return resistivity.get();
     }
 
-    public void setResistivity(double resistivity) {
+    public void setResistanceApp(double resistivity) {
         this.resistivity.set(resistivity);
     }
 
     //Resistivity Error
 
-    public double getResistivityError() {
+    public double getErrorResistanceApp() {
         return resistivityError.get();
     }
 
-    public void setResistivityError(double resistivityError) {
+    public void setErrorResistanceApp(double resistivityError) {
         this.resistivityError.set(resistivityError);
     }
 
     public SimpleDoubleProperty resistivityErrorProperty() {
         if (resistivityError == null) {
-            setResistivityError(0.0);
+            setErrorResistanceApp(0.0);
         }
         return resistivityError;
     }
 
     //Polarization
 
-    public double getPolarization() {
+    public double getPolarizationApp() {
         return polarization.get();
     }
 
-    public void setPolarization(double polarization) {
+    public void setPolarizationApp(double polarization) {
         this.polarization.set(polarization);
     }
 
     public SimpleDoubleProperty polarizationProperty() {
         if (polarization == null) {
-            setPolarization(0.0);
+            setPolarizationApp(0.0);
         }
         return polarization;
     }
 
     //Polarization Error
 
-    public double getPolarizationError() {
+    public double getErrorPolarizationApp() {
         return polarizationError.get();
     }
 
-    public void setPolarizationError(double polarizationError) {
+    public void setErrorPolarizationApp(double polarizationError) {
         this.polarizationError.set(polarizationError);
     }
 
     public SimpleDoubleProperty polarizationErrorProperty() {
         if (polarizationError == null) {
-            setPolarizationError(0.0);
+            setErrorPolarizationApp(0.0);
         }
         return polarizationError;
     }
