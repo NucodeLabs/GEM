@@ -44,11 +44,6 @@ dependencies {
     implementation("org.openjfx:javafx-fxml:${platformName}")
 }
 
-test {
-    useJUnitPlatform()
-    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
-}
-
 task forwardSolver(type: Exec) {
     workingDir "orig/ForwardSolver"
     doFirst {
@@ -105,6 +100,13 @@ task forwardSolver(type: Exec) {
             file("${workingDir}/lib/forwardsolver.lib").delete()
         }
     }
+}
+
+
+test {
+    dependsOn forwardSolver
+    useJUnitPlatform()
+    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
 }
 
 tasks.withType(JavaExec) {
