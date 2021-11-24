@@ -135,8 +135,7 @@ public class AppController {
                     experimentalTable,
                     experimentalRangeAB_2Column,
                     experimentalResistanceColumn,
-                    experimentalResistanceErrorColumn
-            );
+                    experimentalResistanceErrorColumn);
 
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
