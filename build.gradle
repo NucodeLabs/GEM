@@ -110,6 +110,6 @@ test {
 }
 
 tasks.withType(JavaExec) {
-    allJvmArgs = ["-Djava.library.path=${projectDir}/lib"]
     dependsOn forwardSolver
+    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
 }
