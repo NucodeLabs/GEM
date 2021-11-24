@@ -46,7 +46,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    systemProperty "java.library.path", "${projectDir}/lib"
+    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
 }
 
 task forwardSolver(type: Exec) {
