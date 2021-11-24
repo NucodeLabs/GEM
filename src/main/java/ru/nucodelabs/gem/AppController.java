@@ -139,8 +139,18 @@ public class AppController {
                     openedEXP.getResistanceApp(),
                     openedEXP.getErrorResistanceApp(),
                     TheoreticalCurve.getSolvedResistance());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (UnsatisfiedLinkError e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Невозможно решить прямую задачу");
+            alert.setHeaderText("Отсутствует библиотека ForwardSolver");
+            alert.setContentText("""
+                    Убедитесь в наличии файла с именем
+                    - Windows: forwardsolver.dll
+                    - macOS: libforwardsolver.dylib
+                    - Linux: libforwardsolver.so
+                    """);
+            alert.show();
+            return;
         }
     }
 

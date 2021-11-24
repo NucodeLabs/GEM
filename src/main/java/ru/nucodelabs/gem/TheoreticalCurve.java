@@ -2,7 +2,6 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
 
 import java.util.List;
 
@@ -25,21 +24,8 @@ public class TheoreticalCurve {
             vesCurve.getData().remove(AppController.EXP_CURVE_SERIES_CNT);
         }
 
-        try {
-            solvedResistance = ForwardSolver.ves(resistance, power, AB_2);
-        } catch (UnsatisfiedLinkError e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Невозможно решить прямую задачу");
-            alert.setHeaderText("Отсутствует библиотека ForwardSolver");
-            alert.setContentText("""
-                    Убедитесь в наличии файла с именем
-                    - Windows: forwardsolver.dll
-                    - macOS: libforwardsolver.dylib
-                    - Linux: libforwardsolver.so
-                    """);
-            alert.show();
-            return;
-        }
+
+        solvedResistance = ForwardSolver.ves(resistance, power, AB_2);
         vesCurve.getData().add(makeCurveData(AB_2, solvedResistance));
     }
 

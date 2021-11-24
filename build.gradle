@@ -105,5 +105,9 @@ task forwardSolver(type: Exec) {
             file("${workingDir}/lib/forwardsolver.lib").delete()
         }
     }
+}
 
+tasks.withType(JavaExec) {
+    allJvmArgs = ["-Djava.library.path=${projectDir}/lib"]
+    dependsOn forwardSolver
 }
