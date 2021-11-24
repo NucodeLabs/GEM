@@ -69,7 +69,7 @@ public class ModelTable {
             tableLine.setMN_2(listMN_2.get(i));
             tableLine.setAB_2(listAmperage.get(i));
             tableLine.setAB_2(listVoltage.get(i));
-            tableLine.setResistanceApp(listResistance.get(i));
+            tableLine.setResistanceApparent(listResistance.get(i));
             tableLine.setErrorResistanceApp(listResistanceError.get(i));
             tableLine.setPolarizationApp(listPolarization.get(i));
             tableLine.setErrorPolarizationApp(listPolarizationError.get(i));

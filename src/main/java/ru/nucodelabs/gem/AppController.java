@@ -69,9 +69,9 @@ public class AppController {
     public LineChart<Double, Double> vesCurve;
     public LineChart<Double, Double> inaccuracyCurve;
     public TableView<TableLine> experimentalTable;
-    public TableColumn<TableLine, Double> experimentalRangeAB_2Column;
-    public TableColumn<TableLine, Double> experimentalResistanceColumn;
-    public TableColumn<TableLine, Double> experimentalResistanceErrorColumn;
+    public TableColumn<TableLine, Double> experimentalAB_2Column;
+    public TableColumn<TableLine, Double> experimentalResistanceApparentColumn;
+    public TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn;
 
     public MenuItem menuFileOpenMOD;
     public TitledPane inaccuracyPane;
@@ -125,17 +125,17 @@ public class AppController {
             ExperimentalCurve.makeCurve(
                     vesCurve,
                     openedSTT.getAB_2(),
-                    openedEXP.getResistanceApp(),
-                    openedEXP.getErrorResistanceApp());
+                    openedEXP.getResistanceApparent(),
+                    openedEXP.getErrorResistanceApparent());
 
             ExperimentalTable.makeTable(
                     openedSTT.getAB_2(),
-                    openedEXP.getResistanceApp(),
-                    openedEXP.getErrorResistanceApp(),
+                    openedEXP.getResistanceApparent(),
+                    openedEXP.getErrorResistanceApparent(),
                     experimentalTable,
-                    experimentalRangeAB_2Column,
-                    experimentalResistanceColumn,
-                    experimentalResistanceErrorColumn);
+                    experimentalAB_2Column,
+                    experimentalResistanceApparentColumn,
+                    experimentalErrorResistanceApparentColumn);
 
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -190,8 +190,8 @@ public class AppController {
             }
             InaccuracyCurve.makeCurve(inaccuracyCurve,
                     openedSTT.getAB_2(),
-                    openedEXP.getResistanceApp(),
-                    openedEXP.getErrorResistanceApp(),
+                    openedEXP.getResistanceApparent(),
+                    openedEXP.getErrorResistanceApparent(),
                     TheoreticalCurve.getSolvedResistance());
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);

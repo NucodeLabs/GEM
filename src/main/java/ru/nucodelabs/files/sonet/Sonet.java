@@ -41,13 +41,13 @@ public class Sonet {
                 numbers.stream().map(s -> s.get(0)).toList());
         res.getVoltage().addAll(
                 numbers.stream().map(s -> s.get(1)).toList());
-        res.getResistanceApp().addAll(
+        res.getResistanceApparent().addAll(
                 numbers.stream().map(s -> s.get(2)).toList());
-        res.getErrorResistanceApp().addAll(
+        res.getErrorResistanceApparent().addAll(
                 numbers.stream().map(s -> s.get(3)).toList());
-        res.getPolarizationApp().addAll(
+        res.getPolarizationApparent().addAll(
                 numbers.stream().map(s -> s.get(4)).toList());
-        res.getErrorPolarizationApp().addAll(
+        res.getErrorPolarizationApparent().addAll(
                 numbers.stream().map(s -> s.get(5)).toList());
 
         sc.close();

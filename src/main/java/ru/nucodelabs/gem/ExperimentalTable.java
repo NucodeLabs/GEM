@@ -14,37 +14,37 @@ public class ExperimentalTable {
 
     protected static void makeTable(
             List<Double> AB_2,
-            List<Double> resistanceApp,
-            List<Double> errorResistanceApp,
+            List<Double> resistanceApparent,
+            List<Double> errorResistanceApparent,
             TableView<TableLine> experimentalTable,
             TableColumn<TableLine, Double> experimentalAB_2Column,
-            TableColumn<TableLine, Double> experimentalResistanceAppColumn,
-            TableColumn<TableLine, Double> experimentalErrorResistanceAppColumn) {
+            TableColumn<TableLine, Double> experimentalResistanceApparentColumn,
+            TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn) {
 
         experimentalAB_2Column.setCellValueFactory(new PropertyValueFactory<>("AB_2"));
 
-        experimentalResistanceAppColumn.setCellValueFactory(new PropertyValueFactory<>("resistanceApp"));
+        experimentalResistanceApparentColumn.setCellValueFactory(new PropertyValueFactory<>("resistanceApparent"));
 
-        experimentalErrorResistanceAppColumn.setCellValueFactory(new PropertyValueFactory<>("errorResistanceApp"));
+        experimentalErrorResistanceApparentColumn.setCellValueFactory(new PropertyValueFactory<>("errorResistanceApparent"));
 
-        ObservableList<TableLine> tableContent = makeTableContent(AB_2, resistanceApp, errorResistanceApp);
+        ObservableList<TableLine> tableContent = makeTableContent(AB_2, resistanceApparent, errorResistanceApparent);
         experimentalTable.setItems(tableContent);
     }
 
     protected static ObservableList<TableLine> makeTableContent(List<Double> AB_2,
-                                                                List<Double> resistanceApp,
-                                                                List<Double> errorResistanceApp) {
-        List<TableLine> tempList = new ArrayList<>();
+                                                                List<Double> resistanceApparent,
+                                                                List<Double> errorResistanceApparent) {
+        List<TableLine> tableContent = new ArrayList<>();
         for (int i = 0; i < AB_2.size(); i++) {
             TableLine tableLine = new TableLine();
 
             tableLine.setAB_2(AB_2.get(i));
-            tableLine.setResistanceApp(resistanceApp.get(i));
-            tableLine.setErrorResistanceApp(errorResistanceApp.get(i));
+            tableLine.setResistanceApparent(resistanceApparent.get(i));
+            tableLine.setErrorResistanceApp(errorResistanceApparent.get(i));
 
-            tempList.add(tableLine);
+            tableContent.add(tableLine);
         }
 
-        return FXCollections.observableArrayList(tempList);
+        return FXCollections.observableArrayList(tableContent);
     }
 }

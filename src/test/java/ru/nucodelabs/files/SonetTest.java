@@ -45,14 +45,14 @@ public class SonetTest {
         System.out.println(exp.getOperator());
         System.out.println(exp.getInterpreter());
         System.out.println(exp.getChecked());
-        for (int i = 0; i < exp.getResistanceApp().size(); i++) {
+        for (int i = 0; i < exp.getResistanceApparent().size(); i++) {
             System.out.println(
                     checkNull.apply(exp.getAmperage().get(i)) + "   "
                             + checkNull.apply(exp.getVoltage().get(i)) + "   "
-                            + checkNull.apply(exp.getResistanceApp().get(i)) + "   "
-                            + checkNull.apply(exp.getErrorResistanceApp().get(i)) + "   "
-                            + checkNull.apply(exp.getPolarizationApp().get(i)) + "   "
-                            + checkNull.apply(exp.getErrorPolarizationApp().get(i))
+                            + checkNull.apply(exp.getResistanceApparent().get(i)) + "   "
+                            + checkNull.apply(exp.getErrorResistanceApparent().get(i)) + "   "
+                            + checkNull.apply(exp.getPolarizationApparent().get(i)) + "   "
+                            + checkNull.apply(exp.getErrorPolarizationApparent().get(i))
             );
         }
         Path openedFilePath = file.toPath();

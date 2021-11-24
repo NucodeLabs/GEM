@@ -4,66 +4,67 @@ import javafx.beans.property.SimpleDoubleProperty;
 
 public class TableLine {
 
-    private SimpleDoubleProperty rangeAB;
-    private SimpleDoubleProperty rangeMN;
+    private SimpleDoubleProperty AB_2;
+    private SimpleDoubleProperty MN_2;
     private SimpleDoubleProperty voltage;
     private SimpleDoubleProperty amperage;
-    private SimpleDoubleProperty resistivity;
-    private SimpleDoubleProperty resistivityError;
-    private SimpleDoubleProperty polarization;
-    private SimpleDoubleProperty polarizationError;
+    private SimpleDoubleProperty resistanceApparent;
+    private SimpleDoubleProperty errorResistanceApparent;
+    private SimpleDoubleProperty polarizationApparent;
+    private SimpleDoubleProperty errorPolarizationApparent;
+
     public TableLine() {
-        this.rangeAB = new SimpleDoubleProperty();
-        this.rangeMN = new SimpleDoubleProperty();
+        this.AB_2 = new SimpleDoubleProperty();
+        this.MN_2 = new SimpleDoubleProperty();
         this.amperage = new SimpleDoubleProperty();
         this.voltage = new SimpleDoubleProperty();
-        this.resistivity = new SimpleDoubleProperty();
-        this.resistivityError = new SimpleDoubleProperty();
-        this.polarization = new SimpleDoubleProperty();
-        this.polarizationError = new SimpleDoubleProperty();
+        this.resistanceApparent = new SimpleDoubleProperty();
+        this.errorResistanceApparent = new SimpleDoubleProperty();
+        this.polarizationApparent = new SimpleDoubleProperty();
+        this.errorPolarizationApparent = new SimpleDoubleProperty();
 
-        this.rangeAB = rangeABProperty();
-        this.rangeMN = rangeMNProperty();
+        this.AB_2 = AB_2Property();
+        this.MN_2 = MN_2Property();
         this.amperage = amperageProperty();
         this.voltage = voltageProperty();
-        this.resistivity = resistanceAppProperty();
-        this.resistivityError = resistivityErrorProperty();
-        this.polarization = polarizationProperty();
-        this.polarizationError = polarizationErrorProperty();
+        this.resistanceApparent = resistanceApparentProperty();
+        this.errorResistanceApparent = errorResistanceApparentProperty();
+        this.polarizationApparent = polarizationApparentProperty();
+        this.errorPolarizationApparent = errorPolarizationApparentProperty();
     }
 
     //Range AB
 
     public double getAB_2() {
-        return rangeAB.get();
+        return AB_2.get();
     }
 
     public void setAB_2(double rangeAB) {
-        this.rangeAB.set(rangeAB);
+        this.AB_2.set(rangeAB);
     }
 
-    public SimpleDoubleProperty rangeABProperty() {
-        if (rangeAB == null) {
+    public SimpleDoubleProperty AB_2Property() {
+        if (AB_2 == null) {
             setAB_2(0.0);
         }
-        return rangeAB;
+        return AB_2;
     }
 
     //Range MN
 
     public double getMN_2() {
-        return rangeMN.get();
+        return MN_2.get();
     }
 
     public void setMN_2(double rangeMN) {
-        this.rangeMN.set(rangeMN);
+        this.MN_2.set(rangeMN);
     }
 
-    public SimpleDoubleProperty rangeMNProperty() {
-        if (rangeMN == null) {
+    public SimpleDoubleProperty MN_2Property() {
+        if (MN_2 == null) {
             setMN_2(0.0);
         }
-        return rangeMN;
+        return MN_2;
     }
 
     //Power
@@ -102,69 +103,69 @@ public class TableLine {
 
     //Resistivity
 
-    public SimpleDoubleProperty resistanceAppProperty() {
-        if (resistivity == null) {
-            setResistanceApp(0.0);
+    public SimpleDoubleProperty resistanceApparentProperty() {
+        if (resistanceApparent == null) {
+            setResistanceApparent(0.0);
         }
-        return resistivity;
+        return resistanceApparent;
     }
 
-    public double getResistanceApp() {
-        return resistivity.get();
+    public double getResistanceApparent() {
+        return resistanceApparent.get();
     }
 
-    public void setResistanceApp(double resistivity) {
-        this.resistivity.set(resistivity);
+    public void setResistanceApparent(double newResistanceApparent) {
+        this.resistanceApparent.set(newResistanceApparent);
     }
 
-    //Resistivity Error
+    //Resistance Error
 
     public double getErrorResistanceApp() {
-        return resistivityError.get();
+        return errorResistanceApparent.get();
     }
 
-    public void setErrorResistanceApp(double resistivityError) {
-        this.resistivityError.set(resistivityError);
+    public void setErrorResistanceApp(double newErrorResistanceApparent) {
+        this.errorResistanceApparent.set(newErrorResistanceApparent);
     }
 
-    public SimpleDoubleProperty resistivityErrorProperty() {
-        if (resistivityError == null) {
+    public SimpleDoubleProperty errorResistanceApparentProperty() {
+        if (errorResistanceApparent == null) {
             setErrorResistanceApp(0.0);
         }
-        return resistivityError;
+        return errorResistanceApparent;
     }
 
     //Polarization
 
     public double getPolarizationApp() {
-        return polarization.get();
+        return polarizationApparent.get();
     }
 
     public void setPolarizationApp(double polarization) {
-        this.polarization.set(polarization);
+        this.polarizationApparent.set(polarization);
     }
 
-    public SimpleDoubleProperty polarizationProperty() {
-        if (polarization == null) {
+    public SimpleDoubleProperty polarizationApparentProperty() {
+        if (polarizationApparent == null) {
             setPolarizationApp(0.0);
         }
-        return polarization;
+        return polarizationApparent;
     }
 
     //Polarization Error
 
     public double getErrorPolarizationApp() {
-        return polarizationError.get();
+        return errorPolarizationApparent.get();
     }
 
     public void setErrorPolarizationApp(double polarizationError) {
-        this.polarizationError.set(polarizationError);
+        this.errorPolarizationApparent.set(polarizationError);
     }
 
-    public SimpleDoubleProperty polarizationErrorProperty() {
-        if (polarizationError == null) {
+    public SimpleDoubleProperty errorPolarizationApparentProperty() {
+        if (errorPolarizationApparent == null) {
             setErrorPolarizationApp(0.0);
         }
-        return polarizationError;
+        return errorPolarizationApparent;
     }
 }
