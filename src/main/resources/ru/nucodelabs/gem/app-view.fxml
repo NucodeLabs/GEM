@@ -112,16 +112,16 @@
                                 <TableView fx:id="experimentalTable" prefHeight="200.0" prefWidth="200.0"
                                            VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="experimentalRangeAB_2Column" editable="false"
+                                        <TableColumn fx:id="experimentalAB_2Column" editable="false"
                                                      maxWidth="150.0" minWidth="20.0" prefWidth="100.0"
                                                      sortable="false" text="%experimentalAB_2"/>
-                                        <TableColumn fx:id="experimentalResistanceColumn" editable="false"
+                                        <TableColumn fx:id="experimentalResistanceApparentColumn" editable="false"
                                                      maxWidth="150.0" minWidth="20.0" prefWidth="100.0"
-                                                     sortable="false" text="%experimentalResistance"/>
-                                        <TableColumn fx:id="experimentalResistanceErrorColumn"
+                                                     sortable="false" text="%experimentalResistanceApparent"/>
+                                        <TableColumn fx:id="experimentalErrorResistanceApparentColumn"
                                                      editable="false" maxWidth="150.0" minWidth="20.0"
                                                      prefWidth="100.0" sortable="false"
-                                                     text="%experimentalResistanceError"/>
+                                                     text="%experimentalErrorResistanceApparent"/>
                                     </columns>
                                 </TableView>
                             </VBox>

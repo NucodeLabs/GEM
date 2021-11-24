@@ -66,10 +66,10 @@ public class EXPFile {
 
     private ArrayList<Double> amperage = new ArrayList<>(0); // Ток, мА
     private ArrayList<Double> voltage = new ArrayList<>(0); // Напряжение, мВ
-    private ArrayList<Double> resistanceApp = new ArrayList<>(0); // Сопротивление кажущееся, Ом * м
-    private ArrayList<Double> errorResistanceApp = new ArrayList<>(0); // Погрешность, %
-    private ArrayList<Double> polarizationApp = new ArrayList<>(0); // Поляризация кажущаяся, %
-    private ArrayList<Double> errorPolarizationApp = new ArrayList<>(0); // Погрешность, %
+    private ArrayList<Double> resistanceApparent = new ArrayList<>(0); // Сопротивление кажущееся, Ом * м
+    private ArrayList<Double> errorResistanceApparent = new ArrayList<>(0); // Погрешность, %
+    private ArrayList<Double> polarizationApparent = new ArrayList<>(0); // Поляризация кажущаяся, %
+    private ArrayList<Double> errorPolarizationApparent = new ArrayList<>(0); // Погрешность, %
 
     public int getColumnCnt() {
         return 6;
@@ -83,20 +83,20 @@ public class EXPFile {
         return voltage;
     }
 
-    public ArrayList<Double> getResistanceApp() {
-        return resistanceApp;
+    public ArrayList<Double> getResistanceApparent() {
+        return resistanceApparent;
     }
 
-    public ArrayList<Double> getErrorResistanceApp() {
-        return errorResistanceApp;
+    public ArrayList<Double> getErrorResistanceApparent() {
+        return errorResistanceApparent;
     }
 
-    public ArrayList<Double> getPolarizationApp() {
-        return polarizationApp;
+    public ArrayList<Double> getPolarizationApparent() {
+        return polarizationApparent;
     }
 
-    public ArrayList<Double> getErrorPolarizationApp() {
-        return errorPolarizationApp;
+    public ArrayList<Double> getErrorPolarizationApparent() {
+        return errorPolarizationApparent;
     }
 
     public String getSTTFileName() {
@@ -111,20 +111,20 @@ public class EXPFile {
         this.voltage = voltage;
     }
 
-    public void setResistanceApp(ArrayList<Double> resistanceApp) {
-        this.resistanceApp = resistanceApp;
+    public void setResistanceApparent(ArrayList<Double> resistanceApparent) {
+        this.resistanceApparent = resistanceApparent;
     }
 
-    public void setErrorResistanceApp(ArrayList<Double> errorResistanceApp) {
-        this.errorResistanceApp = errorResistanceApp;
+    public void setErrorResistanceApparent(ArrayList<Double> errorResistanceApparent) {
+        this.errorResistanceApparent = errorResistanceApparent;
     }
 
-    public void setPolarizationApp(ArrayList<Double> polarizationApp) {
-        this.polarizationApp = polarizationApp;
+    public void setPolarizationApparent(ArrayList<Double> polarizationApparent) {
+        this.polarizationApparent = polarizationApparent;
     }
 
-    public void setErrorPolarizationApp(ArrayList<Double> errorPolarizationApp) {
-        this.errorPolarizationApp = errorPolarizationApp;
+    public void setErrorPolarizationApparent(ArrayList<Double> errorPolarizationApparent) {
+        this.errorPolarizationApparent = errorPolarizationApparent;
     }
 
     public void setSTTFileName(String STTFileName) {
