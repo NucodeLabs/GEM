@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="485.0" prefWidth="812.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0" prefWidth="812.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
     <MenuBar>
         <Menu mnemonicParsing="false" text="%file">
-            <MenuItem mnemonicParsing="false" text="%create"/>
+            <MenuItem mnemonicParsing="false" text="%create" />
             <Menu mnemonicParsing="false" text="%open">
-                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP"/>
-                <MenuItem fx:id="menuFileOpenMOD" disable="true" mnemonicParsing="false" onAction="#onMenuFileOpenMOD"
-                          text="MOD"/>
+                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP" />
+                <MenuItem fx:id="menuFileOpenMOD" disable="true" mnemonicParsing="false" onAction="#onMenuFileOpenMOD" text="MOD" />
             </Menu>
-            <MenuItem mnemonicParsing="false" text="%close"/>
+            <MenuItem mnemonicParsing="false" text="%close" />
         </Menu>
         <Menu mnemonicParsing="false" text="%edit">
-            <MenuItem mnemonicParsing="false" text="Delete"/>
+            <MenuItem mnemonicParsing="false" text="Delete" />
         </Menu>
         <Menu mnemonicParsing="false" text="%help">
             <MenuItem mnemonicParsing="false" text="About" />
@@ -40,64 +38,48 @@
         <AnchorPane minHeight="300.0">
             <SplitPane dividerPositions="0.68" minHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <AnchorPane minHeight="300.0">
-                    <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0"
-                               orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0"
-                                    SplitPane.resizableWithParent="false">
-                            <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false"
-                                        maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0"
-                                        text="%inaccuracy" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0" SplitPane.resizableWithParent="false">
+                            <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0" text="%inaccuracy" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <opaqueInsets>
-                                    <Insets/>
+                                    <Insets />
                                 </opaqueInsets>
-                                <LineChart fx:id="inaccuracyCurve" legendVisible="false"
-                                           maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="100.0"
-                                           visible="false">
+                                <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="100.0" visible="false">
                                     <xAxis>
-                                        <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false"/>
+                                        <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false" />
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis forceZeroInRange="false" lowerBound="-100.0" side="LEFT"
-                                                    tickLabelsVisible="false"/>
+                                        <NumberAxis forceZeroInRange="false" lowerBound="-100.0" side="LEFT" tickLabelsVisible="false" />
                                     </yAxis>
                                     <opaqueInsets>
-                                        <Insets/>
+                                        <Insets />
                                     </opaqueInsets>
                                     <padding>
-                                        <Insets left="40.0"/>
+                                        <Insets left="40.0" />
                                     </padding>
                                 </LineChart>
                             </TitledPane>
                         </AnchorPane>
                         <AnchorPane minHeight="100.0">
-                            <TitledPane fx:id="vesPane" collapsible="false" minHeight="0.0" text="%ves"
-                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false"
-                                           centerShape="false" legendVisible="false" minHeight="100.0"
-                                           scaleShape="false" visible="false">
+                            <TitledPane fx:id="vesPane" collapsible="false" minHeight="0.0" text="%ves" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false" centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false" visible="false">
                                     <xAxis>
-                                        <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m"
-                                                    prefHeight="26.0" prefWidth="481.0" side="BOTTOM">
+                                        <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m" prefHeight="26.0" prefWidth="481.0" side="BOTTOM">
                                             <cursor>
-                                                <Cursor fx:constant="DEFAULT"/>
+                                                <Cursor fx:constant="DEFAULT" />
                                             </cursor>
                                             <opaqueInsets>
-                                                <Insets/>
+                                                <Insets />
                                             </opaqueInsets>
                                             <tickLabelFont>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </tickLabelFont>
                                         </NumberAxis>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false"
-                                                    label="ρₐₚₚ, Ohm‧m" prefHeight="128.0" prefWidth="20.0" side="LEFT"
-                                                    tickLabelFill="#070707">
+                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false" label="ρₐₚₚ, Ohm‧m" prefHeight="128.0" prefWidth="20.0" side="LEFT" tickLabelFill="#070707">
                                             <tickLabelFont>
-                                                <Font size="14.0"/>
+                                                <Font size="14.0" />
                                             </tickLabelFont>
                                         </NumberAxis>
                                     </yAxis>
@@ -105,7 +87,7 @@
                                         <Insets />
                                     </opaqueInsets>
                                     <padding>
-                                        <Insets bottom="10.0" left="40.0"/>
+                                        <Insets bottom="10.0" left="40.0" />
                                     </padding>
                                 </LineChart>
                             </TitledPane>
@@ -113,41 +95,38 @@
                     </SplitPane>
                 </AnchorPane>
                 <AnchorPane minWidth="0.0">
-                    <children>
-                        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <tabs>
-                                <Tab text="%modelTable">
-                                    <content>
-                                        <VBox prefHeight="200.0" prefWidth="100.0">
-                                            <children>
-                                                <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                                    <columns>
-                                                        <TableColumn prefWidth="75.0" text="C1"/>
-                                                        <TableColumn prefWidth="75.0" text="C2"/>
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </Tab>
-                                <Tab text="%experimentalTable">
-                                    <content>
-                                        <VBox prefHeight="200.0" prefWidth="100.0">
-                                            <children>
-                                                <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                                    <columns>
-                                                        <TableColumn prefWidth="75.0" text="C1"/>
-                                                        <TableColumn prefWidth="75.0" text="C2"/>
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </Tab>
-                            </tabs>
-                        </TabPane>
-                    </children>
+                    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Tab text="%modelTable">
+                            <VBox prefHeight="200.0" prefWidth="100.0">
+                                <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn prefWidth="75.0" text="C1"/>
+                                        <TableColumn prefWidth="75.0" text="C2"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </Tab>
+                        <Tab text="%experimentalTable">
+                            <VBox prefHeight="200.0" prefWidth="100.0">
+                                <TableView fx:id="experimentalTable" prefHeight="200.0" prefWidth="200.0"
+                                           VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="experimentalRangeAB_2Column" editable="false"
+                                                     maxWidth="150.0" minWidth="20.0" prefWidth="100.0"
+                                                     sortable="false" text="%experimentalAB_2"/>
+                                        <TableColumn fx:id="experimentalResistanceColumn" editable="false"
+                                                     maxWidth="150.0" minWidth="20.0" prefWidth="100.0"
+                                                     sortable="false" text="%experimentalResistance"/>
+                                        <TableColumn fx:id="experimentalResistanceErrorColumn"
+                                                     editable="false" maxWidth="150.0" minWidth="20.0"
+                                                     prefWidth="100.0" sortable="false"
+                                                     text="%experimentalResistanceError"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </Tab>
+                    </TabPane>
                 </AnchorPane>
             </SplitPane>
         </AnchorPane>

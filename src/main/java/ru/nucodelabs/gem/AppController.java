@@ -7,10 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.MODFile;
-import ru.nucodelabs.files.sonet.STTFile;
-import ru.nucodelabs.files.sonet.Sonet;
+import ru.nucodelabs.files.sonet.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,23 +21,66 @@ import java.util.stream.Collectors;
 public class AppController {
     protected static final int EXP_CURVE_SERIES_CNT = 3;
     protected static final int VES_CURVE_SERIES_CNT = 4;
+    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
+        final Function<String, String> toUpperIndex = string -> {
+            ArrayList<Character> resChars = new ArrayList<>();
+            for (int i = 0; i < string.length(); i++) {
+                char c = string.charAt(i);
+                switch (c) {
+                    case '1' -> resChars.add('¹');
+                    case '2' -> resChars.add('²');
+                    case '3' -> resChars.add('³');
+                    case '4' -> resChars.add('⁴');
+                    case '5' -> resChars.add('⁵');
+                    case '6' -> resChars.add('⁶');
+                    case '7' -> resChars.add('⁷');
+                    case '8' -> resChars.add('⁸');
+                    case '9' -> resChars.add('⁹');
+                    case '0' -> resChars.add('⁰');
+                    case '.' -> resChars.add('\u0387');
+                    default -> resChars.add(c);
+                }
+            }
+            return resChars
+                    .stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining());
+        };
 
-    EXPFile openedEXP;
-    STTFile openedSTT;
-    MODFile openedMOD;
+        @Override
+        public String toString(Number object) {
+            DecimalFormat format = new DecimalFormat();
+            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
+            formatSymbols.setDecimalSeparator('.');
+            format.setDecimalFormatSymbols(formatSymbols);
+            return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
+        }
 
+        @Override
+        public Number fromString(String string) {
+            return null;
+        }
+    };
     @FXML
     public VBox mainPane;
     public MenuItem menuFileOpenEXP;
     public TitledPane vesPane;
+
     public LineChart<Double, Double> vesCurve;
     public LineChart<Double, Double> inaccuracyCurve;
-    public TableView<Double> vesTable;
+    public TableView<TableLine> experimentalTable;
+    public TableColumn<TableLine, Double> experimentalRangeAB_2Column;
+    public TableColumn<TableLine, Double> experimentalResistanceColumn;
+    public TableColumn<TableLine, Double> experimentalResistanceErrorColumn;
+
     public MenuItem menuFileOpenMOD;
     public TitledPane inaccuracyPane;
     public SplitPane vesSplitPane;
     public NumberAxis vesCurveAxisY;
     public NumberAxis vesCurveAxisX;
+    EXPFile openedEXP;
+    STTFile openedSTT;
+    MODFile openedMOD;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -82,7 +122,22 @@ public class AppController {
             return;
         }
         try {
-            ExperimentalCurve.makeCurve(vesCurve, openedSTT.getAB_2(), openedEXP.getResistanceApp(), openedEXP.getErrorResistanceApp());
+            ExperimentalCurve.makeCurve(
+                    vesCurve,
+                    openedSTT.getAB_2(),
+                    openedEXP.getResistanceApp(),
+                    openedEXP.getErrorResistanceApp());
+
+            ExperimentalTable.makeTable(
+                    openedSTT.getAB_2(),
+                    openedEXP.getResistanceApp(),
+                    openedEXP.getErrorResistanceApp(),
+                    experimentalTable,
+                    experimentalRangeAB_2Column,
+                    experimentalResistanceColumn,
+                    experimentalResistanceErrorColumn
+            );
+
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Cannot open files");
@@ -153,45 +208,4 @@ public class AppController {
             return;
         }
     }
-
-    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
-        final Function<String, String> toUpperIndex = string -> {
-            ArrayList<Character> resChars = new ArrayList<>();
-            for (int i = 0; i < string.length(); i++) {
-                char c = string.charAt(i);
-                switch (c) {
-                    case '1' -> resChars.add('¹');
-                    case '2' -> resChars.add('²');
-                    case '3' -> resChars.add('³');
-                    case '4' -> resChars.add('⁴');
-                    case '5' -> resChars.add('⁵');
-                    case '6' -> resChars.add('⁶');
-                    case '7' -> resChars.add('⁷');
-                    case '8' -> resChars.add('⁸');
-                    case '9' -> resChars.add('⁹');
-                    case '0' -> resChars.add('⁰');
-                    case '.' -> resChars.add('\u0387');
-                    default -> resChars.add(c);
-                }
-            }
-            return resChars
-                    .stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining());
-        };
-
-        @Override
-        public String toString(Number object) {
-            DecimalFormat format = new DecimalFormat();
-            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
-            formatSymbols.setDecimalSeparator('.');
-            format.setDecimalFormatSymbols(formatSymbols);
-            return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
-        }
-
-        @Override
-        public Number fromString(String string) {
-            return null;
-        }
-    };
 }
