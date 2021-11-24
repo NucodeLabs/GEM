@@ -53,7 +53,13 @@ public class AppController {
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
             formatSymbols.setDecimalSeparator('.');
             format.setDecimalFormatSymbols(formatSymbols);
-            return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
+            if (object.doubleValue() == 0) {
+                return "1";
+            } else if (object.doubleValue() - Math.ceil((long) object.doubleValue()) == 0) {
+                return ("10" + toUpperIndex.apply(format.format(object.doubleValue())));
+            } else {
+                return "";
+            }
         }
 
         @Override
