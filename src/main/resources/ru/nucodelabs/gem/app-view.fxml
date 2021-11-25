@@ -66,8 +66,9 @@
                             <TitledPane fx:id="vesPane" collapsible="false" minHeight="0.0" text="%ves" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false" centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false" visible="false">
                                     <xAxis>
-                                        <NumberAxis fx:id="vesCurveAxisX" label="AB/2, m" prefHeight="26.0"
-                                                    prefWidth="481.0" side="BOTTOM" tickUnit="1.0" upperBound="4.0">
+                                        <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m"
+                                                    prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
+                                                    upperBound="4.0">
                                             <cursor>
                                                 <Cursor fx:constant="DEFAULT"/>
                                             </cursor>
@@ -80,9 +81,10 @@
                                         </NumberAxis>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" label="ρₐ, Ohm‧m"
-                                                    lowerBound="1.0" prefHeight="128.0" prefWidth="20.0" side="LEFT"
-                                                    tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
+                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false"
+                                                    label="ρₐ, Ohm‧m" lowerBound="1.0" prefHeight="128.0"
+                                                    prefWidth="20.0" side="LEFT" tickLabelFill="#070707" tickUnit="1.0"
+                                                    upperBound="4.0">
                                             <tickLabelFont>
                                                 <Font size="14.0"/>
                                             </tickLabelFont>
