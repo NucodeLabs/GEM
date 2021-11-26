@@ -27,114 +27,124 @@
         </Menu>
     </MenuBar>
     <SplitPane dividerPositions="0.5301866081229418" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-            <SplitPane dividerPositions="0.48205445544554454" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                    <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%pseudoSection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                    <TitledPane collapsible="false" prefHeight="200.0" prefWidth="200.0" text="%geoSection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                </AnchorPane>
-            </SplitPane>
-        </AnchorPane>
-        <AnchorPane minHeight="300.0">
-            <SplitPane dividerPositions="0.68" minHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <AnchorPane minHeight="300.0">
-                    <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0" SplitPane.resizableWithParent="false">
-                            <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="120.0" text="%inaccuracy" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <SplitPane dividerPositions="0.48205445544554454" maxHeight="1.7976931348623157E308"
+                   maxWidth="1.7976931348623157E308">
+            <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        text="%pseudoSection">
+                <content>
+                    <AreaChart>
+                        <xAxis>
+                            <CategoryAxis side="BOTTOM"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis side="LEFT"/>
+                        </yAxis>
+                    </AreaChart>
+                </content>
+            </TitledPane>
+            <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        text="%geoSection">
+                <content>
+                    <LineChart>
+                        <xAxis>
+                            <CategoryAxis side="BOTTOM"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis side="LEFT"/>
+                        </yAxis>
+                    </LineChart>
+                </content>
+            </TitledPane>
+        </SplitPane>
+        <SplitPane dividerPositions="0.68" minHeight="200.0">
+            <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0"
+                       orientation="VERTICAL">
+                <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false"
+                            maxHeight="1.7976931348623157E308" text="%inaccuracy">
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
+                    <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="1.7976931348623157E308"
+                               minHeight="0.0" prefHeight="150.0" visible="false">
+                        <xAxis>
+                            <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis forceZeroInRange="false" lowerBound="-100.0" side="LEFT"/>
+                        </yAxis>
+                        <opaqueInsets>
+                            <Insets/>
+                        </opaqueInsets>
+                        <padding>
+                            <Insets left="32.0"/>
+                        </padding>
+                    </LineChart>
+                </TitledPane>
+                <TitledPane fx:id="vesPane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
+                    <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false"
+                               centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false"
+                               visible="false">
+                        <xAxis>
+                            <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m" prefHeight="26.0"
+                                        prefWidth="481.0" side="BOTTOM" tickUnit="1.0" upperBound="4.0">
+                                <cursor>
+                                    <Cursor fx:constant="DEFAULT"/>
+                                </cursor>
                                 <opaqueInsets>
-                                    <Insets />
+                                    <Insets/>
                                 </opaqueInsets>
-                                <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="100.0" visible="false">
-                                    <xAxis>
-                                        <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false" />
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis forceZeroInRange="false" lowerBound="-100.0" side="LEFT"/>
-                                    </yAxis>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <padding>
-                                        <Insets left="32.0"/>
-                                    </padding>
-                                </LineChart>
-                            </TitledPane>
-                        </AnchorPane>
-                        <AnchorPane minHeight="100.0">
-                            <TitledPane fx:id="vesPane" collapsible="false" minHeight="0.0" text="%ves" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false" centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false" visible="false">
-                                    <xAxis>
-                                        <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m"
-                                                    prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
-                                                    upperBound="4.0">
-                                            <cursor>
-                                                <Cursor fx:constant="DEFAULT"/>
-                                            </cursor>
-                                            <opaqueInsets>
-                                                <Insets/>
-                                            </opaqueInsets>
-                                            <tickLabelFont>
-                                                <Font size="14.0"/>
-                                            </tickLabelFont>
-                                        </NumberAxis>
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false"
-                                                    label="ρₐ, Ohm‧m" lowerBound="1.0" prefHeight="128.0"
-                                                    prefWidth="20.0" side="LEFT" tickLabelFill="#070707" tickUnit="1.0"
-                                                    upperBound="4.0">
-                                            <tickLabelFont>
-                                                <Font size="14.0"/>
-                                            </tickLabelFont>
-                                        </NumberAxis>
-                                    </yAxis>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <padding>
-                                        <Insets bottom="10.0" left="40.0" />
-                                    </padding>
-                                </LineChart>
-                            </TitledPane>
-                        </AnchorPane>
-                    </SplitPane>
-                </AnchorPane>
-                <AnchorPane minWidth="0.0">
-                    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <Tab text="%modelTable">
-                            <VBox prefHeight="200.0" prefWidth="100.0">
-                                <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn prefWidth="75.0" text="C1"/>
-                                        <TableColumn prefWidth="75.0" text="C2"/>
-                                    </columns>
-                                </TableView>
-                            </VBox>
-                        </Tab>
-                        <Tab text="%experimentalTable">
-                            <VBox prefHeight="200.0" prefWidth="100.0">
-                                <TableView fx:id="experimentalTable" prefHeight="200.0" prefWidth="200.0"
-                                           VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="experimentalAB_2Column" editable="false" maxWidth="150.0"
-                                                     minWidth="20.0" prefWidth="100.0" sortable="false"
-                                                     text="%experimentalAB_2"/>
-                                        <TableColumn fx:id="experimentalResistanceApparentColumn" editable="false"
-                                                     maxWidth="150.0" minWidth="20.0" prefWidth="100.0" sortable="false"
-                                                     text="%experimentalResistanceApparent"/>
-                                        <TableColumn fx:id="experimentalErrorResistanceApparentColumn" editable="false"
-                                                     maxWidth="150.0" minWidth="20.0" prefWidth="100.0" sortable="false"
-                                                     text="%experimentalErrorResistanceApparent"/>
-                                    </columns>
-                                </TableView>
-                            </VBox>
-                        </Tab>
-                    </TabPane>
-                </AnchorPane>
+                                <tickLabelFont>
+                                    <Font size="14.0"/>
+                                </tickLabelFont>
+                            </NumberAxis>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false" label="ρₐ, Ohm‧m"
+                                        lowerBound="1.0" prefHeight="128.0" prefWidth="20.0" side="LEFT"
+                                        tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
+                                <tickLabelFont>
+                                    <Font size="14.0"/>
+                                </tickLabelFont>
+                            </NumberAxis>
+                        </yAxis>
+                        <opaqueInsets>
+                            <Insets/>
+                        </opaqueInsets>
+                        <padding>
+                            <Insets bottom="10.0" left="40.0"/>
+                        </padding>
+                    </LineChart>
+                </TitledPane>
             </SplitPane>
-        </AnchorPane>
+            <TabPane tabClosingPolicy="UNAVAILABLE">
+                <Tab text="%modelTable">
+                    <VBox prefHeight="200.0" prefWidth="100.0">
+                        <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn prefWidth="75.0" text="C1"/>
+                                <TableColumn prefWidth="75.0" text="C2"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+                <Tab text="%experimentalTable">
+                    <VBox prefHeight="200.0" prefWidth="100.0">
+                        <TableView fx:id="experimentalTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="experimentalAB_2Column" editable="false" maxWidth="150.0"
+                                             minWidth="20.0" prefWidth="100.0" sortable="false"
+                                             text="%experimentalAB_2"/>
+                                <TableColumn fx:id="experimentalResistanceApparentColumn" editable="false"
+                                             maxWidth="150.0" minWidth="20.0" prefWidth="100.0" sortable="false"
+                                             text="%experimentalResistanceApparent"/>
+                                <TableColumn fx:id="experimentalErrorResistanceApparentColumn" editable="false"
+                                             maxWidth="150.0" minWidth="20.0" prefWidth="100.0" sortable="false"
+                                             text="%experimentalErrorResistanceApparent"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+            </TabPane>
+        </SplitPane>
     </SplitPane>
 </VBox>
