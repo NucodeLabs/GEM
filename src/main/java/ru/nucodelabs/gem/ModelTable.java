@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import ru.nucodelabs.files.sonet.TableLine;
 
 import java.util.ArrayList;
 import java.util.List;
