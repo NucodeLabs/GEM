@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
@@ -11,16 +12,19 @@ import ru.nucodelabs.files.sonet.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AppController {
+public class AppController implements Initializable {
     protected static final int EXP_CURVE_SERIES_CNT = 3;
-    protected static final int VES_CURVE_SERIES_CNT = 4;
+    protected static final int MOD_CURVE_SERIES_CNT = 4;
+
     protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
             ArrayList<Character> resChars = new ArrayList<>();
@@ -84,6 +88,7 @@ public class AppController {
     public SplitPane vesSplitPane;
     public NumberAxis vesCurveAxisY;
     public NumberAxis vesCurveAxisX;
+    public MenuBar menuBar;
     EXPFile openedEXP;
     STTFile openedSTT;
     MODFile openedMOD;
@@ -211,6 +216,13 @@ public class AppController {
                     """);
             alert.show();
             return;
+        }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            menuBar.setUseSystemMenuBar(true);
         }
     }
 }
