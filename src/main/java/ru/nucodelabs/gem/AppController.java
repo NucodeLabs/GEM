@@ -8,7 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import ru.nucodelabs.files.sonet.*;
+import ru.nucodelabs.files.sonet.EXPFile;
+import ru.nucodelabs.files.sonet.MODFile;
+import ru.nucodelabs.files.sonet.STTFile;
+import ru.nucodelabs.files.sonet.Sonet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +32,7 @@ public class AppController implements Initializable {
     STTFile openedSTT;
     MODFile openedMOD;
 
-    protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
+    protected static final StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
             ArrayList<Character> resChars = new ArrayList<>();
             for (int i = 0; i < string.length(); i++) {
