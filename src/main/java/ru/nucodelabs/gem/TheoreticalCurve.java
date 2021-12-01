@@ -2,6 +2,7 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.algorithms.ForwardSolver;
 
 import java.util.List;
 

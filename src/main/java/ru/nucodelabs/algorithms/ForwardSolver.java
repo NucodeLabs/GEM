@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
