@@ -9,7 +9,7 @@
 <VBox fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="485.0" prefWidth="812.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
-    <MenuBar>
+    <MenuBar fx:id="menuBar">
         <Menu mnemonicParsing="false" text="%file">
             <MenuItem mnemonicParsing="false" text="%create"/>
             <Menu mnemonicParsing="false" text="%open">
@@ -20,7 +20,7 @@
             <MenuItem mnemonicParsing="false" text="%close"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%edit">
-            <MenuItem mnemonicParsing="false" text="Delete" />
+            <MenuItem mnemonicParsing="false" text="Delete"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%help">
             <MenuItem mnemonicParsing="false" text="About" />
