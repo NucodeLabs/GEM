@@ -18,5 +18,5 @@
 /* Nraz                               */
 /* Roker      Кажущееся сопротивление */
 
-extern "C" void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz, int Nraz,
+void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz, int Nraz,
           _FPREC *Roker);
