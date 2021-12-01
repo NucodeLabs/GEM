@@ -2,6 +2,7 @@ package ru.nucodelabs.gem;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nucodelabs.algorithms.ForwardSolver;
 
 import java.util.ArrayList;
 import java.util.stream.DoubleStream;
