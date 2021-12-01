@@ -50,7 +50,6 @@ dependencies {
 def platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
 def libPrefix = currentOS.isWindows() ? "" : "lib"
 def libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
-def libName = "forwardsolver"
 
 def compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
 def arch = currentOS.isMacOsX() && currentArch.isArm() ? ["-arch", "x86_64"] : [""]
@@ -79,6 +78,7 @@ task forwardSolver(type: Exec) {
             [file("${workingDir}/forwardsolver.c").absolutePath,
              file("${workingDir}/VESER.C").absolutePath]
 
+    def libName = "forwardsolver"
     def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
 
     def args = new ArrayList<>()
