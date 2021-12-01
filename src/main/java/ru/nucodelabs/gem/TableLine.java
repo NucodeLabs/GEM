@@ -1,4 +1,4 @@
-package ru.nucodelabs.files.sonet;
+package ru.nucodelabs.gem;
 
 import javafx.beans.property.SimpleDoubleProperty;
 
