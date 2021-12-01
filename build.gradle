@@ -1,9 +1,11 @@
 import org.gradle.internal.jvm.Jvm
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
+    id "com.google.osdetector" version "1.7.0"
 }
 
 group 'ru.nucodelabs'
@@ -13,16 +15,18 @@ repositories {
     mavenCentral()
 }
 
+def currentOS = DefaultNativePlatform.currentOperatingSystem
+def currentArch = DefaultNativePlatform.currentArchitecture
+
 ext {
     junitVersion = '5.8.1'
-    platformName = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 }
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 application {
@@ -38,64 +42,60 @@ javafx {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation("eu.hansolo.fx:charts:17.0.1")
-    implementation("org.openjfx:javafx-base:${platformName}")
-    implementation("org.openjfx:javafx-controls:${platformName}")
-    implementation("org.openjfx:javafx-fxml:${platformName}")
+    implementation('org.openjfx:javafx-base:17.0.0.1')
+    implementation('org.openjfx:javafx-controls:17.0.0.1')
+    implementation('org.openjfx:javafx-fxml:17.0.0.1')
 }
 
+def platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
+def libPrefix = currentOS.isWindows() ? "" : "lib"
+def libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
+def libName = "forwardsolver"
+
+def compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
+def arch = currentOS.isMacOsX() && currentArch.isArm() ? ["-arch", "x86_64"] : [""]
+def optimization = "-O3"
+def pic = currentOS.isWindows() ? "" : "-fPIC"
+def shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
+
+def jniIncludePaths =
+        ["-I", file("${Jvm.current().javaHome}/include").absolutePath,
+         "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath]
+
+def jniArgs = new ArrayList<>()
+jniArgs.add(compiler)
+jniArgs.addAll(arch)
+jniArgs.add(optimization)
+jniArgs.add(pic)
+jniArgs.add(shared)
+jniArgs.addAll(jniIncludePaths)
+
 task forwardSolver(type: Exec) {
-    workingDir "orig/ForwardSolver"
+    workingDir "${projectDir}/orig/ForwardSolver"
+
+    def language = ["-x", "c"]
+
+    def sources =
+            [file("${workingDir}/forwardsolver.c").absolutePath,
+             file("${workingDir}/VESER.C").absolutePath]
+
+    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
     doFirst {
         mkdir "${projectDir}/lib"
     }
-    if (osdetector.os == "osx") {
-        commandLine "/usr/bin/clang",
-                "${workingDir}/forwardsolver.cpp",
-                "${workingDir}/VESER.C",
-                "-O3",
-                "-arch",
-                "x86_64",
-                "-fPIC",
-                "-dynamiclib",
-                "-I",
-                "${workingDir}",
-                "-I",
-                "${Jvm.current().javaHome}/include",
-                "-I",
-                "${Jvm.current().javaHome}/include/darwin",
-                "-o",
-                "${projectDir}/lib/libforwardsolver.dylib"
-    } else if (osdetector.os == "linux") {
-        commandLine "/usr/bin/gcc",
-                "${workingDir}/forwardsolver.cpp",
-                "${workingDir}/VESER.C",
-                "-O3",
-                "-fPIC",
-                "-shared",
-                "-I",
-                "${workingDir}",
-                "-I",
-                "${Jvm.current().javaHome}/include",
-                "-I",
-                "${Jvm.current().javaHome}/include/linux",
-                "-o",
-                "${projectDir}/lib/libforwardsolver.so"
-    } else {
-        commandLine "C:\\Program Files\\LLVM\\bin\\clang.exe",
-                "${workingDir}\\forwardsolver.cpp",
-                "${workingDir}\\VESER.C",
-                "-O3",
-                "-shared",
-                "-I",
-                "${workingDir}",
-                "-I",
-                "${Jvm.current().javaHome}\\include",
-                "-I",
-                "${Jvm.current().javaHome}\\include\\win32",
-                "-o",
-                "${projectDir}\\lib\\forwardsolver.dll"
-        doLast {
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
             file("${projectDir}/lib/forwardsolver.exp").delete()
             file("${workingDir}/lib/forwardsolver.lib").delete()
         }
