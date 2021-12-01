@@ -52,7 +52,7 @@ def libPrefix = currentOS.isWindows() ? "" : "lib"
 def libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
 
 def compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
-def arch = currentOS.isMacOsX() && currentArch.isArm() ? ["-arch", "x86_64"] : [""]
+def arch = currentOS.isMacOsX() && currentArch.isArm() ? ["-arch", "x86_64"] : []
 def optimization = "-O3"
 def pic = currentOS.isWindows() ? "" : "-fPIC"
 def shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
