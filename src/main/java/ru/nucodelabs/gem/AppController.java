@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class AppController implements Initializable {
     protected static final int EXP_CURVE_SERIES_CNT = 3;
     protected static final int MOD_CURVE_SERIES_CNT = 4;
+    protected static String LIB_ERR_TEXT;
 
     protected static StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
@@ -208,12 +209,7 @@ public class AppController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");
             alert.setHeaderText("Отсутствует библиотека ForwardSolver");
-            alert.setContentText("""
-                    Убедитесь в наличии файла с именем
-                    - Windows: forwardsolver.dll
-                    - macOS: libforwardsolver.dylib
-                    - Linux: libforwardsolver.so
-                    """);
+            alert.setContentText(LIB_ERR_TEXT);
             alert.show();
             return;
         }
@@ -221,8 +217,20 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        var osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac")) {
             menuBar.setUseSystemMenuBar(true);
+            LIB_ERR_TEXT = """
+                    Убедитесь в наличии файла libforwardsolver.dylib
+                    """;
+        } else if (osName.contains("linux")) {
+            LIB_ERR_TEXT = """
+                    Убедитесь в наличии файла libforwardsolver.so
+                    """;
+        } else {
+            LIB_ERR_TEXT = """
+                    Убедитесь в наличии файла forwardsolver.dll
+                    """;
         }
     }
 }
