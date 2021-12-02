@@ -1,8 +1,8 @@
 
-module ru.nucodelabs.gem {
+module ru.nucodelabs {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
 
-    exports ru.nucodelabs.gem;
+    opens ru.nucodelabs.gem;
 }

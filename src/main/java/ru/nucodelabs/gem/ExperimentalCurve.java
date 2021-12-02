@@ -2,6 +2,7 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.data.ExperimentalData;
 
 import java.util.List;
 
@@ -11,15 +12,12 @@ import static java.lang.Math.max;
 public class ExperimentalCurve {
 
     protected static void makeCurve(
-            LineChart<Double, Double> vesCurve,
-            List<Double> AB_2,
-            List<Double> resistanceApparent,
-            List<Double> errorResistanceApparent) {
+            LineChart<Double, Double> vesCurve, ExperimentalData experimentalData) {
         vesCurve.getData().clear();
 
-        vesCurve.getData().add(makeCurveData(AB_2, resistanceApparent));
-        vesCurve.getData().add(makeCurveErrorUpper(AB_2, resistanceApparent, errorResistanceApparent));
-        vesCurve.getData().add(makeCurveErrorLower(AB_2, resistanceApparent, errorResistanceApparent));
+        vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent()));
+        vesCurve.getData().add(makeCurveErrorUpper(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
+        vesCurve.getData().add(makeCurveErrorLower(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(List<Double> AB_2, List<Double> resistanceApparent) {

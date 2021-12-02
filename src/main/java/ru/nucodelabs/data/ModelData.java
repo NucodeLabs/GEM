@@ -1,33 +1,60 @@
 package ru.nucodelabs.data;
 
+import ru.nucodelabs.files.sonet.MODFile;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class ModelData {
-    private ArrayList<Double> resistance = new ArrayList<>(0); // Сопротивление, Ом*м
-    private ArrayList<Double> polarization = new ArrayList<>(0); // Поляризация, %
-    private ArrayList<Double> power = new ArrayList<>(0); // Мощность, м
+    private List<Double> resistance; // Сопротивление, Ом*м
+    private List<Double> polarization; // Поляризация, %
+    private List<Double> power; // Мощность, м
 
-    public ArrayList<Double> getResistance() {
+    private List<Double> solvedResistance;
+
+    public ModelData() {
+        resistance = new ArrayList<>();
+        polarization = new ArrayList<>();
+        power = new ArrayList<>();
+        solvedResistance = new ArrayList<>();
+    }
+
+    public ModelData(MODFile modFile) {
+        this();
+        resistance = modFile.getResistance();
+        polarization = modFile.getPolarization();
+        power = modFile.getPower();
+    }
+
+    public List<Double> getResistance() {
         return resistance;
     }
 
-    public void setResistance(ArrayList<Double> resistance) {
+    public void setResistance(List<Double> resistance) {
         this.resistance = resistance;
     }
 
-    public ArrayList<Double> getPolarization() {
+    public List<Double> getPolarization() {
         return polarization;
     }
 
-    public void setPolarization(ArrayList<Double> polarization) {
+    public void setPolarization(List<Double> polarization) {
         this.polarization = polarization;
     }
 
-    public ArrayList<Double> getPower() {
+    public List<Double> getPower() {
         return power;
     }
 
-    public void setPower(ArrayList<Double> power) {
+    public void setPower(List<Double> power) {
         this.power = power;
+    }
+
+    public List<Double> getSolvedResistance() {
+        return solvedResistance;
+    }
+
+    public void setSolvedResistance(List<Double> solvedResistance) {
+        this.solvedResistance = solvedResistance;
     }
 }

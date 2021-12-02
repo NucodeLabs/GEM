@@ -2,7 +2,8 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.algorithms.ForwardSolver;
+import ru.nucodelabs.data.ExperimentalData;
+import ru.nucodelabs.data.ModelData;
 
 import java.util.List;
 
@@ -10,24 +11,13 @@ import static java.lang.Math.log10;
 import static java.lang.Math.max;
 
 public class TheoreticalCurve {
-    private static List<Double> solvedResistance = null;
-
-    public static List<Double> getSolvedResistance() {
-        return solvedResistance;
-    }
-
     protected static void makeCurve(
-            LineChart<Double, Double> vesCurve,
-            List<Double> AB_2,
-            List<Double> resistance,
-            List<Double> power) {
+            LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
         if (vesCurve.getData().size() > AppController.EXP_CURVE_SERIES_CNT) {
             vesCurve.getData().remove(AppController.EXP_CURVE_SERIES_CNT);
         }
 
-
-        solvedResistance = ForwardSolver.ves(resistance, power, AB_2);
-        vesCurve.getData().add(makeCurveData(AB_2, solvedResistance));
+        vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), modelData.getSolvedResistance()));
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(List<Double> AB_2, List<Double> solvedResistance) {
