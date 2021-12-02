@@ -8,6 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import ru.nucodelabs.algorithms.ForwardSolver;
+import ru.nucodelabs.data.ModelData;
+import ru.nucodelabs.data.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
@@ -28,9 +31,7 @@ public class AppController implements Initializable {
     protected static final int EXP_CURVE_SERIES_CNT = 3;
     protected static final int MOD_CURVE_SERIES_CNT = 4;
 
-    EXPFile openedEXP;
-    STTFile openedSTT;
-    MODFile openedMOD;
+    Picket picket;
 
     protected static final StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
@@ -78,6 +79,7 @@ public class AppController implements Initializable {
             return null;
         }
     };
+
     @FXML
     public VBox mainPane;
     public MenuItem menuFileOpenEXP;
@@ -112,6 +114,7 @@ public class AppController implements Initializable {
 
         Path openedFilePath = file.toPath();
 
+        EXPFile openedEXP;
         try {
             openedEXP = Sonet.readEXP(file);
         } catch (FileNotFoundException e) {
@@ -123,6 +126,7 @@ public class AppController implements Initializable {
             return;
         }
 
+        STTFile openedSTT;
         try {
             openedSTT = Sonet.readSTT(new File(
                     openedFilePath.getParent().toString()
@@ -136,26 +140,22 @@ public class AppController implements Initializable {
             alert.show();
             return;
         }
-        try {
-            ExperimentalCurve.makeCurve(
-                    vesCurve,
-                    openedSTT.getAB_2(),
-                    openedEXP.getResistanceApparent(),
-                    openedEXP.getErrorResistanceApparent());
 
+        picket = new Picket(openedEXP, openedSTT);
+
+        try {
+            ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
             ExperimentalTable.makeTable(
-                    openedSTT.getAB_2(),
-                    openedEXP.getResistanceApparent(),
-                    openedEXP.getErrorResistanceApparent(),
                     experimentalTable,
                     experimentalAB_2Column,
                     experimentalResistanceApparentColumn,
-                    experimentalErrorResistanceApparentColumn);
+                    experimentalErrorResistanceApparentColumn,
+                    picket.getExperimentalData());
 
         } catch (IndexOutOfBoundsException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Cannot open files");
-            alert.setHeaderText("STT and EXP files lines mismatch");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Невозможно открыть файлы");
+            alert.setHeaderText("STT и EXP содержат разное количество строк");
             alert.setContentText(e.getMessage());
             alert.show();
             return;
@@ -187,27 +187,28 @@ public class AppController implements Initializable {
             return;
         }
 
+        MODFile openedMOD;
         try {
             openedMOD = Sonet.readMOD(file);
         } catch (FileNotFoundException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("File not found!");
+            alert.setTitle("Ошибка");
+            alert.setHeaderText("Файл не найден!");
             alert.setContentText(e.getMessage());
             alert.show();
             return;
         }
 
+        picket.setModelData(new ModelData(openedMOD));
+
         try {
-            TheoreticalCurve.makeCurve(vesCurve, openedSTT.getAB_2(), openedMOD.getResistance(), openedMOD.getPower());
-            if (!inaccuracyCurve.isVisible()) {
-                inaccuracyCurve.setVisible(true);
-            }
-            InaccuracyCurve.makeCurve(inaccuracyCurve,
-                    openedSTT.getAB_2(),
-                    openedEXP.getResistanceApparent(),
-                    openedEXP.getErrorResistanceApparent(),
-                    TheoreticalCurve.getSolvedResistance());
+            picket.getModelData().setSolvedResistance(
+                    ForwardSolver.ves(
+                            picket.getModelData().getResistance(),
+                            picket.getModelData().getPower(),
+                            picket.getExperimentalData().getAB_2()
+                    )
+            );
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");
@@ -216,6 +217,13 @@ public class AppController implements Initializable {
             alert.show();
             return;
         }
+
+
+        TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
+        if (!inaccuracyCurve.isVisible()) {
+            inaccuracyCurve.setVisible(true);
+        }
+        InaccuracyCurve.makeCurve(inaccuracyCurve, picket.getExperimentalData(), picket.getModelData());
     }
 
     @Override
