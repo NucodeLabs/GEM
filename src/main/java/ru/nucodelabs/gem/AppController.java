@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.ModelData;
 import ru.nucodelabs.data.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
@@ -200,15 +199,12 @@ public class AppController implements Initializable {
         }
 
         picket.setModelData(new ModelData(openedMOD));
-
         try {
-            picket.getModelData().setSolvedResistance(
-                    ForwardSolver.ves(
-                            picket.getModelData().getResistance(),
-                            picket.getModelData().getPower(),
-                            picket.getExperimentalData().getAB_2()
-                    )
-            );
+            TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
+            if (!inaccuracyCurve.isVisible()) {
+                inaccuracyCurve.setVisible(true);
+            }
+            InaccuracyCurve.makeCurve(inaccuracyCurve, picket.getExperimentalData(), picket.getModelData());
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");
@@ -217,13 +213,6 @@ public class AppController implements Initializable {
             alert.show();
             return;
         }
-
-
-        TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
-        if (!inaccuracyCurve.isVisible()) {
-            inaccuracyCurve.setVisible(true);
-        }
-        InaccuracyCurve.makeCurve(inaccuracyCurve, picket.getExperimentalData(), picket.getModelData());
     }
 
     @Override

@@ -2,13 +2,14 @@
 #define FORWARDSOLVER_H__
 #include <jni.h>
 
-JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_gem_ForwardSolver_solve(
+JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_algorithms_ForwardSolver_solve(
     JNIEnv *env,
     jobject obj,
     jdoubleArray resistance,
     jdoubleArray power,
     jint layersCnt,
     jdoubleArray AB_2,
-    jint distCnt);
+    jint distCnt
+);
 
 #endif // FORWARDSOLVER_H__

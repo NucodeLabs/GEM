@@ -10,13 +10,10 @@ public class ModelData {
     private List<Double> polarization; // Поляризация, %
     private List<Double> power; // Мощность, м
 
-    private List<Double> solvedResistance;
-
     public ModelData() {
         resistance = new ArrayList<>();
         polarization = new ArrayList<>();
         power = new ArrayList<>();
-        solvedResistance = new ArrayList<>();
     }
 
     public ModelData(MODFile modFile) {
@@ -48,13 +45,5 @@ public class ModelData {
 
     public void setPower(List<Double> power) {
         this.power = power;
-    }
-
-    public List<Double> getSolvedResistance() {
-        return solvedResistance;
-    }
-
-    public void setSolvedResistance(List<Double> solvedResistance) {
-        this.solvedResistance = solvedResistance;
     }
 }

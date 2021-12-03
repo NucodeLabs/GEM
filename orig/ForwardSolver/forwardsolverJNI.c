@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <forwardsolver_exports.h>
+#include <forwardsolverJNI_exports.h>
 #include <VES.H>
 
 JNIEXPORT jdoubleArray JNICALL Java_ru_nucodelabs_algorithms_ForwardSolver_solve(
