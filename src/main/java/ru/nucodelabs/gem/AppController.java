@@ -5,6 +5,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
@@ -220,6 +223,25 @@ public class AppController implements Initializable {
         var osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("mac")) {
             menuBar.setUseSystemMenuBar(true);
+            menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
+                    KeyCode.O,
+                    KeyCombination.META_DOWN
+            ));
+            menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
+                    KeyCode.O,
+                    KeyCombination.META_DOWN,
+                    KeyCombination.SHIFT_DOWN
+            ));
+        } else {
+            menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
+                    KeyCode.O,
+                    KeyCombination.CONTROL_DOWN
+            ));
+            menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
+                    KeyCode.O,
+                    KeyCombination.CONTROL_DOWN,
+                    KeyCombination.SHIFT_DOWN
+            ));
         }
     }
 }
