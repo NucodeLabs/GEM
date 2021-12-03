@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MisfitFunctions.cpp" />
+    <ClCompile Include="Inversion.cpp" />
     <ClCompile Include="TEST.C" />
     <ClCompile Include="VESER.C" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inversion.h" />
     <ClInclude Include="MisfitFunctions.h" />
     <ClInclude Include="VES.H" />
   </ItemGroup>
