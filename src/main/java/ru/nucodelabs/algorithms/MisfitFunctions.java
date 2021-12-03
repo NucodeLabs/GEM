@@ -2,14 +2,14 @@ package ru.nucodelabs.algorithms;
 
 public class MisfitFunctions {
     public static native double calculateRelativeDeviation(
-            double resistanceExperimental,
-            double resistanceTheoretical
+            double experimentalResistance,
+            double theoreticalResistance
     );
 
     public static native double calculateRelativeDeviationWithError(
-            double resistanceExperimental,
-            double resistanceExperimentalError,
-            double resistanceTheoretical
+            double experimentalResistance,
+            double experimentalErrorResistance,
+            double theoreticalResistance
     );
 
     public static native double calculateResistanceApparent(

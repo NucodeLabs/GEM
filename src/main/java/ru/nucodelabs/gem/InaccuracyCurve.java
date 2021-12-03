@@ -3,6 +3,7 @@ package ru.nucodelabs.gem;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.algorithms.ForwardSolver;
+import ru.nucodelabs.algorithms.MisfitFunctions;
 import ru.nucodelabs.data.ExperimentalData;
 import ru.nucodelabs.data.ModelData;
 
@@ -29,8 +30,8 @@ public class InaccuracyCurve {
 
     protected static List<XYChart.Series<Double, Double>> makeCurveData(
             List<Double> AB_2,
-            List<Double> resistanceApp,
-            List<Double> errResistanceApp,
+            List<Double> resistanceApparent,
+            List<Double> errorResistanceApparent,
             List<Double> solvedResistance) {
         List<XYChart.Series<Double, Double>> res = new ArrayList<>();
 
@@ -40,7 +41,11 @@ public class InaccuracyCurve {
                     log10(AB_2.get(i)),
                     0d));
             double dotX = log10(AB_2.get(i));
-            double dotY = solvedResistance.get(i) - resistanceApp.get(i);
+            double dotY = MisfitFunctions.calculateRelativeDeviationWithError(
+                    resistanceApparent.get(i),
+                    errorResistanceApparent.get(i),
+                    solvedResistance.get(i)
+            );
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
             res.add(pointsSeries);
         }
