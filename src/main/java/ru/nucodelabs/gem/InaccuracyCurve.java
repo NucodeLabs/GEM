@@ -2,6 +2,7 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.ExperimentalData;
 import ru.nucodelabs.data.ModelData;
 
@@ -15,7 +16,14 @@ public class InaccuracyCurve {
     protected static void makeCurve(
             LineChart<Double, Double> inaccuracyCurve, ExperimentalData experimentalData, ModelData modelData) {
         inaccuracyCurve.getData().clear();
-        inaccuracyCurve.getData().addAll(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent(), modelData.getSolvedResistance()));
+
+        ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
+                modelData.getResistance(),
+                modelData.getPower(),
+                experimentalData.getAB_2()
+        ));
+
+        inaccuracyCurve.getData().addAll(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent(), solvedResistance));
 //        inaccuracyCurve.setCreateSymbols(false);
     }
 

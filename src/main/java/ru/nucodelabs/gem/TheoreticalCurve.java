@@ -2,9 +2,11 @@ package ru.nucodelabs.gem;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.ExperimentalData;
 import ru.nucodelabs.data.ModelData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.log10;
@@ -17,7 +19,14 @@ public class TheoreticalCurve {
             vesCurve.getData().remove(AppController.EXP_CURVE_SERIES_CNT);
         }
 
-        vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), modelData.getSolvedResistance()));
+        ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
+                modelData.getResistance(),
+                modelData.getPower(),
+                experimentalData.getAB_2()
+        ));
+
+
+        vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), solvedResistance));
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(List<Double> AB_2, List<Double> solvedResistance) {

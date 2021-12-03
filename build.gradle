@@ -52,14 +52,15 @@ def libPrefix = currentOS.isWindows() ? "" : "lib"
 def libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
 
 def compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
-def arch = currentOS.isMacOsX() && currentArch.isArm() ? ["-arch", "x86_64"] : []
+def arch = currentOS.isMacOsX() ? ["-arch", "x86_64"] : []
 def optimization = "-O3"
 def pic = currentOS.isWindows() ? "" : "-fPIC"
 def shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
 
-def jniIncludePaths =
-        ["-I", file("${Jvm.current().javaHome}/include").absolutePath,
-         "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath]
+def jniIncludePaths = [
+        "-I", file("${Jvm.current().javaHome}/include").absolutePath,
+        "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
+]
 
 def jniArgs = new ArrayList<>()
 jniArgs.add(compiler)
@@ -74,9 +75,10 @@ task forwardSolver(type: Exec) {
 
     def language = ["-x", "c"]
 
-    def sources =
-            [file("${workingDir}/forwardsolver.c").absolutePath,
-             file("${workingDir}/VESER.C").absolutePath]
+    def sources = [
+            file("${workingDir}/forwardsolverJNI.c").absolutePath,
+            file("${workingDir}/VESER.C").absolutePath
+    ]
 
     def libName = "forwardsolver"
     def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
@@ -96,20 +98,53 @@ task forwardSolver(type: Exec) {
 
     doLast {
         if (currentOS.isWindows()) {
-            file("${projectDir}/lib/forwardsolver.exp").delete()
-            file("${workingDir}/lib/forwardsolver.lib").delete()
+            file("${projectDir}/lib/" + libName + ".exp").delete()
+            file("${workingDir}/lib/" + libName + ".lib").delete()
         }
     }
 }
 
+task misfitFunctions(type: Exec) {
+    workingDir "${projectDir}/orig/ForwardSolver"
+    def language = ["-std=c++14"]
+
+    def sources = [
+            file("${workingDir}/MisfitFunctions.cpp"),
+            file("${workingDir}/misfitJNI.cpp")
+    ]
+
+    def libName = "misfit"
+
+    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
+    doFirst {
+        mkdir "${projectDir}/lib"
+    }
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
+            file("${projectDir}/lib/" + libName + ".exp").delete()
+            file("${workingDir}/lib/" + libName + ".lib").delete()
+        }
+    }
+}
 
 test {
-    dependsOn forwardSolver
+    dependsOn forwardSolver, misfitFunctions
     useJUnitPlatform()
     systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
 }
 
 tasks.withType(JavaExec) {
-    dependsOn forwardSolver
+    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
 }
