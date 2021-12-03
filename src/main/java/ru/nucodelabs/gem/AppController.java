@@ -223,25 +223,15 @@ public class AppController implements Initializable {
         var osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("mac")) {
             menuBar.setUseSystemMenuBar(true);
-            menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
-                    KeyCode.O,
-                    KeyCombination.META_DOWN
-            ));
-            menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
-                    KeyCode.O,
-                    KeyCombination.META_DOWN,
-                    KeyCombination.SHIFT_DOWN
-            ));
-        } else {
-            menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
-                    KeyCode.O,
-                    KeyCombination.CONTROL_DOWN
-            ));
-            menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
-                    KeyCode.O,
-                    KeyCombination.CONTROL_DOWN,
-                    KeyCombination.SHIFT_DOWN
-            ));
         }
+        menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
+                KeyCode.O,
+                KeyCombination.SHORTCUT_DOWN
+        ));
+        menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
+                KeyCode.O,
+                KeyCombination.SHORTCUT_DOWN,
+                KeyCombination.SHIFT_DOWN
+        ));
     }
 }
