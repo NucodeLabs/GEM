@@ -3,11 +3,13 @@ package ru.nucodelabs.files.sonet;
 import java.util.ArrayList;
 
 public class STTFile {
-    public STTFile() {
-    }
+    private ArrayList<Double> AB_2; // AB/2, м
+    private ArrayList<Double> MN_2; // MN/2, м
 
-    private ArrayList<Double> AB_2 = new ArrayList<>(0); // AB/2, м
-    private ArrayList<Double> MN_2 = new ArrayList<>(0); // MN/2, м
+    public STTFile() {
+        AB_2 = new ArrayList<>(0);
+        MN_2 = new ArrayList<>(0);
+    }
 
     public int getColumnCnt() {
         return 2;

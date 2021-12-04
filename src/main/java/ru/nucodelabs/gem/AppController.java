@@ -16,7 +16,7 @@ import ru.nucodelabs.data.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
-import ru.nucodelabs.files.sonet.Sonet;
+import ru.nucodelabs.files.sonet.SonetImport;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -118,7 +118,7 @@ public class AppController implements Initializable {
 
         EXPFile openedEXP;
         try {
-            openedEXP = Sonet.readEXP(file);
+            openedEXP = SonetImport.readEXP(file);
         } catch (FileNotFoundException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -130,7 +130,7 @@ public class AppController implements Initializable {
 
         STTFile openedSTT;
         try {
-            openedSTT = Sonet.readSTT(new File(
+            openedSTT = SonetImport.readSTT(new File(
                     openedFilePath.getParent().toString()
                             + File.separator
                             + openedEXP.getSTTFileName()));
@@ -187,7 +187,7 @@ public class AppController implements Initializable {
 
         MODFile openedMOD;
         try {
-            openedMOD = Sonet.readMOD(file);
+            openedMOD = SonetImport.readMOD(file);
         } catch (FileNotFoundException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");

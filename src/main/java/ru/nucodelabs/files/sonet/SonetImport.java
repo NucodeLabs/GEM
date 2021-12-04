@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class Sonet {
-    private Sonet() {
+public class SonetImport {
+    private SonetImport() {
     } // чтобы нельзя было создать экземпляр класса Sonet
 
     public static STTFile readSTT(File file) throws FileNotFoundException {
