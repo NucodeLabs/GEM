@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
-import ru.nucodelabs.files.sonet.Sonet;
+import ru.nucodelabs.files.sonet.SonetImport;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.function.Function;
 
-public class SonetTest {
+public class SonetImportTest {
     Function<Double, String> checkNull = d -> {
         if (d != null)
             return d.toString();
@@ -24,7 +24,7 @@ public class SonetTest {
     void readSTT_test() throws FileNotFoundException {
         System.out.println("SonetTest.readSTT_test");
         File file = new File("data/CHITA.STT");
-        STTFile stt = Sonet.readSTT(file);
+        STTFile stt = SonetImport.readSTT(file);
         Assertions.assertEquals(stt.getAB_2().get(20), 1.5e+003);
         for (int i = 0; i < stt.getAB_2().size(); i++) {
             System.out.println(
@@ -37,7 +37,7 @@ public class SonetTest {
     void readEXP_test() throws FileNotFoundException {
         System.out.println("SonetTest.readEXP_test");
         File file = new File("data/BURM1.EXP");
-        EXPFile exp = Sonet.readEXP(file);
+        EXPFile exp = SonetImport.readEXP(file);
         System.out.println(exp.getSTTFileName());
         System.out.println(exp.getNumber());
         System.out.println(exp.getDate());
@@ -56,7 +56,7 @@ public class SonetTest {
             );
         }
         Path openedFilePath = file.toPath();
-        STTFile stt = Sonet.readSTT(new File(
+        STTFile stt = SonetImport.readSTT(new File(
                 openedFilePath.getParent().toString()
                         + File.separator
                         + exp.getSTTFileName()));
@@ -72,7 +72,7 @@ public class SonetTest {
     void readMOD_test() throws FileNotFoundException {
         System.out.println("SonetTest.readMOD_test");
         File file = new File("data/KAZAN.MOD");
-        MODFile mod = Sonet.readMOD(file);
+        MODFile mod = SonetImport.readMOD(file);
         for (int i = 0; i < mod.getResistance().size(); i++) {
             System.out.println(
                     checkNull.apply(mod.getResistance().get(i)) + "   "
@@ -86,7 +86,7 @@ public class SonetTest {
     void readEXP_test1() throws FileNotFoundException {
         System.out.println("SonetTest.readEXP_test");
         File file = new File("data/BURM4.EXP");
-        EXPFile exp = Sonet.readEXP(file);
+        EXPFile exp = SonetImport.readEXP(file);
         System.out.println("SonetTest.readEXP_test");
     }
 }

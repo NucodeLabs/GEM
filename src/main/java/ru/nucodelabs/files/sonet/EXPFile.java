@@ -3,17 +3,41 @@ package ru.nucodelabs.files.sonet;
 import java.util.ArrayList;
 
 public class EXPFile {
+    private String STTFileName;
+
+    private String number; // Номер установки
+    private String date; // Дата
+    private String weather; // Погода
+    private String operator; // Оператор
+    private String interpreter; // Интерпретатор
+    private String checked; // Проверил
+
+    private ArrayList<Double> amperage; // Ток, мА
+    private ArrayList<Double> voltage; // Напряжение, мВ
+    private ArrayList<Double> resistanceApparent; // Сопротивление кажущееся, Ом * м
+    private ArrayList<Double> errorResistanceApparent; // Погрешность, %
+    private ArrayList<Double> polarizationApparent; // Поляризация кажущаяся, %
+    private ArrayList<Double> errorPolarizationApparent; // Погрешность, %
+
     public EXPFile() {
+        STTFileName = "";
+        interpreter = "";
+        number = "";
+        date = "";
+        weather = "";
+        operator = "";
+        checked = "";
+        amperage = new ArrayList<>();
+        voltage = new ArrayList<>();
+        resistanceApparent = new ArrayList<>();
+        errorResistanceApparent = new ArrayList<>();
+        polarizationApparent = new ArrayList<>();
+        errorPolarizationApparent = new ArrayList<>();
     }
 
-    private String STTFileName = "";
-
-    private String number = ""; // Номер установки
-    private String date = ""; // Дата
-    private String weather = ""; // Погода
-    private String operator = ""; // Оператор
-    private String interpreter = ""; // Интерпретатор
-    private String checked = ""; // Проверил
+    public int getColumnCnt() {
+        return 6;
+    }
 
     public String getNumber() {
         return number;
@@ -63,17 +87,6 @@ public class EXPFile {
         this.checked = checked;
     }
 
-
-    private ArrayList<Double> amperage = new ArrayList<>(0); // Ток, мА
-    private ArrayList<Double> voltage = new ArrayList<>(0); // Напряжение, мВ
-    private ArrayList<Double> resistanceApparent = new ArrayList<>(0); // Сопротивление кажущееся, Ом * м
-    private ArrayList<Double> errorResistanceApparent = new ArrayList<>(0); // Погрешность, %
-    private ArrayList<Double> polarizationApparent = new ArrayList<>(0); // Поляризация кажущаяся, %
-    private ArrayList<Double> errorPolarizationApparent = new ArrayList<>(0); // Погрешность, %
-
-    public int getColumnCnt() {
-        return 6;
-    }
 
     public ArrayList<Double> getAmperage() {
         return amperage;

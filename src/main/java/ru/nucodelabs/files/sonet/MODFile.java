@@ -3,12 +3,15 @@ package ru.nucodelabs.files.sonet;
 import java.util.ArrayList;
 
 public class MODFile {
-    public MODFile() {
-    }
+    private ArrayList<Double> resistance; // Сопротивление, Ом*м
+    private ArrayList<Double> polarization; // Поляризация, %
+    private ArrayList<Double> power; // Мощность, м
 
-    private ArrayList<Double> resistance = new ArrayList<>(0); // Сопротивление, Ом*м
-    private ArrayList<Double> polarization = new ArrayList<>(0); // Поляризация, %
-    private ArrayList<Double> power = new ArrayList<>(0); // Мощность, м
+    public MODFile() {
+        resistance = new ArrayList<>(0);
+        polarization = new ArrayList<>(0);
+        power = new ArrayList<>(0);
+    }
 
     public int getColumnCnt() {
         return 3;
