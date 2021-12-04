@@ -168,10 +168,6 @@ public class AppController implements Initializable {
         vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
         vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
 
-        if (!vesCurve.isVisible()) {
-            vesCurve.setVisible(true);
-        }
-
         if (menuFileOpenMOD.isDisable()) {
             menuFileOpenMOD.setDisable(false);
         }
@@ -204,9 +200,6 @@ public class AppController implements Initializable {
         picket.setModelData(new ModelData(openedMOD));
         try {
             TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
-            if (!inaccuracyCurve.isVisible()) {
-                inaccuracyCurve.setVisible(true);
-            }
             InaccuracyCurve.makeCurve(inaccuracyCurve, picket.getExperimentalData(), picket.getModelData());
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -233,5 +226,8 @@ public class AppController implements Initializable {
                 KeyCombination.SHORTCUT_DOWN,
                 KeyCombination.SHIFT_DOWN
         ));
+
+        vesCurve.setVisible(false);
+        inaccuracyCurve.setVisible(false);
     }
 }
