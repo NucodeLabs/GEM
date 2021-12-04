@@ -18,6 +18,9 @@ public class ExperimentalCurve {
         vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent()));
         vesCurve.getData().add(makeCurveErrorUpper(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
         vesCurve.getData().add(makeCurveErrorLower(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
+        if (!vesCurve.isVisible()) {
+            vesCurve.setVisible(true);
+        }
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(List<Double> AB_2, List<Double> resistanceApparent) {

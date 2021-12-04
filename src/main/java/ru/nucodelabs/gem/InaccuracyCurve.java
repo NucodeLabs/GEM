@@ -10,7 +10,7 @@ import ru.nucodelabs.data.ModelData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.log10;
+import static java.lang.Math.*;
 
 public class InaccuracyCurve {
 
@@ -26,6 +26,9 @@ public class InaccuracyCurve {
 
         inaccuracyCurve.getData().addAll(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent(), solvedResistance));
 //        inaccuracyCurve.setCreateSymbols(false);
+        if (!inaccuracyCurve.isVisible()) {
+            inaccuracyCurve.setVisible(true);
+        }
     }
 
     protected static List<XYChart.Series<Double, Double>> makeCurveData(
@@ -41,11 +44,11 @@ public class InaccuracyCurve {
                     log10(AB_2.get(i)),
                     0d));
             double dotX = log10(AB_2.get(i));
-            double dotY = MisfitFunctions.calculateRelativeDeviationWithError(
+            double dotY = abs(MisfitFunctions.calculateRelativeDeviationWithError(
                     resistanceApparent.get(i),
-                    errorResistanceApparent.get(i),
+                    errorResistanceApparent.get(i) / 100f,
                     solvedResistance.get(i)
-            );
+            )) * signum(solvedResistance.get(i) - resistanceApparent.get(i)) * 100f;
             pointsSeries.getData().add(new XYChart.Data<>(dotX, dotY));
             res.add(pointsSeries);
         }
