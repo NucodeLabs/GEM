@@ -56,8 +56,8 @@
 }
 
 #inaccuracyCurve .chart-series-line {
-    -fx-stroke: Red;
-    -fx-stroke-width: 2px;
+    -fx-stroke: Crimson;
+    -fx-stroke-width: 8px;
     -fx-stroke-line-cap: butt;
     -fx-stroke-line-join: miter;
     -fx-stroke-type: centered;
@@ -66,8 +66,7 @@
 
 #inaccuracyCurve .chart-line-symbol {
     -fx-border-width: 0;
-    -fx-background-radius: 0;
-    -fx-pref-width: 10px;
-    -fx-pref-height: 3px;
-    -fx-background-color: Red;
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
+    -fx-background-color: Crimson;
 }

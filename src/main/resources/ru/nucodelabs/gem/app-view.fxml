@@ -65,7 +65,7 @@
                         <Insets/>
                     </opaqueInsets>
                     <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="1.7976931348623157E308"
-                               minHeight="0.0" prefHeight="150.0">
+                               minHeight="0.0" prefHeight="150.0" title="\%" titleSide="LEFT">
                         <xAxis>
                             <NumberAxis forceZeroInRange="false" side="BOTTOM" tickLabelsVisible="false"/>
                         </xAxis>
@@ -77,7 +77,7 @@
                             <Insets/>
                         </opaqueInsets>
                         <padding>
-                            <Insets left="24.0"/>
+                            <Insets left="9.0"/>
                         </padding>
                     </LineChart>
                 </TitledPane>
