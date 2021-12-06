@@ -70,4 +70,5 @@ void CalcRokWithError(const double AB, const double MN, const double distA_err, 
 	const auto max_err = (max_rok - avg_rok) / avg_rok;
 
 	*Rok = avg_rok;
+	*Rok_err = fmax(fabs(min_err), fabs(max_err));
 }
