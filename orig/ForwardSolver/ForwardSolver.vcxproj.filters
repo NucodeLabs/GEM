@@ -24,12 +24,18 @@
     <ClCompile Include="MisfitFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Inversion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VES.H">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MisfitFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inversion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
