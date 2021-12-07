@@ -6,6 +6,8 @@ import ru.nucodelabs.files.sonet.STTFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.min;
+
 public class ExperimentalData {
     private List<Double> AB_2; // AB/2, м
     private List<Double> MN_2; // MN/2, м
@@ -16,6 +18,8 @@ public class ExperimentalData {
     private List<Double> errorResistanceApparent; // Погрешность, %
     private List<Double> polarizationApparent; // Поляризация кажущаяся, %
     private List<Double> errorPolarizationApparent; // Погрешность, %
+
+    private Integer size;
 
     public ExperimentalData() {
         AB_2 = new ArrayList<>();
@@ -28,7 +32,7 @@ public class ExperimentalData {
         errorPolarizationApparent = new ArrayList<>();
     }
 
-    public ExperimentalData(EXPFile expFile, STTFile sttFile) {
+    public ExperimentalData(EXPFile expFile, STTFile sttFile) throws IndexOutOfBoundsException {
         AB_2 = sttFile.getAB_2();
         MN_2 = sttFile.getMN_2();
         amperage = expFile.getAmperage();
@@ -37,6 +41,19 @@ public class ExperimentalData {
         errorResistanceApparent = expFile.getErrorResistanceApparent();
         polarizationApparent = expFile.getPolarizationApparent();
         errorPolarizationApparent = expFile.getErrorPolarizationApparent();
+        size = min(AB_2.size(), resistanceApparent.size());
+    }
+
+    public boolean isUnsafe() {
+        return AB_2.size() != resistanceApparent.size();
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     public List<Double> getAB_2() {

@@ -24,15 +24,17 @@ public class ExperimentalTable {
 
         experimentalErrorResistanceApparentColumn.setCellValueFactory(new PropertyValueFactory<>("errorResistanceApparent"));
 
-        ObservableList<TableLine> tableContent = makeTableContent(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent());
+        ObservableList<TableLine> tableContent = makeTableContent(experimentalData);
         experimentalTable.setItems(tableContent);
     }
 
-    protected static ObservableList<TableLine> makeTableContent(List<Double> AB_2,
-                                                                List<Double> resistanceApparent,
-                                                                List<Double> errorResistanceApparent) {
+    protected static ObservableList<TableLine> makeTableContent(ExperimentalData experimentalData) {
+        final ArrayList<Double> AB_2 = new ArrayList<>(experimentalData.getAB_2());
+        final ArrayList<Double> resistanceApparent = new ArrayList<>(experimentalData.getResistanceApparent());
+        final ArrayList<Double> errorResistanceApparent = new ArrayList<>(experimentalData.getErrorResistanceApparent());
+
         List<TableLine> tableContent = new ArrayList<>();
-        for (int i = 0; i < AB_2.size(); i++) {
+        for (int i = 0; i < experimentalData.getSize(); i++) {
             TableLine tableLine = new TableLine();
 
             tableLine.setAB_2(AB_2.get(i));

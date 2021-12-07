@@ -17,17 +17,18 @@ import static java.lang.Math.*;
 public class InaccuracyCurve {
 
     protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, TitledPane inaccuracyPane, ExperimentalData experimentalData, ModelData modelData) {
-
+        inaccuracyCurve.getData().clear();
         ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
                 modelData.getResistance(),
                 modelData.getPower(),
                 experimentalData.getAB_2()
         ));
 
-        inaccuracyCurve.getData().addAll(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent(), solvedResistance));
+        inaccuracyCurve.getData().addAll(makeCurveData(experimentalData, solvedResistance));
 //        inaccuracyCurve.setCreateSymbols(false);
         colorizeSeries(inaccuracyCurve.getData());
         makeTextAvgMax(inaccuracyPane, inaccuracyCurve);
+        inaccuracyCurve.setVisible(true);
     }
 
     protected static void makeTextAvgMax(TitledPane inaccuracyPane, LineChart<Double, Double> inaccuracyCurve) {
@@ -51,14 +52,13 @@ public class InaccuracyCurve {
         );
     }
 
-    protected static List<XYChart.Series<Double, Double>> makeCurveData(
-            List<Double> AB_2,
-            List<Double> resistanceApparent,
-            List<Double> errorResistanceApparent,
-            List<Double> solvedResistance) {
-        List<XYChart.Series<Double, Double>> res = new ArrayList<>();
+    protected static List<XYChart.Series<Double, Double>> makeCurveData(ExperimentalData experimentalData, List<Double> solvedResistance) {
+        final ArrayList<Double> AB_2 = new ArrayList<>(experimentalData.getAB_2());
+        final ArrayList<Double> resistanceApparent = new ArrayList<>(experimentalData.getResistanceApparent());
+        final ArrayList<Double> errorResistanceApparent = new ArrayList<>(experimentalData.getErrorResistanceApparent());
 
-        for (int i = 0; i < AB_2.size(); i++) {
+        List<XYChart.Series<Double, Double>> res = new ArrayList<>();
+        for (int i = 0; i < experimentalData.getSize(); i++) {
             XYChart.Series<Double, Double> pointsSeries = new XYChart.Series<>();
             pointsSeries.getData().add(new XYChart.Data<>(
                     log10(AB_2.get(i)),
