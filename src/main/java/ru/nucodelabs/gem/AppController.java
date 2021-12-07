@@ -155,17 +155,14 @@ public class AppController implements Initializable {
             alert.show();
         }
 
-        try {
-            ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
-            ExperimentalTable.makeTable(
-                    experimentalTable,
-                    experimentalAB_2Column,
-                    experimentalResistanceApparentColumn,
-                    experimentalErrorResistanceApparentColumn,
-                    picket.getExperimentalData());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
+        ExperimentalTable.makeTable(
+                experimentalTable,
+                experimentalAB_2Column,
+                experimentalResistanceApparentColumn,
+                experimentalErrorResistanceApparentColumn,
+                picket.getExperimentalData());
+
 
         inaccuracyCurve.getData().clear();
         App.primaryStage.setTitle(file.getName() + " - GEM");
