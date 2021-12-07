@@ -13,8 +13,8 @@ import static java.lang.Math.log10;
 import static java.lang.Math.max;
 
 public class TheoreticalCurve {
-    protected static void makeCurve(
-            LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
+    protected static void makeCurve(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
+
         if (vesCurve.getData().size() > AppController.EXP_CURVE_SERIES_CNT) {
             vesCurve.getData().remove(AppController.EXP_CURVE_SERIES_CNT);
         }

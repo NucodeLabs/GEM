@@ -2,7 +2,7 @@
 
 GEM is a study platform for geologists and geophysicist.
 
-# Building ForwardSolver JNI module
+# Building JNI(C/C++) modules
 
 ## Dependencies
 
@@ -23,7 +23,8 @@ Install **OpenJDK 17.0.1**
 If you have Gradle installed and setup `PATH` variable
 
 ```shell
-> gradle forwardSolver
+$ gradle forwardSolver
+$ gradle misfitFunctions
 ```
 
-Or using IntelliJ IDEA run `forwardSolver` task in `build.gradle`
+Or using IntelliJ IDEA run `forwardSolver`, `misfitFunctions`, etc tasks in `build.gradle`
