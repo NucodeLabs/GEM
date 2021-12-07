@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 
 public class AppController implements Initializable {
     protected static final int EXP_CURVE_SERIES_CNT = 3;
-    protected static final int MOD_CURVE_SERIES_CNT = 4;
+    protected static final int THEOR_CURVE_SERIES_CNT = 4;
+    protected static final int MOD_CURVE_SERIES_CNT = 5;
 
     Picket picket;
 
@@ -144,31 +145,30 @@ public class AppController implements Initializable {
             return;
         }
 
+
         picket = new Picket(openedEXP, openedSTT);
+        if (picket.getExperimentalData().isUnsafe()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Режим совместимости");
+            alert.setHeaderText("STT и EXP содержат разное количество строк");
+            alert.setContentText("Будет отображаться минимально возможное число данных");
+            alert.show();
+        }
 
         try {
-            vesCurve.getData().clear();
-            vesCurve.getXAxis().setAutoRanging(true);
             ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
-            vesCurve.setVisible(true);
-            inaccuracyCurve.getData().clear();
             ExperimentalTable.makeTable(
                     experimentalTable,
                     experimentalAB_2Column,
                     experimentalResistanceApparentColumn,
                     experimentalErrorResistanceApparentColumn,
                     picket.getExperimentalData());
-        } catch (IndexOutOfBoundsException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Невозможно открыть файлы");
-            alert.setHeaderText("STT и EXP содержат разное количество строк");
-            alert.setContentText(e.getMessage());
-            alert.show();
-            return;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        inaccuracyCurve.getData().clear();
         App.primaryStage.setTitle(file.getName() + " - GEM");
-
         menuFileOpenMOD.setDisable(false);
     }
 
@@ -201,9 +201,7 @@ public class AppController implements Initializable {
             TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
             ModelCurve.makeCurve(vesCurve, picket.getModelData());
 
-            inaccuracyCurve.getData().clear();
             InaccuracyCurve.makeCurve(inaccuracyCurve, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
-            inaccuracyCurve.setVisible(true);
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");

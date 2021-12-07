@@ -1,15 +1,21 @@
 package ru.nucodelabs.gem;
 
+import javafx.collections.FXCollections;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ModelData;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.log10;
 
 public class ModelCurve {
     protected static void makeCurve(LineChart<Double, Double> vesCurve, ModelData modelData) {
+        if (vesCurve.getData().size() > AppController.THEOR_CURVE_SERIES_CNT) {
+            vesCurve.setData(vesCurve.getData().stream().limit(AppController.THEOR_CURVE_SERIES_CNT)
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        }
         vesCurve.getXAxis().setAutoRanging(false);
         vesCurve.getData().add(makeCurveData(modelData));
     }
