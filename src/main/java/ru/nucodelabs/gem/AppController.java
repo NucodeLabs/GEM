@@ -84,22 +84,23 @@ public class AppController implements Initializable {
 
     @FXML
     public VBox mainPane;
+    public MenuBar menuBar;
     public MenuItem menuFileOpenEXP;
-    public TitledPane vesPane;
+    public MenuItem menuFileOpenMOD;
 
-    public LineChart<Double, Double> vesCurve;
+    public TitledPane inaccuracyPane;
     public LineChart<Double, Double> inaccuracyCurve;
+
+    public SplitPane vesSplitPane;
+    public TitledPane vesPane;
+    public LineChart<Double, Double> vesCurve;
+    public NumberAxis vesCurveAxisY;
+    public NumberAxis vesCurveAxisX;
+
     public TableView<TableLine> experimentalTable;
     public TableColumn<TableLine, Double> experimentalAB_2Column;
     public TableColumn<TableLine, Double> experimentalResistanceApparentColumn;
     public TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn;
-
-    public MenuItem menuFileOpenMOD;
-    public TitledPane inaccuracyPane;
-    public SplitPane vesSplitPane;
-    public NumberAxis vesCurveAxisY;
-    public NumberAxis vesCurveAxisX;
-    public MenuBar menuBar;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -146,14 +147,17 @@ public class AppController implements Initializable {
         picket = new Picket(openedEXP, openedSTT);
 
         try {
+            vesCurve.getData().clear();
+            vesCurve.getXAxis().setAutoRanging(true);
             ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
+            vesCurve.setVisible(true);
+            inaccuracyCurve.getData().clear();
             ExperimentalTable.makeTable(
                     experimentalTable,
                     experimentalAB_2Column,
                     experimentalResistanceApparentColumn,
                     experimentalErrorResistanceApparentColumn,
                     picket.getExperimentalData());
-
         } catch (IndexOutOfBoundsException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Невозможно открыть файлы");
@@ -165,12 +169,7 @@ public class AppController implements Initializable {
 
         App.primaryStage.setTitle(file.getName() + " - GEM");
 
-        vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
-        vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
-
-        if (menuFileOpenMOD.isDisable()) {
-            menuFileOpenMOD.setDisable(false);
-        }
+        menuFileOpenMOD.setDisable(false);
     }
 
     @FXML
@@ -200,7 +199,11 @@ public class AppController implements Initializable {
         picket.setModelData(new ModelData(openedMOD));
         try {
             TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
-            InaccuracyCurve.makeCurve(inaccuracyCurve, picket.getExperimentalData(), picket.getModelData());
+            ModelCurve.makeCurve(vesCurve, picket.getModelData());
+
+            inaccuracyCurve.getData().clear();
+            InaccuracyCurve.makeCurve(inaccuracyCurve, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
+            inaccuracyCurve.setVisible(true);
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");
@@ -229,5 +232,7 @@ public class AppController implements Initializable {
 
         vesCurve.setVisible(false);
         inaccuracyCurve.setVisible(false);
+        vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
+        vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
     }
 }

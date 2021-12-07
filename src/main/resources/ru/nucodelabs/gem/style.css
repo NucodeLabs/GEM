@@ -46,6 +46,20 @@
     -fx-stroke-width: 2px;
 }
 
+#vesCurve .chart-series-line.series4 {
+    -fx-stroke: Blue;
+}
+
+#vesCurve .chart-line-symbol.series4 {
+    -fx-border-radius: 50%;
+    -fx-border-width: 2px;
+    -fx-pref-height: 7px;
+    -fx-pref-width: 7px;
+    -fx-border-color: DarkBlue;
+    -fx-background-color: Blue;
+    -fx-background-radius: 50%;
+}
+
 #vesCurve .chart-line-symbol {
     -fx-border-width: 1px; /* можно сделать 0, чтобы обводки не было */
     -fx-border-color: black;

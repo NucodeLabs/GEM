@@ -13,14 +13,9 @@ public class ExperimentalCurve {
 
     protected static void makeCurve(
             LineChart<Double, Double> vesCurve, ExperimentalData experimentalData) {
-        vesCurve.getData().clear();
-
         vesCurve.getData().add(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent()));
         vesCurve.getData().add(makeCurveErrorUpper(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
         vesCurve.getData().add(makeCurveErrorLower(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent()));
-        if (!vesCurve.isVisible()) {
-            vesCurve.setVisible(true);
-        }
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(List<Double> AB_2, List<Double> resistanceApparent) {

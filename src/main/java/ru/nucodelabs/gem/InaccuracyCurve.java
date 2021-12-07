@@ -3,6 +3,7 @@ package ru.nucodelabs.gem;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.TitledPane;
 import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.algorithms.MisfitFunctions;
 import ru.nucodelabs.data.ExperimentalData;
@@ -15,9 +16,7 @@ import static java.lang.Math.*;
 
 public class InaccuracyCurve {
 
-    protected static void makeCurve(
-            LineChart<Double, Double> inaccuracyCurve, ExperimentalData experimentalData, ModelData modelData) {
-        inaccuracyCurve.getData().clear();
+    protected static void makeCurve(LineChart<Double, Double> inaccuracyCurve, TitledPane inaccuracyPane, ExperimentalData experimentalData, ModelData modelData) {
 
         ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
                 modelData.getResistance(),
@@ -28,9 +27,16 @@ public class InaccuracyCurve {
         inaccuracyCurve.getData().addAll(makeCurveData(experimentalData.getAB_2(), experimentalData.getResistanceApparent(), experimentalData.getErrorResistanceApparent(), solvedResistance));
 //        inaccuracyCurve.setCreateSymbols(false);
         colorizeSeries(inaccuracyCurve.getData());
-        if (!inaccuracyCurve.isVisible()) {
-            inaccuracyCurve.setVisible(true);
-        }
+        makeTextAvgMax(inaccuracyPane, inaccuracyCurve);
+    }
+
+    protected static void makeTextAvgMax(TitledPane inaccuracyPane, LineChart<Double, Double> inaccuracyCurve) {
+        inaccuracyPane.setText(
+                String.format("%s | avg = %d%% | max = %d%%",
+                        inaccuracyPane.getText().split("\s")[0],
+                        round(calculateAverage(inaccuracyCurve.getData())),
+                        round(calculateMax(inaccuracyCurve.getData())))
+        );
     }
 
     protected static void colorizeSeries(ObservableList<XYChart.Series<Double, Double>> data) {
@@ -68,5 +74,23 @@ public class InaccuracyCurve {
         }
 
         return res;
+    }
+
+    protected static Double calculateAverage(ObservableList<XYChart.Series<Double, Double>> data) {
+        return data.stream()
+                .mapToDouble(
+                        s -> abs(s.getData().get(1).getYValue())
+                )
+                .average()
+                .orElse(0);
+    }
+
+    public static Double calculateMax(ObservableList<XYChart.Series<Double, Double>> data) {
+        return data.stream()
+                .mapToDouble(
+                        s -> abs(s.getData().get(1).getYValue())
+                )
+                .max()
+                .orElse(0);
     }
 }
