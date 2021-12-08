@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.charts;
 
 import javafx.collections.FXCollections;
 import javafx.scene.chart.LineChart;
@@ -13,23 +13,25 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
+import static ru.nucodelabs.gem.charts.VESCurve.EXP_CURVE_SERIES_CNT;
 
 public class TheoreticalCurve {
-    protected static void makeCurve(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
-
-        if (vesCurve.getData().size() > AppController.EXP_CURVE_SERIES_CNT) {
-            vesCurve.setData(vesCurve.getData().stream().limit(AppController.EXP_CURVE_SERIES_CNT)
-                    .collect(Collectors.toCollection(FXCollections::observableArrayList)));
-        }
-
+    protected static void addData(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
         ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
                 modelData.getResistance(),
                 modelData.getPower(),
                 experimentalData.getAB_2()
         ));
 
-
         vesCurve.getData().add(makeCurveData(experimentalData, solvedResistance));
+    }
+
+    protected static void initializeWithData(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData, ModelData modelData) {
+        if (vesCurve.getData().size() > EXP_CURVE_SERIES_CNT) {
+            vesCurve.setData(vesCurve.getData().stream().limit(EXP_CURVE_SERIES_CNT)
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        }
+        addData(vesCurve, experimentalData, modelData);
     }
 
     private static XYChart.Series<Double, Double> makeCurveData(ExperimentalData experimentalData, List<Double> solvedResistance) {

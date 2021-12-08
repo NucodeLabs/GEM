@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.charts;
 
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -11,12 +11,16 @@ import static java.lang.Math.max;
 
 public class ExperimentalCurve {
 
-    protected static void makeCurve(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData) {
-        vesCurve.getData().clear();
-        vesCurve.getXAxis().setAutoRanging(true);
+    protected static void addData(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData) {
         vesCurve.getData().add(makeCurveData(experimentalData));
         vesCurve.getData().add(makeCurveErrorUpper(experimentalData));
         vesCurve.getData().add(makeCurveErrorLower(experimentalData));
+    }
+
+    protected static void initializeWithData(LineChart<Double, Double> vesCurve, ExperimentalData experimentalData) {
+        vesCurve.getData().clear();
+        vesCurve.getXAxis().setAutoRanging(true);
+        addData(vesCurve, experimentalData);
         vesCurve.setVisible(true);
     }
 

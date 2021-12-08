@@ -11,24 +11,24 @@ import java.util.List;
 
 public class ModelTable {
 
-    protected static void makeTable(
-            List<Double> listRangeAB_2,
-            List<Double> listRangeMN_2,
-            List<Double> listAmperage,
-            List<Double> listVoltage,
-            List<Double> listResistance,
-            List<Double> listResistanceError,
-            List<Double> listPolarization,
-            List<Double> listPolarizationError,
-            TableView<TableLine> experimentalTable,
-            TableColumn<TableLine, Double> experimentalAB_2Column,
-            TableColumn<TableLine, Double> experimentalMN_2Column,
-            TableColumn<TableLine, Double> experimentalAmperageColumn,
-            TableColumn<TableLine, Double> experimentalVoltageColumn,
-            TableColumn<TableLine, Double> experimentalResistanceAppColumn,
-            TableColumn<TableLine, Double> experimentalErrorResistanceAppColumn,
-            TableColumn<TableLine, Double> experimentalPolarizationAppColumn,
-            TableColumn<TableLine, Double> experimentalErrorPolarizationAppColumn) {
+    protected static void makeTable( // ИСПРАВИТЬ СИГНАТУРУ НА ИСПОЛЬЗОВАНИЕ ExperimentalData И ModelData
+                                     List<Double> listRangeAB_2,
+                                     List<Double> listRangeMN_2,
+                                     List<Double> listAmperage,
+                                     List<Double> listVoltage,
+                                     List<Double> listResistance,
+                                     List<Double> listResistanceError,
+                                     List<Double> listPolarization,
+                                     List<Double> listPolarizationError,
+                                     TableView<TableLine> experimentalTable,
+                                     TableColumn<TableLine, Double> experimentalAB_2Column,
+                                     TableColumn<TableLine, Double> experimentalMN_2Column,
+                                     TableColumn<TableLine, Double> experimentalAmperageColumn,
+                                     TableColumn<TableLine, Double> experimentalVoltageColumn,
+                                     TableColumn<TableLine, Double> experimentalResistanceAppColumn,
+                                     TableColumn<TableLine, Double> experimentalErrorResistanceAppColumn,
+                                     TableColumn<TableLine, Double> experimentalPolarizationAppColumn,
+                                     TableColumn<TableLine, Double> experimentalErrorPolarizationAppColumn) {
 
         experimentalAB_2Column.setCellValueFactory(new PropertyValueFactory<>("rangeAB"));
         experimentalMN_2Column.setCellValueFactory(new PropertyValueFactory<>("rangeMN"));

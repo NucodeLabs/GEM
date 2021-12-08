@@ -5,4 +5,5 @@ module ru.nucodelabs {
     requires javafx.graphics;
 
     opens ru.nucodelabs.gem;
+    opens ru.nucodelabs.gem.charts;
 }
