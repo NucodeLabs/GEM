@@ -17,6 +17,8 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
+import ru.nucodelabs.gem.charts.InaccuracyCurve;
+import ru.nucodelabs.gem.charts.VESCurve;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,11 +32,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AppController implements Initializable {
-    protected static final int EXP_CURVE_SERIES_CNT = 3;
-    protected static final int THEOR_CURVE_SERIES_CNT = 4;
-    protected static final int MOD_CURVE_SERIES_CNT = 5;
 
     Picket picket;
+    VESCurve vesCurve;
 
     protected static final StringConverter<Number> powerOf10Formatter = new StringConverter<>() {
         final Function<String, String> toUpperIndex = string -> {
@@ -90,13 +90,13 @@ public class AppController implements Initializable {
     public MenuItem menuFileOpenMOD;
 
     public TitledPane inaccuracyPane;
-    public LineChart<Double, Double> inaccuracyCurve;
+    public LineChart<Double, Double> inaccuracyLineChart;
 
     public SplitPane vesSplitPane;
     public TitledPane vesPane;
-    public LineChart<Double, Double> vesCurve;
-    public NumberAxis vesCurveAxisY;
-    public NumberAxis vesCurveAxisX;
+    public LineChart<Double, Double> vesLineChart;
+    public NumberAxis vesLineChartYAxis;
+    public NumberAxis vesLineChartXAxis;
 
     public TableView<TableLine> experimentalTable;
     public TableColumn<TableLine, Double> experimentalAB_2Column;
@@ -155,8 +155,9 @@ public class AppController implements Initializable {
             alert.show();
         }
 
-        ExperimentalCurve.makeCurve(vesCurve, picket.getExperimentalData());
-        ExperimentalTable.makeTable(
+        vesCurve = new VESCurve(vesLineChart, picket);
+        vesCurve.createExperimentalCurve();
+        ExperimentalTable.initializeWithData(
                 experimentalTable,
                 experimentalAB_2Column,
                 experimentalResistanceApparentColumn,
@@ -164,7 +165,7 @@ public class AppController implements Initializable {
                 picket.getExperimentalData());
 
 
-        inaccuracyCurve.getData().clear();
+        inaccuracyLineChart.getData().clear();
         App.primaryStage.setTitle(file.getName() + " - GEM");
         menuFileOpenMOD.setDisable(false);
     }
@@ -195,10 +196,9 @@ public class AppController implements Initializable {
 
         picket.setModelData(new ModelData(openedMOD));
         try {
-            TheoreticalCurve.makeCurve(vesCurve, picket.getExperimentalData(), picket.getModelData());
-            ModelCurve.makeCurve(vesCurve, picket.getModelData());
-
-            InaccuracyCurve.makeCurve(inaccuracyCurve, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
+            vesCurve.createTheoreticalCurve();
+            vesCurve.createModelCurve();
+            InaccuracyCurve.initializeWithData(inaccuracyLineChart, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
         } catch (UnsatisfiedLinkError e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Невозможно решить прямую задачу");
@@ -225,9 +225,10 @@ public class AppController implements Initializable {
                 KeyCombination.SHIFT_DOWN
         ));
 
-        vesCurve.setVisible(false);
-        inaccuracyCurve.setVisible(false);
-        vesCurveAxisY.setTickLabelFormatter(powerOf10Formatter);
-        vesCurveAxisX.setTickLabelFormatter(powerOf10Formatter);
+        inaccuracyLineChart.setVisible(false);
+
+        vesLineChart.setVisible(false);
+        vesLineChartYAxis.setTickLabelFormatter(powerOf10Formatter);
+        vesLineChartXAxis.setTickLabelFormatter(powerOf10Formatter);
     }
 }

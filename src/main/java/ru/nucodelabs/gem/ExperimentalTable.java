@@ -16,7 +16,8 @@ public class ExperimentalTable {
             TableView<TableLine> experimentalTable,
             TableColumn<TableLine, Double> experimentalAB_2Column,
             TableColumn<TableLine, Double> experimentalResistanceApparentColumn,
-            TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn, ExperimentalData experimentalData) {
+            TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn, ExperimentalData experimentalData
+    ) {
 
         experimentalAB_2Column.setCellValueFactory(new PropertyValueFactory<>("AB_2"));
 
@@ -26,6 +27,21 @@ public class ExperimentalTable {
 
         ObservableList<TableLine> tableContent = makeTableContent(experimentalData);
         experimentalTable.setItems(tableContent);
+    }
+
+    protected static void initializeWithData(
+            TableView<TableLine> experimentalTable,
+            TableColumn<TableLine, Double> experimentalAB_2Column,
+            TableColumn<TableLine, Double> experimentalResistanceApparentColumn,
+            TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn, ExperimentalData experimentalData
+    ) {
+        makeTable(
+                experimentalTable,
+                experimentalAB_2Column,
+                experimentalResistanceApparentColumn,
+                experimentalErrorResistanceApparentColumn,
+                experimentalData
+        );
     }
 
     protected static ObservableList<TableLine> makeTableContent(ExperimentalData experimentalData) {

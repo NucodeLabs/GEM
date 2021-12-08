@@ -64,7 +64,7 @@
                     <opaqueInsets>
                         <Insets/>
                     </opaqueInsets>
-                    <LineChart fx:id="inaccuracyCurve" legendVisible="false" maxHeight="1.7976931348623157E308"
+                    <LineChart fx:id="inaccuracyLineChart" legendVisible="false" maxHeight="1.7976931348623157E308"
                                minHeight="0.0" prefHeight="150.0" title="\%" titleSide="LEFT">
                         <xAxis>
                             <NumberAxis forceZeroInRange="false" minorTickLength="3.0" minorTickVisible="false"
@@ -87,10 +87,11 @@
                     </font>
                 </TitledPane>
                 <TitledPane fx:id="vesPane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
-                    <LineChart fx:id="vesCurve" alternativeColumnFillVisible="true" cacheShape="false"
+                    <LineChart fx:id="vesLineChart" alternativeColumnFillVisible="true" cacheShape="false"
                                centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
                         <xAxis>
-                            <NumberAxis fx:id="vesCurveAxisX" forceZeroInRange="false" label="AB/2, m" prefHeight="26.0"
+                            <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2, m"
+                                        prefHeight="26.0"
                                         prefWidth="481.0" side="BOTTOM" tickUnit="1.0" upperBound="4.0">
                                 <cursor>
                                     <Cursor fx:constant="DEFAULT"/>
@@ -104,7 +105,8 @@
                             </NumberAxis>
                         </xAxis>
                         <yAxis>
-                            <NumberAxis fx:id="vesCurveAxisY" cache="true" forceZeroInRange="false" label="ρₐ, Ohm‧m"
+                            <NumberAxis fx:id="vesLineChartYAxis" cache="true" forceZeroInRange="false"
+                                        label="ρₐ, Ohm‧m"
                                         lowerBound="1.0" prefHeight="128.0" prefWidth="20.0" side="LEFT"
                                         tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
                                 <tickLabelFont>
