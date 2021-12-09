@@ -23,16 +23,16 @@
             <MenuItem mnemonicParsing="false" text="Delete"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%help">
-            <MenuItem mnemonicParsing="false" text="About" />
+            <MenuItem mnemonicParsing="false" text="About"/>
         </Menu>
     </MenuBar>
-    <SplitPane dividerPositions="0.5301866081229418" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
         <SplitPane dividerPositions="0.48205445544554454" maxHeight="1.7976931348623157E308"
                    maxWidth="1.7976931348623157E308">
             <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        text="%pseudoSection">
+                        minHeight="0.0" text="%pseudoSection">
                 <content>
-                    <AreaChart>
+                    <AreaChart minHeight="0.0">
                         <xAxis>
                             <CategoryAxis side="BOTTOM"/>
                         </xAxis>
@@ -43,9 +43,9 @@
                 </content>
             </TitledPane>
             <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        text="%geoSection">
+                        minHeight="0.0" text="%geoSection">
                 <content>
-                    <LineChart>
+                    <LineChart minHeight="0.0">
                         <xAxis>
                             <CategoryAxis side="BOTTOM"/>
                         </xAxis>
@@ -56,7 +56,7 @@
                 </content>
             </TitledPane>
         </SplitPane>
-        <SplitPane dividerPositions="0.68" minHeight="200.0">
+        <SplitPane dividerPositions="0.68" maxHeight="1.7976931348623157E308" minHeight="200.0">
             <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0"
                        orientation="VERTICAL">
                 <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false"
@@ -91,8 +91,8 @@
                                centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
                         <xAxis>
                             <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2, m"
-                                        prefHeight="26.0"
-                                        prefWidth="481.0" side="BOTTOM" tickUnit="1.0" upperBound="4.0">
+                                        prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
+                                        upperBound="4.0">
                                 <cursor>
                                     <Cursor fx:constant="DEFAULT"/>
                                 </cursor>
@@ -106,9 +106,8 @@
                         </xAxis>
                         <yAxis>
                             <NumberAxis fx:id="vesLineChartYAxis" cache="true" forceZeroInRange="false"
-                                        label="ρₐ, Ohm‧m"
-                                        lowerBound="1.0" prefHeight="128.0" prefWidth="20.0" side="LEFT"
-                                        tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
+                                        label="ρₐ, Ohm‧m" lowerBound="1.0" prefHeight="128.0" prefWidth="20.0"
+                                        side="LEFT" tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
                                 <tickLabelFont>
                                     <Font size="14.0"/>
                                 </tickLabelFont>
@@ -123,7 +122,7 @@
                     </LineChart>
                 </TitledPane>
             </SplitPane>
-            <TabPane tabClosingPolicy="UNAVAILABLE">
+            <TabPane maxHeight="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                 <Tab text="%modelTable">
                     <VBox prefHeight="200.0" prefWidth="100.0">
                         <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
