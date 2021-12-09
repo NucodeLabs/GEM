@@ -8,6 +8,6 @@ public class PowerOf10FormatterTest {
     @Test
     void test() {
         Number[] src = new Number[]{1.23, 4.56, 7.089};
-        Arrays.stream(src).forEach(n -> System.out.println(AppController.powerOf10Formatter.toString(n)));
+        Arrays.stream(src).forEach(n -> System.out.println((new PowerOf10Formatter()).toString(n)));
     }
 }

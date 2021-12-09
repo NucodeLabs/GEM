@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.tables;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +29,7 @@ public class ExperimentalTable {
         experimentalTable.setItems(tableContent);
     }
 
-    protected static void initializeWithData(
+    public static void initializeWithData(
             TableView<TableLine> experimentalTable,
             TableColumn<TableLine, Double> experimentalAB_2Column,
             TableColumn<TableLine, Double> experimentalResistanceApparentColumn,
