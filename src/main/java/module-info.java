@@ -6,4 +6,5 @@ module ru.nucodelabs {
 
     opens ru.nucodelabs.gem;
     opens ru.nucodelabs.gem.charts;
+    opens ru.nucodelabs.gem.tables;
 }

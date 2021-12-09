@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.tables;
 
 import javafx.beans.property.SimpleDoubleProperty;
 
