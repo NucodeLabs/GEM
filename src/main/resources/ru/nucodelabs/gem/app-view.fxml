@@ -31,7 +31,6 @@
                    maxWidth="1.7976931348623157E308">
             <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         minHeight="0.0" text="%pseudoSection">
-                <content>
                     <AreaChart minHeight="0.0">
                         <xAxis>
                             <CategoryAxis side="BOTTOM"/>
@@ -40,11 +39,9 @@
                             <NumberAxis side="LEFT"/>
                         </yAxis>
                     </AreaChart>
-                </content>
             </TitledPane>
             <TitledPane collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         minHeight="0.0" text="%geoSection">
-                <content>
                     <LineChart minHeight="0.0">
                         <xAxis>
                             <CategoryAxis side="BOTTOM"/>
@@ -53,7 +50,6 @@
                             <NumberAxis side="LEFT"/>
                         </yAxis>
                     </LineChart>
-                </content>
             </TitledPane>
         </SplitPane>
         <SplitPane dividerPositions="0.68" maxHeight="1.7976931348623157E308" minHeight="200.0">

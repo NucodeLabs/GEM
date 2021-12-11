@@ -46,11 +46,11 @@
     -fx-stroke-width: 2px;
 }
 
-#vesLineChart .chart-series-line.series4 {
+#vesLineChart .chart-series-line#modelCurve {
     -fx-stroke: Blue;
 }
 
-#vesLineChart .chart-line-symbol.series4 {
+#vesLineChart .chart-line-symbol#modelCurve {
     -fx-border-radius: 50%;
     -fx-border-width: 2px;
     -fx-pref-height: 7px;
