@@ -12,6 +12,7 @@ public class TableLine {
     private SimpleDoubleProperty errorResistanceApparent;
     private SimpleDoubleProperty polarizationApparent;
     private SimpleDoubleProperty errorPolarizationApparent;
+    private SimpleDoubleProperty power;
 
     public TableLine() {
         this.AB_2 = new SimpleDoubleProperty();
@@ -22,6 +23,7 @@ public class TableLine {
         this.errorResistanceApparent = new SimpleDoubleProperty();
         this.polarizationApparent = new SimpleDoubleProperty();
         this.errorPolarizationApparent = new SimpleDoubleProperty();
+        this.power = new SimpleDoubleProperty();
 
         this.AB_2 = AB_2Property();
         this.MN_2 = MN_2Property();
@@ -31,6 +33,22 @@ public class TableLine {
         this.errorResistanceApparent = errorResistanceApparentProperty();
         this.polarizationApparent = polarizationApparentProperty();
         this.errorPolarizationApparent = errorPolarizationApparentProperty();
+        this.power = powerProperty();
+    }
+
+    public void setPower(double power) {
+        this.power.set(power);
+    }
+
+    public double getPower() {
+        return power.get();
+    }
+
+    public SimpleDoubleProperty powerProperty() {
+        if (power == null) {
+            setPower(0.0);
+        }
+        return power;
     }
 
     //Range AB
@@ -137,34 +155,34 @@ public class TableLine {
 
     //Polarization
 
-    public double getPolarizationApp() {
+    public double getPolarizationApparent() {
         return polarizationApparent.get();
     }
 
-    public void setPolarizationApp(double polarization) {
+    public void setPolarizationApparent(double polarization) {
         this.polarizationApparent.set(polarization);
     }
 
     public SimpleDoubleProperty polarizationApparentProperty() {
         if (polarizationApparent == null) {
-            setPolarizationApp(0.0);
+            setPolarizationApparent(0.0);
         }
         return polarizationApparent;
     }
 
     //Polarization Error
 
-    public double getErrorPolarizationApp() {
+    public double getErrorPolarizationApparent() {
         return errorPolarizationApparent.get();
     }
 
-    public void setErrorPolarizationApp(double polarizationError) {
+    public void setErrorPolarizationApparent(double polarizationError) {
         this.errorPolarizationApparent.set(polarizationError);
     }
 
     public SimpleDoubleProperty errorPolarizationApparentProperty() {
         if (errorPolarizationApparent == null) {
-            setErrorPolarizationApp(0.0);
+            setErrorPolarizationApparent(0.0);
         }
         return errorPolarizationApparent;
     }
