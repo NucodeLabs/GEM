@@ -19,6 +19,7 @@ import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.charts.InaccuracyCurve;
 import ru.nucodelabs.gem.charts.VESCurve;
 import ru.nucodelabs.gem.tables.ExperimentalTable;
+import ru.nucodelabs.gem.tables.ModelTable;
 import ru.nucodelabs.gem.tables.TableLine;
 
 import java.io.File;
@@ -31,6 +32,8 @@ public class AppController implements Initializable {
 
     Picket picket;
     VESCurve vesCurve;
+    String currentEXPFileName;
+    String currentMODFileName;
 
     @FXML
     public VBox mainPane;
@@ -49,8 +52,16 @@ public class AppController implements Initializable {
 
     public TableView<TableLine> experimentalTable;
     public TableColumn<TableLine, Double> experimentalAB_2Column;
+    public TableColumn<TableLine, Double> experimentalMN_2Column;
     public TableColumn<TableLine, Double> experimentalResistanceApparentColumn;
+    public TableColumn<TableLine, Double> experimentalAmperageColumn;
+    public TableColumn<TableLine, Double> experimentalVoltageColumn;
     public TableColumn<TableLine, Double> experimentalErrorResistanceApparentColumn;
+
+    public TableView<TableLine> modelTable;
+    public TableColumn<TableLine, Double> modelPowerColumn;
+    public TableColumn<TableLine, Double> modelResistanceApparentColumn;
+    public TableColumn<TableLine, Double> modelPolarizationColumn;
 
     @FXML
     public void onMenuFileOpenEXP() {
@@ -86,24 +97,11 @@ public class AppController implements Initializable {
             return;
         }
 
+        drawExperimentalCurve(openedEXP, openedSTT);
 
-        picket = new Picket(openedEXP, openedSTT);
-        if (picket.getExperimentalData().isUnsafe()) {
-            alertExperimentalDataIsUnsafe();
-        }
-
-        vesCurve = new VESCurve(vesLineChart, picket);
-        vesCurve.createExperimentalCurve();
-        ExperimentalTable.initializeWithData(
-                experimentalTable,
-                experimentalAB_2Column,
-                experimentalResistanceApparentColumn,
-                experimentalErrorResistanceApparentColumn,
-                picket.getExperimentalData());
-
-
-        inaccuracyLineChart.getData().clear();
-        App.primaryStage.setTitle(file.getName() + " - GEM");
+        currentEXPFileName = file.getName();
+        vesPane.setText(currentEXPFileName);
+        //App.primaryStage.setTitle(file.getName() + " - GEM");
         menuFileOpenMOD.setDisable(false);
     }
 
@@ -148,19 +146,9 @@ public class AppController implements Initializable {
             return;
         }
 
-        picket.setModelData(new ModelData(openedMOD));
-        try {
-            vesCurve.createTheoreticalCurve();
-            vesCurve.createModelCurve();
-            InaccuracyCurve.initializeWithData(inaccuracyLineChart, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
-        } catch (UnsatisfiedLinkError e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Невозможно решить прямую задачу");
-            alert.setHeaderText("Отсутствует библиотека ForwardSolver");
-            alert.setContentText(e.getMessage());
-            alert.show();
-            return;
-        }
+        drawTheoreticalCurve(openedMOD);
+        currentMODFileName = file.getName();
+        vesPane.setText(currentEXPFileName + " - " + currentMODFileName);
     }
 
     @Override
@@ -184,5 +172,49 @@ public class AppController implements Initializable {
         vesLineChart.setVisible(false);
         vesLineChartYAxis.setTickLabelFormatter(new PowerOf10Formatter());
         vesLineChartXAxis.setTickLabelFormatter(new PowerOf10Formatter());
+    }
+
+    private void drawTheoreticalCurve(MODFile openedMOD) {
+        picket.setModelData(new ModelData(openedMOD));
+        try {
+            vesCurve.createTheoreticalCurve();
+            vesCurve.createModelCurve();
+            InaccuracyCurve.initializeWithData(inaccuracyLineChart, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
+            ModelTable.initializeWithData(
+                    modelTable,
+                    modelPowerColumn,
+                    modelResistanceApparentColumn,
+                    modelPolarizationColumn,
+                    picket.getModelData());
+        } catch (UnsatisfiedLinkError e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Невозможно решить прямую задачу");
+            alert.setHeaderText("Отсутствует библиотека ForwardSolver");
+            alert.setContentText(e.getMessage());
+            alert.show();
+            return;
+        }
+    }
+
+    private void drawExperimentalCurve(EXPFile openedEXP, STTFile openedSTT) {
+        picket = new Picket(openedEXP, openedSTT);
+        if (picket.getExperimentalData().isUnsafe()) {
+            alertExperimentalDataIsUnsafe();
+        }
+
+        vesCurve = new VESCurve(vesLineChart, picket);
+        vesCurve.createExperimentalCurve();
+        ExperimentalTable.initializeWithData(
+                experimentalTable,
+                experimentalAB_2Column,
+                experimentalMN_2Column,
+                experimentalResistanceApparentColumn,
+                experimentalAmperageColumn,
+                experimentalVoltageColumn,
+                experimentalErrorResistanceApparentColumn,
+                picket.getExperimentalData());
+
+
+        inaccuracyLineChart.getData().clear();
     }
 }
