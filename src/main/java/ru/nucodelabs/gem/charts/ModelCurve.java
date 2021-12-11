@@ -18,6 +18,7 @@ import static ru.nucodelabs.gem.charts.VESCurve.*;
 public class ModelCurve {
     protected static void addData(LineChart<Double, Double> vesCurve, ModelData modelData) {
         vesCurve.getData().add(makeCurveData(modelData));
+        vesCurve.getData().get(vesCurve.getData().size() - 1).getNode().setId("modelCurve");
     }
 
     protected static void initializeWithData(LineChart<Double, Double> vesCurve, ModelData modelData) {
