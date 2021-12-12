@@ -52,7 +52,9 @@
 
 #vesCurveLineChart .chart-line-symbol.series4 {
     -fx-border-color: transparent;
-    -fx-background-color: transparent;
+    -fx-background-color: Blue;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }
 
 #vesCurveLineChart .chart-line-symbol {
