@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import ru.nucodelabs.data.ModelData;
@@ -217,5 +218,14 @@ public class AppController implements Initializable {
                         currentMODFileName
                 )
         );
+    }
+
+    @FXML
+    public void showHideVESCurveLegendOnDoubleClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2 && !vesCurveLineChart.isLegendVisible()) {
+            vesCurveLineChart.setLegendVisible(true);
+        } else if (mouseEvent.getClickCount() == 2 && vesCurveLineChart.isLegendVisible()) {
+            vesCurveLineChart.setLegendVisible(false);
+        }
     }
 }

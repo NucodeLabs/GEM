@@ -80,6 +80,8 @@ public class VESCurve {
 
             errorExperimentalCurveLowerBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
+
+        errorExperimentalCurveLowerBoundSeries.setName("Нижняя граница погрешности");
         return errorExperimentalCurveLowerBoundSeries;
     }
 
@@ -99,6 +101,7 @@ public class VESCurve {
             errorExperimentalCurveUpperBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
+        errorExperimentalCurveUpperBoundSeries.setName("Верхняя граница погрешности");
         return errorExperimentalCurveUpperBoundSeries;
     }
 
@@ -111,6 +114,7 @@ public class VESCurve {
             experimentalCurveSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
+        experimentalCurveSeries.setName("Экспериментальная кривая");
         return experimentalCurveSeries;
     }
 
@@ -141,6 +145,7 @@ public class VESCurve {
             theoreticalCurveSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
+        theoreticalCurveSeries.setName("Теоретическая кривая");
         return theoreticalCurveSeries;
     }
 
@@ -220,6 +225,7 @@ public class VESCurve {
                 )
         );
 
+        modelCurveSeries.setName("Кривая модели");
         return modelCurveSeries;
     }
 

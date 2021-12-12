@@ -77,9 +77,11 @@
                         <Font name="System Font" size="13.0"/>
                     </font>
                 </TitledPane>
-                <TitledPane fx:id="vesCurvePane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
+                <TitledPane fx:id="vesCurvePane" collapsible="false" maxHeight="1.7976931348623157E308"
+                            onMouseClicked="#showHideVESCurveLegendOnDoubleClick" text="%ves">
                     <LineChart fx:id="vesCurveLineChart" alternativeColumnFillVisible="true" cacheShape="false"
-                               centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
+                               centerShape="false" legendSide="TOP" legendVisible="false" minHeight="100.0"
+                               scaleShape="false">
                         <xAxis>
                             <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
                                         prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
