@@ -16,7 +16,7 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
-import ru.nucodelabs.gem.charts.InaccuracyCurve;
+import ru.nucodelabs.gem.charts.InaccuracyStacks;
 import ru.nucodelabs.gem.charts.VESCurve;
 import ru.nucodelabs.gem.tables.ExperimentalTable;
 import ru.nucodelabs.gem.tables.ModelTable;
@@ -28,12 +28,37 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import static java.lang.String.format;
+
 public class AppController implements Initializable {
 
     Picket picket;
     VESCurve vesCurve;
-    String currentEXPFileName;
-    String currentMODFileName;
+    InaccuracyStacks inaccuracyStacks;
+
+    private void alertExperimentalDataIsUnsafe() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Режим совместимости");
+        alert.setHeaderText("STT и EXP содержат разное количество строк");
+        alert.setContentText("Будет отображаться минимально возможное число данных");
+        alert.show();
+    }
+
+    private void alertFileNotFound(FileNotFoundException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText("Файл не найден!");
+        alert.setContentText(e.getMessage());
+        alert.show();
+    }
+
+    private void alertNoLib(UnsatisfiedLinkError e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Невозможно отрисовать график");
+        alert.setHeaderText("Отсутствует библиотека");
+        alert.setContentText(e.getMessage());
+        alert.show();
+    }
 
     @FXML
     public VBox mainPane;
@@ -63,94 +88,6 @@ public class AppController implements Initializable {
     public TableColumn<TableLine, Double> modelResistanceApparentColumn;
     public TableColumn<TableLine, Double> modelPolarizationColumn;
 
-    @FXML
-    public void onMenuFileOpenEXP() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Выберите файл полевых данных для интерпретации");
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
-        );
-        File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
-//      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
-        if (file == null) {
-            return;
-        }
-
-        Path openedFilePath = file.toPath();
-
-        EXPFile openedEXP;
-        try {
-            openedEXP = SonetImport.readEXP(file);
-        } catch (FileNotFoundException e) {
-            alertWindowFileNotFoundException(e);
-            return;
-        }
-
-        STTFile openedSTT;
-        try {
-            openedSTT = SonetImport.readSTT(new File(
-                    openedFilePath.getParent().toString()
-                            + File.separator
-                            + openedEXP.getSTTFileName()));
-        } catch (FileNotFoundException e) {
-            alertWindowFileNotFoundException(e);
-            return;
-        }
-
-        drawExperimentalCurve(openedEXP, openedSTT);
-
-        currentEXPFileName = file.getName();
-        vesPane.setText(currentEXPFileName);
-        //App.primaryStage.setTitle(file.getName() + " - GEM");
-        menuFileOpenMOD.setDisable(false);
-    }
-
-    private void alertExperimentalDataIsUnsafe() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Режим совместимости");
-        alert.setHeaderText("STT и EXP содержат разное количество строк");
-        alert.setContentText("Будет отображаться минимально возможное число данных");
-        alert.show();
-    }
-
-    private void alertWindowFileNotFoundException(FileNotFoundException e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Файл не найден!");
-        alert.setContentText(e.getMessage());
-        alert.show();
-        return;
-    }
-
-    @FXML
-    public void onMenuFileOpenMOD() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Выберите файл модели");
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
-        );
-        File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
-        if (file == null) {
-            return;
-        }
-
-        MODFile openedMOD;
-        try {
-            openedMOD = SonetImport.readMOD(file);
-        } catch (FileNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Ошибка");
-            alert.setHeaderText("Файл не найден!");
-            alert.setContentText(e.getMessage());
-            alert.show();
-            return;
-        }
-
-        drawTheoreticalCurve(openedMOD);
-        currentMODFileName = file.getName();
-        vesPane.setText(currentEXPFileName + " - " + currentMODFileName);
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         var osName = System.getProperty("os.name").toLowerCase();
@@ -174,29 +111,40 @@ public class AppController implements Initializable {
         vesLineChartXAxis.setTickLabelFormatter(new PowerOf10Formatter());
     }
 
-    private void drawTheoreticalCurve(MODFile openedMOD) {
-        picket.setModelData(new ModelData(openedMOD));
-        try {
-            vesCurve.createTheoreticalCurve();
-            vesCurve.createModelCurve();
-            InaccuracyCurve.initializeWithData(inaccuracyLineChart, inaccuracyPane, picket.getExperimentalData(), picket.getModelData());
-            ModelTable.initializeWithData(
-                    modelTable,
-                    modelPowerColumn,
-                    modelResistanceApparentColumn,
-                    modelPolarizationColumn,
-                    picket.getModelData());
-        } catch (UnsatisfiedLinkError e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Невозможно решить прямую задачу");
-            alert.setHeaderText("Отсутствует библиотека ForwardSolver");
-            alert.setContentText(e.getMessage());
-            alert.show();
+    @FXML
+    public void onMenuFileOpenEXP() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Выберите файл полевых данных для интерпретации");
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
+        );
+        File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
+//      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
+        if (file == null) {
             return;
         }
-    }
 
-    private void drawExperimentalCurve(EXPFile openedEXP, STTFile openedSTT) {
+        Path openedFilePath = file.toPath();
+
+        EXPFile openedEXP;
+        try {
+            openedEXP = SonetImport.readEXP(file);
+        } catch (FileNotFoundException e) {
+            alertFileNotFound(e);
+            return;
+        }
+
+        STTFile openedSTT;
+        try {
+            openedSTT = SonetImport.readSTT(new File(
+                    openedFilePath.getParent().toString()
+                            + File.separator
+                            + openedEXP.getSTTFileName()));
+        } catch (FileNotFoundException e) {
+            alertFileNotFound(e);
+            return;
+        }
+
         picket = new Picket(openedEXP, openedSTT);
         if (picket.getExperimentalData().isUnsafe()) {
             alertExperimentalDataIsUnsafe();
@@ -212,9 +160,62 @@ public class AppController implements Initializable {
                 experimentalAmperageColumn,
                 experimentalVoltageColumn,
                 experimentalErrorResistanceApparentColumn,
-                picket.getExperimentalData());
+                picket.getExperimentalData()
+        );
 
 
         inaccuracyLineChart.getData().clear();
+        inaccuracyLineChart.setVisible(false);
+
+        String currentEXPFileName = file.getName();
+        vesPane.setText(currentEXPFileName);
+        //App.primaryStage.setTitle(file.getName() + " - GEM");
+        menuFileOpenMOD.setDisable(false);
+    }
+
+    @FXML
+    public void onMenuFileOpenMOD() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Выберите файл модели");
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
+        );
+        File file = chooser.showOpenDialog(mainPane.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        MODFile openedMOD;
+        try {
+            openedMOD = SonetImport.readMOD(file);
+        } catch (FileNotFoundException e) {
+            alertFileNotFound(e);
+            return;
+        }
+
+        picket.setModelData(new ModelData(openedMOD));
+        inaccuracyStacks = new InaccuracyStacks(inaccuracyLineChart, inaccuracyPane, picket);
+        try {
+            vesCurve.createTheoreticalCurve();
+            vesCurve.createModelCurve();
+            inaccuracyStacks.createInaccuracyStacks();
+            ModelTable.initializeWithData(
+                    modelTable,
+                    modelPowerColumn,
+                    modelResistanceApparentColumn,
+                    modelPolarizationColumn,
+                    picket.getModelData());
+        } catch (UnsatisfiedLinkError e) {
+            alertNoLib(e);
+            return;
+        }
+        String currentMODFileName = file.getName();
+        vesPane.setText(
+                format(
+                        "%s - %s",
+                        vesPane.getText().split("\s")[0],
+                        currentMODFileName
+                )
+        );
     }
 }
