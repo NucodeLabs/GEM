@@ -3,11 +3,10 @@ package ru.nucodelabs.gem.charts;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.Picket;
 
@@ -161,27 +160,50 @@ public class VESCurve {
         }
         vesCurveLineChart.getXAxis().setAutoRanging(false);
         vesCurveLineChart.getData().add(modelCurveSeries);
-        vesCurveLineChart.getData().get(vesCurveLineChart.getData().size() - 1).getNode().setId("modelCurve");
+        vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode().setCursor(Cursor.HAND);
+        vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode().setOnMouseDragged(this::mouseDraggedHandler);
+    }
 
-        XYChart.Series<Double, Double> series = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX);
-        Axis<Double> xAxis = vesCurveLineChart.getXAxis();
-        Axis<Double> yAxis = vesCurveLineChart.getYAxis();
+    private void mouseDraggedHandler(MouseEvent mouseEvent) {
+        vesCurveLineChart.setAnimated(false);
+        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-        for (XYChart.Data<Double, Double> data : series.getData()) {
-            Node node = data.getNode();
-            node.setCursor(Cursor.HAND);
-            node.setOnMouseDragged(e -> {
-                vesCurveLineChart.setAnimated(false);
-                Point2D pointInScene = new Point2D(e.getSceneX(), e.getSceneY());
-                double xAxisLoc = xAxis.sceneToLocal(pointInScene).getX();
-                double yAxisLoc = yAxis.sceneToLocal(pointInScene).getY();
-                Double x = xAxis.getValueForDisplay(xAxisLoc);
-                Double y = yAxis.getValueForDisplay(yAxisLoc);
-                data.setXValue(x);
-                data.setYValue(y);
-                vesCurveLineChart.setAnimated(false);
-            });
+        Double mouseX = vesCurveLineChart.getXAxis().getValueForDisplay(
+                vesCurveLineChart.getXAxis().sceneToLocal(pointInScene).getX()
+        );
+        Double mouseY = vesCurveLineChart.getYAxis().getValueForDisplay(
+                vesCurveLineChart.getYAxis().sceneToLocal(pointInScene).getY()
+        );
+
+        var points = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getData();
+        var closestVertical = points.stream()
+                .filter(p -> p.getXValue() > mouseX - 0.1 && p.getXValue() < mouseX + 0.1)
+                .toList();
+
+        if (closestVertical.size() == 2) {
+            closestVertical.get(0).setXValue(mouseX);
+            closestVertical.get(1).setXValue(mouseX);
+        } else {
+            XYChart.Data<Double, Double> closestLeft = null;
+            XYChart.Data<Double, Double> closestRight = null;
+
+            for (XYChart.Data<Double, Double> point : points) {
+                if (point.getXValue() < mouseX) {
+                    closestLeft = point;
+                }
+                if (point.getXValue() > mouseX) {
+                    closestRight = point;
+                    break;
+                }
+            }
+
+            if (closestLeft != null && closestRight != null) {
+                closestLeft.setYValue(mouseY);
+                closestRight.setYValue(mouseY);
+            }
         }
+
+        vesCurveLineChart.setAnimated(true);
     }
 
     private XYChart.Series<Double, Double> getModelCurveSeries() {
@@ -218,10 +240,14 @@ public class VESCurve {
         }
 
 //        last point
+        final int lastResistanceIndex = picket.getModelData().getResistance().size() - 1;
         modelCurveSeries.getData().add(
                 new XYChart.Data<>(
-                        100d,
-                        log10(picket.getModelData().getResistance().get(picket.getModelData().getResistance().size() - 1))
+                        log10(max(
+                                prevSum,
+                                picket.getExperimentalData().getAB_2().get(picket.getExperimentalData().getSize() - 1)
+                        )),
+                        log10(picket.getModelData().getResistance().get(lastResistanceIndex))
                 )
         );
 
