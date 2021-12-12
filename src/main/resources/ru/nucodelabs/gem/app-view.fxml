@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
+<?import javafx.scene.text.Font?>
+<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0"
+      prefWidth="1280.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
     <MenuBar fx:id="menuBar">
         <Menu mnemonicParsing="false" text="%file">
-            <MenuItem mnemonicParsing="false" text="%create" />
+            <MenuItem mnemonicParsing="false" text="%create"/>
             <Menu mnemonicParsing="false" text="%open">
-                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP" />
-                <MenuItem fx:id="menuFileOpenMOD" disable="true" mnemonicParsing="false" onAction="#onMenuFileOpenMOD" text="MOD" />
+                <MenuItem fx:id="menuFileOpenEXP" mnemonicParsing="false" onAction="#onMenuFileOpenEXP" text="EXP"/>
+                <MenuItem fx:id="menuFileOpenMOD" disable="true" mnemonicParsing="false" onAction="#onMenuFileOpenMOD"
+                          text="MOD"/>
             </Menu>
-            <MenuItem mnemonicParsing="false" text="%close" />
+            <MenuItem mnemonicParsing="false" text="%close"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%edit">
             <MenuItem mnemonicParsing="false" text="Delete" />
@@ -78,22 +80,26 @@
                 <TitledPane fx:id="vesPane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
                     <LineChart fx:id="vesLineChart" alternativeColumnFillVisible="true" cacheShape="false" centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
                         <xAxis>
-                            <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2, m" prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0" upperBound="4.0">
+                            <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
+                                        prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
+                                        upperBound="4.0">
                                 <cursor>
-                                    <Cursor fx:constant="DEFAULT" />
+                                    <Cursor fx:constant="DEFAULT"/>
                                 </cursor>
                                 <opaqueInsets>
-                                    <Insets />
+                                    <Insets/>
                                 </opaqueInsets>
                                 <tickLabelFont>
-                                    <Font size="14.0" />
+                                    <Font size="14.0"/>
                                 </tickLabelFont>
                             </NumberAxis>
                         </xAxis>
                         <yAxis>
-                            <NumberAxis fx:id="vesLineChartYAxis" cache="true" forceZeroInRange="false" label="ρₐ, Ohm‧m" lowerBound="1.0" prefHeight="128.0" prefWidth="20.0" side="LEFT" tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
+                            <NumberAxis fx:id="vesLineChartYAxis" cache="true" forceZeroInRange="false"
+                                        label="ρₐ (Ohm‧m)" lowerBound="1.0" prefHeight="128.0" prefWidth="20.0"
+                                        side="LEFT" tickLabelFill="#070707" tickUnit="1.0" upperBound="4.0">
                                 <tickLabelFont>
-                                    <Font size="14.0" />
+                                    <Font size="14.0"/>
                                 </tickLabelFont>
                             </NumberAxis>
                         </yAxis>
