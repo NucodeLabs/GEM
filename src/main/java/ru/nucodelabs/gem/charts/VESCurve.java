@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.TitledPane;
 import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.Picket;
 
@@ -33,6 +34,7 @@ public class VESCurve {
     protected static final double EPSILON = 1e-6;
 
     private final LineChart<Double, Double> vesCurveLineChart;
+    private final TitledPane vesCurvePane;
     private final Picket picket;
 
     /**
@@ -41,8 +43,9 @@ public class VESCurve {
      * @param vesCurveLineChart Line Chart to draw curves
      * @param picket            picket
      */
-    public VESCurve(LineChart<Double, Double> vesCurveLineChart, Picket picket) {
+    public VESCurve(LineChart<Double, Double> vesCurveLineChart, TitledPane vesCurvePane, Picket picket) {
         this.vesCurveLineChart = vesCurveLineChart;
+        this.vesCurvePane = vesCurvePane;
         this.picket = picket;
     }
 

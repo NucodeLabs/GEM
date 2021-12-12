@@ -70,8 +70,8 @@ public class AppController implements Initializable {
     public LineChart<Double, Double> inaccuracyLineChart;
 
     public SplitPane vesSplitPane;
-    public TitledPane vesPane;
-    public LineChart<Double, Double> vesLineChart;
+    public TitledPane vesCurvePane;
+    public LineChart<Double, Double> vesCurveLineChart;
     public NumberAxis vesLineChartYAxis;
     public NumberAxis vesLineChartXAxis;
 
@@ -106,7 +106,7 @@ public class AppController implements Initializable {
 
         inaccuracyLineChart.setVisible(false);
 
-        vesLineChart.setVisible(false);
+        vesCurveLineChart.setVisible(false);
         vesLineChartYAxis.setTickLabelFormatter(new PowerOf10Formatter());
         vesLineChartXAxis.setTickLabelFormatter(new PowerOf10Formatter());
     }
@@ -150,7 +150,7 @@ public class AppController implements Initializable {
             alertExperimentalDataIsUnsafe();
         }
 
-        vesCurve = new VESCurve(vesLineChart, picket);
+        vesCurve = new VESCurve(vesCurveLineChart, vesCurvePane, picket);
         vesCurve.createExperimentalCurve();
         ExperimentalTable.initializeWithData(
                 experimentalTable,
@@ -168,7 +168,7 @@ public class AppController implements Initializable {
         inaccuracyLineChart.setVisible(false);
 
         String currentEXPFileName = file.getName();
-        vesPane.setText(currentEXPFileName);
+        vesCurvePane.setText(currentEXPFileName);
         //App.primaryStage.setTitle(file.getName() + " - GEM");
         menuFileOpenMOD.setDisable(false);
     }
@@ -210,10 +210,10 @@ public class AppController implements Initializable {
             return;
         }
         String currentMODFileName = file.getName();
-        vesPane.setText(
+        vesCurvePane.setText(
                 format(
                         "%s - %s",
-                        vesPane.getText().split("\s")[0],
+                        vesCurvePane.getText().split("\s")[0],
                         currentMODFileName
                 )
         );
