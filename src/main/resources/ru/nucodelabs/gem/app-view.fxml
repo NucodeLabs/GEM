@@ -67,18 +67,19 @@
                             <NumberAxis autoRanging="false" forceZeroInRange="false" lowerBound="-200.0" minorTickCount="2" side="LEFT" tickUnit="100.0" upperBound="200.0" />
                         </yAxis>
                         <opaqueInsets>
-                            <Insets />
+                            <Insets/>
                         </opaqueInsets>
                         <padding>
-                            <Insets left="9.0" />
+                            <Insets left="9.0"/>
                         </padding>
                     </LineChart>
                     <font>
-                        <Font name="System Font" size="13.0" />
+                        <Font name="System Font" size="13.0"/>
                     </font>
                 </TitledPane>
-                <TitledPane fx:id="vesPane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
-                    <LineChart fx:id="vesLineChart" alternativeColumnFillVisible="true" cacheShape="false" centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
+                <TitledPane fx:id="vesCurvePane" collapsible="false" maxHeight="1.7976931348623157E308" text="%ves">
+                    <LineChart fx:id="vesCurveLineChart" alternativeColumnFillVisible="true" cacheShape="false"
+                               centerShape="false" legendVisible="false" minHeight="100.0" scaleShape="false">
                         <xAxis>
                             <NumberAxis fx:id="vesLineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
                                         prefHeight="26.0" prefWidth="481.0" side="BOTTOM" tickUnit="1.0"
