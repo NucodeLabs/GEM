@@ -1,21 +1,24 @@
 package ru.nucodelabs.gem.charts;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.algorithms.ForwardSolver;
+import ru.nucodelabs.data.ModelData;
 import ru.nucodelabs.data.Picket;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.log10;
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 /**
  * <code>VESCurve</code> object is drawing VES Curves - experimental, theoretical and model on <code>LineChart</code>
@@ -160,12 +163,79 @@ public class VESCurve {
         }
         vesCurveLineChart.getXAxis().setAutoRanging(false);
         vesCurveLineChart.getData().add(modelCurveSeries);
-        vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode().setCursor(Cursor.HAND);
-        vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode().setOnMouseDragged(this::mouseDraggedHandler);
+
+        ModelData test = fromCurveToModelData(modelCurveSeries.getData());
+
+        Node modelCurveSeriesNode = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode();
+        modelCurveSeriesNode.setCursor(Cursor.HAND);
+        modelCurveSeriesNode.setOnMousePressed(this::lineToDragDetector);
+        modelCurveSeriesNode.setOnMouseDragged(this::mouseDragHandler);
+        modelCurveSeries = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX);
+//        modelCurveSeriesData.addListener(
+//                new ListChangeListener<XYChart.Data<Double, Double>>() {
+//                    @Override
+//                    public void onChanged(Change<? extends XYChart.Data<Double, Double>> change) {
+//                        change.
+//                    }
+//                }
+//        );
+
     }
 
-    private void mouseDraggedHandler(MouseEvent mouseEvent) {
+    // ends of line to be dragged
+    private XYChart.Data<Double, Double> point1;
+    private XYChart.Data<Double, Double> point2;
+
+    private void lineToDragDetector(MouseEvent mouseEvent) {
+        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+        Double mouseX = vesCurveLineChart.getXAxis().getValueForDisplay(
+                vesCurveLineChart.getXAxis().sceneToLocal(pointInScene).getX()
+        );
+
+        var points = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getData();
+        var closestVerticalLines = points.stream()
+                .filter(p -> p.getXValue() > mouseX - 0.01 && p.getXValue() < mouseX + 0.01)
+                .toList();
+
+        if (closestVerticalLines.size() >= 2 && closestVerticalLines.size() % 2 == 0) {
+            Double closestLeftX = null;
+            Double closestRightX = null;
+            for (var point : closestVerticalLines) {
+                if (point.getXValue() <= mouseX) {
+                    closestLeftX = point.getXValue();
+                }
+                if (point.getXValue() >= mouseX) {
+                    closestRightX = point.getXValue();
+                    break;
+                }
+            }
+            final Double closestX =
+                    closestLeftX != null && closestRightX != null ?
+                            min(closestLeftX, closestRightX) :
+                            closestLeftX != null ? closestLeftX : closestRightX != null ? closestRightX : Double.MAX_VALUE;
+            var line = closestVerticalLines
+                    .stream()
+                    .filter(p -> Objects.equals(p.getXValue(), closestX))
+                    .toList();
+            point1 = line.get(0);
+            point2 = line.get(1);
+        } else {
+            for (var point : points) {
+                if (point.getXValue() < mouseX) {
+                    point1 = point;
+                }
+                if (point.getXValue() > mouseX) {
+                    point2 = point;
+                    break;
+                }
+            }
+        }
+    }
+
+    private void mouseDragHandler(MouseEvent mouseEvent) {
         vesCurveLineChart.setAnimated(false);
+
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         Double mouseX = vesCurveLineChart.getXAxis().getValueForDisplay(
@@ -175,31 +245,13 @@ public class VESCurve {
                 vesCurveLineChart.getYAxis().sceneToLocal(pointInScene).getY()
         );
 
-        var points = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getData();
-        var closestVertical = points.stream()
-                .filter(p -> p.getXValue() > mouseX - 0.1 && p.getXValue() < mouseX + 0.1)
-                .toList();
-
-        if (closestVertical.size() == 2) {
-            closestVertical.get(0).setXValue(mouseX);
-            closestVertical.get(1).setXValue(mouseX);
-        } else {
-            XYChart.Data<Double, Double> closestLeft = null;
-            XYChart.Data<Double, Double> closestRight = null;
-
-            for (XYChart.Data<Double, Double> point : points) {
-                if (point.getXValue() < mouseX) {
-                    closestLeft = point;
-                }
-                if (point.getXValue() > mouseX) {
-                    closestRight = point;
-                    break;
-                }
-            }
-
-            if (closestLeft != null && closestRight != null) {
-                closestLeft.setYValue(mouseY);
-                closestRight.setYValue(mouseY);
+        if (point1 != null && point2 != null) {
+            if (Objects.equals(point1.getXValue(), point2.getXValue())) {
+                point1.setXValue(mouseX);
+                point2.setXValue(mouseX);
+            } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
+                point1.setYValue(mouseY);
+                point2.setYValue(mouseY);
             }
         }
 
@@ -253,6 +305,54 @@ public class VESCurve {
 
         modelCurveSeries.setName("Кривая модели");
         return modelCurveSeries;
+    }
+
+    private ModelData fromCurveToModelData(final ObservableList<XYChart.Data<Double, Double>> points) {
+        ModelData res = new ModelData();
+
+        for (int i = 1; i < points.size() - 1; i++) {
+            res.getResistance().add(pow(10, points.get(i).getYValue()));
+        }
+
+        for (int i = 1; i < points.size() - 1; i++) {
+            for (int j = 1; j < points.size() - 1; j++) {
+                if (Objects.equals(points.get(i).getYValue(), points.get(j).getYValue()) && i != j) {
+                    res.getPower().add(
+                            abs(
+                                    pow(10, points.get(i).getXValue()) - pow(10, points.get(j).getXValue())
+                            )
+                    );
+                }
+            }
+        }
+
+        res.getPower().add(0, pow(10, points.get(1).getXValue()));
+        res.getPower().add(0d);
+        ArrayList<Double> fixedPower = new ArrayList<>();
+        fixedPower.add(res.getPower().get(0));
+        for (int i = 1; i < res.getPower().size() - 1; i++) {
+            for (int j = i + 1; j < res.getPower().size() - 1; j++) {
+                if (abs(i - j) == 1 && Objects.equals(res.getPower().get(i), res.getPower().get(j))) {
+                    fixedPower.add(res.getPower().get(i));
+                }
+            }
+        }
+        fixedPower.add(res.getPower().get(res.getPower().size() - 1));
+        res.setPower(fixedPower);
+
+        ArrayList<Double> fixedResistance = new ArrayList<>();
+        fixedResistance.add(res.getResistance().get(0));
+        for (int i = 1; i < res.getResistance().size() - 1; i++) {
+            for (int j = i + 1; j < res.getResistance().size() - 1; j++) {
+                if (abs(i - j) == 1 && Objects.equals(res.getResistance().get(i), res.getResistance().get(j))) {
+                    fixedResistance.add(res.getResistance().get(i));
+                }
+            }
+        }
+        fixedResistance.add(res.getResistance().get(res.getResistance().size() - 1));
+        res.setResistance(fixedResistance);
+
+        return res;
     }
 
     public Picket getPicket() {
