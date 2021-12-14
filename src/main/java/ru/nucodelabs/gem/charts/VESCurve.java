@@ -161,25 +161,14 @@ public class VESCurve {
             vesCurveLineChart.setData(vesCurveLineChart.getData().stream().limit(THEOR_CURVE_SERIES_CNT)
                     .collect(Collectors.toCollection(FXCollections::observableArrayList)));
         }
+
         vesCurveLineChart.getXAxis().setAutoRanging(false);
         vesCurveLineChart.getData().add(modelCurveSeries);
-
-        ModelData test = fromCurveToModelData(modelCurveSeries.getData());
 
         Node modelCurveSeriesNode = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getNode();
         modelCurveSeriesNode.setCursor(Cursor.HAND);
         modelCurveSeriesNode.setOnMousePressed(this::lineToDragDetector);
         modelCurveSeriesNode.setOnMouseDragged(this::mouseDragHandler);
-        modelCurveSeries = vesCurveLineChart.getData().get(MOD_CURVE_SERIES_INDEX);
-//        modelCurveSeriesData.addListener(
-//                new ListChangeListener<XYChart.Data<Double, Double>>() {
-//                    @Override
-//                    public void onChanged(Change<? extends XYChart.Data<Double, Double>> change) {
-//                        change.
-//                    }
-//                }
-//        );
-
     }
 
     // ends of line to be dragged
