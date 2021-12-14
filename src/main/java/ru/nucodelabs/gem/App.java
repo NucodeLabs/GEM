@@ -31,7 +31,7 @@ public class App extends Application {
         Image icon = new Image("nu.png");
         primaryStage.getIcons().add(icon);
 
-        primaryStage.setTitle("GEM - Main Window");
+        primaryStage.setTitle("GEM");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
