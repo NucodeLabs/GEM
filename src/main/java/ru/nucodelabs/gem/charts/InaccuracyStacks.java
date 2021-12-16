@@ -45,7 +45,7 @@ public class InaccuracyStacks {
         inaccuracyLineChart.setVisible(true);
     }
 
-    private static void makeTextAvgMax(TitledPane inaccuracyPane, ObservableList<XYChart.Series<Double, Double>> data) {
+    private void makeTextAvgMax(TitledPane inaccuracyPane, ObservableList<XYChart.Series<Double, Double>> data) {
         inaccuracyPane.setText(
                 String.format("%s | avg = %d%% | max = %d%%",
                         inaccuracyPane.getText().split("\s")[0],
@@ -55,7 +55,7 @@ public class InaccuracyStacks {
         );
     }
 
-    private static void colorizeSeries(ObservableList<XYChart.Series<Double, Double>> data) {
+    private void colorizeSeries(ObservableList<XYChart.Series<Double, Double>> data) {
         data.forEach(
                 s -> {
                     if (abs(s.getData().get(1).getYValue()) < 100f) {
@@ -93,7 +93,7 @@ public class InaccuracyStacks {
         return res;
     }
 
-    private static Double calculateAverage(ObservableList<XYChart.Series<Double, Double>> data) {
+    private Double calculateAverage(ObservableList<XYChart.Series<Double, Double>> data) {
         return data.stream()
                 .mapToDouble(
                         s -> abs(s.getData().get(1).getYValue())
@@ -102,7 +102,7 @@ public class InaccuracyStacks {
                 .orElse(0);
     }
 
-    private static Double calculateMax(ObservableList<XYChart.Series<Double, Double>> data) {
+    private Double calculateMax(ObservableList<XYChart.Series<Double, Double>> data) {
         return data.stream()
                 .mapToDouble(
                         s -> abs(s.getData().get(1).getYValue())
