@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.HBox;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
@@ -14,15 +13,14 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     private MainMenuBar menuBar;
     @FXML
     private VESMisfitSplit vesMisfitSplit;
-    @FXML
-    private MisfitStacks misfitStacks = vesMisfitSplit.getMisfitStacks();
-    @FXML
-    private VESCurves vesCurves = vesMisfitSplit.getVesCurves();
-    @FXML
-    private HBox vesMisfitsHBox;
+
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
+
+        MisfitStacks misfitStacks = vesMisfitSplit.getMisfitStacks();
+        VESCurves vesCurves = vesMisfitSplit.getVesCurves();
+
         menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXPSTT(this.getScene()));
         menuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD(this.getScene()));
         menuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
