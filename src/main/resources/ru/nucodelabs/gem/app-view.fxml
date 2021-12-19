@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0"
       prefWidth="1280.0" stylesheets="@./style.css" xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController">
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.AppController_old">
     <MenuBar fx:id="menuBar">
         <Menu mnemonicParsing="false" text="%file">
             <MenuItem mnemonicParsing="false" text="%create"/>
@@ -55,16 +55,21 @@
         </SplitPane>
         <SplitPane dividerPositions="0.68" maxHeight="1.7976931348623157E308" minHeight="200.0">
             <SplitPane fx:id="vesSplitPane" dividerPositions="0.30033557046979864" minHeight="200.0" orientation="VERTICAL">
-                <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false" maxHeight="1.7976931348623157E308" text="%inaccuracy">
+                <TitledPane fx:id="inaccuracyPane" alignment="BOTTOM_LEFT" collapsible="false"
+                            maxHeight="1.7976931348623157E308" text="%misfit">
                     <opaqueInsets>
-                        <Insets />
+                        <Insets/>
                     </opaqueInsets>
-                    <LineChart fx:id="inaccuracyLineChart" legendVisible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="150.0" title="\%" titleSide="LEFT">
+                    <LineChart fx:id="inaccuracyLineChart" legendVisible="false" maxHeight="1.7976931348623157E308"
+                               minHeight="0.0" prefHeight="150.0" title="\%" titleSide="LEFT">
                         <xAxis>
-                            <NumberAxis forceZeroInRange="false" minorTickLength="3.0" minorTickVisible="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" tickUnit="100.0" />
+                            <NumberAxis forceZeroInRange="false" minorTickLength="3.0" minorTickVisible="false"
+                                        side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false"
+                                        tickUnit="100.0"/>
                         </xAxis>
                         <yAxis>
-                            <NumberAxis autoRanging="false" forceZeroInRange="false" lowerBound="-200.0" minorTickCount="2" side="LEFT" tickUnit="100.0" upperBound="200.0" />
+                            <NumberAxis autoRanging="false" forceZeroInRange="false" lowerBound="-200.0"
+                                        minorTickCount="2" side="LEFT" tickUnit="100.0" upperBound="200.0"/>
                         </yAxis>
                         <opaqueInsets>
                             <Insets/>

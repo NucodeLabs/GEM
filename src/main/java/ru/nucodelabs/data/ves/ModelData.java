@@ -1,4 +1,4 @@
-package ru.nucodelabs.data;
+package ru.nucodelabs.data.ves;
 
 import ru.nucodelabs.files.sonet.MODFile;
 
@@ -6,9 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModelData {
-    private List<Double> resistance; // Сопротивление, Ом*м
-    private List<Double> polarization; // Поляризация, %
-    private List<Double> power; // Мощность, м
+    /**
+     * Сопротивление, Ом * м
+     */
+    private List<Double> resistance; // get set
+    /**
+     * Поляризация, %
+     */
+    private List<Double> polarization; // get set
+    /**
+     * Мощность, м
+     */
+    private List<Double> power; // get set
 
     public ModelData() {
         resistance = new ArrayList<>();
@@ -23,6 +32,7 @@ public class ModelData {
         power = modFile.getPower();
     }
 
+    //region getters and setters
     public List<Double> getResistance() {
         return resistance;
     }
@@ -46,4 +56,5 @@ public class ModelData {
     public void setPower(List<Double> power) {
         this.power = power;
     }
+    //endregion
 }

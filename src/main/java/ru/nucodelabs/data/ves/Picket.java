@@ -1,12 +1,18 @@
-package ru.nucodelabs.data;
+package ru.nucodelabs.data.ves;
 
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
 public class Picket {
-    private ExperimentalData experimentalData;
-    private ModelData modelData;
+    /**
+     * Экспериментальные(полевые) данные
+     */
+    private ExperimentalData experimentalData; // get set
+    /**
+     * Данные модели
+     */
+    private ModelData modelData; // get set
 
     public Picket() {
         this.experimentalData = new ExperimentalData();
@@ -22,6 +28,7 @@ public class Picket {
         modelData = new ModelData(modFile);
     }
 
+    //region getters and setters
     public ExperimentalData getExperimentalData() {
         return experimentalData;
     }
@@ -37,4 +44,5 @@ public class Picket {
     public void setModelData(ModelData modelData) {
         this.modelData = modelData;
     }
+    //endregion
 }

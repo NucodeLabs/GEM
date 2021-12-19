@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.charts;
+package ru.nucodelabs.gem.charts_old;
 
 import javafx.collections.ObservableList;
 import javafx.scene.chart.LineChart;
@@ -6,7 +6,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
 import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.algorithms.MisfitFunctions;
-import ru.nucodelabs.data.Picket;
+import ru.nucodelabs.data.ves.Picket;
 
 import java.util.ArrayList;
 import java.util.List;

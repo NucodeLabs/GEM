@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem;
+package ru.nucodelabs.gem.view;
 
 import javafx.util.StringConverter;
 
@@ -25,6 +25,7 @@ public class PowerOf10Formatter extends StringConverter<Number> {
                 case '9' -> resChars.add('⁹');
                 case '0' -> resChars.add('⁰');
                 case '.' -> resChars.add('\u0387');
+                case '-' -> resChars.add('\u207b');
                 default -> resChars.add(c);
             }
         }
@@ -42,7 +43,7 @@ public class PowerOf10Formatter extends StringConverter<Number> {
         format.setDecimalFormatSymbols(formatSymbols);
         if (object.doubleValue() == 0) {
             return "1";
-        } else if (object.doubleValue() - Math.ceil((long) object.doubleValue()) == 0) {
+        } else if (object.doubleValue() - Math.ceil(object.doubleValue()) == 0) {
             return ("10" + toUpperIndex(format.format(object.doubleValue())));
         } else {
             return "";
