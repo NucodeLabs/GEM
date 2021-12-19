@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem;
 
 import org.junit.jupiter.api.Test;
+import ru.nucodelabs.gem.view.PowerOf10Formatter;
 
 import java.util.Arrays;
 

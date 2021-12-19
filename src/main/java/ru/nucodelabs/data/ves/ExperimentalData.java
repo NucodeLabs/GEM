@@ -1,4 +1,4 @@
-package ru.nucodelabs.data;
+package ru.nucodelabs.data.ves;
 
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
@@ -9,15 +9,40 @@ import java.util.List;
 import static java.lang.Math.min;
 
 public class ExperimentalData {
-    private List<Double> AB_2; // AB/2, м
-    private List<Double> MN_2; // MN/2, м
+    /**
+     * AB/2, м
+     */
+    private List<Double> AB_2; // get set
+    /**
+     * MN/2, м
+     */
+    private List<Double> MN_2; // get set
 
-    private List<Double> amperage; // Ток, мА
-    private List<Double> voltage; // Напряжение, мВ
-    private List<Double> resistanceApparent; // Сопротивление кажущееся, Ом * м
-    private List<Double> errorResistanceApparent; // Погрешность, %
-    private List<Double> polarizationApparent; // Поляризация кажущаяся, %
-    private List<Double> errorPolarizationApparent; // Погрешность, %
+
+    /**
+     * Ток, мА
+     */
+    private List<Double> amperage; // get set
+    /**
+     * Напряжение, мВ
+     */
+    private List<Double> voltage; // get set
+    /**
+     * Сопротивление кажущееся, Ом * м
+     */
+    private List<Double> resistanceApparent; // get set
+    /**
+     * Погрешность, %
+     */
+    private List<Double> errorResistanceApparent; // get set
+    /**
+     * Поляризация кажущаяся, %
+     */
+    private List<Double> polarizationApparent; // get set
+    /**
+     * Погрешность, %
+     */
+    private List<Double> errorPolarizationApparent; // get set
 
     private Integer size;
 
@@ -48,6 +73,7 @@ public class ExperimentalData {
         return AB_2.size() != resistanceApparent.size();
     }
 
+    //region getters and setters
     public Integer getSize() {
         return size;
     }
@@ -119,4 +145,5 @@ public class ExperimentalData {
     public void setErrorPolarizationApparent(List<Double> errorPolarizationApparent) {
         this.errorPolarizationApparent = errorPolarizationApparent;
     }
+    //endregion
 }

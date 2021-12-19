@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+         alignment="CENTER"
+         maxHeight="Infinity"
+         maxWidth="Infinity"
+         stylesheets="@VESCurves.css"
+         VBox.vgrow="ALWAYS">
+    <Text fx:id="text" text="not opened" textAlignment="CENTER" VBox.vgrow="NEVER">
+        <VBox.margin>
+            <Insets top="10.0"/>
+        </VBox.margin>
+    </Text>
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity">
+        <xAxis>
+            <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
+                        side="BOTTOM" tickUnit="1.0"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis fx:id="lineChartYAxis" cache="true" forceZeroInRange="false"
+                        label="ρₐ (Ohm‧m)" lowerBound="1.0"
+                        side="LEFT" tickUnit="1.0"/>
+        </yAxis>
+    </LineChart>
+</fx:root>

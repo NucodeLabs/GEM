@@ -11,17 +11,18 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import ru.nucodelabs.data.ModelData;
-import ru.nucodelabs.data.Picket;
+import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
-import ru.nucodelabs.gem.charts.InaccuracyStacks;
-import ru.nucodelabs.gem.charts.VESCurve;
-import ru.nucodelabs.gem.tables.ExperimentalTable;
-import ru.nucodelabs.gem.tables.ModelTable;
-import ru.nucodelabs.gem.tables.TableLine;
+import ru.nucodelabs.gem.charts_old.InaccuracyStacks;
+import ru.nucodelabs.gem.charts_old.VESCurve;
+import ru.nucodelabs.gem.tables_old.ExperimentalTable;
+import ru.nucodelabs.gem.tables_old.ModelTable;
+import ru.nucodelabs.gem.tables_old.TableLine;
+import ru.nucodelabs.gem.view.PowerOf10Formatter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +32,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.String.format;
 
-public class AppController implements Initializable {
+public class AppController_old implements Initializable {
 
     Picket picket;
     VESCurve vesCurve;

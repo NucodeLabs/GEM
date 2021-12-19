@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+         stylesheets="@../../main/MainSplitLayoutView.css">
+    <MenuBar fx:id="menuBar">
+        <Menu text="%file">
+            <MenuItem text="%create"/>
+            <Menu text="%open">
+                <MenuItem fx:id="menuFileOpenEXP" text="EXP"/>
+                <MenuItem fx:id="menuFileOpenMOD" disable="true" text="MOD"/>
+            </Menu>
+            <MenuItem text="%close"/>
+        </Menu>
+        <Menu text="%edit">
+            <MenuItem text="Delete"/>
+        </Menu>
+        <Menu text="%help">
+            <MenuItem text="About"/>
+        </Menu>
+    </MenuBar>
+</fx:root>
