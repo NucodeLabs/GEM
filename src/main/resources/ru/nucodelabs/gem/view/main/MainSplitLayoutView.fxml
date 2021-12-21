@@ -6,7 +6,8 @@
 <?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
 <?import ru.nucodelabs.gem.view.usercontrols.vesmisfitsplit.VESMisfitSplit?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         VBox.vgrow="ALWAYS" maxWidth="Infinity" maxHeight="Infinity" stylesheets="@MainSplitLayoutView.css">
+         VBox.vgrow="ALWAYS" maxWidth="Infinity" maxHeight="Infinity"
+         stylesheets="@MainSplitLayoutView.css, @../common.css">
     <MainMenuBar fx:id="menuBar"/>
     <SplitPane dividerPositions="0.5" orientation="VERTICAL" maxHeight="Infinity" VBox.vgrow="ALWAYS">
 

@@ -29,7 +29,7 @@ public class App_old extends Application {
         Scene scene = new Scene(root, 1280, 720);
 //        scene.getStylesheets().add(App.class.getResource("style.css").toExternalForm());
 
-        Image icon = new Image("gem.png");
+        Image icon = new Image("img/gem.png");
         primaryStage.getIcons().add(icon);
 
         primaryStage.setTitle("GEM");
