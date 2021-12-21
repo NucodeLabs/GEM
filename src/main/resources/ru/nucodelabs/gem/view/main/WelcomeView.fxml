@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         prefHeight="400.0" prefWidth="600.0">
+         prefHeight="400.0" prefWidth="600.0"
+         style="-fx-background-color: White">
 
     <MainMenuBar fx:id="menuBar"/>
+    <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
+        <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
+            <ImageView fitHeight="100" fitWidth="100">
+                <Image url="/gem.png"/>
+            </ImageView>
+            <Text textOrigin="CENTER" VBox.vgrow="ALWAYS"
+                  style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
+            <Text VBox.vgrow="ALWAYS" text="Вы можете открыть файл SONET для интерпретации ВЭЗ"/>
+            <Text VBox.vgrow="ALWAYS" text="В меню: Файл > Открыть > EXP"/>
+            <Text text="или Ctrl + O"/>
+        </VBox>
+    </HBox>
 
-    <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
-        <VBox.margin>
-            <Insets top="50.0"/>
-        </VBox.margin>
-        <Text VBox.vgrow="ALWAYS"
-              style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
-    </VBox>
 
 </fx:root>

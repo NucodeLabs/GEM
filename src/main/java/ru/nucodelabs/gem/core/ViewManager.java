@@ -30,7 +30,7 @@ public class ViewManager {
 
         Scene scene = new Scene(welcomeView);
         stage.setTitle("GEM");
-        stage.getIcons().add(new Image("nu.png"));
+        stage.getIcons().add(new Image("gem.png"));
         stage.setScene(scene);
         stage.show();
     }
