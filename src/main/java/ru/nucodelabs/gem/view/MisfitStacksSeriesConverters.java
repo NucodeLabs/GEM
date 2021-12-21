@@ -11,8 +11,12 @@ import java.util.List;
 
 import static java.lang.Math.*;
 
-public class MisfitStacksSeriesConverter {
-    public List<XYChart.Series<Double, Double>> toMisfitStacksSeriesList(final ExperimentalData experimentalData, final ModelData modelData) {
+public class MisfitStacksSeriesConverters {
+
+    private MisfitStacksSeriesConverters() {
+    }
+
+    public static List<XYChart.Series<Double, Double>> toMisfitStacksSeriesList(final ExperimentalData experimentalData, final ModelData modelData) {
         final List<Double> resistance = modelData.getResistance();
         final List<Double> power = modelData.getPower();
         final List<Double> ab_2 = experimentalData.getAB_2();
