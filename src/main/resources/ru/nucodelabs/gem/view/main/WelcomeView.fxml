@@ -8,13 +8,13 @@
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          prefHeight="400.0" prefWidth="600.0"
-         style="-fx-background-color: White">
+         style="-fx-background-color: White" stylesheets="@../common.css">
 
     <MainMenuBar fx:id="menuBar"/>
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
             <ImageView fitHeight="100" fitWidth="100">
-                <Image url="/gem.png"/>
+                <Image url="/img/gem.png"/>
             </ImageView>
             <Text textOrigin="CENTER" VBox.vgrow="ALWAYS"
                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
