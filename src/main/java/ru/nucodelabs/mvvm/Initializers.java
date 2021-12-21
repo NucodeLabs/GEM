@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 public class Initializers {
     /**
-     * Load FXML file with name equals to root class name and sets the root as the controller of loaded FXML.
+     * Load FXML file with name equals to {@code root} class name and sets the {@code root} as the controller of loaded FXML.
      *
      * @param root object that inherits class of root node of FXML
      * @param <N>  class of root

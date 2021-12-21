@@ -15,8 +15,8 @@ import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.VESDataModel;
-import ru.nucodelabs.gem.view.MisfitStacksSeriesConverter;
-import ru.nucodelabs.gem.view.VESSeriesConverter;
+import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
+import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -28,12 +28,6 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 public class MainViewModel extends ViewModel<VESDataModel> {
-
-    /**
-     * <h3>Helpers</h3>
-     */
-    private final VESSeriesConverter vesSeriesConverter;
-    private final MisfitStacksSeriesConverter misfitStacksSeriesConverter;
 
     /**
      * <h3>Properties</h3>
@@ -54,9 +48,6 @@ public class MainViewModel extends ViewModel<VESDataModel> {
      */
     public MainViewModel(VESDataModel vesDataModel, ViewManager viewManager) {
         super(vesDataModel, viewManager);
-
-        vesSeriesConverter = new VESSeriesConverter();
-        misfitStacksSeriesConverter = new MisfitStacksSeriesConverter();
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
@@ -178,21 +169,21 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     }
 
     private void updateTheoreticalCurve() {
-        XYChart.Series<Double, Double> theorCurveSeries = vesSeriesConverter.toTheoreticalCurveSeries(
+        XYChart.Series<Double, Double> theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
                 model.getExperimentalData(0), model.getModelData(0)
         );
         vesCurvesData.getValue().add(theorCurveSeries);
     }
 
     private void updateModelCurve() {
-        XYChart.Series<Double, Double> modelCurveSeries = vesSeriesConverter.toModelCurveSeries(
+        XYChart.Series<Double, Double> modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
                 model.getModelData(0)
         );
         vesCurvesData.getValue().add(modelCurveSeries);
     }
 
     private void updateExpCurveData() {
-        List<XYChart.Series<Double, Double>> expCurveSeries = vesSeriesConverter.toExperimentalCurveSeriesAll(
+        List<XYChart.Series<Double, Double>> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeriesAll(
                 model.getExperimentalData(0)
         );
         ArrayList<XYChart.Series<Double, Double>> seriesList = new ArrayList<>(expCurveSeries);
@@ -202,7 +193,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     }
 
     private void updateMisfitStacksData() {
-        List<XYChart.Series<Double, Double>> misfitStacksSeriesList = misfitStacksSeriesConverter.toMisfitStacksSeriesList(
+        List<XYChart.Series<Double, Double>> misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
                 model.getExperimentalData(0), model.getModelData(0)
         );
         misfitStacksData.setValue(
