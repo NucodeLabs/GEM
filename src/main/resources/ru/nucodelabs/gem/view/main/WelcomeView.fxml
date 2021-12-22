@@ -18,9 +18,8 @@
             </ImageView>
             <Text textOrigin="CENTER" VBox.vgrow="ALWAYS"
                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
-            <Text VBox.vgrow="ALWAYS" text="Вы можете открыть файл SONET для интерпретации ВЭЗ"/>
-            <Text VBox.vgrow="ALWAYS" text="В меню: Файл > Открыть > EXP"/>
-            <Text text="или Ctrl + O"/>
+            <Text wrappingWidth="350" VBox.vgrow="ALWAYS"
+                  text="Вы можете открыть файл SONET для интерпретации ВЭЗ.&#10;В меню: Файл > Открыть > EXP"/>
         </VBox>
     </HBox>
 

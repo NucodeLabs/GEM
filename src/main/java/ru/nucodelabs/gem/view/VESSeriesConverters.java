@@ -12,7 +12,7 @@ import static java.lang.Math.log10;
 import static java.lang.Math.max;
 
 /**
- * <h1>VESSeriesConverter - converts data to series for charts</h1>
+ * Functions that convert VES data to series for charts.
  */
 public class VESSeriesConverters {
 

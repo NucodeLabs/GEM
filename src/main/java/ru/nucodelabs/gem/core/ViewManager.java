@@ -32,6 +32,7 @@ public class ViewManager {
         stage.setTitle("GEM");
         stage.getIcons().add(new Image("img/gem.png"));
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
@@ -43,6 +44,7 @@ public class ViewManager {
         if (mainSplitLayoutView.getViewModel().importEXPSTT(stage.getScene())) {
             stage.close();
             stage.setScene(scene);
+            stage.setResizable(true);
             stage.show();
         }
     }
