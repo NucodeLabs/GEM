@@ -1,6 +1,7 @@
 #lineChart {
     -fx-padding: 0 0 10 40;
-    -fx-legend-visible: false;
+    -fx-legend-visible: true;
+    -fx-legend-side: top;
 }
 
 #lineChart .chart-plot-background {
