@@ -17,11 +17,12 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
+        viewModel.initModelCurveDragger(vesMisfitSplit.getVesCurves().getLineChart());
 
         MisfitStacks misfitStacks = vesMisfitSplit.getMisfitStacks();
         VESCurves vesCurves = vesMisfitSplit.getVesCurves();
 
-        menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXPSTT(this.getScene()));
+        menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP(this.getScene()));
         menuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD(this.getScene()));
         menuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
 

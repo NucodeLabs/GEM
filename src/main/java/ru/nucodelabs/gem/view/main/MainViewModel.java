@@ -3,7 +3,9 @@ package ru.nucodelabs.gem.view.main;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
@@ -16,6 +18,7 @@ import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
+import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.mvvm.ViewModel;
 
@@ -38,6 +41,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
     private final BooleanProperty misfitStacksLineChartVisibility;
     private final BooleanProperty menuFileMODDisabled;
+    private ModelCurveDragger modelCurveDragger;
 
     /**
      * <h3>Constructor</h3>
@@ -57,6 +61,10 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
         misfitStacksLineChartVisibility = new SimpleBooleanProperty(false);
         misfitStacksData = new SimpleObjectProperty<>();
+    }
+
+    protected void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
+        modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart);
     }
 
     private void alertExperimentalDataIsUnsafe() {
@@ -83,7 +91,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.show();
     }
 
-    public boolean importEXPSTT(Scene sceneForFileChooser) {
+    public boolean importEXP(Scene sceneForFileChooser) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл полевых данных для интерпретации");
         chooser.getExtensionFilters().addAll(
@@ -180,6 +188,9 @@ public class MainViewModel extends ViewModel<VESDataModel> {
                 model.getModelData(0)
         );
         vesCurvesData.getValue().add(modelCurveSeries);
+        modelCurveSeries.getNode().setCursor(Cursor.HAND);
+        modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
+        modelCurveSeries.getNode().setOnMouseDragged(e -> modelCurveDragger.dragHandler(e));
     }
 
     private void updateExpCurveData() {
