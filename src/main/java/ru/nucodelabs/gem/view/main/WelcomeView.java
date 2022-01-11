@@ -9,7 +9,6 @@ public class WelcomeView extends VBView<WelcomeViewModel> {
     @FXML
     private MainMenuBar menuBar;
 
-
     public WelcomeView(WelcomeViewModel viewModel) {
         super(viewModel);
         menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.switchToMainView());
