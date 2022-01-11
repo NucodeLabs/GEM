@@ -15,6 +15,6 @@ public class WelcomeViewModel extends ViewModel<Model> {
     }
 
     public void switchToMainView() {
-        viewManager.openMainViewWithImport();
+        viewManager.openMainViewWithImportEXP();
     }
 }

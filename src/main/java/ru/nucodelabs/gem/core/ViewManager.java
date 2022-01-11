@@ -11,7 +11,7 @@ import ru.nucodelabs.gem.view.main.WelcomeViewModel;
 /**
  * <h2>View Manager</h2>
  * Creates and opens Views and giving them references to their ViewModels linked with Models.
- * Also changing dynamically Views if ViewModel required to.
+ * Also changing Views dynamically if ViewModel asks to do so.
  */
 public class ViewManager {
 
@@ -36,12 +36,12 @@ public class ViewManager {
         stage.show();
     }
 
-    public void openMainViewWithImport() {
+    public void openMainViewWithImportEXP() {
         MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
                 new MainViewModel(modelFactory.getVesDataModel(), this)
         );
         Scene scene = new Scene(mainSplitLayoutView);
-        if (mainSplitLayoutView.getViewModel().importEXPSTT(stage.getScene())) {
+        if (mainSplitLayoutView.getViewModel().importEXP(stage.getScene())) {
             stage.close();
             stage.setScene(scene);
             stage.setResizable(true);
