@@ -5,8 +5,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
-import ru.nucodelabs.gem.view.main.WelcomeView;
-import ru.nucodelabs.gem.view.main.WelcomeViewModel;
+import ru.nucodelabs.gem.view.welcome.WelcomeView;
+import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 
 /**
  * <h2>View Manager</h2>
