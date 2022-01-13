@@ -33,6 +33,18 @@ import static java.lang.Math.abs;
 public class MainViewModel extends ViewModel<VESDataModel> {
 
     /**
+     * <h3>Constants</h3>
+     */
+    protected static final int EXP_CURVE_SERIES_CNT = 3;
+    protected static final int THEOR_CURVE_SERIES_CNT = 4;
+    protected static final int MOD_CURVE_SERIES_CNT = 5;
+    protected static final int EXP_CURVE_SERIES_INDEX = 0;
+    protected static final int EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1;
+    protected static final int EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2;
+    protected static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
+    protected static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
+
+    /**
      * <h3>Properties</h3>
      */
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
@@ -179,6 +191,11 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
                 model.getExperimentalData(0), model.getModelData(0)
+        );
+        vesCurvesData.setValue(
+                FXCollections.observableList(
+                        vesCurvesData.getValue().subList(0, EXP_CURVE_SERIES_CNT)
+                )
         );
         vesCurvesData.getValue().add(theorCurveSeries);
     }
