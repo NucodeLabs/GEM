@@ -13,4 +13,5 @@ module ru.nucodelabs {
     opens ru.nucodelabs.gem.view.usercontrols.misfitstacks;
     opens ru.nucodelabs.gem.view.usercontrols.mainmenubar;
     opens ru.nucodelabs.mvvm;
+    opens ru.nucodelabs.gem.view.welcome;
 }
