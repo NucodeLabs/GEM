@@ -1,5 +1,5 @@
 #lineChart {
-    -fx-padding: 0 0 10 40;
+    -fx-padding: 0 0 10 25;
     -fx-legend-visible: true;
     -fx-legend-side: top;
 }
@@ -13,7 +13,7 @@
 }
 
 #lineChart #lineChartYAxis .axis-label {
-    -fx-label-padding: -75 0 0 0;
+    -fx-label-padding: -45 0 0 0;
 }
 
 #lineChart #lineChartXAxis .axis-label {
@@ -74,4 +74,9 @@
     -fx-background-radius: 0;
     -fx-pref-width: 8px;
     -fx-pref-height: 4px;
+}
+
+#lineChartXAxis, #lineChartYAxis {
+    -fx-tick-label-font-size: 12pt;
+    -fx-font-size: 10pt;
 }
