@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.usercontrols.vescurves;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -25,6 +26,11 @@ public class VESCurves extends VBUserControl {
         super();
         lineChartXAxis.setTickLabelFormatter(new PowerOf10Formatter());
         lineChartYAxis.setTickLabelFormatter(new PowerOf10Formatter());
+        this.setOnContextMenuRequested(this::legendShowHide);
+    }
+
+    void legendShowHide(Event e) {
+        lineChart.setLegendVisible(!lineChart.isLegendVisible());
     }
 
     public Text getText() {
