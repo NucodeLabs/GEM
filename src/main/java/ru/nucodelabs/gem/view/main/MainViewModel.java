@@ -218,8 +218,9 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         );
         ArrayList<XYChart.Series<Double, Double>> seriesList = new ArrayList<>(expCurveSeries);
         vesCurvesData.setValue(
-                FXCollections.observableList(seriesList)
+                FXCollections.observableList(new ArrayList<>())
         );
+        vesCurvesData.getValue().setAll(seriesList);
     }
 
     private void updateMisfitStacksData() {
@@ -227,8 +228,9 @@ public class MainViewModel extends ViewModel<VESDataModel> {
                 model.getExperimentalData(0), model.getModelData(0)
         );
         misfitStacksData.setValue(
-                FXCollections.observableList(misfitStacksSeriesList)
+                FXCollections.observableList(new ArrayList<>())
         );
+        misfitStacksData.getValue().addAll(misfitStacksSeriesList);
         colorizeMisfitStacksSeries(misfitStacksData);
     }
 
