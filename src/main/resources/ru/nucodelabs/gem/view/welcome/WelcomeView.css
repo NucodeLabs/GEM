@@ -9,11 +9,15 @@
 
 #openEXPButton {
     -fx-font-weight: bold;
-    -fx-background-color: Green;
+    -fx-background-color: ForestGreen;
     -fx-text-fill: White;
 }
 
 #openEXPButton:hover {
+    -fx-background-color: Green;
+}
+
+#openEXPButton:pressed {
     -fx-background-color: DarkGreen;
 }
 
