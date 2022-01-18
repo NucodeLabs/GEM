@@ -48,10 +48,11 @@ public class MainViewModel extends ViewModel<VESDataModel> {
      * <h3>Properties</h3>
      */
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
-    private final BooleanProperty vesLineChartVisibility;
+    private final BooleanProperty vesLineChartVisible;
+    private final BooleanProperty vesLegendsVisible;
     private final StringProperty vesText;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
-    private final BooleanProperty misfitStacksLineChartVisibility;
+    private final BooleanProperty misfitStacksLineChartVisible;
     private final BooleanProperty menuFileMODDisabled;
     private ModelCurveDragger modelCurveDragger;
 
@@ -67,11 +68,12 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
-        vesLineChartVisibility = new SimpleBooleanProperty(false);
+        vesLineChartVisible = new SimpleBooleanProperty(false);
+        vesLegendsVisible = new SimpleBooleanProperty(true);
         vesCurvesData = new SimpleObjectProperty<>();
         vesText = new SimpleStringProperty("");
 
-        misfitStacksLineChartVisibility = new SimpleBooleanProperty(false);
+        misfitStacksLineChartVisible = new SimpleBooleanProperty(false);
         misfitStacksData = new SimpleObjectProperty<>();
     }
 
@@ -148,8 +150,8 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         vesText.setValue(file.getName());
         updateExpCurveData();
 
-        misfitStacksLineChartVisibility.setValue(false);
-        vesLineChartVisibility.setValue(true);
+        misfitStacksLineChartVisible.setValue(false);
+        vesLineChartVisible.setValue(true);
         return true;
     }
 
@@ -184,7 +186,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         updateModelCurve();
         vesText.setValue(vesText.getValue() + " - " + file.getName());
         updateMisfitStacksData();
-        misfitStacksLineChartVisibility.setValue(true);
+        misfitStacksLineChartVisible.setValue(true);
         return true;
     }
 
@@ -267,19 +269,19 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     }
 
     public boolean isVesLineChartVisible() {
-        return vesLineChartVisibility.get();
+        return vesLineChartVisible.get();
     }
 
-    public BooleanProperty vesLineChartVisibilityProperty() {
-        return vesLineChartVisibility;
+    public BooleanProperty vesLineChartVisibleProperty() {
+        return vesLineChartVisible;
     }
 
     public boolean isMisfitStacksLineChartVisible() {
-        return misfitStacksLineChartVisibility.get();
+        return misfitStacksLineChartVisible.get();
     }
 
-    public BooleanProperty misfitStacksLineChartVisibilityProperty() {
-        return misfitStacksLineChartVisibility;
+    public BooleanProperty misfitStacksLineChartVisibleProperty() {
+        return misfitStacksLineChartVisible;
     }
 
     public String getVesText() {
@@ -288,5 +290,13 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
     public StringProperty vesTextProperty() {
         return vesText;
+    }
+
+    public boolean isVesLegendsVisible() {
+        return vesLegendsVisible.get();
+    }
+
+    public BooleanProperty vesLegendsVisibleProperty() {
+        return vesLegendsVisible;
     }
 }

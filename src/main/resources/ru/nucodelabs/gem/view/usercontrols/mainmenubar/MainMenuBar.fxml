@@ -16,6 +16,11 @@
         <Menu text="%edit">
             <MenuItem text="Delete"/>
         </Menu>
+        <Menu text="%view">
+            <Menu text="%legend">
+                <CheckMenuItem fx:id="menuViewLegendsVESCurves" text="%ves"/>
+            </Menu>
+        </Menu>
         <Menu text="%help">
             <MenuItem text="About"/>
         </Menu>
