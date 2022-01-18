@@ -15,6 +15,7 @@ public class WelcomeView extends VBView<WelcomeViewModel> {
     public WelcomeView(WelcomeViewModel viewModel) {
         super(viewModel);
         menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.switchToMainView());
+        menuBar.getMenuViewLegendsVESCurves().setDisable(true);
         openEXPButton.setOnAction(e -> viewModel.switchToMainView());
     }
 }

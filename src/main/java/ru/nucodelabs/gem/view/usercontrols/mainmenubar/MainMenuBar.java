@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.usercontrols.mainmenubar;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
@@ -17,6 +18,8 @@ public class MainMenuBar extends VBUserControl {
     private MenuItem menuFileOpenEXP;
     @FXML
     private MenuItem menuFileOpenMOD;
+    @FXML
+    private CheckMenuItem menuViewLegendsVESCurves;
     @FXML
     private MenuBar menuBar;
 
@@ -43,6 +46,10 @@ public class MainMenuBar extends VBUserControl {
 
     public MenuItem getMenuFileOpenMOD() {
         return menuFileOpenMOD;
+    }
+
+    public CheckMenuItem getMenuViewLegendsVESCurves() {
+        return menuViewLegendsVESCurves;
     }
 
     public MenuBar getMenuBar() {
