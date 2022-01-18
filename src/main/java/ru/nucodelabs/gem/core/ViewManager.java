@@ -33,6 +33,7 @@ public class ViewManager {
         stage.getIcons().add(new Image("img/gem.png"));
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -41,11 +42,14 @@ public class ViewManager {
                 new MainViewModel(modelFactory.getVesDataModel(), this)
         );
         Scene scene = new Scene(mainSplitLayoutView);
-        if (mainSplitLayoutView.getViewModel().importEXP(stage.getScene())) {
-            stage.close();
-            stage.setScene(scene);
+        if (mainSplitLayoutView.getViewModel().importEXP()) {
             stage.setResizable(true);
-            stage.show();
+            stage.setScene(scene);
+            stage.setMaximized(true);
         }
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

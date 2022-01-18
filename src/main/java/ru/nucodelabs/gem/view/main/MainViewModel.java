@@ -4,7 +4,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
@@ -86,6 +85,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setTitle("Режим совместимости");
         alert.setHeaderText("STT и EXP содержат разное количество строк");
         alert.setContentText("Будет отображаться минимально возможное число данных");
+        alert.initOwner(viewManager.getStage());
         alert.show();
     }
 
@@ -94,6 +94,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setTitle("Ошибка");
         alert.setHeaderText("Файл не найден!");
         alert.setContentText(e.getMessage());
+        alert.initOwner(viewManager.getStage());
         alert.show();
     }
 
@@ -102,16 +103,17 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setTitle("Невозможно отрисовать график");
         alert.setHeaderText("Отсутствует библиотека");
         alert.setContentText(e.getMessage());
+        alert.initOwner(viewManager.getStage());
         alert.show();
     }
 
-    public boolean importEXP(Scene sceneForFileChooser) {
+    public boolean importEXP() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл полевых данных для интерпретации");
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
         );
-        File file = chooser.showOpenDialog(sceneForFileChooser.getWindow());
+        File file = chooser.showOpenDialog(viewManager.getStage());
 //      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
         if (file == null) {
             return false;
@@ -155,13 +157,13 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         return true;
     }
 
-    public boolean importMOD(Scene sceneForFileChooser) {
+    public boolean importMOD() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл модели");
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
         );
-        File file = chooser.showOpenDialog(sceneForFileChooser.getWindow());
+        File file = chooser.showOpenDialog(viewManager.getStage());
         if (file == null) {
             return false;
         }
@@ -185,7 +187,12 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
         updateModelCurve();
         vesText.setValue(vesText.getValue() + " - " + file.getName());
-        updateMisfitStacksData();
+        try {
+            updateMisfitStacksData();
+        } catch (UnsatisfiedLinkError e) {
+            alertNoLib(e);
+            return false;
+        }
         misfitStacksLineChartVisible.setValue(true);
         return true;
     }

@@ -22,8 +22,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         MisfitStacks misfitStacks = vesMisfitSplit.getMisfitStacks();
         VESCurves vesCurves = vesMisfitSplit.getVesCurves();
 
-        menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP(this.getScene()));
-        menuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD(this.getScene()));
+        menuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
+        menuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());
         menuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         menuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(viewModel.vesLegendsVisibleProperty());
 
