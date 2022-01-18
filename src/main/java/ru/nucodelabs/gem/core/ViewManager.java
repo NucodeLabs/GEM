@@ -42,11 +42,13 @@ public class ViewManager {
                 new MainViewModel(modelFactory.getVesDataModel(), this)
         );
         Scene scene = new Scene(mainSplitLayoutView);
-        if (mainSplitLayoutView.getViewModel().importEXP()) {
-            stage.setResizable(true);
-            stage.setScene(scene);
-            stage.setMaximized(true);
-        }
+        if (mainSplitLayoutView.getViewModel().importEXP()) { // надо вынести файловый диалог в отдельный объект
+            stage.hide();                                    // потому что оповещений об ошибках (alert) не видно
+            stage.setResizable(true);                       // при переходе с экрана приветствия на главное окно;
+            stage.setScene(scene);                         // использовать view model до появления сцены все же костыль...
+            stage.show();                                 // и я вроде было пофиксил это убрав hide/close и show
+            stage.setMaximized(true);                    // но тогда после setResizable(true) окно все равно нельзя было
+        }                                               // потянуть за края для изменения размера хотя кнопка 'развернуть' работала...
     }
 
     public Stage getStage() {
