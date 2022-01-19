@@ -7,20 +7,6 @@
     -fx-padding: 0;
 }
 
-#openEXPButton {
-    -fx-font-weight: bold;
-    -fx-background-color: ForestGreen;
-    -fx-text-fill: White;
-}
-
-#openEXPButton:hover {
-    -fx-background-color: Green;
-}
-
-#openEXPButton:pressed {
-    -fx-background-color: DarkGreen;
-}
-
 #textContainer {
     -fx-padding: 20px;
 }

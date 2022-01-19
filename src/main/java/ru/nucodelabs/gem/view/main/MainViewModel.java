@@ -86,6 +86,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setHeaderText("STT и EXP содержат разное количество строк");
         alert.setContentText("Будет отображаться минимально возможное число данных");
         alert.initOwner(viewManager.getStage());
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
@@ -95,6 +96,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setHeaderText("Файл не найден!");
         alert.setContentText(e.getMessage());
         alert.initOwner(viewManager.getStage());
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
@@ -104,6 +106,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.setHeaderText("Отсутствует библиотека");
         alert.setContentText(e.getMessage());
         alert.initOwner(viewManager.getStage());
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
