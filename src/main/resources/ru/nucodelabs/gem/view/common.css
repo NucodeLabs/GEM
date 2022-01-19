@@ -1,3 +1,37 @@
-* {
+.button {
+    -fx-font-weight: bold;
+    -fx-background-color: ForestGreen;
+    -fx-text-fill: White;
+}
 
+.button:hover {
+    -fx-background-color: Green;
+}
+
+.button:pressed {
+    -fx-background-color: DarkGreen;
+}
+
+.menu-button:hover {
+    -fx-background-color: Green;
+}
+
+.menu-button:pressed {
+    -fx-background-color: DarkGreen;
+}
+
+.menu-button:focused, .menu-button:showing {
+    -fx-background-color: ForestGreen;
+}
+
+.menu-item:hover {
+    -fx-background-color: Green;
+}
+
+.menu-item:showing, .menu-item:focused {
+    -fx-background-color: ForestGreen;
+}
+
+.menu-bar {
+    -fx-background-color: WhiteSmoke;
 }
