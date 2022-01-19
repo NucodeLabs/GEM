@@ -16,7 +16,7 @@
         <Menu text="%edit">
             <MenuItem text="Delete"/>
         </Menu>
-        <Menu text="%view">
+        <Menu fx:id="menuView" text="%view">
             <Menu text="%legend">
                 <CheckMenuItem fx:id="menuViewLegendsVESCurves" text="%ves"/>
             </Menu>
