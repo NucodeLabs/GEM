@@ -2,11 +2,14 @@ package ru.nucodelabs.gem.core;
 
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeView;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
+
+import java.io.File;
 
 /**
  * <h2>View Manager</h2>
@@ -38,17 +41,38 @@ public class ViewManager {
     }
 
     public void openMainViewWithImportEXP() {
-        MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
-                new MainViewModel(modelFactory.getVesDataModel(), this)
+        File expFile = showEXPFileChooser();
+        if (expFile != null) {
+            MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
+                    new MainViewModel(modelFactory.getVesDataModel(), this)
+            );
+            Scene scene = new Scene(mainSplitLayoutView);
+            stage.hide();
+            stage.setResizable(true);
+            stage.setScene(scene);
+            stage.show();
+            stage.setMaximized(true);
+            mainSplitLayoutView.getViewModel().importEXP(expFile);
+        }
+    }
+
+    public File showEXPFileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Выберите файл полевых данных для интерпретации");
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
         );
-        Scene scene = new Scene(mainSplitLayoutView);
-        if (mainSplitLayoutView.getViewModel().importEXP()) { // надо вынести файловый диалог в отдельный объект
-            stage.hide();                                    // потому что оповещений об ошибках (alert) не видно
-            stage.setResizable(true);                       // при переходе с экрана приветствия на главное окно;
-            stage.setScene(scene);                         // использовать view model до появления сцены все же костыль...
-            stage.show();                                 // и я вроде было пофиксил это убрав hide/close и show
-            stage.setMaximized(true);                    // но тогда после setResizable(true) окно все равно нельзя было
-        }                                               // потянуть за края для изменения размера хотя кнопка 'развернуть' работала...
+        return chooser.showOpenDialog(stage);
+//      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
+    }
+
+    public File showMODFileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Выберите файл модели");
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
+        );
+        return chooser.showOpenDialog(stage);
     }
 
     public Stage getStage() {
