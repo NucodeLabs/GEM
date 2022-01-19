@@ -4,10 +4,6 @@
     -fx-legend-side: top;
 }
 
-#lineChart .chart-plot-background {
-    -fx-background-color: white;
-}
-
 #lineChart .chart-series-line {
     -fx-stroke: transparent;
 }

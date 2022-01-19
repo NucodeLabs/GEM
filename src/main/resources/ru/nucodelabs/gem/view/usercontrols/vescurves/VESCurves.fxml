@@ -9,7 +9,7 @@
          alignment="CENTER"
          maxHeight="Infinity"
          maxWidth="Infinity"
-         stylesheets="@VESCurves.css"
+         stylesheets="@../../common.css, @VESCurves.css"
          VBox.vgrow="ALWAYS">
     <Text fx:id="text" text="not opened" textAlignment="CENTER" VBox.vgrow="NEVER">
         <VBox.margin>

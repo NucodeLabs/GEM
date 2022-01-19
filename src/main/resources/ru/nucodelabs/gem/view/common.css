@@ -1,15 +1,19 @@
 .button {
     -fx-font-weight: bold;
-    -fx-background-color: ForestGreen;
-    -fx-text-fill: White;
+    -fx-border-color: ForestGreen;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-background-color: white;
+    -fx-text-fill: ForestGreen;
 }
 
 .button:hover {
-    -fx-background-color: Green;
+    -fx-background-color: WhiteSmoke;
 }
 
 .button:pressed {
-    -fx-background-color: DarkGreen;
+    -fx-background-color: GainsBoro;
 }
 
 .menu-button:hover {
@@ -34,4 +38,34 @@
 
 .menu-bar {
     -fx-background-color: WhiteSmoke;
+}
+
+.split-pane {
+    -fx-background-color: white;
+}
+
+.split-pane-divider {
+    -fx-background-color: GainsBoro;
+    -fx-max-width: 1px;
+    -fx-pref-width: 5px;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+}
+
+.split-pane-divider:hover {
+    -fx-background-color: Gray;
+    -fx-border-width: 1px;
+}
+
+.split-pane-divider:pressed {
+    -fx-background-color: LightGreen;
+}
+
+.chart-legend {
+    -fx-background-color: WhiteSmoke;
+    -fx-background-radius: 5px;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
 }
