@@ -7,7 +7,6 @@ import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
-import javafx.stage.FileChooser;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
@@ -110,16 +109,13 @@ public class MainViewModel extends ViewModel<VESDataModel> {
         alert.show();
     }
 
-    public boolean importEXP() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Выберите файл полевых данных для интерпретации");
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
-        );
-        File file = chooser.showOpenDialog(viewManager.getStage());
-//      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
+    public void importEXP() {
+        importEXP(viewManager.showEXPFileChooser());
+    }
+
+    public void importEXP(File file) {
         if (file == null) {
-            return false;
+            return;
         }
 
         Path openedFilePath = file.toPath();
@@ -129,7 +125,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             openedEXP = SonetImport.readEXP(file);
         } catch (FileNotFoundException e) {
             alertFileNotFound(e);
-            return false;
+            return;
         }
 
         STTFile openedSTT;
@@ -140,7 +136,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
                             + openedEXP.getSTTFileName()));
         } catch (FileNotFoundException e) {
             alertFileNotFound(e);
-            return false;
+            return;
         }
         if (model.getPickets().size() == 0) {
             model.addPicket(new Picket(openedEXP, openedSTT));
@@ -157,18 +153,16 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
         misfitStacksLineChartVisible.setValue(false);
         vesLineChartVisible.setValue(true);
-        return true;
     }
 
-    public boolean importMOD() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Выберите файл модели");
-        chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
-        );
-        File file = chooser.showOpenDialog(viewManager.getStage());
+    public void importMOD() {
+        importMOD(viewManager.showMODFileChooser());
+    }
+
+    public void importMOD(File file) {
+
         if (file == null) {
-            return false;
+            return;
         }
 
         MODFile openedMOD;
@@ -176,7 +170,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             openedMOD = SonetImport.readMOD(file);
         } catch (FileNotFoundException e) {
             alertFileNotFound(e);
-            return false;
+            return;
         }
 
         model.setModelData(0, new ModelData(openedMOD));
@@ -185,7 +179,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             updateTheoreticalCurve();
         } catch (UnsatisfiedLinkError e) {
             alertNoLib(e);
-            return false;
+            return;
         }
 
         updateModelCurve();
@@ -194,10 +188,9 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             updateMisfitStacksData();
         } catch (UnsatisfiedLinkError e) {
             alertNoLib(e);
-            return false;
+            return;
         }
         misfitStacksLineChartVisible.setValue(true);
-        return true;
     }
 
     private void updateTheoreticalCurve() {
