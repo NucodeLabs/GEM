@@ -11,7 +11,7 @@
          maxWidth="Infinity"
          minHeight="0"
          minWidth="0"
-         stylesheets="@MisfitStacks.css"
+         stylesheets="@../../common.css, @MisfitStacks.css"
          VBox.vgrow="ALWAYS">
     <Text fx:id="text" text="%misfit" textAlignment="CENTER" VBox.vgrow="NEVER">
         <VBox.margin>
