@@ -17,6 +17,7 @@
             <ImageView fitHeight="100" fitWidth="100">
                 <Image url="/img/gem.png"/>
             </ImageView>
+            <Text style="-fx-fill: DarkGray" text="%version"/>
             <Text textOrigin="CENTER" VBox.vgrow="ALWAYS"
                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
             <HBox fx:id="textContainer">
