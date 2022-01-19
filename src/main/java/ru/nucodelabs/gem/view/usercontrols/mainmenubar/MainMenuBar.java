@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.usercontrols.mainmenubar;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
@@ -19,6 +20,8 @@ public class MainMenuBar extends VBUserControl {
     @FXML
     private MenuItem menuFileOpenMOD;
     @FXML
+    Menu menuView;
+    @FXML
     private CheckMenuItem menuViewLegendsVESCurves;
     @FXML
     private MenuBar menuBar;
@@ -27,7 +30,9 @@ public class MainMenuBar extends VBUserControl {
         super();
         var osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("mac")) {
-            menuBar.setUseSystemMenuBar(true);
+            CheckMenuItem useSystemMenu = new CheckMenuItem("Использовать системное меню");
+            menuView.getItems().add(0, useSystemMenu);
+            useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
         menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
                 KeyCode.O,
