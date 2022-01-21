@@ -14,10 +14,12 @@ import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
+import ru.nucodelabs.gem.model.VESDataManager;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
+import ru.nucodelabs.mvvm.Model;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -28,7 +30,7 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-public class MainViewModel extends ViewModel<VESDataModel> {
+public class MainViewModel extends ViewModel {
 
     /**
      * <h3>Constants</h3>
@@ -55,14 +57,20 @@ public class MainViewModel extends ViewModel<VESDataModel> {
     private ModelCurveDragger modelCurveDragger;
 
     /**
+     * Data models
+     */
+    private final VESDataModel vesData;
+
+    /**
      * <h3>Constructor</h3>
      * Initialization
      *
-     * @param vesDataModel VES Data Model
-     * @param viewManager  View Manager
+     * @param viewManager View Manager
+     * @param models      models
      */
-    public MainViewModel(VESDataModel vesDataModel, ViewManager viewManager) {
-        super(vesDataModel, viewManager);
+    public MainViewModel(ViewManager viewManager, Model... models) {
+        super(viewManager, models);
+        this.vesData = (VESDataModel) this.models.get(VESDataManager.class);
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
@@ -138,12 +146,12 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             alertFileNotFound(e);
             return;
         }
-        if (model.getPickets().size() == 0) {
-            model.addPicket(new Picket(openedEXP, openedSTT));
+        if (vesData.getPickets().size() == 0) {
+            vesData.addPicket(new Picket(openedEXP, openedSTT));
         } else {
-            model.getPickets().set(0, new Picket(openedEXP, openedSTT));
+            vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
         }
-        if (model.getPicket(model.getPickets().size() - 1).getExperimentalData().isUnsafe()) {
+        if (vesData.getPicket(vesData.getPickets().size() - 1).getExperimentalData().isUnsafe()) {
             alertExperimentalDataIsUnsafe();
         }
 
@@ -173,7 +181,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
             return;
         }
 
-        model.setModelData(0, new ModelData(openedMOD));
+        vesData.setModelData(0, new ModelData(openedMOD));
 
         try {
             updateTheoreticalCurve();
@@ -195,7 +203,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
     private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                model.getExperimentalData(0), model.getModelData(0)
+                vesData.getExperimentalData(0), vesData.getModelData(0)
         );
         vesCurvesData.setValue(
                 FXCollections.observableList(
@@ -207,7 +215,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
     private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                model.getModelData(0)
+                vesData.getModelData(0)
         );
         vesCurvesData.getValue().add(modelCurveSeries);
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
@@ -217,7 +225,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
     private void updateExpCurveData() {
         List<XYChart.Series<Double, Double>> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeriesAll(
-                model.getExperimentalData(0)
+                vesData.getExperimentalData(0)
         );
         ArrayList<XYChart.Series<Double, Double>> seriesList = new ArrayList<>(expCurveSeries);
         vesCurvesData.setValue(
@@ -228,7 +236,7 @@ public class MainViewModel extends ViewModel<VESDataModel> {
 
     private void updateMisfitStacksData() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                model.getExperimentalData(0), model.getModelData(0)
+                vesData.getExperimentalData(0), vesData.getModelData(0)
         );
         misfitStacksData.setValue(
                 FXCollections.observableList(new ArrayList<>())

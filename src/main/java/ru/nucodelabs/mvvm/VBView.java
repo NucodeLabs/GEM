@@ -1,6 +1,6 @@
 package ru.nucodelabs.mvvm;
 
-public abstract class VBView<VM extends ViewModel<? extends Model>> extends VBUserControl {
+public abstract class VBView<VM extends ViewModel> extends VBUserControl {
 
     protected VM viewModel;
 
