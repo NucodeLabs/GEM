@@ -1,17 +1,12 @@
 package ru.nucodelabs.gem.view.welcome;
 
 import ru.nucodelabs.gem.core.ViewManager;
-import ru.nucodelabs.mvvm.Model;
 import ru.nucodelabs.mvvm.ViewModel;
 
-public class WelcomeViewModel extends ViewModel<Model> {
+public class WelcomeViewModel extends ViewModel {
 
     public WelcomeViewModel(ViewManager viewManager) {
-        super(null, viewManager);
-    }
-
-    private WelcomeViewModel(Model model, ViewManager viewManager) {
-        super(model, viewManager);
+        super(viewManager);
     }
 
     public void switchToMainView() {

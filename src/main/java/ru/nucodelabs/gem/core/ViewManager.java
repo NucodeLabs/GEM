@@ -44,7 +44,7 @@ public class ViewManager {
         File expFile = showEXPFileChooser();
         if (expFile != null) {
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
-                    new MainViewModel(modelFactory.getVesDataModel(), this)
+                    new MainViewModel(this, modelFactory.getVesDataModel())
             );
             Scene scene = new Scene(mainSplitLayoutView);
             stage.hide();
