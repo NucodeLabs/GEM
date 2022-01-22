@@ -11,10 +11,6 @@ import static java.lang.Math.min;
 
 public class ModelCurveDragger {
 
-    public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
-        this.vesCurvesLineChart = vesCurvesLineChart;
-    }
-
     private final int MOD_CURVE_SERIES_INDEX = 4;
 
     private LineChart<Double, Double> vesCurvesLineChart;
@@ -22,6 +18,10 @@ public class ModelCurveDragger {
     // ends of line to be dragged
     private XYChart.Data<Double, Double> point1;
     private XYChart.Data<Double, Double> point2;
+
+    public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
+        this.vesCurvesLineChart = vesCurvesLineChart;
+    }
 
     public void lineToDragDetector(MouseEvent mouseEvent) {
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
