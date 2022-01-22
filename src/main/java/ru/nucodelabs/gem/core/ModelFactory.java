@@ -1,7 +1,11 @@
 package ru.nucodelabs.gem.core;
 
+import ru.nucodelabs.gem.model.ConfigManager;
+import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataManager;
 import ru.nucodelabs.gem.model.VESDataModel;
+
+import java.util.Objects;
 
 /**
  * <h2>Model Factory</h2>
@@ -9,13 +13,17 @@ import ru.nucodelabs.gem.model.VESDataModel;
  */
 public class ModelFactory {
 
-    private final VESDataModel vesDataModel;
+    private VESDataModel vesDataModel;
+    private ConfigModel configModel;
 
     public ModelFactory() {
-        vesDataModel = new VESDataManager();
     }
 
     public VESDataModel getVesDataModel() {
-        return vesDataModel;
+        return Objects.requireNonNullElse(vesDataModel, new VESDataManager());
+    }
+
+    public ConfigModel getConfigModel() {
+        return Objects.requireNonNullElse(configModel, new ConfigManager());
     }
 }

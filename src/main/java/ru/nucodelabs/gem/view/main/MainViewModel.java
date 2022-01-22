@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
@@ -14,16 +13,14 @@ import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
-import ru.nucodelabs.gem.model.VESDataManager;
+import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
-import ru.nucodelabs.mvvm.Model;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,17 +57,20 @@ public class MainViewModel extends ViewModel {
      * Data models
      */
     private final VESDataModel vesData;
+    private final ConfigModel config;
 
     /**
      * <h3>Constructor</h3>
      * Initialization
      *
-     * @param viewManager View Manager
-     * @param models      models
+     * @param viewManager  View Manager
+     * @param configModel  Configuration
+     * @param vesDataModel VES Data
      */
-    public MainViewModel(ViewManager viewManager, Model... models) {
-        super(viewManager, models);
-        this.vesData = (VESDataModel) this.models.get(VESDataManager.class);
+    public MainViewModel(ViewManager viewManager, ConfigModel configModel, VESDataModel vesDataModel) {
+        super(viewManager);
+        this.config = configModel;
+        this.vesData = vesDataModel;
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
@@ -83,38 +83,8 @@ public class MainViewModel extends ViewModel {
         misfitStacksData = new SimpleObjectProperty<>();
     }
 
-    protected void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
+    public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
         modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart);
-    }
-
-    private void alertExperimentalDataIsUnsafe() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Режим совместимости");
-        alert.setHeaderText("STT и EXP содержат разное количество строк");
-        alert.setContentText("Будет отображаться минимально возможное число данных");
-        alert.initOwner(viewManager.getStage());
-        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
-        alert.show();
-    }
-
-    private void alertFileNotFound(FileNotFoundException e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Файл не найден!");
-        alert.setContentText(e.getMessage());
-        alert.initOwner(viewManager.getStage());
-        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
-        alert.show();
-    }
-
-    private void alertNoLib(UnsatisfiedLinkError e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Невозможно отрисовать график");
-        alert.setHeaderText("Отсутствует библиотека");
-        alert.setContentText(e.getMessage());
-        alert.initOwner(viewManager.getStage());
-        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
-        alert.show();
     }
 
     public void importEXP() {
@@ -131,8 +101,8 @@ public class MainViewModel extends ViewModel {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
-        } catch (FileNotFoundException e) {
-            alertFileNotFound(e);
+        } catch (Exception e) {
+            viewManager.alertIncorrectFile(e);
             return;
         }
 
@@ -142,8 +112,8 @@ public class MainViewModel extends ViewModel {
                     openedFilePath.getParent().toString()
                             + File.separator
                             + openedEXP.getSTTFileName()));
-        } catch (FileNotFoundException e) {
-            alertFileNotFound(e);
+        } catch (Exception e) {
+            viewManager.alertIncorrectFile(e);
             return;
         }
         if (vesData.getPickets().size() == 0) {
@@ -152,7 +122,7 @@ public class MainViewModel extends ViewModel {
             vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
         }
         if (vesData.getPicket(vesData.getPickets().size() - 1).getExperimentalData().isUnsafe()) {
-            alertExperimentalDataIsUnsafe();
+            viewManager.alertExperimentalDataIsUnsafe();
         }
 
         menuFileMODDisabled.setValue(false);
@@ -176,8 +146,8 @@ public class MainViewModel extends ViewModel {
         MODFile openedMOD;
         try {
             openedMOD = SonetImport.readMOD(file);
-        } catch (FileNotFoundException e) {
-            alertFileNotFound(e);
+        } catch (Exception e) {
+            viewManager.alertIncorrectFile(e);
             return;
         }
 
@@ -186,7 +156,7 @@ public class MainViewModel extends ViewModel {
         try {
             updateTheoreticalCurve();
         } catch (UnsatisfiedLinkError e) {
-            alertNoLib(e);
+            viewManager.alertNoLib(e);
             return;
         }
 
@@ -195,7 +165,7 @@ public class MainViewModel extends ViewModel {
         try {
             updateMisfitStacksData();
         } catch (UnsatisfiedLinkError e) {
-            alertNoLib(e);
+            viewManager.alertNoLib(e);
             return;
         }
         misfitStacksLineChartVisible.setValue(true);

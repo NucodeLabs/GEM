@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.core;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -10,6 +11,7 @@ import ru.nucodelabs.gem.view.welcome.WelcomeView;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * <h2>View Manager</h2>
@@ -44,7 +46,9 @@ public class ViewManager {
         File expFile = showEXPFileChooser();
         if (expFile != null) {
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
-                    new MainViewModel(this, modelFactory.getVesDataModel())
+                    new MainViewModel(this,
+                            modelFactory.getConfigModel(),
+                            modelFactory.getVesDataModel())
             );
             Scene scene = new Scene(mainSplitLayoutView);
             stage.hide();
@@ -75,7 +79,43 @@ public class ViewManager {
         return chooser.showOpenDialog(stage);
     }
 
-    public Stage getStage() {
-        return stage;
+    public void alertExperimentalDataIsUnsafe() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Режим совместимости");
+        alert.setHeaderText("STT и EXP содержат разное количество строк");
+        alert.setContentText("Будет отображаться минимально возможное число данных");
+        alert.initOwner(stage);
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
+        alert.show();
+    }
+
+    public void alertFileNotFound(FileNotFoundException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText("Файл не найден!");
+        alert.setContentText(e.getMessage());
+        alert.initOwner(stage);
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
+        alert.show();
+    }
+
+    public void alertNoLib(UnsatisfiedLinkError e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Невозможно отрисовать график");
+        alert.setHeaderText("Отсутствует библиотека");
+        alert.setContentText(e.getMessage());
+        alert.initOwner(stage);
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
+        alert.show();
+    }
+
+    public void alertIncorrectFile(Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+//        alert.setTitle("Неверный формат файла");
+        alert.setHeaderText("Произошла ошибка при открытии файла");
+        alert.setContentText(e.getMessage());
+        alert.initOwner(stage);
+        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
+        alert.show();
     }
 }
