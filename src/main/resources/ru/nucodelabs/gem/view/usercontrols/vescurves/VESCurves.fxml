@@ -16,7 +16,7 @@
             <Insets top="10.0"/>
         </VBox.margin>
     </Text>
-    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity">
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
                         side="BOTTOM" tickUnit="1.0"/>
