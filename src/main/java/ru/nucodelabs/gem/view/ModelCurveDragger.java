@@ -71,8 +71,6 @@ public class ModelCurveDragger {
     }
 
     public void dragHandler(MouseEvent mouseEvent) {
-        vesCurvesLineChart.setAnimated(false);
-
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         Double mouseX = vesCurvesLineChart.getXAxis().getValueForDisplay(
@@ -91,7 +89,5 @@ public class ModelCurveDragger {
                 point2.setYValue(mouseY);
             }
         }
-
-        vesCurvesLineChart.setAnimated(true);
     }
 }
