@@ -4,7 +4,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
     id "com.google.osdetector" version "1.7.0"
 }
 
@@ -43,10 +43,7 @@ application {
 }
 
 javafx {
-    if (currentOS.isMacOsX() && currentArch.name.toLowerCase().contains("arm")) {
-        sdk = "${userDir}/Library/Java/javafx-sdk-18"
-    }
-    version = "17"
+    version = "17.0.2"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
 }
 
