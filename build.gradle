@@ -17,7 +17,14 @@ repositories {
 
 def currentOS = DefaultNativePlatform.currentOperatingSystem
 def currentArch = DefaultNativePlatform.currentArchitecture
+def currentOSVer = System.getProperty("os.version").toString()
 def userDir = System.getProperty("user.home")
+
+task printPlatformInfo {
+    println 'OS:             ' + currentOS.name
+    println 'OS VERSION:     ' + currentOSVer
+    println 'ARCHITECTURE:   ' + currentArch.name
+}
 
 ext {
     junitVersion = '5.8.2'
@@ -36,7 +43,7 @@ application {
 }
 
 javafx {
-    if (currentOS.isMacOsX() && currentArch.name.contains("arm")) {
+    if (currentOS.isMacOsX() && currentArch.name.toLowerCase().contains("arm")) {
         sdk = "${userDir}/Library/Java/javafx-sdk-18"
     }
     version = "17"
