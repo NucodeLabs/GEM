@@ -8,7 +8,7 @@ GEM is a study platform for geologists and geophysicist.
 
 ### All platforms
 
-Install **OpenJDK 17.0.1**
+Install **OpenJDK 17**
 
 ### Windows
 
@@ -27,4 +27,4 @@ $ gradle forwardSolver
 $ gradle misfitFunctions
 ```
 
-Or using IntelliJ IDEA run `forwardSolver`, `misfitFunctions`, etc tasks in `build.gradle`
+Or using IntelliJ IDEA run `forwardSolver`, `misfitFunctions`, etc. tasks in `build.gradle`.
