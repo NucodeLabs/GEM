@@ -23,7 +23,6 @@ ext {
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
     currentOSVer = System.getProperty("os.version").toString()
-    userDir = System.getProperty("user.home")
 
     // JNI specific variables
     platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
