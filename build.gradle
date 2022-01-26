@@ -16,19 +16,49 @@ repositories {
     mavenCentral()
 }
 
-def currentOS = DefaultNativePlatform.currentOperatingSystem
-def currentArch = DefaultNativePlatform.currentArchitecture
-def currentOSVer = System.getProperty("os.version").toString()
-def userDir = System.getProperty("user.home")
-
-task printPlatformInfo {
-    println 'OS:             ' + currentOS.name
-    println 'OS VERSION:     ' + currentOSVer
-    println 'ARCHITECTURE:   ' + currentArch.name
-}
-
 ext {
     junitVersion = '5.8.2'
+
+    // Platform Info
+    currentOS = DefaultNativePlatform.currentOperatingSystem
+    currentArch = DefaultNativePlatform.currentArchitecture
+    currentOSVer = System.getProperty("os.version").toString()
+    userDir = System.getProperty("user.home")
+
+    // JNI specific variables
+    platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
+    libPrefix = currentOS.isWindows() ? "" : "lib"
+    libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
+
+    compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
+    arch = currentOS.isMacOsX() ? ["-arch", "x86_64", "-arch", "arm64"] : []
+    optimization = "-O3"
+    pic = currentOS.isWindows() ? "" : "-fPIC"
+    shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
+
+    jniIncludePaths = [
+            "-I", file("${Jvm.current().javaHome}/include").absolutePath,
+            "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
+    ]
+
+    jniArgs = prepareJNIArgs()
+}
+
+def prepareJNIArgs() {
+    def jniArgs = new ArrayList();
+    jniArgs.add(compiler)
+    jniArgs.addAll(arch)
+    jniArgs.add(optimization)
+    jniArgs.add(pic)
+    jniArgs.add(shared)
+    jniArgs.addAll(jniIncludePaths)
+    return jniArgs;
+}
+
+task printPlatformInfo {
+    println "OS:             ${currentOS.name}"
+    println "OS VERSION:     ${currentOSVer}"
+    println "ARCHITECTURE:   ${currentArch.name}"
 }
 
 sourceCompatibility = '17'
@@ -51,33 +81,10 @@ javafx {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation('org.openjfx:javafx-base:17.0.0.1')
-    implementation('org.openjfx:javafx-controls:17.0.0.1')
-    implementation('org.openjfx:javafx-fxml:17.0.0.1')
+    implementation('org.openjfx:javafx-base')
+    implementation('org.openjfx:javafx-controls')
+    implementation('org.openjfx:javafx-fxml')
 }
-
-def platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
-def libPrefix = currentOS.isWindows() ? "" : "lib"
-def libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
-
-def compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
-def arch = currentOS.isMacOsX() ? ["-arch", "x86_64", "-arch", "arm64"] : []
-def optimization = "-O3"
-def pic = currentOS.isWindows() ? "" : "-fPIC"
-def shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
-
-def jniIncludePaths = [
-        "-I", file("${Jvm.current().javaHome}/include").absolutePath,
-        "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
-]
-
-def jniArgs = new ArrayList<>()
-jniArgs.add(compiler)
-jniArgs.addAll(arch)
-jniArgs.add(optimization)
-jniArgs.add(pic)
-jniArgs.add(shared)
-jniArgs.addAll(jniIncludePaths)
 
 task forwardSolver(type: Exec) {
     workingDir "${projectDir}/orig/ForwardSolver"
@@ -101,6 +108,7 @@ task forwardSolver(type: Exec) {
 
     doFirst {
         mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
     }
 
     commandLine args
@@ -135,6 +143,7 @@ task misfitFunctions(type: Exec) {
 
     doFirst {
         mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
     }
 
     commandLine args
