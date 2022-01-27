@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.VBox?>
+<?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
+<?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
+<?import ru.nucodelabs.gem.view.usercontrols.vescurvestablesplit.VESCurvesTableSplit?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="@../common.css"
+         maxWidth="Infinity" maxHeight="Infinity">
+    <MainMenuBar fx:id="mainMenuBar"/>
+
+    <SplitPane orientation="VERTICAL">
+        <SplitPane orientation="VERTICAL">
+            <!-- placeholder -->
+            <VESCurves/>
+            <VESCurves/>
+        </SplitPane>
+
+        <VESCurvesTableSplit fx:id="vesCurvesTable"/>
+    </SplitPane>
+
+</fx:root>
