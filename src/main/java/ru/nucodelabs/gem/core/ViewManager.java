@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
+import ru.nucodelabs.gem.view.main.MainSplitLayoutView_single;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeView;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
@@ -45,18 +45,18 @@ public class ViewManager {
     public void openMainViewWithImportEXP() {
         File expFile = showEXPFileChooser();
         if (expFile != null) {
-            MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
+            MainSplitLayoutView_single mainSplitLayoutViewSingle = new MainSplitLayoutView_single(
                     new MainViewModel(this,
                             modelFactory.getConfigModel(),
                             modelFactory.getVesDataModel())
             );
-            Scene scene = new Scene(mainSplitLayoutView);
+            Scene scene = new Scene(mainSplitLayoutViewSingle);
             stage.hide();
             stage.setResizable(true);
             stage.setScene(scene);
             stage.show();
             stage.setMaximized(true);
-            mainSplitLayoutView.getViewModel().importEXP(expFile);
+            mainSplitLayoutViewSingle.getViewModel().importEXP(expFile);
         }
     }
 

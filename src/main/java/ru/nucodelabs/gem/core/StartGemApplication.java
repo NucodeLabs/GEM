@@ -10,10 +10,10 @@ import java.util.Arrays;
 public class StartGemApplication {
     public static void main(String[] args) {
         // only for debug!!!
-        if (Arrays.asList(args).contains("--pre-load")) {
+        if (Arrays.asList(args).contains("--preload-lib")) {
             System.loadLibrary("forwardsolver"); // for faster first time file opening
             System.loadLibrary("misfit");
-            System.out.println("--pre-load: DLL loaded.");
+            System.out.println("--preload-lib: DLL loaded.");
         }
         // because here is no error handling
 

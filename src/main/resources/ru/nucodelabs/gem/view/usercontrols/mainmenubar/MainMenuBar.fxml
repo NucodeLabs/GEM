@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-         stylesheets="@../../main/MainSplitLayoutView.css">
+         stylesheets="@../../common.css">
     <MenuBar fx:id="menuBar">
         <Menu text="%file">
             <MenuItem text="%create"/>
