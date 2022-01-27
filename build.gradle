@@ -6,11 +6,13 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.11'
     id "com.google.osdetector" version "1.7.0"
-    id "org.beryx.jlink" version "2.24.4"
 }
 
 group 'ru.nucodelabs'
 version '1.0-SNAPSHOT'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -60,9 +62,6 @@ task printPlatformInfo {
     println "ARCHITECTURE:   ${currentArch.name}"
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -83,6 +82,7 @@ dependencies {
     implementation('org.openjfx:javafx-base')
     implementation('org.openjfx:javafx-controls')
     implementation('org.openjfx:javafx-fxml')
+    implementation 'com.google.code.gson:gson:2.8.9'
 }
 
 task forwardSolver(type: Exec) {
