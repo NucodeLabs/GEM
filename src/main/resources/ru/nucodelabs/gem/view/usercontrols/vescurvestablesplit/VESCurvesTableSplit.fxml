@@ -12,7 +12,7 @@
          maxHeight="Infinity"
          VBox.vgrow="ALWAYS">
 
-    <HBox alignment="CENTER" maxWidth="Infinity">
+    <HBox alignment="CENTER" maxWidth="Infinity" style="-fx-background-color: WhiteSmoke">
         <HBox style="-fx-padding: 5">
             <Button text="Предыдущий пикет" fx:id="prevButton"/>
         </HBox>
