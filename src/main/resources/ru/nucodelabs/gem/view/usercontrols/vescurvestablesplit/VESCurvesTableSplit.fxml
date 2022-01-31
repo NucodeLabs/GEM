@@ -14,13 +14,13 @@
 
     <HBox alignment="CENTER" maxWidth="Infinity" style="-fx-background-color: WhiteSmoke">
         <HBox style="-fx-padding: 5">
-            <Button text="Предыдущий пикет" fx:id="prevButton"/>
+            <Button text="← Предыдущий пикет" fx:id="prevButton"/>
         </HBox>
         <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
             <Text fx:id="text" text="VES"/>
         </HBox>
         <HBox style="-fx-padding: 5">
-            <Button text="Следующий пикет" fx:id="nextButton"/>
+            <Button text="Следующий пикет →" fx:id="nextButton"/>
         </HBox>
     </HBox>
     <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
