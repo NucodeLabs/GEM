@@ -14,7 +14,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
     public Button prevButton;
     @FXML
-    public Text text;
+    public Text vesTitle;
     @FXML
     public Button nextButton;
     @FXML
@@ -33,7 +33,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
 
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
-        text.textProperty().bind(viewModel.vesTextProperty());
+        vesTitle.textProperty().bind(viewModel.vesTextProperty());
 
         misfitStacks.getLineChart().visibleProperty().bind(viewModel.misfitStacksVisibleProperty());
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
