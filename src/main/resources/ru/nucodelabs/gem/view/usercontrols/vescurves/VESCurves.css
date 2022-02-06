@@ -76,3 +76,9 @@
     -fx-tick-label-font-size: 12pt;
     -fx-font-size: 10pt;
 }
+
+#text {
+    -fx-fill: Gray;
+    -fx-font-size: 12;
+    -fx-padding: 5;
+}
