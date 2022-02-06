@@ -7,10 +7,9 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.Objects;
 
-import static java.lang.Math.min;
-
 public class ModelCurveDragger {
 
+    public static final double TOLERANCE = 0.005;
     private final int MOD_CURVE_SERIES_INDEX = 4;
 
     private LineChart<Double, Double> vesCurvesLineChart;
@@ -18,6 +17,10 @@ public class ModelCurveDragger {
     // ends of line to be dragged
     private XYChart.Data<Double, Double> point1;
     private XYChart.Data<Double, Double> point2;
+
+    // for vertical line dragging
+    private Double leftLimitX;
+    private Double rightLimitX;
 
     public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
         this.vesCurvesLineChart = vesCurvesLineChart;
@@ -32,31 +35,22 @@ public class ModelCurveDragger {
 
         var points = vesCurvesLineChart.getData().get(MOD_CURVE_SERIES_INDEX).getData();
         var closestVerticalLines = points.stream()
-                .filter(p -> p.getXValue() > mouseX - 0.01 && p.getXValue() < mouseX + 0.01)
+                .filter(p -> p.getXValue() > mouseX - TOLERANCE && p.getXValue() < mouseX + TOLERANCE)
                 .toList();
 
-        if (closestVerticalLines.size() >= 2 && closestVerticalLines.size() % 2 == 0) {
-            Double closestLeftX = null;
-            Double closestRightX = null;
-            for (var point : closestVerticalLines) {
-                if (point.getXValue() <= mouseX) {
-                    closestLeftX = point.getXValue();
+        if (closestVerticalLines.size() == 2) {
+            point1 = closestVerticalLines.get(0);
+            point2 = closestVerticalLines.get(1);
+
+            for (var point : points) {
+                if (point.getXValue() < mouseX && point.getXValue() < point1.getXValue()) {
+                    leftLimitX = point.getXValue();
                 }
-                if (point.getXValue() >= mouseX) {
-                    closestRightX = point.getXValue();
+                if (point.getXValue() > mouseX && point.getXValue() > point2.getXValue()) {
+                    rightLimitX = point.getXValue();
                     break;
                 }
             }
-            final Double closestX =
-                    closestLeftX != null && closestRightX != null ?
-                            min(closestLeftX, closestRightX) :
-                            closestLeftX != null ? closestLeftX : closestRightX != null ? closestRightX : Double.MAX_VALUE;
-            var line = closestVerticalLines
-                    .stream()
-                    .filter(p -> Objects.equals(p.getXValue(), closestX))
-                    .toList();
-            point1 = line.get(0);
-            point2 = line.get(1);
         } else {
             for (var point : points) {
                 if (point.getXValue() < mouseX) {
@@ -81,7 +75,8 @@ public class ModelCurveDragger {
         );
 
         if (point1 != null && point2 != null) {
-            if (Objects.equals(point1.getXValue(), point2.getXValue())) {
+            if (Objects.equals(point1.getXValue(), point2.getXValue())
+                    && leftLimitX < mouseX - TOLERANCE * 5 && mouseX + TOLERANCE * 5 < rightLimitX) {
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
