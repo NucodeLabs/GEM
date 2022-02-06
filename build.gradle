@@ -79,9 +79,9 @@ javafx {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation('org.openjfx:javafx-base')
-    implementation('org.openjfx:javafx-controls')
-    implementation('org.openjfx:javafx-fxml')
+    implementation('org.openjfx:javafx-base:17.0.2')
+    implementation('org.openjfx:javafx-controls:17.0.2')
+    implementation('org.openjfx:javafx-fxml:17.0.2')
     implementation 'com.google.code.gson:gson:2.8.9'
 }
 

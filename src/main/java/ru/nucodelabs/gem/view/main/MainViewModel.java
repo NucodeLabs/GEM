@@ -173,6 +173,7 @@ public class MainViewModel extends ViewModel {
         XYChart.Series<Double, Double> theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
                 vesData.getExperimentalData(0), vesData.getModelData(0)
         );
+
         vesCurvesData.setValue(
                 FXCollections.observableList(
                         vesCurvesData.getValue().subList(0, EXP_CURVE_SERIES_CNT)
@@ -272,4 +273,9 @@ public class MainViewModel extends ViewModel {
     public StringProperty vesTextProperty() {
         return vesText;
     }
+
+    /**Tables part
+     */
+
+
 }

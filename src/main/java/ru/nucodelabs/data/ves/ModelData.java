@@ -1,5 +1,6 @@
 package ru.nucodelabs.data.ves;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import ru.nucodelabs.files.sonet.MODFile;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class ModelData {
         polarization = modFile.getPolarization();
         power = modFile.getPower();
     }
+
+
 
     //region getters and setters
     public List<Double> getResistance() {

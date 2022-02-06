@@ -17,8 +17,6 @@ public class ExperimentalData {
      * MN/2, м
      */
     private List<Double> MN_2; // get set
-
-
     /**
      * Ток, мА
      */

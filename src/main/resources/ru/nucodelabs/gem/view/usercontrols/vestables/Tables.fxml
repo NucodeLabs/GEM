@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<AnchorPane fx:id="tables" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" maxWidth="Infinity">
+    <SplitPane maxWidth="Infinity">
+        <fx:include source="ExperimentalTable.fxml" fx:id="expTable" maxWidth="Infinity"/>
+        <fx:include source="ModelTable.fxml" fx:id="modTable" maxWidth="Infinity"/>
+    </SplitPane>
+</AnchorPane>

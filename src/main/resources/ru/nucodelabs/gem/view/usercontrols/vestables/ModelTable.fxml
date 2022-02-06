@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml" maxWidth="Infinity" minWidth="60">
+    <Label text="%modelTable"/>
+    <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60">
+        <columns>
+            <TableColumn fx:id="modPower" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelPower"/>
+            <TableColumn fx:id="modResistance" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelResistanceApparent"/>
+            <TableColumn fx:id="modPolarization" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelPolarization"/>
+        </columns>
+    </TableView>
+
+</AnchorPane>

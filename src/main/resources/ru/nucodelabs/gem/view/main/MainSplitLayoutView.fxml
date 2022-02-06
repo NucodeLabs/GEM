@@ -5,6 +5,8 @@
 <?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
 <?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
 <?import ru.nucodelabs.gem.view.usercontrols.vescurvestablesplit.VESCurvesTableSplit?>
+
+
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          stylesheets="@../common.css"
@@ -15,10 +17,9 @@
         <SplitPane orientation="VERTICAL">
             <!-- placeholder -->
             <VESCurves/>
-            <VESCurves/>
         </SplitPane>
 
-        <VESCurvesTableSplit fx:id="vesCurvesTable"/>
+            <VESCurvesTableSplit fx:id="vesCurvesTable"/>
     </SplitPane>
 
 </fx:root>
