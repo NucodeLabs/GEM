@@ -11,7 +11,7 @@ import static java.lang.Math.pow;
 public class ForwardSolverTest {
 
     @Test
-    void test_JNI() {
+    void testJNI() {
         int Nraz = 40;
         int Nlay = 3;
         double Raz[] = new double[Nraz]; /* Distances           */
@@ -19,7 +19,7 @@ public class ForwardSolverTest {
         double Th[] = new double[Nlay];  /* Layers thicknesses  */
         int i;
         double sr;
-        sr = 4./(double)(Nraz-1);
+        sr = 4. / (double) (Nraz - 1);
         System.out.println(sr);
 
         /* Generating distances */
