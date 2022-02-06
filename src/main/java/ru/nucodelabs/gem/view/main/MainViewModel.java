@@ -159,7 +159,13 @@ public class MainViewModel extends ViewModel {
         }
 
         updateModelCurve();
-        vesText.setValue(vesText.getValue() + " - " + file.getName());
+        vesText.setValue(
+                String.format(
+                        "%s - %s",
+                        vesText.getValue().split("\s")[0],
+                        file.getName()
+                )
+        );
         try {
             updateMisfitStacksData();
         } catch (UnsatisfiedLinkError e) {
