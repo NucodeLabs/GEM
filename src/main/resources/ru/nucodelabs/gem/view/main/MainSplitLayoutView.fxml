@@ -28,7 +28,7 @@
                     <Button text="← Предыдущий пикет" fx:id="prevButton"/>
                 </HBox>
                 <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
-                    <Text fx:id="text" text="VES"/>
+                    <Text fx:id="vesTitle" text="VES"/>
                 </HBox>
                 <HBox style="-fx-padding: 5">
                     <Button text="Следующий пикет →" fx:id="nextButton"/>
