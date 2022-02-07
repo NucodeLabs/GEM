@@ -5,6 +5,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.model.ConfigManager;
+import ru.nucodelabs.gem.model.ConfigModel;
+import ru.nucodelabs.gem.model.VESDataManager;
+import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeView;
@@ -47,8 +51,8 @@ public class ViewManager {
         if (expFile != null) {
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
                     new MainViewModel(this,
-                            modelFactory.getConfigModel(),
-                            modelFactory.getVesDataModel())
+                            (ConfigModel) modelFactory.get(ConfigManager.class),
+                            (VESDataModel) modelFactory.get(VESDataManager.class))
             );
             Scene scene = new Scene(mainSplitLayoutView);
             stage.hide();
