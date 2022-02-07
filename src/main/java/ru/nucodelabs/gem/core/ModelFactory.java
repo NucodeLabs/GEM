@@ -1,11 +1,9 @@
 package ru.nucodelabs.gem.core;
 
-import ru.nucodelabs.gem.model.ConfigManager;
-import ru.nucodelabs.gem.model.ConfigModel;
-import ru.nucodelabs.gem.model.VESDataManager;
-import ru.nucodelabs.gem.model.VESDataModel;
+import ru.nucodelabs.mvvm.Model;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h2>Model Factory</h2>
@@ -13,17 +11,24 @@ import java.util.Objects;
  */
 public class ModelFactory {
 
-    private VESDataModel vesDataModel;
-    private ConfigModel configModel;
+    private final Map<Class<? extends Model>, Model> modelMap;
 
     public ModelFactory() {
+        modelMap = new HashMap<>();
     }
 
-    public VESDataModel getVesDataModel() {
-        return Objects.requireNonNullElse(vesDataModel, new VESDataManager());
-    }
-
-    public ConfigModel getConfigModel() {
-        return Objects.requireNonNullElse(configModel, new ConfigManager());
+    public Model get(Class<? extends Model> modelClass) {
+        if (modelMap.get(modelClass) != null) {
+            return modelMap.get(modelClass);
+        } else {
+            Model model = null;
+            try {
+                model = modelClass.getConstructor().newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            modelMap.put(modelClass, model);
+            return model;
+        }
     }
 }
