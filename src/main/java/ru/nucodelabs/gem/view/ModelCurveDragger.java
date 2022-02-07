@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class ModelCurveDragger {
 
-    public static final double TOLERANCE = 0.005;
+    private static final double TOLERANCE = 0.005;
     private final int MOD_CURVE_SERIES_INDEX = 4;
 
     private LineChart<Double, Double> vesCurvesLineChart;
