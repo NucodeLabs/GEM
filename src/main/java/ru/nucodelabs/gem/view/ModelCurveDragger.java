@@ -76,7 +76,7 @@ public class ModelCurveDragger {
 
         if (point1 != null && point2 != null) {
             if (Objects.equals(point1.getXValue(), point2.getXValue())
-                    && leftLimitX < mouseX - TOLERANCE * 5 && mouseX + TOLERANCE * 5 < rightLimitX) {
+                    && leftLimitX < mouseX - TOLERANCE * 2 && mouseX + TOLERANCE * 2 < rightLimitX) {
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
