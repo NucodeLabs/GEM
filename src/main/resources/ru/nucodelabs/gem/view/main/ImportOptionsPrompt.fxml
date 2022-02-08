@@ -7,18 +7,18 @@
 <fx:root alignment="CENTER" prefHeight="150" prefWidth="400" type="javafx.scene.layout.VBox"
          xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
          stylesheets="@../common.css">
-    <Text text="Добавить пикет к текущему разрезу или создать новый?">
+    <Text text="%askImportOption">
         <VBox.margin>
             <Insets bottom="30.0"/>
         </VBox.margin>
     </Text>
     <HBox alignment="CENTER">
-        <Button fx:id="addToCurrentBtn" text="Добавить к текущему">
+        <Button fx:id="addToCurrentBtn" text="%addToCurrent">
             <HBox.margin>
                 <Insets right="30.0"/>
             </HBox.margin>
         </Button>
-        <Button fx:id="addToNewBtn" text="Новый разрез"/>
+        <Button fx:id="addToNewBtn" text="%addToNew"/>
         <VBox.margin>
             <Insets/>
         </VBox.margin>
