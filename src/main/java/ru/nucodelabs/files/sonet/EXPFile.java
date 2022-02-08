@@ -1,9 +1,11 @@
 package ru.nucodelabs.files.sonet;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class EXPFile {
     private String STTFileName;
+    private File file;
 
     private String number; // Номер установки
     private String date; // Дата
@@ -114,6 +116,14 @@ public class EXPFile {
 
     public String getSTTFileName() {
         return STTFileName;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public void setAmperage(ArrayList<Double> amperage) {

@@ -1,8 +1,11 @@
 package ru.nucodelabs.files.sonet;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class STTFile {
+    private File file;
+
     private ArrayList<Double> AB_2; // AB/2, м
     private ArrayList<Double> MN_2; // MN/2, м
 
@@ -29,5 +32,13 @@ public class STTFile {
 
     public void setMN_2(ArrayList<Double> MN_2) {
         this.MN_2 = MN_2;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
