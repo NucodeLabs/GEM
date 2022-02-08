@@ -136,6 +136,7 @@ public class MainViewModel extends ViewModel {
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
         }
+        importMOD();
     }
 
     public void importMOD() {
