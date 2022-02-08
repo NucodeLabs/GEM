@@ -22,6 +22,7 @@ public class SonetImport {
                 numbers.stream().map(s -> s.get(1)).toList());
 
         sc.close();
+        res.setFile(file);
         return res;
     }
 
@@ -51,6 +52,7 @@ public class SonetImport {
                 numbers.stream().map(s -> s.get(5)).toList());
 
         sc.close();
+        res.setFile(file);
         return res;
     }
 
@@ -68,6 +70,7 @@ public class SonetImport {
                 numbers.stream().map(s -> s.get(2)).toList());
 
         sc.close();
+        res.setFile(file);
         return res;
     }
 
