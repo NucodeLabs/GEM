@@ -4,9 +4,8 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static java.lang.Math.min;
 
 public class ExperimentalData {
     /**
@@ -44,8 +43,6 @@ public class ExperimentalData {
      */
     private List<Double> errorPolarizationApparent; // get set
 
-    private Integer size;
-
     public ExperimentalData() {
         AB_2 = new ArrayList<>();
         MN_2 = new ArrayList<>();
@@ -66,20 +63,29 @@ public class ExperimentalData {
         errorResistanceApparent = expFile.getErrorResistanceApparent();
         polarizationApparent = expFile.getPolarizationApparent();
         errorPolarizationApparent = expFile.getErrorPolarizationApparent();
-        size = min(AB_2.size(), resistanceApparent.size());
+    }
+
+    private List<Integer> sizesList() {
+        List<Integer> sizes = new ArrayList<>();
+        if (AB_2.size() > 0) sizes.add(AB_2.size());
+        if (MN_2.size() > 0) sizes.add(MN_2.size());
+        if (amperage.size() > 0) sizes.add(amperage.size());
+        if (voltage.size() > 0) sizes.add(voltage.size());
+        if (resistanceApparent.size() > 0) sizes.add(resistanceApparent.size());
+        if (errorResistanceApparent.size() > 0) sizes.add(errorPolarizationApparent.size());
+        if (polarizationApparent.size() > 0) sizes.add(polarizationApparent.size());
+        if (errorPolarizationApparent.size() > 0) sizes.add(errorPolarizationApparent.size());
+
+        return sizes;
     }
 
     public boolean isUnsafe() {
-        return AB_2.size() != resistanceApparent.size();
+        return sizesList().stream().distinct().count() != 1;
     }
 
     //region getters and setters
     public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
+        return Collections.min(sizesList());
     }
 
     public List<Double> getAB_2() {
