@@ -24,10 +24,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static java.lang.Math.abs;
 
 public class MainViewModel extends ViewModel {
+
+    private final Stack<File> filesStack;
 
     /**
      * <h3>Constants</h3>
@@ -45,10 +48,8 @@ public class MainViewModel extends ViewModel {
      * <h3>Properties</h3>
      */
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
-    private final BooleanProperty vesCurvesVisible;
     private final StringProperty vesText;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
-    private final BooleanProperty misfitStacksVisible;
     private final BooleanProperty menuFileMODDisabled;
     private ModelCurveDragger modelCurveDragger;
 
@@ -71,14 +72,14 @@ public class MainViewModel extends ViewModel {
         this.config = configModel;
         this.vesData = vesDataModel;
 
+        filesStack = new Stack<>();
+
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
-        vesCurvesVisible = new SimpleBooleanProperty(false);
-        vesCurvesData = new SimpleObjectProperty<>();
+        vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         vesText = new SimpleStringProperty("");
 
-        misfitStacksVisible = new SimpleBooleanProperty(false);
-        misfitStacksData = new SimpleObjectProperty<>();
+        misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
     }
 
     public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
@@ -93,9 +94,12 @@ public class MainViewModel extends ViewModel {
         if (file == null) {
             return;
         }
+        filesStack.push(file);
+        viewManager.askImportOption();
+    }
 
-        Path openedFilePath = file.toPath();
-
+    public void addToNew() {
+        File file = filesStack.pop();
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -103,6 +107,8 @@ public class MainViewModel extends ViewModel {
             viewManager.alertIncorrectFile(e);
             return;
         }
+
+        Path openedFilePath = file.toPath();
 
         STTFile openedSTT;
         try {
@@ -119,7 +125,7 @@ public class MainViewModel extends ViewModel {
         } else {
             vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
         }
-        if (vesData.getPicket(vesData.getPickets().size() - 1).getExperimentalData().isUnsafe()) {
+        if (vesData.getPicket(0).getExperimentalData().isUnsafe()) {
             viewManager.alertExperimentalDataIsUnsafe();
         }
 
@@ -127,8 +133,9 @@ public class MainViewModel extends ViewModel {
         vesText.setValue(file.getName());
         updateExpCurveData();
 
-        misfitStacksVisible.setValue(false);
-        vesCurvesVisible.setValue(true);
+        if (misfitStacksData.getValue() != null) {
+            misfitStacksData.getValue().clear();
+        }
     }
 
     public void importMOD() {
@@ -170,9 +177,7 @@ public class MainViewModel extends ViewModel {
             updateMisfitStacksData();
         } catch (UnsatisfiedLinkError e) {
             viewManager.alertNoLib(e);
-            return;
         }
-        misfitStacksVisible.setValue(true);
     }
 
     private void updateTheoreticalCurve() {
@@ -253,22 +258,6 @@ public class MainViewModel extends ViewModel {
 
     public BooleanProperty menuFileMODDisabledProperty() {
         return menuFileMODDisabled;
-    }
-
-    public boolean getVesCurvesVisible() {
-        return vesCurvesVisible.get();
-    }
-
-    public BooleanProperty vesCurvesVisibleProperty() {
-        return vesCurvesVisible;
-    }
-
-    public boolean getMisfitStacksVisible() {
-        return misfitStacksVisible.get();
-    }
-
-    public BooleanProperty misfitStacksVisibleProperty() {
-        return misfitStacksVisible;
     }
 
     public String getVesText() {
