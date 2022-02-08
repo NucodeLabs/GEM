@@ -35,7 +35,6 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
         vesTitle.textProperty().bind(viewModel.vesTextProperty());
 
-        misfitStacks.getLineChart().visibleProperty().bind(viewModel.misfitStacksVisibleProperty());
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
     }
 }
