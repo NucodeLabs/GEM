@@ -83,10 +83,11 @@ public class ExperimentalData {
         return sizesList().stream().distinct().count() != 1;
     }
 
-    //region getters and setters
     public Integer getSize() {
         return Collections.min(sizesList());
     }
+
+    //region getters and setters
 
     public List<Double> getAB_2() {
         return AB_2;
