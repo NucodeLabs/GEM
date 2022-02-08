@@ -20,10 +20,13 @@ public class ModelData {
      */
     private List<Double> power; // get set
 
+    private Integer size;
+
     public ModelData() {
         resistance = new ArrayList<>();
         polarization = new ArrayList<>();
         power = new ArrayList<>();
+        size = 0;
     }
 
     public ModelData(MODFile modFile) {
@@ -31,6 +34,7 @@ public class ModelData {
         resistance = modFile.getResistance();
         polarization = modFile.getPolarization();
         power = modFile.getPower();
+        size = resistance.size();
     }
 
 
@@ -59,5 +63,10 @@ public class ModelData {
     public void setPower(List<Double> power) {
         this.power = power;
     }
+
+    public Integer getSize() {
+        return size;
+    }
+
     //endregion
 }

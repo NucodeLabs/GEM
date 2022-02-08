@@ -1,8 +1,10 @@
 package ru.nucodelabs.gem.view.main;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
+import ru.nucodelabs.gem.view.usercontrols.tables.experimental.ExperimentalTable;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.gem.view.usercontrols.vescurvestablesplit.VESCurvesTableSplit;
 import ru.nucodelabs.mvvm.VBView;
@@ -12,6 +14,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     public MainMenuBar mainMenuBar;
     @FXML
     public VESCurvesTableSplit vesCurvesTable;
+    @FXML
+    public ExperimentalTable experimentalTable;
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
