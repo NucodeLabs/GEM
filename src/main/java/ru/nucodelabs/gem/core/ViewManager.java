@@ -4,11 +4,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.model.ConfigManager;
 import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataManager;
 import ru.nucodelabs.gem.model.VESDataModel;
+import ru.nucodelabs.gem.view.main.ImportOptionsPrompt;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeView;
@@ -25,11 +27,13 @@ import java.io.FileNotFoundException;
 public class ViewManager {
 
     private final ModelFactory modelFactory;
+    private final ViewModelStorage viewModelStorage;
     private final Stage stage;
 
     public ViewManager(ModelFactory modelFactory, Stage stage) {
         this.modelFactory = modelFactory;
         this.stage = stage;
+        viewModelStorage = new ViewModelStorage();
     }
 
     public void start() {
@@ -49,11 +53,13 @@ public class ViewManager {
     public void openMainViewWithImportEXP() {
         File expFile = showEXPFileChooser();
         if (expFile != null) {
-            MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(
-                    new MainViewModel(this,
-                            (ConfigModel) modelFactory.get(ConfigManager.class),
-                            (VESDataModel) modelFactory.get(VESDataManager.class))
+            MainViewModel mainViewModel = new MainViewModel(
+                    this,
+                    (ConfigModel) modelFactory.get(ConfigManager.class),
+                    (VESDataModel) modelFactory.get(VESDataManager.class)
             );
+            viewModelStorage.put(mainViewModel);
+            MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
             Scene scene = new Scene(mainSplitLayoutView);
             stage.hide();
             stage.setResizable(true);
@@ -121,5 +127,17 @@ public class ViewManager {
         alert.initOwner(stage);
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
+    }
+
+    public void askImportOption() {
+        ImportOptionsPrompt importOptionsPrompt = new ImportOptionsPrompt(
+                (MainViewModel) viewModelStorage.get(MainViewModel.class)
+        );
+        Stage stage = new Stage();
+        stage.setScene(new Scene(importOptionsPrompt));
+        stage.initOwner(this.stage);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setResizable(false);
+        stage.show();
     }
 }
