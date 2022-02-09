@@ -6,6 +6,7 @@ public abstract class VBView<VM extends ViewModel> extends VBUserControl {
 
     public VBView(VM viewModel) {
         this.viewModel = viewModel;
+        Initializers.addCloseShortcutMacOS(this);
     }
 
     public VM getViewModel() {

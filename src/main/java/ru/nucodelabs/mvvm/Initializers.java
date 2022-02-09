@@ -2,6 +2,12 @@ package ru.nucodelabs.mvvm;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
+import ru.nucodelabs.gem.core.utils.OSDetector;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -24,6 +30,19 @@ public class Initializers {
             loader.load();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static <N extends Node> void addCloseShortcutMacOS(N root) {
+        if (new OSDetector().isMacOS()) {
+            root.addEventFilter(KeyEvent.KEY_PRESSED,
+                    e -> {
+                        KeyCodeCombination closeShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
+                        if (closeShortcut.match(e)) {
+                            ((Stage) root.getScene().getWindow()).close();
+                        }
+                    }
+            );
         }
     }
 }
