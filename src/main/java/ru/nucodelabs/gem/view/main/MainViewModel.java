@@ -131,14 +131,9 @@ public class MainViewModel extends ViewModel {
             viewManager.alertIncorrectFile(this, e);
             return;
         }
-        if (vesData.getPickets().size() == 0) {
-            vesData.addPicket(new Picket(openedEXP, openedSTT));
-        } else {
-            vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
-        }
-        if (vesData.getPicket(0).getExperimentalData().isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe(this);
-        }
+
+        addToModel(openedEXP, openedSTT);
+        compatibilityModeAlert();
 
         menuFileMODDisabled.setValue(false);
         vesText.setValue(file.getName());
@@ -148,6 +143,29 @@ public class MainViewModel extends ViewModel {
             misfitStacksData.getValue().clear();
         }
         importMOD();
+    }
+
+    /**
+     * Warns about compatibility mode if data is unsafe
+     */
+    private void compatibilityModeAlert() {
+        if (vesData.getPicket(0).getExperimentalData().isUnsafe()) {
+            viewManager.alertExperimentalDataIsUnsafe(this);
+        }
+    }
+
+    /**
+     * Adds new picket defined by files to section
+     *
+     * @param openedEXP EXP
+     * @param openedSTT STT
+     */
+    private void addToModel(EXPFile openedEXP, STTFile openedSTT) {
+        if (vesData.getPickets().size() == 0) {
+            vesData.addPicket(new Picket(openedEXP, openedSTT));
+        } else {
+            vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
+        }
     }
 
     /**
@@ -175,7 +193,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        vesData.setModelData(0, new ModelData(openedMOD));
+        addToModel(openedMOD);
 
         try {
             updateTheoreticalCurve();
@@ -197,6 +215,13 @@ public class MainViewModel extends ViewModel {
         } catch (UnsatisfiedLinkError e) {
             viewManager.alertNoLib(this, e);
         }
+    }
+
+    /**
+     * Adds ModelData to picket
+     */
+    private void addToModel(MODFile openedMOD) {
+        vesData.setModelData(0, new ModelData(openedMOD));
     }
 
     private void updateTheoreticalCurve() {
