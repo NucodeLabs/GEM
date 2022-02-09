@@ -20,10 +20,6 @@ public class MisfitStacks extends VBUserControl {
     @FXML
     public NumberAxis lineChartYAxis;
 
-    public MisfitStacks() {
-        super();
-    }
-
     public Text getText() {
         return text;
     }
