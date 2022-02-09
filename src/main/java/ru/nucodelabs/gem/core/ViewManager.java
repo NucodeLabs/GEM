@@ -15,9 +15,12 @@ import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeView;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
+import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h2>View Manager</h2>
@@ -27,117 +30,118 @@ import java.io.FileNotFoundException;
 public class ViewManager {
 
     private final ModelFactory modelFactory;
-    private final ViewModelStorage viewModelStorage;
-    private final Stage stage;
+    private final Stage initialStage;
+    private final Map<ViewModel, Stage> viewModelStageMap;
 
-    public ViewManager(ModelFactory modelFactory, Stage stage) {
+
+    public ViewManager(ModelFactory modelFactory, Stage initialStage) {
         this.modelFactory = modelFactory;
-        this.stage = stage;
-        viewModelStorage = new ViewModelStorage();
+        this.initialStage = initialStage;
+        viewModelStageMap = new HashMap<>();
     }
 
     public void start() {
-        WelcomeView welcomeView = new WelcomeView(
-                new WelcomeViewModel(this)
-        );
+        WelcomeViewModel welcomeViewModel = new WelcomeViewModel(this);
+        viewModelStageMap.put(welcomeViewModel, initialStage);
+        WelcomeView welcomeView = new WelcomeView(welcomeViewModel);
 
         Scene scene = new Scene(welcomeView);
-        stage.setTitle("GEM");
-        stage.getIcons().add(new Image("img/gem.png"));
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.centerOnScreen();
-        stage.show();
+        initialStage.setTitle("GEM");
+        initialStage.getIcons().add(new Image("img/gem.png"));
+        initialStage.setScene(scene);
+        initialStage.setResizable(false);
+        initialStage.centerOnScreen();
+        initialStage.show();
     }
 
-    public void openMainViewWithImportEXP() {
-        File expFile = showEXPFileChooser();
+    public void newMainViewWithImportEXP(File expFile) {
         if (expFile != null) {
             MainViewModel mainViewModel = new MainViewModel(
                     this,
                     (ConfigModel) modelFactory.get(ConfigManager.class),
                     (VESDataModel) modelFactory.get(VESDataManager.class)
             );
-            viewModelStorage.put(mainViewModel);
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
-            Scene scene = new Scene(mainSplitLayoutView);
-            stage.hide();
-            stage.setResizable(true);
-            stage.setScene(scene);
-            stage.show();
-            stage.setMaximized(true);
-            mainSplitLayoutView.getViewModel().importEXP(expFile);
+            Stage newStage = new Stage();
+            viewModelStageMap.put(mainViewModel, newStage);
+            initialStage.hide();
+            newStage.setScene(new Scene(mainSplitLayoutView));
+            newStage.show();
+            newStage.setMaximized(true);
+            mainSplitLayoutView.getViewModel().importEXP(expFile, false);
         }
     }
 
-    public File showEXPFileChooser() {
+    public void newMainViewWithImportEXP(ViewModel caller) {
+        newMainViewWithImportEXP(showEXPFileChooser(caller));
+    }
+
+    public File showEXPFileChooser(ViewModel caller) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл полевых данных для интерпретации");
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
         );
-        return chooser.showOpenDialog(stage);
+        return chooser.showOpenDialog(viewModelStageMap.get(caller));
 //      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
     }
 
-    public File showMODFileChooser() {
+    public File showMODFileChooser(ViewModel caller) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл модели");
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
         );
-        return chooser.showOpenDialog(stage);
+        return chooser.showOpenDialog(viewModelStageMap.get(caller));
     }
 
-    public void alertExperimentalDataIsUnsafe() {
+    public void alertExperimentalDataIsUnsafe(ViewModel caller) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Режим совместимости");
         alert.setHeaderText("STT и EXP содержат разное количество строк");
         alert.setContentText("Будет отображаться минимально возможное число данных");
-        alert.initOwner(stage);
+        alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
-    public void alertFileNotFound(FileNotFoundException e) {
+    public void alertFileNotFound(ViewModel caller, FileNotFoundException e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Ошибка");
         alert.setHeaderText("Файл не найден!");
         alert.setContentText(e.getMessage());
-        alert.initOwner(stage);
+        alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
-    public void alertNoLib(UnsatisfiedLinkError e) {
+    public void alertNoLib(ViewModel caller, UnsatisfiedLinkError e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Невозможно отрисовать график");
         alert.setHeaderText("Отсутствует библиотека");
         alert.setContentText(e.getMessage());
-        alert.initOwner(stage);
+        alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
-    public void alertIncorrectFile(Exception e) {
+    public void alertIncorrectFile(ViewModel caller, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
 //        alert.setTitle("Неверный формат файла");
         alert.setHeaderText("Произошла ошибка при открытии файла");
         alert.setContentText(e.getMessage());
-        alert.initOwner(stage);
+        alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
     }
 
-    public void askImportOption() {
-        ImportOptionsPrompt importOptionsPrompt = new ImportOptionsPrompt(
-                (MainViewModel) viewModelStorage.get(MainViewModel.class)
-        );
-        Stage stage = new Stage();
-        stage.setScene(new Scene(importOptionsPrompt));
-        stage.initOwner(this.stage);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.setResizable(false);
-        stage.show();
+    public void askImportOption(ViewModel caller) {
+        ImportOptionsPrompt importOptionsPrompt = new ImportOptionsPrompt((MainViewModel) caller);
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(importOptionsPrompt));
+        newStage.initOwner(viewModelStageMap.get(caller));
+        newStage.initModality(Modality.WINDOW_MODAL);
+        newStage.setResizable(false);
+        newStage.show();
     }
 }

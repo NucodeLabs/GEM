@@ -87,24 +87,31 @@ public class MainViewModel extends ViewModel {
     }
 
     public void importEXP() {
-        importEXP(viewManager.showEXPFileChooser());
+        importEXP(viewManager.showEXPFileChooser(this), true);
     }
 
-    public void importEXP(File file) {
+    public void importEXP(File file, boolean showAskImportOption) {
         if (file == null) {
             return;
         }
-        filesStack.push(file);
-        viewManager.askImportOption();
+        if (showAskImportOption) {
+            filesStack.push(file);
+            viewManager.askImportOption(this);
+        } else {
+            addToCurrent(file);
+        }
     }
 
-    public void addToNew() {
-        File file = filesStack.pop();
+    public void addToCurrent() {
+        addToCurrent(filesStack.pop());
+    }
+
+    public void addToCurrent(File file) {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
         } catch (Exception e) {
-            viewManager.alertIncorrectFile(e);
+            viewManager.alertIncorrectFile(this, e);
             return;
         }
 
@@ -117,7 +124,7 @@ public class MainViewModel extends ViewModel {
                             + File.separator
                             + openedEXP.getSTTFileName()));
         } catch (Exception e) {
-            viewManager.alertIncorrectFile(e);
+            viewManager.alertIncorrectFile(this, e);
             return;
         }
         if (vesData.getPickets().size() == 0) {
@@ -126,7 +133,7 @@ public class MainViewModel extends ViewModel {
             vesData.getPickets().set(0, new Picket(openedEXP, openedSTT));
         }
         if (vesData.getPicket(0).getExperimentalData().isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe();
+            viewManager.alertExperimentalDataIsUnsafe(this);
         }
 
         menuFileMODDisabled.setValue(false);
@@ -139,8 +146,12 @@ public class MainViewModel extends ViewModel {
         importMOD();
     }
 
+    public void addToNew() {
+        viewManager.newMainViewWithImportEXP(filesStack.pop());
+    }
+
     public void importMOD() {
-        importMOD(viewManager.showMODFileChooser());
+        importMOD(viewManager.showMODFileChooser(this));
     }
 
     public void importMOD(File file) {
@@ -153,7 +164,7 @@ public class MainViewModel extends ViewModel {
         try {
             openedMOD = SonetImport.readMOD(file);
         } catch (Exception e) {
-            viewManager.alertIncorrectFile(e);
+            viewManager.alertIncorrectFile(this, e);
             return;
         }
 
@@ -162,7 +173,7 @@ public class MainViewModel extends ViewModel {
         try {
             updateTheoreticalCurve();
         } catch (UnsatisfiedLinkError e) {
-            viewManager.alertNoLib(e);
+            viewManager.alertNoLib(this, e);
             return;
         }
 
@@ -177,7 +188,7 @@ public class MainViewModel extends ViewModel {
         try {
             updateMisfitStacksData();
         } catch (UnsatisfiedLinkError e) {
-            viewManager.alertNoLib(e);
+            viewManager.alertNoLib(this, e);
         }
     }
 

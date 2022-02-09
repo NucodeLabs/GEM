@@ -10,6 +10,6 @@ public class WelcomeViewModel extends ViewModel {
     }
 
     public void switchToMainView() {
-        viewManager.openMainViewWithImportEXP();
+        viewManager.newMainViewWithImportEXP(this);
     }
 }

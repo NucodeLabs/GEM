@@ -18,7 +18,7 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
             ((Stage) this.getScene().getWindow()).close();
         });
         addToCurrentBtn.setOnAction(e -> {
-            viewModel.addToNew();
+            viewModel.addToCurrent();
             ((Stage) this.getScene().getWindow()).close();
         });
     }
