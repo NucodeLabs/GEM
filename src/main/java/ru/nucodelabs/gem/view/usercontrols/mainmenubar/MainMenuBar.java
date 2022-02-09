@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.mvvm.VBUserControl;
 
 /**
@@ -28,8 +29,7 @@ public class MainMenuBar extends VBUserControl {
 
     public MainMenuBar() {
         super();
-        var osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("mac")) {
+        if (new OSDetector().isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem("Использовать системное меню");
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
