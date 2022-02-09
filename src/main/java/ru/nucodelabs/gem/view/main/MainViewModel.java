@@ -24,13 +24,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import static java.lang.Math.abs;
 
 public class MainViewModel extends ViewModel {
-
-    private final Stack<File> filesStack;
 
     /**
      * <h3>Constants</h3>
@@ -44,6 +41,9 @@ public class MainViewModel extends ViewModel {
     protected static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     protected static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
+    private ModelCurveDragger modelCurveDragger;
+
+
     /**
      * <h3>Properties</h3>
      */
@@ -51,7 +51,6 @@ public class MainViewModel extends ViewModel {
     private final StringProperty vesText;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
     private final BooleanProperty menuFileMODDisabled;
-    private ModelCurveDragger modelCurveDragger;
 
     /**
      * Data models
@@ -72,8 +71,6 @@ public class MainViewModel extends ViewModel {
         this.config = configModel;
         this.vesData = vesDataModel;
 
-        filesStack = new Stack<>();
-
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
@@ -82,31 +79,38 @@ public class MainViewModel extends ViewModel {
         misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
     }
 
+    /**
+     * Inject line chart dependency to dragger
+     *
+     * @param vesCurvesLineChart Line Chart
+     */
     public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
         modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart);
     }
 
+    /**
+     * Asks about import option then either addToCurrent() or addToNew() is called from ImportOptionPrompt
+     */
     public void importEXP() {
-        importEXP(viewManager.showEXPFileChooser(this), true);
+        viewManager.askImportOption(this);
     }
 
-    public void importEXP(File file, boolean showAskImportOption) {
+    /**
+     * Asks which file and then imports it to current window
+     */
+    public void addToCurrent() {
+        addToCurrent(viewManager.showEXPFileChooser(this));
+    }
+
+    /**
+     * Imports file to current window, then imports MOD
+     *
+     * @param file file to import
+     */
+    public void addToCurrent(File file) {
         if (file == null) {
             return;
         }
-        if (showAskImportOption) {
-            filesStack.push(file);
-            viewManager.askImportOption(this);
-        } else {
-            addToCurrent(file);
-        }
-    }
-
-    public void addToCurrent() {
-        addToCurrent(filesStack.pop());
-    }
-
-    public void addToCurrent(File file) {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -146,15 +150,18 @@ public class MainViewModel extends ViewModel {
         importMOD();
     }
 
+    /**
+     * Opens new window, in which asks which file and then imports it
+     */
     public void addToNew() {
-        viewManager.newMainViewWithImportEXP(filesStack.pop());
+        viewManager.newMainViewWithImportEXP(this);
     }
 
+    /**
+     * Asks which file to import and then import it
+     */
     public void importMOD() {
-        importMOD(viewManager.showMODFileChooser(this));
-    }
-
-    public void importMOD(File file) {
+        File file = viewManager.showMODFileChooser(this);
 
         if (file == null) {
             return;

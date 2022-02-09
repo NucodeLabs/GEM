@@ -40,6 +40,9 @@ public class ViewManager {
         viewModelStageMap = new HashMap<>();
     }
 
+    /**
+     * Opens welcome window
+     */
     public void start() {
         WelcomeViewModel welcomeViewModel = new WelcomeViewModel(this);
         viewModelStageMap.put(welcomeViewModel, initialStage);
@@ -68,7 +71,7 @@ public class ViewManager {
             newStage.setScene(new Scene(mainSplitLayoutView));
             newStage.show();
             newStage.setMaximized(true);
-            mainSplitLayoutView.getViewModel().importEXP(expFile, false);
+            mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
     }
 
