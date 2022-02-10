@@ -79,7 +79,7 @@ public class ModelCurveDragger {
         }
     }
 
-    public void dragHandler(MouseEvent mouseEvent, Runnable onChange) {
+    public void dragHandler(MouseEvent mouseEvent) {
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         Double mouseX = vesCurvesLineChart.getXAxis().getValueForDisplay(
@@ -98,7 +98,6 @@ public class ModelCurveDragger {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 modelData.getResistance().set(pointResistanceMap.get(point1), pow(10, point1.getYValue()));
-                onChange.run();
             }
         }
     }
