@@ -97,7 +97,11 @@ public class ModelCurveDragger {
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
-                modelData.getResistance().set(pointResistanceMap.get(point1), pow(10, point1.getYValue()));
+                if (modelData != null) {
+                    modelData.getResistance().set(
+                            pointResistanceMap.get(point1), pow(10, point1.getYValue())
+                    );
+                }
             }
         }
     }
