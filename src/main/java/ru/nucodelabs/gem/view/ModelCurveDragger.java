@@ -36,7 +36,9 @@ public class ModelCurveDragger {
     private Double leftLimitX;
     private Double rightLimitX;
 
-    public ModelCurveDragger(MainViewModel viewModel, LineChart<Double, Double> vesCurvesLineChart, ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData) {
+    public ModelCurveDragger(MainViewModel viewModel,
+                             LineChart<Double, Double> vesCurvesLineChart,
+                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData) {
         this.viewModel = viewModel;
         this.vesCurvesLineChart = vesCurvesLineChart;
         this.vesCurvesData = vesCurvesData;
@@ -104,10 +106,6 @@ public class ModelCurveDragger {
                 viewModel.updateTheoreticalCurve();
             }
         }
-    }
-
-    public void initVesCurvesLineChart(LineChart<Double, Double> vesCurvesLineChart) {
-        this.vesCurvesLineChart = vesCurvesLineChart;
     }
 
     public void initModelData(ModelData modelData) {
