@@ -18,7 +18,7 @@ import static java.lang.Math.pow;
 public class ModelCurveDragger {
 
     private static final double TOLERANCE = 0.005;
-    private final int MOD_CURVE_SERIES_INDEX = 4;
+    private final int MOD_CURVE_SERIES_INDEX;
 
     private LineChart<Double, Double> vesCurvesLineChart;
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
@@ -35,10 +35,12 @@ public class ModelCurveDragger {
     private Double rightLimitX;
 
     public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart,
-                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData) {
+                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData,
+                             int modelCurveIndex) {
         this.vesCurvesLineChart = vesCurvesLineChart;
         this.vesCurvesData = vesCurvesData;
         pointResistanceMap = new HashMap<>();
+        MOD_CURVE_SERIES_INDEX = modelCurveIndex;
     }
 
     public void lineToDragDetector(MouseEvent mouseEvent) {
