@@ -14,6 +14,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Initializers {
+
+    private Initializers() {
+    }
+
     /**
      * Load FXML file with name equals to {@code root} class name and sets the {@code root} as the controller of loaded FXML.
      *

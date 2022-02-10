@@ -10,7 +10,8 @@ public class GemApplication extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
         ModelFactory modelFactory = new ModelFactory();
-        ViewManager viewManager = new ViewManager(modelFactory, stage);
+        ViewModelFactory viewModelFactory = new ViewModelFactory(modelFactory);
+        ViewManager viewManager = new ViewManager(viewModelFactory, stage);
 
         viewManager.start();
     }
