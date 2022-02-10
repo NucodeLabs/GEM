@@ -85,7 +85,7 @@ public class MainViewModel extends ViewModel {
      * @param vesCurvesLineChart Line Chart
      */
     public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
-        modelCurveDragger = new ModelCurveDragger(this, vesCurvesLineChart, vesCurvesData);
+        modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart, vesCurvesData);
     }
 
     /**
@@ -249,7 +249,12 @@ public class MainViewModel extends ViewModel {
         vesCurvesData.getValue().add(modelCurveSeries);
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
-        modelCurveSeries.getNode().setOnMouseDragged(e -> modelCurveDragger.dragHandler(e));
+        modelCurveSeries.getNode().setOnMouseDragged(e -> modelCurveDragger.dragHandler(e,
+                () -> {
+                    updateMisfitStacksData();
+                    updateTheoreticalCurve();
+                }
+        ));
     }
 
     public void updateExpCurveData() {

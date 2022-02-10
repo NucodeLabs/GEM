@@ -7,7 +7,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.gem.view.main.MainViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,6 @@ public class ModelCurveDragger {
     private static final double TOLERANCE = 0.005;
     private final int MOD_CURVE_SERIES_INDEX = 4;
 
-    private MainViewModel viewModel;
     private LineChart<Double, Double> vesCurvesLineChart;
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private ModelData modelData;
@@ -36,10 +34,8 @@ public class ModelCurveDragger {
     private Double leftLimitX;
     private Double rightLimitX;
 
-    public ModelCurveDragger(MainViewModel viewModel,
-                             LineChart<Double, Double> vesCurvesLineChart,
+    public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart,
                              ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData) {
-        this.viewModel = viewModel;
         this.vesCurvesLineChart = vesCurvesLineChart;
         this.vesCurvesData = vesCurvesData;
         pointResistanceMap = new HashMap<>();
@@ -83,7 +79,7 @@ public class ModelCurveDragger {
         }
     }
 
-    public void dragHandler(MouseEvent mouseEvent) {
+    public void dragHandler(MouseEvent mouseEvent, Runnable onChange) {
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         Double mouseX = vesCurvesLineChart.getXAxis().getValueForDisplay(
@@ -102,8 +98,7 @@ public class ModelCurveDragger {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 modelData.getResistance().set(pointResistanceMap.get(point1), pow(10, point1.getYValue()));
-                viewModel.updateMisfitStacksData();
-                viewModel.updateTheoreticalCurve();
+                onChange.run();
             }
         }
     }
