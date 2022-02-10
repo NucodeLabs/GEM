@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.usercontrols.tables.property_data;
+package ru.nucodelabs.gem.view.usercontrols.vestables.property_data;
 
 import javafx.beans.property.SimpleDoubleProperty;
 

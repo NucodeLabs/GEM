@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.usercontrols.tables.experimental;
+package ru.nucodelabs.gem.view.usercontrols.vestables;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -6,21 +6,22 @@ import javafx.scene.control.TableView;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.DataTableConverters;
-import ru.nucodelabs.gem.view.usercontrols.tables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import ru.nucodelabs.mvvm.VBUserControl;
 
-public class ExperimentalTable {
+    public class EXPTable extends VBUserControl {
     @FXML
     TableView<ExpTableLine> experimentalTable;
 
     private ExperimentalData data;
     private ObservableList<ExpTableLine> oTableLines;
 
-    public ExperimentalTable() {
+    public EXPTable() {
         this.experimentalTable = new TableView<>();
         this.data = new ExperimentalData();
     }
 
-    public ExperimentalTable(Picket currentPicket) {
+    public EXPTable(Picket currentPicket) {
         this.experimentalTable = new TableView<>();
         this.data = currentPicket.getExperimentalData();
 

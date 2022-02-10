@@ -1,13 +1,13 @@
-package ru.nucodelabs.gem.view.usercontrols.tables.model;
+package ru.nucodelabs.gem.view.usercontrols.vestables;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.usercontrols.tables.property_data.ModelTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ModelTableLine;
+import ru.nucodelabs.mvvm.VBUserControl;
 
-public class ModelTable {
+public class MODTable extends VBUserControl {
 
     @FXML
     TableView<ModelTableLine> modelTable;
@@ -15,7 +15,7 @@ public class ModelTable {
     private ModelData data;
     private ObservableList<ModelTableLine> oModelTableLines;
 
-    public ModelTable() {
+    public MODTable() {
         this.modelTable = new TableView<>();
         this.data = new ModelData();
     }
