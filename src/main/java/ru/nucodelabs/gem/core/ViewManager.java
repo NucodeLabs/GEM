@@ -6,10 +6,6 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.model.ConfigManager;
-import ru.nucodelabs.gem.model.ConfigModel;
-import ru.nucodelabs.gem.model.VESDataManager;
-import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.main.ImportOptionsPrompt;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
@@ -29,13 +25,13 @@ import java.util.Map;
  */
 public class ViewManager {
 
-    private final ModelFactory modelFactory;
+    private final ViewModelFactory viewModelFactory;
     private final Stage initialStage;
     private final Map<ViewModel, Stage> viewModelStageMap;
 
 
-    public ViewManager(ModelFactory modelFactory, Stage initialStage) {
-        this.modelFactory = modelFactory;
+    public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage) {
+        this.viewModelFactory = viewModelFactory.initViewManager(this);
         this.initialStage = initialStage;
         viewModelStageMap = new HashMap<>();
     }
@@ -44,7 +40,7 @@ public class ViewManager {
      * Opens welcome window
      */
     public void start() {
-        WelcomeViewModel welcomeViewModel = new WelcomeViewModel(this);
+        WelcomeViewModel welcomeViewModel = viewModelFactory.createWelcomeViewModel();
         viewModelStageMap.put(welcomeViewModel, initialStage);
         WelcomeView welcomeView = new WelcomeView(welcomeViewModel);
 
@@ -59,11 +55,7 @@ public class ViewManager {
 
     public void newMainViewWithImportEXP(File expFile) {
         if (expFile != null) {
-            MainViewModel mainViewModel = new MainViewModel(
-                    this,
-                    (ConfigModel) modelFactory.get(ConfigManager.class),
-                    (VESDataModel) modelFactory.get(VESDataManager.class)
-            );
+            MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
             Stage newStage = new Stage();
             viewModelStageMap.put(mainViewModel, newStage);
