@@ -3,6 +3,9 @@ package ru.nucodelabs.gem.core;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 
+/**
+ * Creates ViewModels with dependencies that they need
+ */
 public class ViewModelFactory {
 
     private final ModelFactory modelFactory;

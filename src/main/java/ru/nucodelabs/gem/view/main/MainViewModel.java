@@ -80,7 +80,7 @@ public class MainViewModel extends ViewModel {
     }
 
     /**
-     * Inject line chart dependency to dragger
+     * Initializes model dragger
      *
      * @param vesCurvesLineChart Line Chart
      */
@@ -111,6 +111,7 @@ public class MainViewModel extends ViewModel {
         if (file == null) {
             return;
         }
+
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -136,13 +137,22 @@ public class MainViewModel extends ViewModel {
         compatibilityModeAlert();
 
         menuFileMODDisabled.setValue(false);
-        vesText.setValue(file.getName());
-        updateExpCurveData();
+        addEXPFileNameToVESText(file);
+        updateExpCurves();
 
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
         }
         importMOD();
+    }
+
+    /**
+     * Adds EXP file name to vesText
+     *
+     * @param file EXP File
+     */
+    private void addEXPFileNameToVESText(File file) {
+        vesText.setValue(file.getName());
     }
 
     /**
@@ -203,6 +213,27 @@ public class MainViewModel extends ViewModel {
         }
 
         updateModelCurve();
+        addMODFileNameToVESText(file);
+
+        try {
+            updateMisfitStacks();
+        } catch (UnsatisfiedLinkError e) {
+            viewManager.alertNoLib(this, e);
+        }
+
+        try {
+            modelCurveDragger.initModelData(vesData.getModelData(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Adds MOD File name to vesText
+     *
+     * @param file MOD File
+     */
+    private void addMODFileNameToVESText(File file) {
         vesText.setValue(
                 String.format(
                         "%s - %s",
@@ -210,12 +241,6 @@ public class MainViewModel extends ViewModel {
                         file.getName()
                 )
         );
-        try {
-            updateMisfitStacksData();
-        } catch (UnsatisfiedLinkError e) {
-            viewManager.alertNoLib(this, e);
-        }
-        modelCurveDragger.initModelData(vesData.getModelData(0));
     }
 
     /**
@@ -251,12 +276,12 @@ public class MainViewModel extends ViewModel {
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            updateMisfitStacksData();
+            updateMisfitStacks();
             updateTheoreticalCurve();
         });
     }
 
-    private void updateExpCurveData() {
+    private void updateExpCurves() {
         List<XYChart.Series<Double, Double>> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeriesAll(
                 vesData.getExperimentalData(0)
         );
@@ -267,7 +292,7 @@ public class MainViewModel extends ViewModel {
         vesCurvesData.getValue().setAll(seriesList);
     }
 
-    private void updateMisfitStacksData() {
+    private void updateMisfitStacks() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
                 vesData.getExperimentalData(0), vesData.getModelData(0)
         );
@@ -275,10 +300,13 @@ public class MainViewModel extends ViewModel {
                 FXCollections.observableList(new ArrayList<>())
         );
         misfitStacksData.getValue().addAll(misfitStacksSeriesList);
-        colorizeMisfitStacksSeries(misfitStacksData);
+        colorizeMisfitStacksSeries();
     }
 
-    private void colorizeMisfitStacksSeries(ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData) {
+    /**
+     * Colorizes misfit stacks with green and red, green for ones that <100%, red for ≥100%
+     */
+    private void colorizeMisfitStacksSeries() {
         misfitStacksData.getValue().forEach(
                 s -> {
                     if (abs(s.getData().get(1).getYValue()) < 100f) {

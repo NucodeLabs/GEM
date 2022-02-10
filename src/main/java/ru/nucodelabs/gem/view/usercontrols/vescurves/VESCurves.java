@@ -6,9 +6,6 @@ import javafx.scene.chart.NumberAxis;
 import ru.nucodelabs.gem.view.PowerOf10Formatter;
 import ru.nucodelabs.mvvm.VBUserControl;
 
-/**
- * VES Curves line chart with text above.
- */
 public class VESCurves extends VBUserControl {
     @FXML
     private LineChart<Double, Double> lineChart;

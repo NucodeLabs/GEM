@@ -4,6 +4,9 @@ import ru.nucodelabs.mvvm.Model;
 
 import java.io.File;
 
+/**
+ * Data model which represents configuration/settings of program
+ */
 public interface ConfigModel extends Model {
     File getConfigFile();
 
