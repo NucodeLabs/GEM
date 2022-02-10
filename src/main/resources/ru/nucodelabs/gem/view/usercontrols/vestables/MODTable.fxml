@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml" maxWidth="Infinity" minWidth="60">
+<?import javafx.scene.layout.VBox?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+         alignment="CENTER"
+         maxHeight="Infinity"
+         maxWidth="Infinity"
+         stylesheets="@../../common.css"
+         VBox.vgrow="ALWAYS">
     <Label text="%modelTable"/>
     <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60">
         <columns>
@@ -19,5 +19,4 @@
                          text="%modelPolarization"/>
         </columns>
     </TableView>
-
-</AnchorPane>
+</fx:root>
