@@ -249,12 +249,11 @@ public class MainViewModel extends ViewModel {
         vesCurvesData.getValue().add(modelCurveSeries);
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
-        modelCurveSeries.getNode().setOnMouseDragged(e -> modelCurveDragger.dragHandler(e,
-                () -> {
-                    updateMisfitStacksData();
-                    updateTheoreticalCurve();
-                }
-        ));
+        modelCurveSeries.getNode().setOnMouseDragged(e -> {
+            modelCurveDragger.dragHandler(e);
+            updateMisfitStacksData();
+            updateTheoreticalCurve();
+        });
     }
 
     public void updateExpCurveData() {
