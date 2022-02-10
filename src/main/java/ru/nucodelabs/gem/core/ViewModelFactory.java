@@ -3,6 +3,8 @@ package ru.nucodelabs.gem.core;
 import ru.nucodelabs.gem.view.main.MainViewModel;
 import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 
+import java.util.Objects;
+
 /**
  * Creates ViewModels with dependencies that they need
  */
@@ -16,18 +18,12 @@ public class ViewModelFactory {
     }
 
     public ViewModelFactory initViewManager(ViewManager viewManager) {
+        Objects.requireNonNull(viewManager);
         this.viewManager = viewManager;
         return this;
     }
 
-    private void checkViewManagerNotNull() {
-        if (viewManager == null) {
-            throw new NullPointerException("ViewManager is null.");
-        }
-    }
-
     public MainViewModel createMainViewModel() {
-        checkViewManagerNotNull();
         return new MainViewModel(
                 viewManager,
                 modelFactory.getConfigModel(),
@@ -36,7 +32,6 @@ public class ViewModelFactory {
     }
 
     public WelcomeViewModel createWelcomeViewModel() {
-        checkViewManagerNotNull();
         return new WelcomeViewModel(viewManager);
     }
 }
