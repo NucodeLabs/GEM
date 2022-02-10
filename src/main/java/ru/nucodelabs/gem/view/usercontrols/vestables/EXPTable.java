@@ -6,7 +6,8 @@ import javafx.scene.control.TableView;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.DataTableConverters;
-import ru.nucodelabs.gem.view.usercontrols.tables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
 import ru.nucodelabs.mvvm.VBUserControl;
 
 public class EXPTable extends VBUserControl {

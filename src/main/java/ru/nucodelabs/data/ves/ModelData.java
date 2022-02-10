@@ -19,10 +19,13 @@ public class ModelData {
      */
     private List<Double> power; // get set
 
+    private Integer size;
+
     public ModelData() {
         resistance = new ArrayList<>();
         polarization = new ArrayList<>();
         power = new ArrayList<>();
+        size = 0;
     }
 
     public ModelData(MODFile modFile) {
@@ -30,6 +33,7 @@ public class ModelData {
         resistance = modFile.getResistance();
         polarization = modFile.getPolarization();
         power = modFile.getPower();
+        size = resistance.size();
     }
 
     //region getters and setters
@@ -57,4 +61,8 @@ public class ModelData {
         this.power = power;
     }
     //endregion
+
+    public Integer getSize() {
+        return size;
+    }
 }
