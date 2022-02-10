@@ -8,7 +8,7 @@ public class OSDetector {
     private final boolean linux;
 
     public OSDetector() {
-        var osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         macOS = osName.contains("mac");
         windows = osName.contains("windows");
         linux = !macOS && !windows;

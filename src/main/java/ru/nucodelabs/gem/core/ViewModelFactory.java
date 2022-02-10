@@ -10,7 +10,6 @@ public class ViewModelFactory {
 
     public ViewModelFactory(ModelFactory modelFactory) {
         this.modelFactory = modelFactory;
-
     }
 
     public ViewModelFactory initViewManager(ViewManager viewManager) {
@@ -18,7 +17,14 @@ public class ViewModelFactory {
         return this;
     }
 
+    private void checkViewManagerNotNull() {
+        if (viewManager == null) {
+            throw new NullPointerException("ViewManager is null.");
+        }
+    }
+
     public MainViewModel createMainViewModel() {
+        checkViewManagerNotNull();
         return new MainViewModel(
                 viewManager,
                 modelFactory.getConfigModel(),
@@ -27,6 +33,7 @@ public class ViewModelFactory {
     }
 
     public WelcomeViewModel createWelcomeViewModel() {
+        checkViewManagerNotNull();
         return new WelcomeViewModel(viewManager);
     }
 }
