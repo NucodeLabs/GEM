@@ -7,6 +7,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Formats number to ten with power of this number, only if its integer
+ */
 public class PowerOf10Formatter extends StringConverter<Number> {
 
     private static String toUpperIndex(String doubleString) {

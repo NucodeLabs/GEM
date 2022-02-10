@@ -6,9 +6,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.text.Text;
 import ru.nucodelabs.mvvm.VBUserControl;
 
-/**
- * Misfit Stacks line chart with test above.
- */
 public class MisfitStacks extends VBUserControl {
 
     @FXML

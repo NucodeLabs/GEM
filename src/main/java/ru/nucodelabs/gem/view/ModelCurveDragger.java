@@ -15,16 +15,19 @@ import java.util.Objects;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 
+/**
+ * Enables drag-n-drop functionality on given line chart for step curve (Model Curve)
+ */
 public class ModelCurveDragger {
 
     private static final double TOLERANCE = 0.005;
     private final int MOD_CURVE_SERIES_INDEX;
 
-    private LineChart<Double, Double> vesCurvesLineChart;
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
+    private final LineChart<Double, Double> vesCurvesLineChart;
+    private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private ModelData modelData;
-    private Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
-    private Map<XYChart.Data<Double, Double>, Integer> pointPowerMap;
+    private final Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
+    private final Map<XYChart.Data<Double, Double>, Integer> pointPowerMap;
 
     // ends of line to be dragged
     private XYChart.Data<Double, Double> point1;
@@ -34,15 +37,28 @@ public class ModelCurveDragger {
     private Double leftLimitX;
     private Double rightLimitX;
 
+    /**
+     * Initializes dragger for given line chart
+     *
+     * @param vesCurvesLineChart line chart with model curve
+     * @param vesCurvesData      data property that line chart bound to
+     * @param modelCurveIndex    index of series of model curve in line chart's data list of series
+     */
     public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart,
                              ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData,
                              int modelCurveIndex) {
         this.vesCurvesLineChart = vesCurvesLineChart;
         this.vesCurvesData = vesCurvesData;
         pointResistanceMap = new HashMap<>();
+        pointPowerMap = new HashMap<>();
         MOD_CURVE_SERIES_INDEX = modelCurveIndex;
     }
 
+    /**
+     * Detects two points that will be dragged by mouse
+     *
+     * @param mouseEvent mouse pressed event
+     */
     public void lineToDragDetector(MouseEvent mouseEvent) {
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
@@ -81,6 +97,11 @@ public class ModelCurveDragger {
         }
     }
 
+    /**
+     * Drags the points by mouse and modifies ModelData values if called initModelData() previously
+     *
+     * @param mouseEvent mouse dragged event
+     */
     public void dragHandler(MouseEvent mouseEvent) {
         Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
@@ -108,7 +129,14 @@ public class ModelCurveDragger {
         }
     }
 
+    /**
+     * Initializes ModelData that will be modified by dragging points
+     *
+     * @param modelData model data that match curve
+     */
     public void initModelData(ModelData modelData) {
+        pointResistanceMap.clear();
+        pointPowerMap.clear();
         this.modelData = modelData;
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
         for (var point : points) {
@@ -118,6 +146,9 @@ public class ModelCurveDragger {
                     pointResistanceMap.put(point, i);
                 }
             }
+        }
+        if (pointResistanceMap.values().stream().distinct().count() != modelData.getResistance().size()) {
+            throw new IllegalArgumentException("ModelData does not match series");
         }
     }
 }

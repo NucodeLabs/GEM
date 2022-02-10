@@ -37,6 +37,12 @@ public class Initializers {
         }
     }
 
+    /**
+     * Adds ⌘W shortcut that must be supported on macOS
+     *
+     * @param root root node
+     * @param <N>  class of root node
+     */
     public static <N extends Node> void addCloseShortcutMacOS(N root) {
         if (new OSDetector().isMacOS()) {
             root.addEventFilter(KeyEvent.KEY_PRESSED,

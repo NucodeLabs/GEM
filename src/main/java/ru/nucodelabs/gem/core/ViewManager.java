@@ -29,7 +29,6 @@ public class ViewManager {
     private final Stage initialStage;
     private final Map<ViewModel, Stage> viewModelStageMap;
 
-
     public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage) {
         this.viewModelFactory = viewModelFactory.initViewManager(this);
         this.initialStage = initialStage;
