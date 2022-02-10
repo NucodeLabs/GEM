@@ -32,14 +32,14 @@ public class MainViewModel extends ViewModel {
     /**
      * <h3>Constants</h3>
      */
-    protected static final int EXP_CURVE_SERIES_CNT = 3;
-    protected static final int THEOR_CURVE_SERIES_CNT = 4;
-    protected static final int MOD_CURVE_SERIES_CNT = 5;
-    protected static final int EXP_CURVE_SERIES_INDEX = 0;
-    protected static final int EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1;
-    protected static final int EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2;
-    protected static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
-    protected static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
+    private static final int EXP_CURVE_SERIES_CNT = 3;
+    private static final int THEOR_CURVE_SERIES_CNT = 4;
+    private static final int MOD_CURVE_SERIES_CNT = 5;
+    private static final int EXP_CURVE_SERIES_INDEX = 0;
+    private static final int EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1;
+    private static final int EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2;
+    private static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
+    private static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
     private ModelCurveDragger modelCurveDragger;
 
@@ -85,7 +85,7 @@ public class MainViewModel extends ViewModel {
      * @param vesCurvesLineChart Line Chart
      */
     public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
-        modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart, vesCurvesData);
+        modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart, vesCurvesData, MOD_CURVE_SERIES_INDEX);
     }
 
     /**
@@ -225,7 +225,7 @@ public class MainViewModel extends ViewModel {
         vesData.setModelData(0, new ModelData(openedMOD));
     }
 
-    public void updateTheoreticalCurve() {
+    private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
                 vesData.getExperimentalData(0), vesData.getModelData(0)
         );
@@ -256,7 +256,7 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    public void updateExpCurveData() {
+    private void updateExpCurveData() {
         List<XYChart.Series<Double, Double>> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeriesAll(
                 vesData.getExperimentalData(0)
         );
@@ -267,7 +267,7 @@ public class MainViewModel extends ViewModel {
         vesCurvesData.getValue().setAll(seriesList);
     }
 
-    public void updateMisfitStacksData() {
+    private void updateMisfitStacksData() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
                 vesData.getExperimentalData(0), vesData.getModelData(0)
         );
