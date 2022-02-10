@@ -53,7 +53,9 @@ public class ViewManager {
         initialStage.show();
     }
 
-    public void newMainViewWithImportEXP(File expFile) {
+    public void newMainViewWithImportEXP(ViewModel caller) {
+        File expFile = showEXPFileChooser(caller);
+
         if (expFile != null) {
             MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
@@ -65,10 +67,6 @@ public class ViewManager {
             newStage.setMaximized(true);
             mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
-    }
-
-    public void newMainViewWithImportEXP(ViewModel caller) {
-        newMainViewWithImportEXP(showEXPFileChooser(caller));
     }
 
     public File showEXPFileChooser(ViewModel caller) {
