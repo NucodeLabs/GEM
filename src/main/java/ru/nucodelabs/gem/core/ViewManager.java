@@ -30,7 +30,8 @@ public class ViewManager {
     private final Map<ViewModel, Stage> viewModelStageMap;
 
     public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage) {
-        this.viewModelFactory = viewModelFactory.initViewManager(this);
+        this.viewModelFactory = viewModelFactory;
+        viewModelFactory.initViewManager(this);
         this.initialStage = initialStage;
         viewModelStageMap = new HashMap<>();
     }
