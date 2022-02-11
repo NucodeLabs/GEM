@@ -18,7 +18,7 @@ import static java.lang.Math.pow;
  */
 public class ModelCurveDragger {
 
-    private static final double TOLERANCE = 0.005;
+    private static final double TOLERANCE = 0.01;
     private final int MOD_CURVE_SERIES_INDEX;
 
     private final LineChart<Double, Double> vesCurvesLineChart;
@@ -118,29 +118,21 @@ public class ModelCurveDragger {
                 point2.setXValue(mouseX);
                 if (modelData != null) {
                     int index1 = pointPowerMap.get(point1);
-                    int index2; // index of neighbor
-                    Double p1 = modelData.getPower().get(index1);
-                    Double p2; // neighbor power value
-                    if (diff >= 0) {
-                        index2 = index1 + 1;
-                    } else {
-                        index2 = index1 - 1;
-                    }
-                    p2 = modelData.getPower().get(index2);
-                    modelData.getPower().set(
-                            index1, pow(10, log10(p1) - diff)
-                    );
-                    modelData.getPower().set(
-                            index2, pow(10, log10(p2) + diff)
-                    );
+                    int index2 = index1 + 1; // neighbor
+                    double initialValue1 = modelData.getPower().get(index1);
+                    double initialValue2 = modelData.getPower().get(index2);
+                    double newValue1 = pow(10, log10(initialValue1) - diff);
+                    double newValue2 = pow(10, log10(initialValue2) + diff);
+                    modelData.getPower().set(index1, newValue1);
+                    modelData.getPower().set(index2, newValue2);
                 }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 if (modelData != null) {
-                    modelData.getResistance().set(
-                            pointResistanceMap.get(point1), pow(10, mouseY)
-                    );
+                    int index = pointResistanceMap.get(point1);
+                    double newValue = pow(10, mouseY);
+                    modelData.getResistance().set(index, newValue);
                 }
             }
         }
@@ -164,14 +156,15 @@ public class ModelCurveDragger {
         pointResistanceMap = new HashMap<>();
         this.modelData = modelData;
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
+        var resistance = modelData.getResistance();
         for (var point : points) {
-            var resistance = modelData.getResistance();
             for (int i = 0; i < resistance.size(); i++) {
                 if (point.getYValue() == log10(resistance.get(i))) {
                     pointResistanceMap.put(point, i);
                 }
             }
         }
+
         if (pointResistanceMap.values().stream().distinct().count() != modelData.getResistance().size()) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
@@ -198,6 +191,7 @@ public class ModelCurveDragger {
                 }
             }
         }
+
         if (pointPowerMap.values().stream().distinct().count() != modelData.getPower().size() - 1) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
