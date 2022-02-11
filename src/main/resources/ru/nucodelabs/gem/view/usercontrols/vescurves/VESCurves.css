@@ -1,0 +1,84 @@
+#lineChart {
+    -fx-padding: 0 0 10 25;
+    -fx-legend-visible: true;
+    -fx-legend-side: top;
+}
+
+#lineChart .chart-series-line {
+    -fx-stroke: transparent;
+}
+
+#lineChart #lineChartYAxis .axis-label {
+    -fx-label-padding: -45 0 0 0;
+}
+
+#lineChart #lineChartXAxis .axis-label {
+    -fx-label-padding: 0 0 -15 0;
+}
+
+#lineChart .chart-line-symbol.series0 {
+    -fx-background-color: LightGreen;
+    -fx-border-color: MediumSeaGreen;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-pref-width: 6px;
+    -fx-pref-height: 6px;
+}
+
+#lineChart .chart-line-symbol.series1 {
+    -fx-background-color: LightCoral;
+    -fx-border-color: FireBrick;
+    -fx-background-radius: 100px 100px 0 0;
+    -fx-border-radius: 100px 100px 0 0;
+}
+
+#lineChart .chart-line-symbol.series2 {
+    -fx-background-color: LightBlue;
+    -fx-border-color: CornflowerBlue;
+    -fx-background-radius: 0 0 100px 100px;
+    -fx-border-radius: 0 0 100px 100px;
+}
+
+#lineChart .chart-line-symbol.series3 {
+    -fx-background-color: black;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-pref-width: 3px;
+    -fx-pref-height: 3px;
+}
+
+#lineChart .chart-series-line.series3 {
+    -fx-stroke: rgba(0, 0, 0, 0.4);
+    -fx-stroke-width: 2px;
+}
+
+#lineChart .chart-series-line.series4 {
+    -fx-stroke: Blue;
+}
+
+#lineChart .chart-line-symbol.series4 {
+    -fx-border-color: transparent;
+    -fx-background-color: Blue;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+#lineChart .chart-line-symbol {
+    -fx-border-width: 1px; /* можно сделать 0, чтобы обводки не было */
+    -fx-border-color: black;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-pref-width: 8px;
+    -fx-pref-height: 4px;
+}
+
+#lineChartXAxis, #lineChartYAxis {
+    -fx-tick-label-font-size: 12pt;
+    -fx-font-size: 10pt;
+}
+
+#text {
+    -fx-fill: Gray;
+    -fx-font-size: 12;
+    -fx-padding: 5;
+}

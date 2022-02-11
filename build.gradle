@@ -1,0 +1,167 @@
+import org.gradle.internal.jvm.Jvm
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
+    id "com.google.osdetector" version "1.7.0"
+}
+
+group 'ru.nucodelabs'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.8.2'
+
+    // Platform Info
+    currentOS = DefaultNativePlatform.currentOperatingSystem
+    currentArch = DefaultNativePlatform.currentArchitecture
+    currentOSVer = System.getProperty("os.version").toString()
+
+    // JNI specific variables
+    platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
+    libPrefix = currentOS.isWindows() ? "" : "lib"
+    libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
+
+    compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
+    arch = currentOS.isMacOsX() ? ["-arch", "x86_64", "-arch", "arm64"] : []
+    optimization = "-O3"
+    pic = currentOS.isWindows() ? "" : "-fPIC"
+    shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
+
+    jniIncludePaths = [
+            "-I", file("${Jvm.current().javaHome}/include").absolutePath,
+            "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
+    ]
+
+    jniArgs = prepareJNIArgs()
+}
+
+def prepareJNIArgs() {
+    def jniArgs = new ArrayList();
+    jniArgs.add(compiler)
+    jniArgs.addAll(arch)
+    jniArgs.add(optimization)
+    jniArgs.add(pic)
+    jniArgs.add(shared)
+    jniArgs.addAll(jniIncludePaths)
+    return jniArgs;
+}
+
+task printPlatformInfo {
+    println "OS:             ${currentOS.name}"
+    println "OS VERSION:     ${currentOSVer}"
+    println "ARCHITECTURE:   ${currentArch.name}"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'ru.nucodelabs'
+    mainClass = 'ru.nucodelabs.gem.StartGemApplication'
+}
+
+javafx {
+    version = "17.0.2"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
+}
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    implementation('org.openjfx:javafx-base')
+    implementation('org.openjfx:javafx-controls')
+    implementation('org.openjfx:javafx-fxml')
+    implementation 'com.google.code.gson:gson:2.8.9'
+}
+
+task forwardSolver(type: Exec) {
+    workingDir "${projectDir}/orig/ForwardSolver"
+
+    def language = ["-x", "c"]
+
+    def sources = [
+            file("${workingDir}/forwardsolverJNI.c").absolutePath,
+            file("${workingDir}/VESER.C").absolutePath
+    ]
+
+    def libName = "forwardsolver"
+    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
+    doFirst {
+        mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
+    }
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
+            file("${projectDir}/lib/" + libName + ".exp").delete()
+            file("${workingDir}/lib/" + libName + ".lib").delete()
+        }
+    }
+}
+
+task misfitFunctions(type: Exec) {
+    workingDir "${projectDir}/orig/ForwardSolver"
+    def language = ["-std=c++14"]
+
+    def sources = [
+            file("${workingDir}/MisfitFunctions.cpp"),
+            file("${workingDir}/misfitJNI.cpp")
+    ]
+
+    def libName = "misfit"
+
+    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
+    doFirst {
+        mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
+    }
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
+            file("${projectDir}/lib/" + libName + ".exp").delete()
+            file("${workingDir}/lib/" + libName + ".lib").delete()
+        }
+    }
+}
+
+test {
+    dependsOn forwardSolver, misfitFunctions
+    useJUnitPlatform()
+    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
+}
+
+tasks.withType(JavaExec) {
+    dependsOn forwardSolver, misfitFunctions
+    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
+}
