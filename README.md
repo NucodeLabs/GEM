@@ -1,2 +1,6 @@
 # GEM
-GEM is a study platform for geologists and geophysicist. 
+
+- `README` с инструкцией по сборке нативных библиотек смотрите в `/orig`
+
+
+- `README` с гайд-лайнами разработки смотрите в `/src`

@@ -1,0 +1,26 @@
+#lineChart {
+    -fx-legend-visible: false;
+    -fx-padding: 0 0 0 9;
+}
+
+#lineChart .chart-series-line {
+    -fx-stroke: Crimson;
+    -fx-stroke-width: 8px;
+    -fx-stroke-line-cap: butt;
+    -fx-stroke-line-join: miter;
+    -fx-stroke-type: centered;
+    -fx-stroke-miter-limit: 0.1;
+}
+
+#lineChart .chart-line-symbol {
+    -fx-border-width: 0;
+    -fx-pref-width: 8px;
+    -fx-pref-height: 8px;
+    -fx-background-color: Crimson;
+}
+
+#text {
+    -fx-fill: Gray;
+    -fx-font-size: 12;
+    -fx-padding: 5;
+}

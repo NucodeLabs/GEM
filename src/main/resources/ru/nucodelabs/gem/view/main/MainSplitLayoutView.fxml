@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
+<?import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks?>
+<?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
+<?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
+<?import ru.nucodelabs.gem.view.usercontrols.vestables.EXPTable?>
+<?import ru.nucodelabs.gem.view.usercontrols.vestables.MODTable?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="@../common.css"
+         maxWidth="Infinity" maxHeight="Infinity">
+    <MainMenuBar fx:id="mainMenuBar"/>
+
+    <SplitPane orientation="VERTICAL">
+        <SplitPane orientation="VERTICAL">
+            <Placeholder text="%pseudoSection"/>
+            <Placeholder text="%geoSection"/>
+        </SplitPane>
+
+        <VBox maxWidth="Infinity"
+              maxHeight="Infinity"
+              VBox.vgrow="ALWAYS">
+
+            <HBox alignment="CENTER" maxWidth="Infinity" style="-fx-background-color: WhiteSmoke">
+                <HBox style="-fx-padding: 5">
+                    <Button text="← Предыдущий пикет" fx:id="prevButton"/>
+                </HBox>
+                <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
+                    <Text fx:id="vesTitle" text="VES"/>
+                </HBox>
+                <HBox style="-fx-padding: 5">
+                    <Button text="Следующий пикет →" fx:id="nextButton"/>
+                </HBox>
+            </HBox>
+            <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS" orientation="HORIZONTAL">
+
+                <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                    <MisfitStacks fx:id="misfitStacks"/>
+                    <VESCurves fx:id="vesCurves"/>
+                </SplitPane>
+                <SplitPane orientation="HORIZONTAL">
+                    <EXPTable fx:id="expTable"/>
+                    <MODTable fx:id="modTable"/>
+                </SplitPane>
+
+                <!--<Placeholder text="Табличное представление"/>-->
+            </SplitPane>
+
+        </VBox>
+
+    </SplitPane>
+
+</fx:root>
