@@ -8,9 +8,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.data.ves.ModelData;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
@@ -26,8 +24,10 @@ public class ModelCurveDragger {
     private final LineChart<Double, Double> vesCurvesLineChart;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private ModelData modelData;
-    private final Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
-    private final Map<XYChart.Data<Double, Double>, Integer> pointPowerMap;
+
+    // mapping: point on chart --> index of the value in data model arrays
+    private Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
+    private Map<XYChart.Data<Double, Double>, Integer> pointPowerMap;
 
     // ends of line to be dragged
     private XYChart.Data<Double, Double> point1;
@@ -49,8 +49,6 @@ public class ModelCurveDragger {
                              int modelCurveIndex) {
         this.vesCurvesLineChart = vesCurvesLineChart;
         this.vesCurvesData = vesCurvesData;
-        pointResistanceMap = new HashMap<>();
-        pointPowerMap = new HashMap<>();
         MOD_CURVE_SERIES_INDEX = modelCurveIndex;
     }
 
@@ -115,18 +113,44 @@ public class ModelCurveDragger {
         if (point1 != null && point2 != null) {
             if (Objects.equals(point1.getXValue(), point2.getXValue())
                     && leftLimitX < mouseX - TOLERANCE * 2 && mouseX + TOLERANCE * 2 < rightLimitX) {
+                double diff = mouseX - point1.getXValue();
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
+                if (modelData != null) {
+                    int index1 = pointPowerMap.get(point1);
+                    int index2; // index of neighbor
+                    Double p1 = modelData.getPower().get(index1);
+                    Double p2; // neighbor power value
+                    if (diff >= 0) {
+                        index2 = index1 + 1;
+                    } else {
+                        index2 = index1 - 1;
+                    }
+                    p2 = modelData.getPower().get(index2);
+                    modelData.getPower().set(
+                            index1, pow(10, log10(p1) - diff)
+                    );
+                    modelData.getPower().set(
+                            index2, pow(10, log10(p2) + diff)
+                    );
+                }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 if (modelData != null) {
                     modelData.getResistance().set(
-                            pointResistanceMap.get(point1), pow(10, point1.getYValue())
+                            pointResistanceMap.get(point1), pow(10, mouseY)
                     );
                 }
             }
         }
+    }
+
+    /**
+     * Call this if array structure will change
+     */
+    private void updateMappings() {
+        initModelData(modelData);
     }
 
     /**
@@ -135,8 +159,9 @@ public class ModelCurveDragger {
      * @param modelData model data that match curve
      */
     public void initModelData(ModelData modelData) {
-        pointResistanceMap.clear();
-        pointPowerMap.clear();
+        String E_MSG = "ModelData array size: %d does not match mapping size: %d";
+
+        pointResistanceMap = new HashMap<>();
         this.modelData = modelData;
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
         for (var point : points) {
@@ -148,7 +173,38 @@ public class ModelCurveDragger {
             }
         }
         if (pointResistanceMap.values().stream().distinct().count() != modelData.getResistance().size()) {
-            throw new IllegalArgumentException("ModelData does not match series");
+            throw new IllegalArgumentException(
+                    String.format(E_MSG,
+                            pointResistanceMap.values().stream().distinct().count(),
+                            modelData.getResistance().size()
+                    )
+            );
+        }
+
+        pointPowerMap = new HashMap<>();
+        var power = modelData.getPower();
+        double currentHeight = 0;
+        List<Double> height = new ArrayList<>();
+
+        for (Double p : power) {
+            height.add(currentHeight += p);
+        }
+        height.remove(height.size() - 1); // last in power is zero
+
+        for (var point : points) {
+            for (int i = 0; i < height.size(); i++) {
+                if (point.getXValue() == log10(height.get(i))) {
+                    pointPowerMap.put(point, i);
+                }
+            }
+        }
+        if (pointPowerMap.values().stream().distinct().count() != modelData.getPower().size() - 1) {
+            throw new IllegalArgumentException(
+                    String.format(E_MSG,
+                            pointPowerMap.values().stream().distinct().count(),
+                            modelData.getPower().size()
+                    )
+            );
         }
     }
 }
