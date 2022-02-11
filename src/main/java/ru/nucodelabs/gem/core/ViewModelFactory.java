@@ -17,10 +17,9 @@ public class ViewModelFactory {
         this.modelFactory = modelFactory;
     }
 
-    public ViewModelFactory initViewManager(ViewManager viewManager) {
+    public void initViewManager(ViewManager viewManager) {
         Objects.requireNonNull(viewManager);
         this.viewManager = viewManager;
-        return this;
     }
 
     public MainViewModel createMainViewModel() {
