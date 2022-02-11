@@ -134,6 +134,7 @@ public class ModelCurveDragger {
                     double newValue = pow(10, mouseY);
                     modelData.getResistance().set(index, newValue);
                 }
+                // sample
             }
         }
     }
