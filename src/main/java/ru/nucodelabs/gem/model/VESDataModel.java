@@ -78,4 +78,11 @@ public interface VESDataModel extends Model {
      * @return count
      */
     int getPicketsCount();
+
+    /**
+     * Returns last picket in pickets list
+     *
+     * @return picket
+     */
+    Picket getLastPicket();
 }

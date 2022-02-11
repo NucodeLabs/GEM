@@ -58,4 +58,9 @@ public class VESDataManager implements VESDataModel {
     public int getPicketsCount() {
         return pickets.size();
     }
+
+    @Override
+    public Picket getLastPicket() {
+        return pickets.get(pickets.size() - 1);
+    }
 }
