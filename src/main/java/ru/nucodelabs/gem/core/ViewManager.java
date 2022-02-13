@@ -65,6 +65,7 @@ public class ViewManager {
             newStage.setScene(new Scene(mainSplitLayoutView));
             newStage.show();
             newStage.setMaximized(true);
+            mainSplitLayoutView.initShortcutsVESCurvesNavigation();
             mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
     }

@@ -20,7 +20,7 @@
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false"
                         side="BOTTOM" minorTickVisible="false" tickLabelsVisible="false" tickMarkVisible="false"
-                        tickUnit="100.0"/>
+                        tickUnit="100.0" autoRanging="false"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" cache="true" forceZeroInRange="false"

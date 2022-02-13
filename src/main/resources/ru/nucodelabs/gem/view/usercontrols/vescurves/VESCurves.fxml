@@ -2,6 +2,7 @@
 
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
@@ -16,12 +17,19 @@
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
-                        side="BOTTOM" tickUnit="1.0"/>
+                        side="BOTTOM" tickUnit="1.0" autoRanging="false"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)" lowerBound="1.0"
-                        side="LEFT" tickUnit="1.0"/>
+                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false"/>
         </yAxis>
     </LineChart>
+    <HBox style="-fx-padding: 5">
+        <Button fx:id="minusBtn" text="%zoomOut"/>
+        <Button fx:id="plusBtn" text="%zoomIn"/>
+        <Button fx:id="leftBtn" text="%left"/>
+        <Button fx:id="rightBtn" text="%right"/>
+        <Button fx:id="upBtn" text="%up"/>
+        <Button fx:id="downBtn" text="%down"/>
+    </HBox>
 </fx:root>

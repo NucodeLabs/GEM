@@ -120,7 +120,7 @@ public class VESSeriesConverters {
 //        first point
         modelCurveSeries.getData().add(
                 new XYChart.Data<>(
-                        log10(power.get(0) - 0.5 * power.get(0)),
+                        log10(1e-3),
                         log10(resistance.get(0))
                 )
         );
@@ -151,7 +151,7 @@ public class VESSeriesConverters {
         final int lastResistanceIndex = resistance.size() - 1;
         modelCurveSeries.getData().add(
                 new XYChart.Data<>(
-                        log10(prevSum + 2 * prevSum),
+                        100d,
                         log10(resistance.get(lastResistanceIndex))
                 )
         );
