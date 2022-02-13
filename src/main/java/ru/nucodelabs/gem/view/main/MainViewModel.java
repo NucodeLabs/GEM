@@ -16,7 +16,7 @@ import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.*;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExperimentalTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -334,8 +334,6 @@ public class MainViewModel extends ViewModel {
                 FXCollections.observableList(new ArrayList<>())
         );
         vesCurvesData.getValue().setAll(seriesList);
-
-        updateExpTable();
     }
 
     private void updateExpTable() {

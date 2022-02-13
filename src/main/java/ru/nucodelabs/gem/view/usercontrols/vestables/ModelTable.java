@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.view.usercontrols.vestables;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ModelTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 import ru.nucodelabs.mvvm.VBUserControl;
 
 public class ModelTable extends VBUserControl {
