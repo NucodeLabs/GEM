@@ -10,17 +10,9 @@ import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ModelTableLin
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataTableConverters {
+public class VESTablesConverters {
 
-    public static ObservableList<ExpTableLine> expObservableTableLines(ExperimentalData expData) {
-        return FXCollections.observableArrayList(expDataToExpTableLines(expData));
-    }
-
-    public static ObservableList<ModelTableLine> modObservableTableLines(ModelData modelData) {
-        return FXCollections.observableArrayList(modelDataToModelTableLines(modelData));
-    }
-
-    private static List<ExpTableLine> expDataToExpTableLines(ExperimentalData expData) {
+    public static ObservableList<ExpTableLine> toExperimentalTableData(final ExperimentalData expData) {
         List<ExpTableLine> tableLines = new ArrayList<>();
         if (expData != null) {
             for (int i = 0; i < expData.getSize(); i++) {
@@ -38,10 +30,10 @@ public class DataTableConverters {
                 );
             }
         }
-        return tableLines;
+        return FXCollections.observableArrayList(tableLines);
     }
 
-    private static List<ModelTableLine> modelDataToModelTableLines(ModelData modelData) {
+    public static ObservableList<ModelTableLine> toModelTableData(final ModelData modelData) {
         List<ModelTableLine> tableLines = new ArrayList<>();
         if (modelData != null) {
             for (int i = 0; i < modelData.getSize(); i++) {
@@ -54,6 +46,7 @@ public class DataTableConverters {
                 );
             }
         }
-        return tableLines;
+        return FXCollections.observableArrayList(tableLines);
     }
+
 }
