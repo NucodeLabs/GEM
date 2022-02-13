@@ -14,19 +14,19 @@
     <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPower">
+                         text="%modelPower" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="power"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelResistanceApparent">
+                         text="%modelResistanceApparent" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="resistance"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="polarization" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPolarization">
+                         text="%modelPolarization" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="polarization"/>
                 </cellValueFactory>

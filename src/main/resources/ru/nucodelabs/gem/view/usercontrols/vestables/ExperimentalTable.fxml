@@ -13,37 +13,37 @@
     <TableView fx:id="experimentalTable" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="AB_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAB_2">
+                         text="%experimentalAB_2" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="AB_2"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="MN_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalMN_2">
+                         text="%experimentalMN_2" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="MN_2"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalResistanceApparent">
+                         prefWidth="100.0" text="%experimentalResistanceApparent" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="resistanceApparent"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalErrorResistanceApparent">
+                         prefWidth="100.0" text="%experimentalErrorResistanceApparent" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="errorResistanceApparent"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAmperage">
+                         text="%experimentalAmperage" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="amperage"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalVoltage">
+                         text="%experimentalVoltage" sortable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="voltage"/>
                 </cellValueFactory>
