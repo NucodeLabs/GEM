@@ -23,11 +23,11 @@ public class ExperimentalTableLine {
     /**
      * Поляризация экспериментальных данных
      */
-    private final SimpleDoubleProperty polarization;
+    private final SimpleDoubleProperty polarizationApparent;
     /**
      * Погрешность поляризации экспериментальных данных
      */
-    private final SimpleDoubleProperty errorPolarization;
+    private final SimpleDoubleProperty errorPolarizationApparent;
     /**
      * Сила тока экспериментальных данных
      */
@@ -41,16 +41,16 @@ public class ExperimentalTableLine {
                                  Double ab_2,
                                  Double mn_2,
                                  Double errorResistanceApparent,
-                                 Double polarization,
-                                 Double errorPolarization,
+                                 Double polarizationApparent,
+                                 Double errorPolarizationApparent,
                                  Double amperage,
                                  Double voltage) {
         this.resistanceApparent = new SimpleDoubleProperty(resistanceApparent);
         this.errorResistanceApparent = new SimpleDoubleProperty(errorResistanceApparent);
         this.AB_2 = new SimpleDoubleProperty(ab_2);
         this.MN_2 = new SimpleDoubleProperty(mn_2);
-        this.polarization = new SimpleDoubleProperty(polarization);
-        this.errorPolarization = new SimpleDoubleProperty(errorPolarization);
+        this.polarizationApparent = new SimpleDoubleProperty(polarizationApparent);
+        this.errorPolarizationApparent = new SimpleDoubleProperty(errorPolarizationApparent);
         this.amperage = new SimpleDoubleProperty(amperage);
         this.voltage = new SimpleDoubleProperty(voltage);
     }
@@ -103,28 +103,28 @@ public class ExperimentalTableLine {
         this.errorResistanceApparent.set(errorResistanceApparent);
     }
 
-    public double getPolarization() {
-        return polarization.get();
+    public double getPolarizationApparent() {
+        return polarizationApparent.get();
     }
 
-    public SimpleDoubleProperty polarizationProperty() {
-        return polarization;
+    public SimpleDoubleProperty polarizationApparentProperty() {
+        return polarizationApparent;
     }
 
-    public void setPolarization(double polarization) {
-        this.polarization.set(polarization);
+    public void setPolarizationApparent(double polarizationApparent) {
+        this.polarizationApparent.set(polarizationApparent);
     }
 
-    public double getErrorPolarization() {
-        return errorPolarization.get();
+    public double getErrorPolarizationApparent() {
+        return errorPolarizationApparent.get();
     }
 
-    public SimpleDoubleProperty errorPolarizationProperty() {
-        return errorPolarization;
+    public SimpleDoubleProperty errorPolarizationApparentProperty() {
+        return errorPolarizationApparent;
     }
 
-    public void setErrorPolarization(double errorPolarization) {
-        this.errorPolarization.set(errorPolarization);
+    public void setErrorPolarizationApparent(double errorPolarizationApparent) {
+        this.errorPolarizationApparent.set(errorPolarizationApparent);
     }
 
     public double getAmperage() {
