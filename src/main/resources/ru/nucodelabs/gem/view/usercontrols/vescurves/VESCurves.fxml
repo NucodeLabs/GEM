@@ -24,12 +24,12 @@
                         label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false"/>
         </yAxis>
     </LineChart>
-    <HBox>
-        <Button fx:id="minusBtn" text="-"/>
-        <Button fx:id="plusBtn" text="+"/>
-        <Button fx:id="leftBtn" text="←"/>
-        <Button fx:id="rightBtn" text="→"/>
-        <Button fx:id="upBtn" text="↑"/>
-        <Button fx:id="downBtn" text="↓"/>
+    <HBox style="-fx-padding: 5">
+        <Button fx:id="minusBtn" text="%zoomOut"/>
+        <Button fx:id="plusBtn" text="%zoomIn"/>
+        <Button fx:id="leftBtn" text="%left"/>
+        <Button fx:id="rightBtn" text="%right"/>
+        <Button fx:id="upBtn" text="%up"/>
+        <Button fx:id="downBtn" text="%down"/>
     </HBox>
 </fx:root>
