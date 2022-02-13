@@ -1,41 +1,43 @@
 package ru.nucodelabs.gem.view.usercontrols.vestables.property_data;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableValue;
 
 public class ExpTableLine extends VESPropertyData {
 
     /**
      * Сопротивление экспериментальных данных
      */
-    private SimpleDoubleProperty expResistance = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expResistance = new SimpleDoubleProperty();
     /**
      * Разнос внешних электродов экспериментальных данных
      */
-    private SimpleDoubleProperty expAB_2 = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expAB_2 = new SimpleDoubleProperty(0);
     /**
      * Разнос внутренних электродов экспериментальных данных
      */
-    private SimpleDoubleProperty expMN_2 = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expMN_2 = new SimpleDoubleProperty(0);
     /**
      * Погрешность сопротивления экспериментальных данных
      */
-    private SimpleDoubleProperty expErrorResistance = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expErrorResistance = new SimpleDoubleProperty(0);
     /**
      * Поляризация экспериментальных данных
      */
-    private SimpleDoubleProperty expPolarisation = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expPolarisation = new SimpleDoubleProperty(0);
     /**
      * Погрешность поляризации экспериментальных данных
      */
-    private SimpleDoubleProperty expErrorPolarisation = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expErrorPolarisation = new SimpleDoubleProperty(0);
     /**
      * Сила тока экспериментальных данных
      */
-    private SimpleDoubleProperty expAmperage = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expAmperage = new SimpleDoubleProperty(0);
     /**
      * Напряжение экспериментальных данных
      */
-    private SimpleDoubleProperty expVoltage = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty expVoltage = new SimpleDoubleProperty(0);
 
        /*
     this.expAB_2 = new SimpleDoubleProperty(ab_2);
@@ -48,7 +50,7 @@ public class ExpTableLine extends VESPropertyData {
         this.expVoltage = new SimpleDoubleProperty(voltage);
      */
 
-    public ExpTableLine() {
+    /*public ExpTableLine() {
         setExpResistance(0);
         setExpAB_2(0);
         setExpMN_2(0);
@@ -57,7 +59,7 @@ public class ExpTableLine extends VESPropertyData {
         setExpErrorPolarisation(0);
         setExpAmperage(0);
         setExpVoltage(0);
-    }
+    }*/
 
     public ExpTableLine(Double resistance,
                         Double ab_2,

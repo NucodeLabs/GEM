@@ -12,12 +12,12 @@ import java.util.List;
 
 public class DataTableConverters {
 
-    public static ObservableList<ExpTableLine> expDataToExpObservableTableLines(ExperimentalData expData) {
-        return expTableLinesToExpObservableList(expDataToExpTableLines(expData));
+    public static ObservableList<ExpTableLine> expObservableTableLines(ExperimentalData expData) {
+        return FXCollections.observableArrayList(expDataToExpTableLines(expData));
     }
 
-    public static ObservableList<ModelTableLine> modelDataToModelObservableTableLines(ModelData modelData) {
-        return modTableLinesToModObservableList(modelDataToModelTableLines(modelData));
+    public static ObservableList<ModelTableLine> modObservableTableLines(ModelData modelData) {
+        return FXCollections.observableArrayList(modelDataToModelTableLines(modelData));
     }
 
     private static List<ExpTableLine> expDataToExpTableLines(ExperimentalData expData) {
@@ -30,8 +30,8 @@ public class DataTableConverters {
                                 expData.getAB_2().get(i),
                                 expData.getMN_2().get(i),
                                 expData.getErrorResistanceApparent().get(i),
-                                0.0,//expData.getPolarizationApparent().get(i),
-                                0.0,//expData.getErrorPolarizationApparent().get(i),
+                                expData.getPolarizationApparent().get(i),
+                                expData.getErrorPolarizationApparent().get(i),
                                 expData.getAmperage().get(i),
                                 expData.getVoltage().get(i)
                         )
@@ -55,13 +55,5 @@ public class DataTableConverters {
             }
         }
         return tableLines;
-    }
-
-    private static ObservableList<ExpTableLine> expTableLinesToExpObservableList(List<ExpTableLine> tableLines) {
-        return FXCollections.observableArrayList(tableLines);
-    }
-
-    private static ObservableList<ModelTableLine> modTableLinesToModObservableList(List<ModelTableLine> tableLines) {
-        return FXCollections.observableArrayList(tableLines);
     }
 }
