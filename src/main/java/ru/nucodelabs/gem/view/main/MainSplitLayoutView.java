@@ -10,25 +10,28 @@ import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable;
+import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable;
 import ru.nucodelabs.mvvm.VBView;
 
 import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
-    public MainMenuBar mainMenuBar;
+    private MainMenuBar mainMenuBar;
     @FXML
-    public Button prevButton;
+    private Button prevButton;
     @FXML
-    public Text vesTitle;
+    private Text vesTitle;
     @FXML
-    public Button nextButton;
+    private Button nextButton;
     @FXML
-    public MisfitStacks misfitStacks;
+    private MisfitStacks misfitStacks;
     @FXML
-    public VESCurves vesCurves;
+    private VESCurves vesCurves;
     @FXML
-    public ExperimentalTable experimentalTable;
+    private ExperimentalTable experimentalTable;
+    @FXML
+    private ModelTable modelTable;
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
@@ -60,6 +63,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         misfitStacks.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
 
         experimentalTable.getExperimentalTable().itemsProperty().bind(viewModel.expTableDataProperty());
+        modelTable.getModelTable().itemsProperty().bind(viewModel.modelTableDataProperty());
     }
 
     public void initShortcutsVESCurvesNavigation() {

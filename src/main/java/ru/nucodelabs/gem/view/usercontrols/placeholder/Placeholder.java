@@ -7,7 +7,7 @@ import ru.nucodelabs.mvvm.VBUserControl;
 
 public class Placeholder extends VBUserControl {
     @FXML
-    Text text;
+    private Text text;
 
     public String getText() {
         return text.textProperty().get();

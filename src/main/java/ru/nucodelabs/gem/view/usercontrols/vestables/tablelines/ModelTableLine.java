@@ -3,60 +3,60 @@ package ru.nucodelabs.gem.view.usercontrols.vestables.tablelines;
 import javafx.beans.property.SimpleDoubleProperty;
 
 public class ModelTableLine {
+    /**
+     * Сопротивление слоя модели
+     */
+    private final SimpleDoubleProperty resistance;
+    /**
+     * Толщина слоя модели
+     */
+    private final SimpleDoubleProperty power;
+    /**
+     * Поляризация слоя модели
+     */
+    private final SimpleDoubleProperty polarization;
 
     public ModelTableLine(Double resistance,
                           Double power,
-                          Double polarisation) {
-        setModResistance(resistance);
-        setModPower(power);
-        setModPolarisation(polarisation);
+                          Double polarization) {
+        this.resistance = new SimpleDoubleProperty(resistance);
+        this.power = new SimpleDoubleProperty(power);
+        this.polarization = new SimpleDoubleProperty(polarization);
     }
 
-    /** Сопротивление слоя модели
-     */
-    SimpleDoubleProperty modResistance;
-
-    public double getModResistance() {
-        return modResistance.get();
+    public double getResistance() {
+        return resistance.get();
     }
 
-    public SimpleDoubleProperty modResistanceProperty() {
-        return modResistance;
+    public SimpleDoubleProperty resistanceProperty() {
+        return resistance;
     }
 
-    public void setModResistance(double modResistance) {
-        this.modResistance.set(modResistance);
+    public void setResistance(double resistance) {
+        this.resistance.set(resistance);
     }
 
-    /** Толщина слоя модели
-     */
-    SimpleDoubleProperty modPower;
-
-    public double getModPower() {
-        return modPower.get();
+    public double getPower() {
+        return power.get();
     }
 
-    public SimpleDoubleProperty modPowerProperty() {
-        return modPower;
+    public SimpleDoubleProperty powerProperty() {
+        return power;
     }
 
-    public void setModPower(double modPower) {
-        this.modPower.set(modPower);
+    public void setPower(double power) {
+        this.power.set(power);
     }
 
-    /** Поляризация слоя модели
-     */
-    SimpleDoubleProperty modPolarisation;
-
-    public double getModPolarisation() {
-        return modPolarisation.get();
+    public double getPolarization() {
+        return polarization.get();
     }
 
-    public SimpleDoubleProperty modPolarisationProperty() {
-        return modPolarisation;
+    public SimpleDoubleProperty polarizationProperty() {
+        return polarization;
     }
 
-    public void setModPolarisation(double modPolarisation) {
-        this.modPolarisation.set(modPolarisation);
+    public void setPolarization(double polarization) {
+        this.polarization.set(polarization);
     }
 }

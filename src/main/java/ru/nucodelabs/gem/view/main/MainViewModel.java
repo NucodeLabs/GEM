@@ -17,6 +17,7 @@ import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -59,6 +60,8 @@ public class MainViewModel extends ViewModel {
     private final DoubleProperty vesCurvesYLowerBound;
     private final DoubleProperty vesCurvesYUpperBound;
     private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
+    private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
+
     /**
      * Data models
      */
@@ -96,6 +99,7 @@ public class MainViewModel extends ViewModel {
         misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
 
         expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
+        modelTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
     }
 
     /**
@@ -233,6 +237,7 @@ public class MainViewModel extends ViewModel {
         }
 
         updateModelCurve();
+        updateModelTable();
         addMODFileNameToVESText(file);
 
         try {
@@ -316,12 +321,17 @@ public class MainViewModel extends ViewModel {
                 vesData.getModelData(0)
         );
         vesCurvesData.getValue().add(modelCurveSeries);
+        addDraggingToModelCurveSeries(modelCurveSeries);
+    }
+
+    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
             updateMisfitStacks();
             updateTheoreticalCurve();
+            updateModelTable();
         });
     }
 
@@ -339,12 +349,17 @@ public class MainViewModel extends ViewModel {
     private void updateExpTable() {
         expTableData.setValue(
                 VESTablesConverters.toExperimentalTableData(
-                        vesData.getExperimentalData(0))
+                        vesData.getExperimentalData(0)
+                )
         );
     }
 
     private void updateModelTable() {
-
+        modelTableData.setValue(
+                VESTablesConverters.toModelTableData(
+                        vesData.getModelData(0)
+                )
+        );
     }
 
     private void updateMisfitStacks() {
@@ -445,7 +460,11 @@ public class MainViewModel extends ViewModel {
         return expTableData;
     }
 
-    public void setExpTableData(ObservableList<ExperimentalTableLine> expTableData) {
-        this.expTableData.set(expTableData);
+    public ObservableList<ModelTableLine> getModelTableData() {
+        return modelTableData.get();
+    }
+
+    public ObjectProperty<ObservableList<ModelTableLine>> modelTableDataProperty() {
+        return modelTableData;
     }
 }
