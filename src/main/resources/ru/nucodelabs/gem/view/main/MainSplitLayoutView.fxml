@@ -42,10 +42,16 @@
                     <MisfitStacks fx:id="misfitStacks"/>
                     <VESCurves fx:id="vesCurves"/>
                 </SplitPane>
-                <SplitPane orientation="HORIZONTAL">
-                    <EXPTable fx:id="expTable"/>
-                    <MODTable fx:id="modTable"/>
-                </SplitPane>
+                <TabPane VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab text="%experimentalTable" closable="false">
+                            <EXPTable fx:id="expTable"/>
+                        </Tab>
+                        <Tab text="%modelTable" closable="false">
+                            <MODTable fx:id="modTable"/>
+                        </Tab>
+                    </tabs>
+                </TabPane>
 
                 <!--<Placeholder text="Табличное представление"/>-->
             </SplitPane>

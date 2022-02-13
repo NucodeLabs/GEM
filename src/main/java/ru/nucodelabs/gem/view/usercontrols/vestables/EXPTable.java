@@ -1,12 +1,13 @@
 package ru.nucodelabs.gem.view.usercontrols.vestables;
 
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.DataTableConverters;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import javafx.scene.control.cell.PropertyValueFactory;
 import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
 import ru.nucodelabs.mvvm.VBUserControl;
 
@@ -14,58 +15,95 @@ public class EXPTable extends VBUserControl {
     @FXML
     TableView<ExpTableLine> experimentalTable;
 
-    private ExperimentalData data;
-    private ObservableList<ExpTableLine> oTableLines;
+    @FXML
+    TableColumn<ExpTableLine, Double> expAB_2Column;
+    @FXML
+    TableColumn<ExpTableLine, Double> expMN_2Column;
+    @FXML
+    TableColumn<ExpTableLine, Double> expResistanceColumn;
+    @FXML
+    TableColumn<ExpTableLine, Double> expResistanceErrorColumn;
+    @FXML
+    TableColumn<ExpTableLine, Double> expPolarisationColumn;
+    @FXML
+    TableColumn<ExpTableLine, Double> expPolarisationErrorColumn;
+    @FXML
+    TableColumn<ExpTableLine, Double> expAmperageColumn;
+    @FXML
+    TableColumn<ExpTableLine, Double> expVoltageColumn;
 
     public EXPTable() {
-        this.experimentalTable = new TableView<>();
-        this.data = new ExperimentalData();
-    }
+        super();
+        experimentalTable = new TableView<>();
 
-    public EXPTable(Picket currentPicket) {
-        this.experimentalTable = new TableView<>();
-        this.data = currentPicket.getExperimentalData();
+        expAB_2Column = new TableColumn<>("%");
+        expAB_2Column.setCellValueFactory(new PropertyValueFactory<>("expAB_2"));
 
-        this.oTableLines = DataTableConverters.expDataToExpObservableTableLines(data);
-        this.experimentalTable.setItems(oTableLines);
-    }
+        expMN_2Column = new TableColumn<>();
+        expMN_2Column.setCellValueFactory(new PropertyValueFactory<>("expMN_2"));
 
-    public void setExpTableLines(ExperimentalData expData) {
-        this.data = expData;
-        setTable(data);
-    }
+        expResistanceColumn = new TableColumn<>();
+        expResistanceColumn.setCellValueFactory(new PropertyValueFactory<>("expResistance"));
 
-    public void setExpTableLines(Picket currentPicket) {
-        this.data = currentPicket.getExperimentalData();
-        setTable(data);
-    }
+        expResistanceErrorColumn = new TableColumn<>();
+        expResistanceErrorColumn.setCellValueFactory(new PropertyValueFactory<>("expErrorResistance"));
 
-    private void setTable(ExperimentalData data) {
-        this.oTableLines = DataTableConverters.expDataToExpObservableTableLines(data);
-        this.experimentalTable.setItems(oTableLines);
+        expPolarisationColumn = new TableColumn<>();
+        expPolarisationColumn.setCellValueFactory(new PropertyValueFactory<>("expPolarisation"));
+
+        expPolarisationErrorColumn = new TableColumn<>();
+        expPolarisationErrorColumn.setCellValueFactory(new PropertyValueFactory<>("expErrorPolarisation"));
+
+        expAmperageColumn = new TableColumn<>();
+        expAmperageColumn.setCellValueFactory(new PropertyValueFactory<>("expAmperage"));
+
+        expVoltageColumn = new TableColumn<>();
+        expVoltageColumn.setCellValueFactory(new PropertyValueFactory<>("expVoltage"));
+
+        experimentalTable.getColumns().addAll(
+                expAB_2Column,
+                expMN_2Column,
+                expResistanceColumn,
+                expResistanceErrorColumn,
+                expPolarisationColumn,
+                expPolarisationErrorColumn,
+                expAmperageColumn,
+                expVoltageColumn);
     }
 
     public TableView<ExpTableLine> getExperimentalTable() {
         return experimentalTable;
     }
 
-    public void setExperimentalTable(TableView<ExpTableLine> experimentalTable) {
-        this.experimentalTable = experimentalTable;
+    public TableColumn<ExpTableLine, Double> getExpAB_2Column() {
+        return expAB_2Column;
     }
 
-    public ExperimentalData getData() {
-        return data;
+    public TableColumn<ExpTableLine, Double> getExpMN_2Column() {
+        return expMN_2Column;
     }
 
-    public void setData(ExperimentalData data) {
-        this.data = data;
+    public TableColumn<ExpTableLine, Double> getExpResistanceColumn() {
+        return expResistanceColumn;
     }
 
-    public ObservableList<ExpTableLine> getoTableLines() {
-        return oTableLines;
+    public TableColumn<ExpTableLine, Double> getExpResistanceErrorColumn() {
+        return expResistanceErrorColumn;
     }
 
-    public void setoTableLines(ObservableList<ExpTableLine> oTableLines) {
-        this.oTableLines = oTableLines;
+    public TableColumn<ExpTableLine, Double> getExpPolarisationColumn() {
+        return expPolarisationColumn;
+    }
+
+    public TableColumn<ExpTableLine, Double> getExpPolarisationErrorColumn() {
+        return expPolarisationErrorColumn;
+    }
+
+    public TableColumn<ExpTableLine, Double> getExpAmperageColumn() {
+        return expAmperageColumn;
+    }
+
+    public TableColumn<ExpTableLine, Double> getExpVoltageColumn() {
+        return expVoltageColumn;
     }
 }
