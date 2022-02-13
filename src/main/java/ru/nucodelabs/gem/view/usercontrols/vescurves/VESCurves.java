@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
-import ru.nucodelabs.gem.view.PowerOf10Formatter;
 import ru.nucodelabs.mvvm.VBUserControl;
 
 public class VESCurves extends VBUserControl {
@@ -26,12 +25,6 @@ public class VESCurves extends VBUserControl {
     private Button upBtn;
     @FXML
     private Button downBtn;
-
-    public VESCurves() {
-        super();
-        lineChartXAxis.setTickLabelFormatter(new PowerOf10Formatter());
-        lineChartYAxis.setTickLabelFormatter(new PowerOf10Formatter());
-    }
 
     public LineChart<Double, Double> getLineChart() {
         return lineChart;
