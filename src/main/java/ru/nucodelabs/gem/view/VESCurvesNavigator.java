@@ -24,11 +24,14 @@ public class VESCurvesNavigator {
     }
 
     public void zoomIn() {
-        vesCurvesXLowerBound.set(vesCurvesXLowerBound.get() + CHANGE_VALUE);
-        vesCurvesXUpperBound.set(vesCurvesXUpperBound.get() - CHANGE_VALUE);
+        if (vesCurvesXLowerBound.get() < vesCurvesXUpperBound.get()
+                && vesCurvesXLowerBound.get() < vesCurvesYUpperBound.get()) {
+            vesCurvesXLowerBound.set(vesCurvesXLowerBound.get() + CHANGE_VALUE);
+            vesCurvesXUpperBound.set(vesCurvesXUpperBound.get() - CHANGE_VALUE);
 
-        vesCurvesYLowerBound.set(vesCurvesYLowerBound.get() + CHANGE_VALUE);
-        vesCurvesYUpperBound.set(vesCurvesYUpperBound.get() - CHANGE_VALUE);
+            vesCurvesYLowerBound.set(vesCurvesYLowerBound.get() + CHANGE_VALUE);
+            vesCurvesYUpperBound.set(vesCurvesYUpperBound.get() - CHANGE_VALUE);
+        }
     }
 
     public void zoomOut() {
