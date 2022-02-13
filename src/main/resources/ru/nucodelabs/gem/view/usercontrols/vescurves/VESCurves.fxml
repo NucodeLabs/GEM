@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import ru.nucodelabs.gem.view.PowerOf10Formatter?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
          alignment="CENTER"
          maxHeight="Infinity"
@@ -16,11 +17,19 @@
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
-                        side="BOTTOM" tickUnit="1.0" autoRanging="false"/>
+                        side="BOTTOM" tickUnit="1.0" autoRanging="false">
+                <tickLabelFormatter>
+                    <PowerOf10Formatter/>
+                </tickLabelFormatter>
+            </NumberAxis>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false"/>
+                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false">
+                <tickLabelFormatter>
+                    <PowerOf10Formatter/>
+                </tickLabelFormatter>
+            </NumberAxis>
         </yAxis>
     </LineChart>
     <HBox style="-fx-padding: 5">
