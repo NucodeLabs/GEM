@@ -78,3 +78,59 @@
 .chart-plot-background {
     -fx-background-color: white;
 }
+
+.table-view .column-header-background .filler,
+.table-view .column-header {
+    -fx-background-color: WhiteSmoke;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: ForestGreen;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical .thumb {
+    -fx-background-color: LightGray;
+}
+
+.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color: LightGray;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: WhiteSmoke;
+}
+
+.tab-pane .tab-content-area {
+    -fx-border-color: none;
+}
+
+.tab-pane .tab {
+    -fx-pref-height: 25;
+    -fx-background-color: LightGray;
+    -fx-background-radius: 5;
+    -fx-border-color: none;
+    -fx-border-radius: 5;
+    -fx-border-width: 2;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: GainsBoro;
+}
+
+.tab-pane .tab:selected,
+.tab-pane .tab:showing,
+.tab-pane .tab:focused {
+    -fx-background-color: White;
+    -fx-border-color: ForestGreen;
+}

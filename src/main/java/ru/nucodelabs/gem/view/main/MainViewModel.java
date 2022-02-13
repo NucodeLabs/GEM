@@ -15,11 +15,9 @@ import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
-import ru.nucodelabs.gem.view.DataTableConverters;
-import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
-import ru.nucodelabs.gem.view.ModelCurveDragger;
-import ru.nucodelabs.gem.view.VESSeriesConverters;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.*;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -43,7 +41,11 @@ public class MainViewModel extends ViewModel {
     private static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     private static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
+    /**
+     * Service-objects
+     */
     private ModelCurveDragger modelCurveDragger;
+    private VESCurvesNavigator vesCurvesNavigator;
 
 
     /**
@@ -53,7 +55,13 @@ public class MainViewModel extends ViewModel {
     private final StringProperty vesText;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
     private final BooleanProperty menuFileMODDisabled;
-    private final ObjectProperty<ObservableList<ExpTableLine>> expTableData;
+    private final DoubleProperty vesCurvesXLowerBound;
+    private final DoubleProperty vesCurvesXUpperBound;
+    private final DoubleProperty vesCurvesYLowerBound;
+    private final DoubleProperty vesCurvesYUpperBound;
+    private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
+    private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
+
     /**
      * Data models
      */
@@ -73,6 +81,16 @@ public class MainViewModel extends ViewModel {
         this.config = configModel;
         this.vesData = vesDataModel;
 
+        vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
+        vesCurvesXUpperBound = new SimpleDoubleProperty(4);
+        vesCurvesYLowerBound = new SimpleDoubleProperty(-1);
+        vesCurvesYUpperBound = new SimpleDoubleProperty(4);
+        vesCurvesNavigator = new VESCurvesNavigator(
+                vesCurvesXLowerBound, vesCurvesXUpperBound,
+                vesCurvesYLowerBound, vesCurvesYUpperBound,
+                0.1
+        );
+
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
@@ -81,6 +99,7 @@ public class MainViewModel extends ViewModel {
         misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
 
         expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
+        modelTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
     }
 
     /**
@@ -137,13 +156,13 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        addToModel(openedEXP, openedSTT);
+        addToVESDataModel(openedEXP, openedSTT);
         compatibilityModeAlert();
 
         menuFileMODDisabled.setValue(false);
         addEXPFileNameToVESText(file);
-
         updateExpCurves();
+        updateExpTable();
 
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
@@ -175,7 +194,7 @@ public class MainViewModel extends ViewModel {
      * @param openedEXP EXP
      * @param openedSTT STT
      */
-    private void addToModel(EXPFile openedEXP, STTFile openedSTT) {
+    private void addToVESDataModel(EXPFile openedEXP, STTFile openedSTT) {
         if (vesData.getPickets().size() == 0) {
             vesData.addPicket(new Picket(openedEXP, openedSTT));
         } else {
@@ -208,7 +227,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        addToModel(openedMOD);
+        addToVESDataModel(openedMOD);
 
         try {
             updateTheoreticalCurve();
@@ -218,6 +237,7 @@ public class MainViewModel extends ViewModel {
         }
 
         updateModelCurve();
+        updateModelTable();
         addMODFileNameToVESText(file);
 
         try {
@@ -251,8 +271,32 @@ public class MainViewModel extends ViewModel {
     /**
      * Adds ModelData to picket
      */
-    private void addToModel(MODFile openedMOD) {
+    private void addToVESDataModel(MODFile openedMOD) {
         vesData.setModelData(0, new ModelData(openedMOD));
+    }
+
+    public void zoomInVesCurves() {
+        vesCurvesNavigator.zoomIn();
+    }
+
+    public void zoomOutVesCurves() {
+        vesCurvesNavigator.zoomOut();
+    }
+
+    public void moveLeftVesCurves() {
+        vesCurvesNavigator.moveLeft();
+    }
+
+    public void moveRightVesCurves() {
+        vesCurvesNavigator.moveRight();
+    }
+
+    public void moveUpVesCurves() {
+        vesCurvesNavigator.moveUp();
+    }
+
+    public void moveDownVesCurves() {
+        vesCurvesNavigator.moveDown();
     }
 
     private void updateTheoreticalCurve() {
@@ -277,12 +321,17 @@ public class MainViewModel extends ViewModel {
                 vesData.getModelData(0)
         );
         vesCurvesData.getValue().add(modelCurveSeries);
+        addDraggingToModelCurveSeries(modelCurveSeries);
+    }
+
+    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
             updateMisfitStacks();
             updateTheoreticalCurve();
+            updateModelTable();
         });
     }
 
@@ -295,10 +344,21 @@ public class MainViewModel extends ViewModel {
                 FXCollections.observableList(new ArrayList<>())
         );
         vesCurvesData.getValue().setAll(seriesList);
+    }
 
+    private void updateExpTable() {
         expTableData.setValue(
-                DataTableConverters.expObservableTableLines(
-                        vesData.getExperimentalData(0))
+                VESTablesConverters.toExperimentalTableData(
+                        vesData.getExperimentalData(0)
+                )
+        );
+    }
+
+    private void updateModelTable() {
+        modelTableData.setValue(
+                VESTablesConverters.toModelTableData(
+                        vesData.getModelData(0)
+                )
         );
     }
 
@@ -360,15 +420,51 @@ public class MainViewModel extends ViewModel {
         return vesText;
     }
 
-    public ObservableList<ExpTableLine> getExpTableData() {
+    public double getVesCurvesXLowerBound() {
+        return vesCurvesXLowerBound.get();
+    }
+
+    public DoubleProperty vesCurvesXLowerBoundProperty() {
+        return vesCurvesXLowerBound;
+    }
+
+    public double getVesCurvesXUpperBound() {
+        return vesCurvesXUpperBound.get();
+    }
+
+    public DoubleProperty vesCurvesXUpperBoundProperty() {
+        return vesCurvesXUpperBound;
+    }
+
+    public double getVesCurvesYLowerBound() {
+        return vesCurvesYLowerBound.get();
+    }
+
+    public DoubleProperty vesCurvesYLowerBoundProperty() {
+        return vesCurvesYLowerBound;
+    }
+
+    public double getVesCurvesYUpperBound() {
+        return vesCurvesYUpperBound.get();
+    }
+
+    public DoubleProperty vesCurvesYUpperBoundProperty() {
+        return vesCurvesYUpperBound;
+    }
+
+    public ObservableList<ExperimentalTableLine> getExpTableData() {
         return expTableData.get();
     }
 
-    public ObjectProperty<ObservableList<ExpTableLine>> expTableDataProperty() {
+    public ObjectProperty<ObservableList<ExperimentalTableLine>> expTableDataProperty() {
         return expTableData;
     }
 
-    public void setExpTableData(ObservableList<ExpTableLine> expTableData) {
-        this.expTableData.set(expTableData);
+    public ObservableList<ModelTableLine> getModelTableData() {
+        return modelTableData.get();
+    }
+
+    public ObjectProperty<ObservableList<ModelTableLine>> modelTableDataProperty() {
+        return modelTableData;
     }
 }

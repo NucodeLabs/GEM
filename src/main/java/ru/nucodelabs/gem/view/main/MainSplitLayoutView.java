@@ -2,28 +2,36 @@ package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Text;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
-import ru.nucodelabs.gem.view.usercontrols.vestables.EXPTable;
+import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable;
+import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable;
 import ru.nucodelabs.mvvm.VBView;
+
+import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
-    public MainMenuBar mainMenuBar;
+    private MainMenuBar mainMenuBar;
     @FXML
-    public Button prevButton;
+    private Button prevButton;
     @FXML
-    public Text vesTitle;
+    private Text vesTitle;
     @FXML
-    public Button nextButton;
+    private Button nextButton;
     @FXML
-    public MisfitStacks misfitStacks;
+    private MisfitStacks misfitStacks;
     @FXML
-    public VESCurves vesCurves;
+    private VESCurves vesCurves;
     @FXML
-    public EXPTable expTable;
+    private ExperimentalTable experimentalTable;
+    @FXML
+    private ModelTable modelTable;
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
@@ -35,12 +43,55 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
 
+        vesCurves.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
+        vesCurves.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
+        vesCurves.getLineChartYAxis().lowerBoundProperty().bind(viewModel.vesCurvesYLowerBoundProperty());
+        vesCurves.getLineChartYAxis().upperBoundProperty().bind(viewModel.vesCurvesYUpperBoundProperty());
+
+        vesCurves.getLeftBtn().setOnAction(e -> viewModel.moveLeftVesCurves());
+        vesCurves.getRightBtn().setOnAction(e -> viewModel.moveRightVesCurves());
+        vesCurves.getUpBtn().setOnAction(e -> viewModel.moveUpVesCurves());
+        vesCurves.getDownBtn().setOnAction(e -> viewModel.moveDownVesCurves());
+        vesCurves.getPlusBtn().setOnAction(e -> viewModel.zoomInVesCurves());
+        vesCurves.getMinusBtn().setOnAction(e -> viewModel.zoomOutVesCurves());
+
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
         vesTitle.textProperty().bind(viewModel.vesTextProperty());
 
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
+        misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
+        misfitStacks.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
 
-        expTable.getExperimentalTable().itemsProperty().bind(viewModel.expTableDataProperty());
-        System.out.println(viewModel.getExpTableData().toString());
+        experimentalTable.getExperimentalTable().itemsProperty().bind(viewModel.expTableDataProperty());
+        modelTable.getModelTable().itemsProperty().bind(viewModel.modelTableDataProperty());
+    }
+
+    public void initShortcutsVESCurvesNavigation() {
+        Objects.requireNonNull(this.getScene(), "Scene is null");
+        var accelerators = this.getScene().getAccelerators();
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.LEFT, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveLeftVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveRightVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.UP, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveUpVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.DOWN, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveDownVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN),
+                viewModel::zoomInVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN),
+                viewModel::zoomOutVesCurves
+        );
     }
 }
