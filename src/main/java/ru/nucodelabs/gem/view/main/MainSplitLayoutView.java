@@ -2,11 +2,16 @@ package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.text.Text;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.mvvm.VBView;
+
+import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
@@ -50,5 +55,34 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
         misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
         misfitStacks.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
+    }
+
+    public void initShortcutsVESCurvesNavigation() {
+        Objects.requireNonNull(this.getScene(), "Scene is null");
+        var accelerators = this.getScene().getAccelerators();
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.LEFT, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveLeftVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveRightVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.UP, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveUpVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.DOWN, KeyCombination.SHORTCUT_DOWN),
+                viewModel::moveDownVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN),
+                viewModel::zoomInVesCurves
+        );
+        accelerators.put(
+                new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN),
+                viewModel::zoomOutVesCurves
+        );
     }
 }

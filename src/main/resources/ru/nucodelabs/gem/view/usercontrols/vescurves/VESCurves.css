@@ -82,3 +82,20 @@
     -fx-font-size: 12;
     -fx-padding: 5;
 }
+
+#plusBtn, #minusBtn, #leftBtn, #rightBtn, #upBtn, #downBtn {
+    -fx-pref-width: 60;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+#minusBtn {
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+}
+
+#downBtn {
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+}
+
