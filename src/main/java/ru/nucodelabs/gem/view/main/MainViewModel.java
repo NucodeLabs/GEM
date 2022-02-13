@@ -15,11 +15,7 @@ import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
-import ru.nucodelabs.gem.view.DataTableConverters;
-import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
-import ru.nucodelabs.gem.view.ModelCurveDragger;
-import ru.nucodelabs.gem.view.VESCurvesNavigator;
-import ru.nucodelabs.gem.view.VESSeriesConverters;
+import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
@@ -44,6 +40,9 @@ public class MainViewModel extends ViewModel {
     private static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     private static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
+    /**
+     * Service-objects
+     */
     private ModelCurveDragger modelCurveDragger;
     private VESCurvesNavigator vesCurvesNavigator;
 
@@ -335,8 +334,12 @@ public class MainViewModel extends ViewModel {
         );
         vesCurvesData.getValue().setAll(seriesList);
 
+        updateExpTable();
+    }
+
+    private void updateExpTable() {
         expTableData.setValue(
-                DataTableConverters.expObservableTableLines(
+                VESTablesConverters.toExperimentalTableData(
                         vesData.getExperimentalData(0))
         );
     }
