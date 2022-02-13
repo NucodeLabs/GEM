@@ -18,9 +18,3 @@
     -fx-pref-height: 8px;
     -fx-background-color: Crimson;
 }
-
-#text {
-    -fx-fill: Gray;
-    -fx-font-size: 12;
-    -fx-padding: 5;
-}
