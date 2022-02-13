@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
@@ -10,14 +11,26 @@
          stylesheets="@../../common.css"
          VBox.vgrow="ALWAYS">
     <!--<Label text="%modelTable"/>-->
-    <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60">
+    <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="modPower" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPower"/>
-            <TableColumn fx:id="modResistance" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelResistanceApparent"/>
-            <TableColumn fx:id="modPolarization" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPolarization"/>
+            <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelPower">
+                <cellValueFactory>
+                    <PropertyValueFactory property="power"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelResistanceApparent">
+                <cellValueFactory>
+                    <PropertyValueFactory property="resistance"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="polarization" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%modelPolarization">
+                <cellValueFactory>
+                    <PropertyValueFactory property="polarization"/>
+                </cellValueFactory>
+            </TableColumn>
         </columns>
     </TableView>
 </fx:root>

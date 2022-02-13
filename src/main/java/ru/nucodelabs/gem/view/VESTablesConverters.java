@@ -9,6 +9,7 @@ import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class VESTablesConverters {
 
@@ -18,14 +19,22 @@ public class VESTablesConverters {
             for (int i = 0; i < experimentalData.getSize(); i++) {
                 tableLines.add(
                         new ExperimentalTableLine(
-                                experimentalData.getResistanceApparent().get(i),
-                                experimentalData.getAB_2().get(i),
-                                experimentalData.getMN_2().get(i),
-                                experimentalData.getErrorResistanceApparent().get(i),
-                                experimentalData.getPolarizationApparent().get(i),
-                                experimentalData.getErrorPolarizationApparent().get(i),
-                                experimentalData.getAmperage().get(i),
-                                experimentalData.getVoltage().get(i)
+                                Objects.requireNonNullElse(
+                                        experimentalData.getResistanceApparent().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getAB_2().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getMN_2().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getErrorResistanceApparent().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getPolarizationApparent().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getErrorPolarizationApparent().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getAmperage().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        experimentalData.getVoltage().get(i), 0d)
                         )
                 );
             }
@@ -39,9 +48,12 @@ public class VESTablesConverters {
             for (int i = 0; i < modelData.getSize(); i++) {
                 tableLines.add(
                         new ModelTableLine(
-                                modelData.getResistance().get(i),
-                                modelData.getPower().get(i),
-                                modelData.getPolarization().get(i)
+                                Objects.requireNonNullElse(
+                                        modelData.getResistance().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        modelData.getPower().get(i), 0d),
+                                Objects.requireNonNullElse(
+                                        modelData.getPolarization().get(i), 0d)
                         )
                 );
             }

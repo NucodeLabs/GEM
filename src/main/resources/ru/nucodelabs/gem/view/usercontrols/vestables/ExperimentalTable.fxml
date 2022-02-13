@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
@@ -9,20 +10,44 @@
          stylesheets="@../../common.css"
          VBox.vgrow="ALWAYS">
     <!--<Label text="%experimentalTable"/>-->
-    <TableView fx:id="experimentalTable" maxWidth="Infinity" minWidth="120">
+    <TableView fx:id="experimentalTable" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="expAB_2Column" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAB_2"/>
-            <TableColumn fx:id="expMN_2Column" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalMN_2"/>
-            <TableColumn fx:id="expResistanceColumn" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalResistanceApparent"/>
-            <TableColumn fx:id="expResistanceErrorColumn" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalErrorResistanceApparent"/>
-            <TableColumn fx:id="expAmperageColumn" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAmperage"/>
-            <TableColumn fx:id="expVoltageColumn" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalVoltage"/>
+            <TableColumn fx:id="AB_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalAB_2">
+                <cellValueFactory>
+                    <PropertyValueFactory property="AB_2"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="MN_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalMN_2">
+                <cellValueFactory>
+                    <PropertyValueFactory property="MN_2"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
+                         prefWidth="100.0" text="%experimentalResistanceApparent">
+                <cellValueFactory>
+                    <PropertyValueFactory property="resistanceApparent"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
+                         prefWidth="100.0" text="%experimentalErrorResistanceApparent">
+                <cellValueFactory>
+                    <PropertyValueFactory property="errorResistanceApparent"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalAmperage">
+                <cellValueFactory>
+                    <PropertyValueFactory property="amperage"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalVoltage">
+                <cellValueFactory>
+                    <PropertyValueFactory property="voltage"/>
+                </cellValueFactory>
+            </TableColumn>
         </columns>
     </TableView>
 </fx:root>

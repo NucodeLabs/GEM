@@ -7,201 +7,147 @@ public class ExperimentalTableLine {
     /**
      * Сопротивление экспериментальных данных
      */
-    private final SimpleDoubleProperty expResistance = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty resistanceApparent;
     /**
      * Разнос внешних электродов экспериментальных данных
      */
-    private final SimpleDoubleProperty expAB_2 = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty AB_2;
     /**
      * Разнос внутренних электродов экспериментальных данных
      */
-    private final SimpleDoubleProperty expMN_2 = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty MN_2;
     /**
      * Погрешность сопротивления экспериментальных данных
      */
-    private final SimpleDoubleProperty expErrorResistance = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty errorResistanceApparent;
     /**
      * Поляризация экспериментальных данных
      */
-    private final SimpleDoubleProperty expPolarisation = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty polarization;
     /**
      * Погрешность поляризации экспериментальных данных
      */
-    private final SimpleDoubleProperty expErrorPolarisation = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty errorPolarization;
     /**
      * Сила тока экспериментальных данных
      */
-    private final SimpleDoubleProperty expAmperage = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty amperage;
     /**
      * Напряжение экспериментальных данных
      */
-    private final SimpleDoubleProperty expVoltage = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty voltage;
 
-       /*
-    this.expAB_2 = new SimpleDoubleProperty(ab_2);
-        this.expMN_2 = new SimpleDoubleProperty(mn_2);
-        this.expResistance = new SimpleDoubleProperty(resistance);
-        this.expErrorResistance = new SimpleDoubleProperty(errorResistance);
-        this.expPolarisation= new SimpleDoubleProperty(polarization);
-        this.expErrorPolarisation= new SimpleDoubleProperty(errorPolarization);
-        this.expAmperage = new SimpleDoubleProperty(amperage);
-        this.expVoltage = new SimpleDoubleProperty(voltage);
-     */
-
-    /*public ExpTableLine() {
-        setExpResistance(0);
-        setExpAB_2(0);
-        setExpMN_2(0);
-        setExpErrorResistance(0);
-        setExpPolarisation(0);
-        setExpErrorPolarisation(0);
-        setExpAmperage(0);
-        setExpVoltage(0);
-    }*/
-
-    public ExperimentalTableLine(Double resistance,
+    public ExperimentalTableLine(Double resistanceApparent,
                                  Double ab_2,
                                  Double mn_2,
-                                 Double errorResistance,
+                                 Double errorResistanceApparent,
                                  Double polarization,
                                  Double errorPolarization,
                                  Double amperage,
                                  Double voltage) {
-        setExpResistance(resistance);
-        setExpAB_2(ab_2);
-        setExpMN_2(mn_2);
-        setExpErrorResistance(errorResistance);
-        setExpPolarisation(polarization);
-        setExpErrorPolarisation(errorPolarization);
-        setExpAmperage(amperage);
-        setExpVoltage(voltage);
+        this.resistanceApparent = new SimpleDoubleProperty(resistanceApparent);
+        this.errorResistanceApparent = new SimpleDoubleProperty(errorResistanceApparent);
+        this.AB_2 = new SimpleDoubleProperty(ab_2);
+        this.MN_2 = new SimpleDoubleProperty(mn_2);
+        this.polarization = new SimpleDoubleProperty(polarization);
+        this.errorPolarization = new SimpleDoubleProperty(errorPolarization);
+        this.amperage = new SimpleDoubleProperty(amperage);
+        this.voltage = new SimpleDoubleProperty(voltage);
     }
 
-    public double getExpResistance() {
-        return expResistance.get();
+    public double getResistanceApparent() {
+        return resistanceApparent.get();
     }
 
-    public void setExpResistance(double expResistance) {
-        try {
-            this.expResistance.set(expResistance);
-        } catch (NullPointerException nullExc) {
-            this.expResistance.set(0);
-        }
+    public SimpleDoubleProperty resistanceApparentProperty() {
+        return resistanceApparent;
     }
 
-    public SimpleDoubleProperty expResistanceProperty() {
-        return expResistance;
+    public void setResistanceApparent(double resistanceApparent) {
+        this.resistanceApparent.set(resistanceApparent);
     }
 
-    public double getExpAB_2() {
-        return expAB_2.get();
+    public double getAB_2() {
+        return AB_2.get();
     }
 
-    public void setExpAB_2(double expAB_2) {
-        try {
-            this.expAB_2.set(expAB_2);
-        } catch (NullPointerException nullExc) {
-            this.expAB_2.set(0);
-        }
+    public SimpleDoubleProperty AB_2Property() {
+        return AB_2;
     }
 
-    public SimpleDoubleProperty expAB_2Property() {
-        return expAB_2;
+    public void setAB_2(double AB_2) {
+        this.AB_2.set(AB_2);
     }
 
-    public double getExpMN_2() {
-        return expMN_2.get();
+    public double getMN_2() {
+        return MN_2.get();
     }
 
-    public void setExpMN_2(double expMN_2) {
-        try {
-            this.expMN_2.set(expMN_2);
-        } catch (NullPointerException nullExc) {
-            this.expMN_2.set(0);
-        }
+    public SimpleDoubleProperty MN_2Property() {
+        return MN_2;
     }
 
-    public SimpleDoubleProperty expMN_2Property() {
-        return expMN_2;
+    public void setMN_2(double MN_2) {
+        this.MN_2.set(MN_2);
     }
 
-    public double getExpErrorResistance() {
-        return expErrorResistance.get();
+    public double getErrorResistanceApparent() {
+        return errorResistanceApparent.get();
     }
 
-    public void setExpErrorResistance(double expErrorResistance) {
-        try {
-            this.expErrorResistance.set(expErrorResistance);
-        } catch (NullPointerException nullExc) {
-            this.expErrorResistance.set(0);
-        }
+    public SimpleDoubleProperty errorResistanceApparentProperty() {
+        return errorResistanceApparent;
     }
 
-    public SimpleDoubleProperty expErrorResistanceProperty() {
-        return expErrorResistance;
+    public void setErrorResistanceApparent(double errorResistanceApparent) {
+        this.errorResistanceApparent.set(errorResistanceApparent);
     }
 
-    public double getExpPolarisation() {
-        return expPolarisation.get();
+    public double getPolarization() {
+        return polarization.get();
     }
 
-    public void setExpPolarisation(double expPolarisation) {
-        try {
-            this.expPolarisation.set(expPolarisation);
-        } catch (NullPointerException nullExc) {
-            this.expPolarisation.set(0);
-        }
+    public SimpleDoubleProperty polarizationProperty() {
+        return polarization;
     }
 
-    public SimpleDoubleProperty expPolarisationProperty() {
-        return expPolarisation;
+    public void setPolarization(double polarization) {
+        this.polarization.set(polarization);
     }
 
-    public double getExpErrorPolarisation() {
-        return expErrorPolarisation.get();
+    public double getErrorPolarization() {
+        return errorPolarization.get();
     }
 
-    public void setExpErrorPolarisation(double expErrorPolarisation) {
-        try {
-            this.expErrorPolarisation.set(expErrorPolarisation);
-        } catch (NullPointerException nullExc) {
-            this.expErrorPolarisation.set(0);
-        }
+    public SimpleDoubleProperty errorPolarizationProperty() {
+        return errorPolarization;
     }
 
-    public SimpleDoubleProperty expErrorPolarisationProperty() {
-        return expErrorPolarisation;
+    public void setErrorPolarization(double errorPolarization) {
+        this.errorPolarization.set(errorPolarization);
     }
 
-    public double getExpAmperage() {
-        return expAmperage.get();
+    public double getAmperage() {
+        return amperage.get();
     }
 
-    public void setExpAmperage(double expAmperage) {
-        try {
-            this.expAmperage.set(expAmperage);
-        } catch (NullPointerException nullExc) {
-            this.expAmperage.set(0);
-        }
+    public SimpleDoubleProperty amperageProperty() {
+        return amperage;
     }
 
-    public SimpleDoubleProperty expAmperageProperty() {
-        return expAmperage;
+    public void setAmperage(double amperage) {
+        this.amperage.set(amperage);
     }
 
-    public double getExpVoltage() {
-        return expVoltage.get();
+    public double getVoltage() {
+        return voltage.get();
     }
 
-    public void setExpVoltage(double expVoltage) {
-        try {
-            this.expVoltage.set(0);
-        } catch (NullPointerException nullExc) {
-            this.expVoltage.set(0);
-        }
+    public SimpleDoubleProperty voltageProperty() {
+        return voltage;
     }
 
-    public SimpleDoubleProperty expVoltageProperty() {
-        return expVoltage;
+    public void setVoltage(double voltage) {
+        this.voltage.set(voltage);
     }
 }
