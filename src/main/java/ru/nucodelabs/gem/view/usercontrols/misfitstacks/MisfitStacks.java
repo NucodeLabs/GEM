@@ -9,13 +9,13 @@ import ru.nucodelabs.mvvm.VBUserControl;
 public class MisfitStacks extends VBUserControl {
 
     @FXML
-    public Text text;
+    private Text text;
     @FXML
-    public LineChart<Double, Double> lineChart;
+    private LineChart<Double, Double> lineChart;
     @FXML
-    public NumberAxis lineChartXAxis;
+    private NumberAxis lineChartXAxis;
     @FXML
-    public NumberAxis lineChartYAxis;
+    private NumberAxis lineChartYAxis;
 
     public Text getText() {
         return text;
