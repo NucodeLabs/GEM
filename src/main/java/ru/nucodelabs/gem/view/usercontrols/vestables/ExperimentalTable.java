@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExperimentalTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 import ru.nucodelabs.mvvm.VBUserControl;
 
 public class ExperimentalTable extends VBUserControl {

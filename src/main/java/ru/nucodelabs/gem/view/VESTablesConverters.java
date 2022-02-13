@@ -4,8 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExperimentalTableLine;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ModelTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.util.ArrayList;
 import java.util.List;
