@@ -18,7 +18,7 @@ import static java.lang.Math.pow;
  */
 public class ModelCurveDragger {
 
-    private static final double TOLERANCE = 0.01;
+    private static final double TOLERANCE_ABS = 2;
     private final int MOD_CURVE_SERIES_INDEX;
 
     private final LineChart<Double, Double> vesCurvesLineChart;
@@ -58,15 +58,19 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse pressed event
      */
     public void lineToDragDetector(MouseEvent mouseEvent) {
-        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-        Double mouseX = vesCurvesLineChart.getXAxis().getValueForDisplay(
-                vesCurvesLineChart.getXAxis().sceneToLocal(pointInScene).getX()
-        );
+        Double mouseX = coordinatesToValues(mouseEvent).getXValue();
+
+        Double mouseXLeftBound = coordinatesToValues(
+                new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY())
+        ).getXValue();
+        Double mouseXRightBound = coordinatesToValues(
+                new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY())
+        ).getXValue();
 
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
         var closestVerticalLines = points.stream()
-                .filter(p -> p.getXValue() > mouseX - TOLERANCE && p.getXValue() < mouseX + TOLERANCE)
+                .filter(p -> mouseXLeftBound < p.getXValue() && p.getXValue() < mouseXRightBound)
                 .toList();
 
         if (closestVerticalLines.size() == 2) {
@@ -101,18 +105,21 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse dragged event
      */
     public void dragHandler(MouseEvent mouseEvent) {
-        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        var valuesForAxis = coordinatesToValues(mouseEvent);
+        Double mouseX = valuesForAxis.getXValue();
+        Double mouseY = valuesForAxis.getYValue();
 
-        Double mouseX = vesCurvesLineChart.getXAxis().getValueForDisplay(
-                vesCurvesLineChart.getXAxis().sceneToLocal(pointInScene).getX()
-        );
-        Double mouseY = vesCurvesLineChart.getYAxis().getValueForDisplay(
-                vesCurvesLineChart.getYAxis().sceneToLocal(pointInScene).getY()
-        );
+        Double mouseXLeftBound = coordinatesToValues(
+                new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY())
+        ).getXValue();
+        Double mouseXRightBound = coordinatesToValues(
+                new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY())
+        ).getXValue();
+
 
         if (point1 != null && point2 != null) {
             if (Objects.equals(point1.getXValue(), point2.getXValue())
-                    && leftLimitX < mouseX - TOLERANCE * 2 && mouseX + TOLERANCE * 2 < rightLimitX) {
+                    && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX) {
                 double diff = mouseX - point1.getXValue();
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
@@ -139,7 +146,7 @@ public class ModelCurveDragger {
     }
 
     /**
-     * Call this if array structure will change
+     * Call this if model data array structure will change
      */
     private void updateMappings() {
         initModelData(modelData);
@@ -200,5 +207,26 @@ public class ModelCurveDragger {
                     )
             );
         }
+    }
+
+    /**
+     * Converts mouse event coordinates to valid values in axis
+     *
+     * @param mouseEvent mouse pressed/dragged event
+     * @return point with valid X and Y values
+     */
+    private XYChart.Data<Double, Double> coordinatesToValues(MouseEvent mouseEvent) {
+        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+        return coordinatesToValues(pointInScene);
+    }
+
+    private XYChart.Data<Double, Double> coordinatesToValues(Point2D pointInScene) {
+        return new XYChart.Data<>(
+                vesCurvesLineChart.getXAxis().getValueForDisplay(
+                        vesCurvesLineChart.getXAxis().sceneToLocal(pointInScene).getX()),
+                vesCurvesLineChart.getYAxis().getValueForDisplay(
+                        vesCurvesLineChart.getYAxis().sceneToLocal(pointInScene).getY())
+        );
     }
 }
