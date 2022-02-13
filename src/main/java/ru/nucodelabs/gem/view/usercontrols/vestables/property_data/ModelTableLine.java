@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.usercontrols.vestables.property_data;
 
 import javafx.beans.property.SimpleDoubleProperty;
 
-public class ModelTableLine extends VESPropertyData {
+public class ModelTableLine {
 
     public ModelTableLine(Double resistance,
                           Double power,

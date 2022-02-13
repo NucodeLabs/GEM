@@ -16,7 +16,7 @@ import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.*;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExperimentalTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -58,7 +58,7 @@ public class MainViewModel extends ViewModel {
     private final DoubleProperty vesCurvesXUpperBound;
     private final DoubleProperty vesCurvesYLowerBound;
     private final DoubleProperty vesCurvesYUpperBound;
-    private final ObjectProperty<ObservableList<ExpTableLine>> expTableData;
+    private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
     /**
      * Data models
      */
@@ -158,6 +158,7 @@ public class MainViewModel extends ViewModel {
         menuFileMODDisabled.setValue(false);
         addEXPFileNameToVESText(file);
         updateExpCurves();
+        updateExpTable();
 
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
@@ -344,6 +345,10 @@ public class MainViewModel extends ViewModel {
         );
     }
 
+    private void updateModelTable() {
+
+    }
+
     private void updateMisfitStacks() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
                 vesData.getExperimentalData(0), vesData.getModelData(0)
@@ -434,15 +439,15 @@ public class MainViewModel extends ViewModel {
         return vesCurvesYUpperBound;
     }
 
-    public ObservableList<ExpTableLine> getExpTableData() {
+    public ObservableList<ExperimentalTableLine> getExpTableData() {
         return expTableData.get();
     }
 
-    public ObjectProperty<ObservableList<ExpTableLine>> expTableDataProperty() {
+    public ObjectProperty<ObservableList<ExperimentalTableLine>> expTableDataProperty() {
         return expTableData;
     }
 
-    public void setExpTableData(ObservableList<ExpTableLine> expTableData) {
+    public void setExpTableData(ObservableList<ExperimentalTableLine> expTableData) {
         this.expTableData.set(expTableData);
     }
 }
