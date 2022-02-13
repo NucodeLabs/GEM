@@ -1,38 +1,34 @@
 package ru.nucodelabs.gem.view.usercontrols.vestables;
 
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExpTableLine;
+import ru.nucodelabs.gem.view.usercontrols.vestables.property_data.ExperimentalTableLine;
 import ru.nucodelabs.mvvm.VBUserControl;
 
-public class EXPTable extends VBUserControl {
+public class ExperimentalTable extends VBUserControl {
     @FXML
-    TableView<ExpTableLine> experimentalTable;
+    TableView<ExperimentalTableLine> experimentalTable;
 
     @FXML
-    TableColumn<ExpTableLine, Double> expAB_2Column;
+    TableColumn<ExperimentalTableLine, Double> expAB_2Column;
     @FXML
-    TableColumn<ExpTableLine, Double> expMN_2Column;
+    TableColumn<ExperimentalTableLine, Double> expMN_2Column;
     @FXML
-    TableColumn<ExpTableLine, Double> expResistanceColumn;
+    TableColumn<ExperimentalTableLine, Double> expResistanceColumn;
     @FXML
-    TableColumn<ExpTableLine, Double> expResistanceErrorColumn;
+    TableColumn<ExperimentalTableLine, Double> expResistanceErrorColumn;
     @FXML
-    TableColumn<ExpTableLine, Double> expPolarisationColumn;
+    TableColumn<ExperimentalTableLine, Double> expPolarisationColumn;
     @FXML
-    TableColumn<ExpTableLine, Double> expPolarisationErrorColumn;
+    TableColumn<ExperimentalTableLine, Double> expPolarisationErrorColumn;
     @FXML
-    TableColumn<ExpTableLine, Double> expAmperageColumn;
+    TableColumn<ExperimentalTableLine, Double> expAmperageColumn;
     @FXML
-    TableColumn<ExpTableLine, Double> expVoltageColumn;
+    TableColumn<ExperimentalTableLine, Double> expVoltageColumn;
 
-    public EXPTable() {
+    public ExperimentalTable() {
         super();
         experimentalTable = new TableView<>();
 
@@ -68,42 +64,43 @@ public class EXPTable extends VBUserControl {
                 expPolarisationColumn,
                 expPolarisationErrorColumn,
                 expAmperageColumn,
-                expVoltageColumn);
+                expVoltageColumn
+        );
     }
 
-    public TableView<ExpTableLine> getExperimentalTable() {
+    public TableView<ExperimentalTableLine> getExperimentalTable() {
         return experimentalTable;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpAB_2Column() {
+    public TableColumn<ExperimentalTableLine, Double> getExpAB_2Column() {
         return expAB_2Column;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpMN_2Column() {
+    public TableColumn<ExperimentalTableLine, Double> getExpMN_2Column() {
         return expMN_2Column;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpResistanceColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpResistanceColumn() {
         return expResistanceColumn;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpResistanceErrorColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpResistanceErrorColumn() {
         return expResistanceErrorColumn;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpPolarisationColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpPolarisationColumn() {
         return expPolarisationColumn;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpPolarisationErrorColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpPolarisationErrorColumn() {
         return expPolarisationErrorColumn;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpAmperageColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpAmperageColumn() {
         return expAmperageColumn;
     }
 
-    public TableColumn<ExpTableLine, Double> getExpVoltageColumn() {
+    public TableColumn<ExperimentalTableLine, Double> getExpVoltageColumn() {
         return expVoltageColumn;
     }
 }

@@ -9,7 +9,7 @@ import javafx.scene.text.Text;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
-import ru.nucodelabs.gem.view.usercontrols.vestables.EXPTable;
+import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable;
 import ru.nucodelabs.mvvm.VBView;
 
 import java.util.Objects;
@@ -28,7 +28,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
     public VESCurves vesCurves;
     @FXML
-    public EXPTable expTable;
+    public ExperimentalTable experimentalTable;
 
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
@@ -59,8 +59,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
         misfitStacks.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
 
-        expTable.getExperimentalTable().itemsProperty().bind(viewModel.expTableDataProperty());
-        System.out.println(viewModel.getExpTableData().toString());
+        experimentalTable.getExperimentalTable().itemsProperty().bind(viewModel.expTableDataProperty());
     }
 
     public void initShortcutsVESCurvesNavigation() {

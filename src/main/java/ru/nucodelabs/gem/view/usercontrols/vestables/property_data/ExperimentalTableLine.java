@@ -1,10 +1,8 @@
 package ru.nucodelabs.gem.view.usercontrols.vestables.property_data;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableValue;
 
-public class ExpTableLine extends VESPropertyData {
+public class ExperimentalTableLine {
 
     /**
      * Сопротивление экспериментальных данных
@@ -61,14 +59,14 @@ public class ExpTableLine extends VESPropertyData {
         setExpVoltage(0);
     }*/
 
-    public ExpTableLine(Double resistance,
-                        Double ab_2,
-                        Double mn_2,
-                        Double errorResistance,
-                        Double polarization,
-                        Double errorPolarization,
-                        Double amperage,
-                        Double voltage) {
+    public ExperimentalTableLine(Double resistance,
+                                 Double ab_2,
+                                 Double mn_2,
+                                 Double errorResistance,
+                                 Double polarization,
+                                 Double errorPolarization,
+                                 Double amperage,
+                                 Double voltage) {
         setExpResistance(resistance);
         setExpAB_2(ab_2);
         setExpMN_2(mn_2);
