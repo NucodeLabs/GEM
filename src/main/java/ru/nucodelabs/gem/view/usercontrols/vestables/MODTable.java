@@ -13,11 +13,9 @@ public class MODTable extends VBUserControl {
     @FXML
     TableView<ModelTableLine> modelTable;
 
-    private ModelData data;
     private ObservableList<ModelTableLine> oModelTableLines;
 
     public MODTable() {
         this.modelTable = new TableView<>();
-        this.data = new ModelData();
     }
 }
