@@ -32,9 +32,23 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
 
+        vesCurves.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
+        vesCurves.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
+        vesCurves.getLineChartYAxis().lowerBoundProperty().bind(viewModel.vesCurvesYLowerBoundProperty());
+        vesCurves.getLineChartYAxis().upperBoundProperty().bind(viewModel.vesCurvesYUpperBoundProperty());
+
+        vesCurves.getLeftBtn().setOnAction(e -> viewModel.moveLeftVesCurves());
+        vesCurves.getRightBtn().setOnAction(e -> viewModel.moveRightVesCurves());
+        vesCurves.getUpBtn().setOnAction(e -> viewModel.moveUpVesCurves());
+        vesCurves.getDownBtn().setOnAction(e -> viewModel.moveDownVesCurves());
+        vesCurves.getPlusBtn().setOnAction(e -> viewModel.zoomInVesCurves());
+        vesCurves.getMinusBtn().setOnAction(e -> viewModel.zoomOutVesCurves());
+
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
         vesTitle.textProperty().bind(viewModel.vesTextProperty());
 
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
+        misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
+        misfitStacks.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
     }
 }

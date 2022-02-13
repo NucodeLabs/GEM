@@ -17,6 +17,7 @@ import ru.nucodelabs.gem.model.ConfigModel;
 import ru.nucodelabs.gem.model.VESDataModel;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
+import ru.nucodelabs.gem.view.VESCurvesNavigator;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.mvvm.ViewModel;
 
@@ -42,6 +43,7 @@ public class MainViewModel extends ViewModel {
     private static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
     private ModelCurveDragger modelCurveDragger;
+    private VESCurvesNavigator vesCurvesNavigator;
 
 
     /**
@@ -51,6 +53,10 @@ public class MainViewModel extends ViewModel {
     private final StringProperty vesText;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
     private final BooleanProperty menuFileMODDisabled;
+    private final DoubleProperty vesCurvesXLowerBound;
+    private final DoubleProperty vesCurvesXUpperBound;
+    private final DoubleProperty vesCurvesYLowerBound;
+    private final DoubleProperty vesCurvesYUpperBound;
 
     /**
      * Data models
@@ -70,6 +76,16 @@ public class MainViewModel extends ViewModel {
         super(viewManager);
         this.config = configModel;
         this.vesData = vesDataModel;
+
+        vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
+        vesCurvesXUpperBound = new SimpleDoubleProperty(4);
+        vesCurvesYLowerBound = new SimpleDoubleProperty(-1);
+        vesCurvesYUpperBound = new SimpleDoubleProperty(4);
+        vesCurvesNavigator = new VESCurvesNavigator(
+                vesCurvesXLowerBound, vesCurvesXUpperBound,
+                vesCurvesYLowerBound, vesCurvesYUpperBound,
+                0.1
+        );
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
 
@@ -133,7 +149,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        addToModel(openedEXP, openedSTT);
+        addToVESDataModel(openedEXP, openedSTT);
         compatibilityModeAlert();
 
         menuFileMODDisabled.setValue(false);
@@ -170,7 +186,7 @@ public class MainViewModel extends ViewModel {
      * @param openedEXP EXP
      * @param openedSTT STT
      */
-    private void addToModel(EXPFile openedEXP, STTFile openedSTT) {
+    private void addToVESDataModel(EXPFile openedEXP, STTFile openedSTT) {
         if (vesData.getPickets().size() == 0) {
             vesData.addPicket(new Picket(openedEXP, openedSTT));
         } else {
@@ -203,7 +219,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        addToModel(openedMOD);
+        addToVESDataModel(openedMOD);
 
         try {
             updateTheoreticalCurve();
@@ -246,8 +262,32 @@ public class MainViewModel extends ViewModel {
     /**
      * Adds ModelData to picket
      */
-    private void addToModel(MODFile openedMOD) {
+    private void addToVESDataModel(MODFile openedMOD) {
         vesData.setModelData(0, new ModelData(openedMOD));
+    }
+
+    public void zoomInVesCurves() {
+        vesCurvesNavigator.zoomIn();
+    }
+
+    public void zoomOutVesCurves() {
+        vesCurvesNavigator.zoomOut();
+    }
+
+    public void moveLeftVesCurves() {
+        vesCurvesNavigator.moveLeft();
+    }
+
+    public void moveRightVesCurves() {
+        vesCurvesNavigator.moveRight();
+    }
+
+    public void moveUpVesCurves() {
+        vesCurvesNavigator.moveUp();
+    }
+
+    public void moveDownVesCurves() {
+        vesCurvesNavigator.moveDown();
     }
 
     private void updateTheoreticalCurve() {
@@ -348,5 +388,37 @@ public class MainViewModel extends ViewModel {
 
     public StringProperty vesTextProperty() {
         return vesText;
+    }
+
+    public double getVesCurvesXLowerBound() {
+        return vesCurvesXLowerBound.get();
+    }
+
+    public DoubleProperty vesCurvesXLowerBoundProperty() {
+        return vesCurvesXLowerBound;
+    }
+
+    public double getVesCurvesXUpperBound() {
+        return vesCurvesXUpperBound.get();
+    }
+
+    public DoubleProperty vesCurvesXUpperBoundProperty() {
+        return vesCurvesXUpperBound;
+    }
+
+    public double getVesCurvesYLowerBound() {
+        return vesCurvesYLowerBound.get();
+    }
+
+    public DoubleProperty vesCurvesYLowerBoundProperty() {
+        return vesCurvesYLowerBound;
+    }
+
+    public double getVesCurvesYUpperBound() {
+        return vesCurvesYUpperBound.get();
+    }
+
+    public DoubleProperty vesCurvesYUpperBoundProperty() {
+        return vesCurvesYUpperBound;
     }
 }
