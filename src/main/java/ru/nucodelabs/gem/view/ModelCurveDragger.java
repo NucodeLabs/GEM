@@ -3,12 +3,12 @@ package ru.nucodelabs.gem.view;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.data.ves.ModelData;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
@@ -21,7 +21,7 @@ public class ModelCurveDragger {
     private static final double TOLERANCE_ABS = 2;
     private final int MOD_CURVE_SERIES_INDEX;
 
-    private final LineChart<Double, Double> vesCurvesLineChart;
+    private final Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private ModelData modelData;
 
@@ -38,17 +38,18 @@ public class ModelCurveDragger {
     private Double rightLimitX;
 
     /**
-     * Initializes dragger for given line chart
+     * Adds drag-n-drop functionality for model step chart.
+     * Modifies values of given property and ModelData if initialized.
      *
-     * @param vesCurvesLineChart line chart with model curve
-     * @param vesCurvesData      data property that line chart bound to
-     * @param modelCurveIndex    index of series of model curve in line chart's data list of series
+     * @param coordinatesInSceneToValue line chart node dependent function to convert X and Y to values for axis
+     * @param chartData                 data property of line chart or bound
+     * @param modelCurveIndex           index of series in data
      */
-    public ModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart,
-                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData,
+    public ModelCurveDragger(Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue,
+                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> chartData,
                              int modelCurveIndex) {
-        this.vesCurvesLineChart = vesCurvesLineChart;
-        this.vesCurvesData = vesCurvesData;
+        this.coordinatesInSceneToValue = coordinatesInSceneToValue;
+        this.vesCurvesData = chartData;
         MOD_CURVE_SERIES_INDEX = modelCurveIndex;
     }
 
@@ -210,7 +211,7 @@ public class ModelCurveDragger {
     }
 
     /**
-     * Converts mouse event coordinates to valid values in axis
+     * Converts mouse event coordinates to valid values for axis
      *
      * @param mouseEvent mouse pressed/dragged event
      * @return point with valid X and Y values
@@ -222,11 +223,6 @@ public class ModelCurveDragger {
     }
 
     private XYChart.Data<Double, Double> coordinatesToValues(Point2D pointInScene) {
-        return new XYChart.Data<>(
-                vesCurvesLineChart.getXAxis().getValueForDisplay(
-                        vesCurvesLineChart.getXAxis().sceneToLocal(pointInScene).getX()),
-                vesCurvesLineChart.getYAxis().getValueForDisplay(
-                        vesCurvesLineChart.getYAxis().sceneToLocal(pointInScene).getY())
-        );
+        return coordinatesInSceneToValue.apply(pointInScene);
     }
 }

@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -36,7 +37,20 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     public MainSplitLayoutView(MainViewModel viewModel) {
         super(viewModel);
 
-        viewModel.initModelCurveDragger(vesCurves.getLineChart());
+        viewModel.initModelCurveDragger((pointInScene) ->
+                new XYChart.Data<>(
+                        (Double) vesCurves
+                                .getLineChartXAxis()
+                                .getValueForDisplay(
+                                        vesCurves.getLineChartXAxis().sceneToLocal(pointInScene).getX()
+                                ),
+                        (Double) vesCurves
+                                .getLineChartYAxis()
+                                .getValueForDisplay(
+                                        vesCurves.getLineChartYAxis().sceneToLocal(pointInScene).getY()
+                                )
+                )
+        );
 
         mainMenuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
         mainMenuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());
