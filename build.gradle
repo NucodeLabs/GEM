@@ -178,13 +178,19 @@ tasks.withType(JavaExec) {
 task packageGemApp(type: PackageTask, dependsOn: build) {
     mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
     bundleJre = true
+    organizationName = "NucodeLabs"
+    organizationUrl = "https://t.me/+jCkpn7S43NA3ZWRi"
+    organizationEmail = "v.mostovoi@g.nsu.ru"
     generateInstaller = false
     additionalResources = [
             file("lib/${libPrefix}forwardsolver.${libExt}"),
             file("lib/${libPrefix}misfit.${libExt}")
     ]
     macConfig {
+        generateInstaller = true
         icnsFile = file("src/main/resources/img/gem.icns")
+        generateDmg = true
+        generatePkg = false
     }
     useResourcesAsWorkingDir = true
     vmArgs = ["-Djava.library.path=."]
