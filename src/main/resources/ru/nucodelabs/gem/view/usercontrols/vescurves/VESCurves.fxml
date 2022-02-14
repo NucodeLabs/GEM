@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.util.Duration?>
 <?import ru.nucodelabs.gem.view.PowerOf10Formatter?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
          alignment="CENTER"
@@ -32,12 +33,41 @@
             </NumberAxis>
         </yAxis>
     </LineChart>
-    <HBox style="-fx-padding: 5">
-        <Button fx:id="minusBtn" text="%zoomOut"/>
-        <Button fx:id="plusBtn" text="%zoomIn"/>
-        <Button fx:id="leftBtn" text="%left"/>
-        <Button fx:id="rightBtn" text="%right"/>
-        <Button fx:id="upBtn" text="%up"/>
-        <Button fx:id="downBtn" text="%down"/>
+    <HBox style="-fx-padding: 5" alignment="BASELINE_LEFT">
+
+        <fx:define>
+            <Duration fx:id="delay" fx:value="100ms"/>
+        </fx:define>
+
+        <Button fx:id="minusBtn" text="%zoomOut">
+            <tooltip>
+                <Tooltip text="Ctrl-" showDelay="$delay"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="plusBtn" text="%zoomIn">
+            <tooltip>
+                <Tooltip text="Ctrl+" showDelay="$delay"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="leftBtn" text="%left">
+            <tooltip>
+                <Tooltip text="Ctrl←" showDelay="$delay"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="rightBtn" text="%right">
+            <tooltip>
+                <Tooltip text="Ctrl→" showDelay="$delay"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="upBtn" text="%up">
+            <tooltip>
+                <Tooltip text="Ctrl↑" showDelay="$delay"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="downBtn" text="%down">
+            <tooltip>
+                <Tooltip text="Ctrl↓" showDelay="$delay"/>
+            </tooltip>
+        </Button>
     </HBox>
 </fx:root>
