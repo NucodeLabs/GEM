@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.view.main;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
@@ -24,6 +24,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static java.lang.Math.abs;
 
@@ -105,10 +106,10 @@ public class MainViewModel extends ViewModel {
     /**
      * Initializes model dragger
      *
-     * @param vesCurvesLineChart Line Chart
+     * @param coordinateInSceneToValue line chart node dependent function to convert X and Y in values for axis
      */
-    public void initModelCurveDragger(LineChart<Double, Double> vesCurvesLineChart) {
-        modelCurveDragger = new ModelCurveDragger(vesCurvesLineChart, vesCurvesData, MOD_CURVE_SERIES_INDEX);
+    public void initModelCurveDragger(Function<Point2D, XYChart.Data<Double, Double>> coordinateInSceneToValue) {
+        modelCurveDragger = new ModelCurveDragger(coordinateInSceneToValue, vesCurvesData, MOD_CURVE_SERIES_INDEX);
     }
 
     /**
