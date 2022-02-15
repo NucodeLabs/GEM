@@ -1,4 +1,5 @@
 import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.SetupMode
 import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -180,9 +181,10 @@ javapackager {
     mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
     bundleJre = true
     organizationName = "NucodeLabs"
-    applicationName = "GEM"
+    name = "GEM"
     version = "0.1"
     vmArgs = ["-Djava.library.path=."]
+    administratorRequired = false
     additionalResources = [
             file("lib/${libPrefix}forwardsolver.${libExt}"),
             file("lib/${libPrefix}misfit.${libExt}")
@@ -200,10 +202,18 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
 }
 
 task packageWindowsExe(type: PackageTask, dependsOn: build) {
-    generateInstaller = false
+    generateInstaller = true
     winConfig {
+        generateSetup = true
+        generateMsi = false
         exeCreationTool = WindowsExeCreationTool.winrun4j
         icoFile = file("src/main/resources/img/gem.ico")
+        setupMode = SetupMode.askTheUser
+        removeOldLibs = true
+        disableDirPage = false
+        disableFinishedPage = false
+        disableWelcomePage = false
+        createDesktopIconTask = false
     }
 }
 
