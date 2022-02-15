@@ -1,4 +1,5 @@
 import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
@@ -105,7 +106,7 @@ task forwardSolver(type: Exec) {
     ]
 
     def libName = "forwardsolver"
-    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
 
     def args = new ArrayList<>()
     args.addAll(jniArgs)
@@ -140,7 +141,7 @@ task misfitFunctions(type: Exec) {
 
     def libName = "misfit"
 
-    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
 
     def args = new ArrayList<>()
     args.addAll(jniArgs)
@@ -201,6 +202,7 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
 task packageWindowsExe(type: PackageTask, dependsOn: build) {
     generateInstaller = false
     winConfig {
+        exeCreationTool = WindowsExeCreationTool.winrun4j
         icoFile = file("src/main/resources/img/gem.ico")
     }
 }
