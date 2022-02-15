@@ -175,25 +175,33 @@ tasks.withType(JavaExec) {
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
 }
 
-task packageGemApp(type: PackageTask, dependsOn: build) {
+javapackager {
     mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
     bundleJre = true
     organizationName = "NucodeLabs"
-    organizationUrl = "https://t.me/+jCkpn7S43NA3ZWRi"
-    organizationEmail = "v.mostovoi@g.nsu.ru"
-    generateInstaller = false
+    applicationName = "GEM"
+    version = "0.1"
+    vmArgs = ["-Djava.library.path=."]
     additionalResources = [
             file("lib/${libPrefix}forwardsolver.${libExt}"),
             file("lib/${libPrefix}misfit.${libExt}")
     ]
+}
+
+task packageMacApp(type: PackageTask, dependsOn: build) {
+    useResourcesAsWorkingDir = true
+    generateInstaller = true
     macConfig {
-        generateInstaller = true
         icnsFile = file("src/main/resources/img/gem.icns")
         generateDmg = true
         generatePkg = false
     }
-    useResourcesAsWorkingDir = true
-    vmArgs = ["-Djava.library.path=."]
-    applicationName = "GEM"
-    version = "0.1"
 }
+
+task packageWindowsExe(type: PackageTask, dependsOn: build) {
+    generateInstaller = false
+    winConfig {
+        icoFile = file("src/main/resources/img/gem.ico")
+    }
+}
+
