@@ -25,7 +25,7 @@ public class VESCurvesNavigator {
 
     public void zoomIn() {
         if (vesCurvesXLowerBound.get() < vesCurvesXUpperBound.get()
-                && vesCurvesXLowerBound.get() < vesCurvesYUpperBound.get()) {
+                && vesCurvesYLowerBound.get() < vesCurvesYUpperBound.get()) {
             vesCurvesXLowerBound.set(vesCurvesXLowerBound.get() + CHANGE_VALUE);
             vesCurvesXUpperBound.set(vesCurvesXUpperBound.get() - CHANGE_VALUE);
 
