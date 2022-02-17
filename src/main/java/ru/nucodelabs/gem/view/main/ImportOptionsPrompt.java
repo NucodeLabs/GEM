@@ -10,6 +10,8 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
     public Button addToCurrentBtn;
     @FXML
     public Button addToNewBtn;
+    @FXML
+    public Button cancelBtn;
 
     public ImportOptionsPrompt(MainViewModel viewModel) {
         super(viewModel);
@@ -21,5 +23,6 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
             viewModel.addToCurrent();
             ((Stage) this.getScene().getWindow()).close();
         });
+        cancelBtn.setOnAction(e -> ((Stage) this.getScene().getWindow()).close());
     }
 }
