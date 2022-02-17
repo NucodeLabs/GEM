@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.core;
 
 import ru.nucodelabs.gem.view.main.MainViewModel;
-import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 
 import java.util.Objects;
 
@@ -28,9 +27,5 @@ public class ViewModelFactory {
                 modelFactory.getConfigModel(),
                 modelFactory.createVESDataModel()
         );
-    }
-
-    public WelcomeViewModel createWelcomeViewModel() {
-        return new WelcomeViewModel(viewManager);
     }
 }

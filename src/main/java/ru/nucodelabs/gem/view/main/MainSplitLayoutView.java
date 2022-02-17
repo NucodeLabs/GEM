@@ -18,6 +18,8 @@ import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
+    private WelcomeScreen welcomeScreen;
+    @FXML
     private MainMenuBar mainMenuBar;
     @FXML
     private Button prevButton;
@@ -51,6 +53,9 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
                                 )
                 )
         );
+
+        welcomeScreen.visibleProperty().bind(viewModel.welcomeScreenVisibleProperty());
+        welcomeScreen.getOpenEXPButton().setOnAction(e -> viewModel.addToCurrent());
 
         mainMenuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
         mainMenuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());
