@@ -1,6 +1,11 @@
+* {
+    -fx-accent: ForestGreen;
+    -fx-focus-color: ForestGreen;
+}
+
 .button {
-    -fx-border-color: ForestGreen;
-    -fx-border-width: 2px;
+    -fx-border-color: LightGray;
+    -fx-border-width: 1px;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-background-color: white;
@@ -15,7 +20,7 @@
     -fx-background-color: GainsBoro;
 }
 
-.menu-button:hover {
+.menu-button:hover, .menu-item:hover {
     -fx-background-color: Green;
 }
 
@@ -23,14 +28,7 @@
     -fx-background-color: DarkGreen;
 }
 
-.menu-button:focused, .menu-button:showing {
-    -fx-background-color: ForestGreen;
-}
-
-.menu-item:hover {
-    -fx-background-color: Green;
-}
-
+.menu-button:focused, .menu-button:showing,
 .menu-item:showing, .menu-item:focused {
     -fx-background-color: ForestGreen;
 }
@@ -79,13 +77,14 @@
     -fx-background-color: white;
 }
 
-.table-view .column-header-background .filler,
-.table-view .column-header {
-    -fx-background-color: WhiteSmoke;
+.table-view:focused {
+    -fx-border-color: none;
 }
 
-.table-row-cell:selected {
-    -fx-background-color: ForestGreen;
+.table-view .column-header-background .filler,
+.table-view .column-header,
+.table-view .corner {
+    -fx-background-color: WhiteSmoke;
 }
 
 .table-view .virtual-flow .scroll-bar:vertical,
@@ -106,37 +105,52 @@
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: WhiteSmoke;
+    -fx-background-color: white;
 }
 
-.tab-pane .tab-content-area {
+.tab-header-area {
+    -fx-padding: 5;
+    -fx-background-radius: 5;
+}
+
+.tab-pane .tab-content-area, .table-view {
     -fx-border-color: none;
 }
 
 .tab-pane .tab {
     -fx-pref-height: 25;
-    -fx-background-color: LightGray;
+    -fx-background-color: WhiteSmoke;
     -fx-background-radius: 5;
     -fx-border-color: none;
     -fx-border-radius: 5;
-    -fx-border-width: 2;
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-border-width: 0;
+    -fx-focus-color: none; /* warning cause */
+    -fx-faint-focus-color: none; /* warning cause */
 }
 
 .tab-pane .tab:hover {
     -fx-background-color: GainsBoro;
+    -fx-border-color: GainsBoro;
 }
 
 .tab-pane .tab:selected,
 .tab-pane .tab:showing,
 .tab-pane .tab:focused {
-    -fx-background-color: White;
-    -fx-border-color: ForestGreen;
+    -fx-background-color: LightGray;
 }
 
-#label {
+#uclabel {
     -fx-text-fill: Gray;
     -fx-font-size: 12;
     -fx-padding: 5;
+}
+
+.tooltip {
+    -fx-effect: none;
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-text-fill: Gray;
+    -fx-border-width: 1;
+    -fx-border-color: Gray;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
 }
