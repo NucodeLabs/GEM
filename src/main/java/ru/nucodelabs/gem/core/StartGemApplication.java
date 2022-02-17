@@ -17,6 +17,6 @@ public class StartGemApplication {
         }
         // because here is no error handling
 
-        Application.launch(GemApplication.class);
+        Application.launch(GemApplication.class, args);
     }
 }
