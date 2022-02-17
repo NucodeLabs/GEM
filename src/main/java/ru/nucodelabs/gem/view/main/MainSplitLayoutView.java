@@ -3,10 +3,10 @@ package ru.nucodelabs.gem.view.main;
 import javafx.fxml.FXML;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.text.Text;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
@@ -24,7 +24,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
     private Button prevButton;
     @FXML
-    private Text vesTitle;
+    private Label vesTitle;
     @FXML
     private Button nextButton;
     @FXML
