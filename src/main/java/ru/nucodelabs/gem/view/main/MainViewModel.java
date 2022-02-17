@@ -118,7 +118,11 @@ public class MainViewModel extends ViewModel {
      * Asks about import option then either addToCurrent() or addToNew() is called from ImportOptionPrompt
      */
     public void importEXP() {
-        viewManager.askImportOption(this);
+        if (vesData.getPicketsCount() > 0) {
+            viewManager.askImportOption(this);
+        } else {
+            addToCurrent(viewManager.showEXPFileChooser(this));
+        }
     }
 
     /**
