@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.core;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,11 +41,9 @@ public class ViewManager {
         viewModelStageMap.put(mainViewModel, initialStage);
         MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
 
-        initialStage.setTitle("GEM");
-        initialStage.getIcons().add(new Image("img/gem.png"));
         initialStage.setScene(new Scene(mainSplitLayoutView));
+        initialStage.setTitle("GEM");
         initialStage.show();
-        initialStage.setMaximized(true);
     }
 
     public void newMainViewWithImportEXP(ViewModel caller) {
@@ -58,8 +55,8 @@ public class ViewManager {
             Stage newStage = new Stage();
             viewModelStageMap.put(mainViewModel, newStage);
             newStage.setScene(new Scene(mainSplitLayoutView));
+            newStage.setTitle("GEM");
             newStage.show();
-            newStage.setMaximized(true);
             mainSplitLayoutView.initShortcutsVESCurvesNavigation();
             mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
@@ -131,6 +128,7 @@ public class ViewManager {
         newStage.initOwner(viewModelStageMap.get(caller));
         newStage.initModality(Modality.WINDOW_MODAL);
         newStage.setResizable(false);
+        newStage.setTitle("Опции импорта");
         newStage.show();
     }
 }
