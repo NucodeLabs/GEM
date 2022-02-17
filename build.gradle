@@ -1,5 +1,14 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.SetupMode
+import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+buildscript {
+    dependencies {
+        classpath 'io.github.fvarrui:javapackager:1.6.3'
+    }
+}
 
 plugins {
     id 'java'
@@ -7,6 +16,8 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.11'
     id "com.google.osdetector" version "1.7.0"
 }
+
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'ru.nucodelabs'
 version '1.0-SNAPSHOT'
@@ -79,9 +90,9 @@ javafx {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation('org.openjfx:javafx-base')
-    implementation('org.openjfx:javafx-controls')
-    implementation('org.openjfx:javafx-fxml')
+    implementation('org.openjfx:javafx-base:17.0.2')
+    implementation('org.openjfx:javafx-controls:17.0.2')
+    implementation('org.openjfx:javafx-fxml:17.0.2')
     implementation 'com.google.code.gson:gson:2.8.9'
 }
 
@@ -96,7 +107,7 @@ task forwardSolver(type: Exec) {
     ]
 
     def libName = "forwardsolver"
-    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
 
     def args = new ArrayList<>()
     args.addAll(jniArgs)
@@ -131,7 +142,7 @@ task misfitFunctions(type: Exec) {
 
     def libName = "misfit"
 
-    def out = ["-o", file("${projectDir}/lib/" + libPrefix + libName + "." + libExt).absolutePath]
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
 
     def args = new ArrayList<>()
     args.addAll(jniArgs)
@@ -165,3 +176,44 @@ tasks.withType(JavaExec) {
     dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
 }
+
+javapackager {
+    mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
+    bundleJre = true
+    organizationName = "NucodeLabs"
+    name = "GEM"
+    version = "0.1"
+    vmArgs = ["-Djava.library.path=."]
+    administratorRequired = false
+    additionalResources = [
+            file("lib/${libPrefix}forwardsolver.${libExt}"),
+            file("lib/${libPrefix}misfit.${libExt}")
+    ]
+}
+
+task packageMacApp(type: PackageTask, dependsOn: build) {
+    useResourcesAsWorkingDir = true
+    generateInstaller = true
+    macConfig {
+        icnsFile = file("src/main/resources/img/gem.icns")
+        generateDmg = true
+        generatePkg = false
+    }
+}
+
+task packageWindowsExe(type: PackageTask, dependsOn: build) {
+    generateInstaller = true
+    winConfig {
+        generateSetup = true
+        generateMsi = false
+        exeCreationTool = WindowsExeCreationTool.winrun4j
+        icoFile = file("src/main/resources/img/gem.ico")
+        setupMode = SetupMode.askTheUser
+        removeOldLibs = true
+        disableDirPage = false
+        disableFinishedPage = false
+        disableWelcomePage = false
+        createDesktopIconTask = false
+    }
+}
+

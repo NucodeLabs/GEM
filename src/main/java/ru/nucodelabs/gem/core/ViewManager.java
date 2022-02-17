@@ -2,19 +2,20 @@ package ru.nucodelabs.gem.core;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.ImportOptionsPrompt;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
+import ru.nucodelabs.mvvm.VBView;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * <h2>View Manager</h2>
@@ -24,13 +25,13 @@ import java.util.Map;
 public class ViewManager {
 
     private final ViewModelFactory viewModelFactory;
-    private final Stage initialStage;
     private final Map<ViewModel, Stage> viewModelStageMap;
+    private final ResourceBundle uiProperties;
 
-    public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage) {
+    public ViewManager(ViewModelFactory viewModelFactory, ResourceBundle uiProperties) {
+        this.uiProperties = uiProperties;
         this.viewModelFactory = viewModelFactory;
         viewModelFactory.initViewManager(this);
-        this.initialStage = initialStage;
         viewModelStageMap = new HashMap<>();
     }
 
@@ -39,29 +40,27 @@ public class ViewManager {
      */
     public void start() {
         MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
-        viewModelStageMap.put(mainViewModel, initialStage);
         MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
+        initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
+        mainSplitLayoutView.initShortcutsVESCurvesNavigation();
+    }
 
-        initialStage.setTitle("GEM");
-        initialStage.getIcons().add(new Image("img/gem.png"));
-        initialStage.setScene(new Scene(mainSplitLayoutView));
-        initialStage.show();
-        initialStage.setMaximized(true);
+    private void initAndShowWindow(String windowTitle, VBView<? extends ViewModel> view, ViewModel viewModel) {
+        Stage stage = new Stage();
+        stage.setScene(new Scene(view));
+        stage.setTitle(windowTitle);
+        stage.show();
+        viewModelStageMap.put(viewModel, stage);
     }
 
     public void newMainViewWithImportEXP(ViewModel caller) {
         File expFile = showEXPFileChooser(caller);
 
         if (expFile != null) {
-            MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
+            MainViewModel mainViewModel = viewModelFactory.createMainViewModel(expFile);
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
-            Stage newStage = new Stage();
-            viewModelStageMap.put(mainViewModel, newStage);
-            newStage.setScene(new Scene(mainSplitLayoutView));
-            newStage.show();
-            newStage.setMaximized(true);
+            initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
             mainSplitLayoutView.initShortcutsVESCurvesNavigation();
-            mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
     }
 
@@ -131,6 +130,7 @@ public class ViewManager {
         newStage.initOwner(viewModelStageMap.get(caller));
         newStage.initModality(Modality.WINDOW_MODAL);
         newStage.setResizable(false);
+        newStage.setTitle(uiProperties.getString("importOptions"));
         newStage.show();
     }
 }
