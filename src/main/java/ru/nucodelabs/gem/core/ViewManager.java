@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.ImportOptionsPrompt;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
+import ru.nucodelabs.mvvm.VBView;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -24,15 +25,13 @@ import java.util.ResourceBundle;
 public class ViewManager {
 
     private final ViewModelFactory viewModelFactory;
-    private final Stage initialStage;
     private final Map<ViewModel, Stage> viewModelStageMap;
     private final ResourceBundle uiProperties;
 
-    public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage, ResourceBundle uiProperties) {
+    public ViewManager(ViewModelFactory viewModelFactory, ResourceBundle uiProperties) {
         this.uiProperties = uiProperties;
         this.viewModelFactory = viewModelFactory;
         viewModelFactory.initViewManager(this);
-        this.initialStage = initialStage;
         viewModelStageMap = new HashMap<>();
     }
 
@@ -41,27 +40,27 @@ public class ViewManager {
      */
     public void start() {
         MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
-        viewModelStageMap.put(mainViewModel, initialStage);
         MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
+        initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
+        mainSplitLayoutView.initShortcutsVESCurvesNavigation();
+    }
 
-        initialStage.setScene(new Scene(mainSplitLayoutView));
-        initialStage.setTitle("GEM");
-        initialStage.show();
+    private void initAndShowWindow(String windowTitle, VBView<? extends ViewModel> view, ViewModel viewModel) {
+        Stage stage = new Stage();
+        stage.setScene(new Scene(view));
+        stage.setTitle(windowTitle);
+        stage.show();
+        viewModelStageMap.put(viewModel, stage);
     }
 
     public void newMainViewWithImportEXP(ViewModel caller) {
         File expFile = showEXPFileChooser(caller);
 
         if (expFile != null) {
-            MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
+            MainViewModel mainViewModel = viewModelFactory.createMainViewModel(expFile);
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
-            Stage newStage = new Stage();
-            viewModelStageMap.put(mainViewModel, newStage);
-            newStage.setScene(new Scene(mainSplitLayoutView));
-            newStage.setTitle("GEM");
-            newStage.show();
+            initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
             mainSplitLayoutView.initShortcutsVESCurvesNavigation();
-            mainSplitLayoutView.getViewModel().addToCurrent(expFile);
         }
     }
 

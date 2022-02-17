@@ -133,7 +133,7 @@ public class MainViewModel extends ViewModel {
     }
 
     /**
-     * Imports file to current window, then imports MOD
+     * Imports file to current window
      *
      * @param file file to import
      */
@@ -176,7 +176,6 @@ public class MainViewModel extends ViewModel {
         }
 
         welcomeScreenVisible.set(false);
-        importMOD();
     }
 
     /**
