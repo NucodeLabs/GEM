@@ -13,6 +13,9 @@ import java.util.Objects;
 
 public class VESTablesConverters {
 
+    private VESTablesConverters() {
+    }
+
     public static ObservableList<ExperimentalTableLine> toExperimentalTableData(final ExperimentalData experimentalData) {
         List<ExperimentalTableLine> tableLines = new ArrayList<>();
         if (experimentalData != null) {

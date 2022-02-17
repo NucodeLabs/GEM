@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Static methods for initializing user controls and view
+ */
 public class Initializers {
 
     private Initializers() {

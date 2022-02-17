@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * <h2>View Manager</h2>
  * Creates and opens Views and giving them references to their ViewModels linked with Models.
  * Also changing Views dynamically if ViewModel asks to do so.
  */
