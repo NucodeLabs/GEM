@@ -12,6 +12,10 @@
     -fx-text-fill: ForestGreen;
 }
 
+#cancelBtn {
+    -fx-text-fill: DarkSlateGray;
+}
+
 .button:hover {
     -fx-background-color: WhiteSmoke;
 }

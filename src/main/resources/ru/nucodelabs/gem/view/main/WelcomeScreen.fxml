@@ -18,12 +18,12 @@
             </ImageView>
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
             <Label VBox.vgrow="ALWAYS"
-                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
+                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%welcomeToGem"/>
             <HBox fx:id="textContainer">
-                <Text text="Вы можете открыть SONET-совместимый файл для интерпретации ВЭЗ."/>
+                <Text text="%welcomeText"/>
             </HBox>
             <HBox fx:id="openEXPButtonContainer">
-                <Button fx:id="openEXPButton" text="Открыть файл EXP"/>
+                <Button fx:id="openEXPButton" text="%openEXPFile"/>
             </HBox>
         </VBox>
     </HBox>
