@@ -139,7 +139,7 @@
     -fx-background-color: LightGray;
 }
 
-#label {
+#uclabel {
     -fx-text-fill: Gray;
     -fx-font-size: 12;
     -fx-padding: 5;
