@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * <h2>View Manager</h2>
@@ -25,8 +26,10 @@ public class ViewManager {
     private final ViewModelFactory viewModelFactory;
     private final Stage initialStage;
     private final Map<ViewModel, Stage> viewModelStageMap;
+    private final ResourceBundle uiProperties;
 
-    public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage) {
+    public ViewManager(ViewModelFactory viewModelFactory, Stage initialStage, ResourceBundle uiProperties) {
+        this.uiProperties = uiProperties;
         this.viewModelFactory = viewModelFactory;
         viewModelFactory.initViewManager(this);
         this.initialStage = initialStage;
@@ -128,7 +131,7 @@ public class ViewManager {
         newStage.initOwner(viewModelStageMap.get(caller));
         newStage.initModality(Modality.WINDOW_MODAL);
         newStage.setResizable(false);
-        newStage.setTitle("Опции импорта");
+        newStage.setTitle(uiProperties.getString("importOptions"));
         newStage.show();
     }
 }
