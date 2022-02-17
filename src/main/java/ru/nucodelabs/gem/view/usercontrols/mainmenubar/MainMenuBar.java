@@ -11,6 +11,8 @@ import javafx.scene.input.KeyCombination;
 import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.mvvm.VBUserControl;
 
+import java.util.ResourceBundle;
+
 /**
  * Main Menu Bar
  */
@@ -30,7 +32,8 @@ public class MainMenuBar extends VBUserControl {
     public MainMenuBar() {
         super();
         if (new OSDetector().isMacOS()) {
-            CheckMenuItem useSystemMenu = new CheckMenuItem("Использовать системное меню");
+            ResourceBundle uiProps = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
+            CheckMenuItem useSystemMenu = new CheckMenuItem(uiProps.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
