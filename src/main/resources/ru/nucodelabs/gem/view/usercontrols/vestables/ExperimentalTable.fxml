@@ -9,7 +9,6 @@
          maxWidth="Infinity"
          stylesheets="@../../common.css"
          VBox.vgrow="ALWAYS">
-    <!--<Label text="%experimentalTable"/>-->
     <TableView fx:id="experimentalTable" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="AB_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"

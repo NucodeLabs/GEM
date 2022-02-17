@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          prefHeight="400.0" prefWidth="600.0"
-         stylesheets="@../common.css, @WelcomeView.css">
+         stylesheets="@../common.css, @WelcomeScreen.css" style="-fx-background-color: white">
 
-    <MainMenuBar fx:id="menuBar"/>
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
             <ImageView fitHeight="100" fitWidth="100">
                 <Image url="/img/gem.png"/>
             </ImageView>
-            <Text style="-fx-fill: DarkGray" text="%version"/>
-            <Text textOrigin="CENTER" VBox.vgrow="ALWAYS"
-                  style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
+            <Label style="-fx-text-fill: DarkGray" text="%version"/>
+            <Label VBox.vgrow="ALWAYS"
+                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="Добро пожаловать в GEM"/>
             <HBox fx:id="textContainer">
                 <Text text="Вы можете открыть SONET-совместимый файл для интерпретации ВЭЗ."/>
             </HBox>
