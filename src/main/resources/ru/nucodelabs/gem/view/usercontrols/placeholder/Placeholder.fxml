@@ -9,7 +9,7 @@
          maxHeight="Infinity"
          maxWidth="Infinity"
          stylesheets="@../../common.css"
-         VBox.vgrow="ALWAYS" style="-fx-border-width: 2; -fx-border-color: Orange; -fx-border-style: dashed;">
+         VBox.vgrow="ALWAYS" style="-fx-border-width: 2; -fx-border-color: LightGray; -fx-border-style: dashed;">
     <HBox alignment="CENTER">
         <Label fx:id="text"/>
     </HBox>
