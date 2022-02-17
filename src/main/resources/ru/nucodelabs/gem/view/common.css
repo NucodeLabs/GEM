@@ -1,4 +1,4 @@
-* {
+.root {
     -fx-accent: ForestGreen;
     -fx-focus-color: ForestGreen;
 }
@@ -124,8 +124,8 @@
     -fx-border-color: none;
     -fx-border-radius: 5;
     -fx-border-width: 0;
-    -fx-focus-color: none; /* warning cause */
-    -fx-faint-focus-color: none; /* warning cause */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .tab-pane .tab:hover {
