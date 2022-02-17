@@ -9,8 +9,6 @@ import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.ImportOptionsPrompt;
 import ru.nucodelabs.gem.view.main.MainSplitLayoutView;
 import ru.nucodelabs.gem.view.main.MainViewModel;
-import ru.nucodelabs.gem.view.welcome.WelcomeView;
-import ru.nucodelabs.gem.view.welcome.WelcomeViewModel;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
@@ -40,17 +38,15 @@ public class ViewManager {
      * Opens welcome window
      */
     public void start() {
-        WelcomeViewModel welcomeViewModel = viewModelFactory.createWelcomeViewModel();
-        viewModelStageMap.put(welcomeViewModel, initialStage);
-        WelcomeView welcomeView = new WelcomeView(welcomeViewModel);
+        MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
+        viewModelStageMap.put(mainViewModel, initialStage);
+        MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
 
-        Scene scene = new Scene(welcomeView);
         initialStage.setTitle("GEM");
         initialStage.getIcons().add(new Image("img/gem.png"));
-        initialStage.setScene(scene);
-        initialStage.setResizable(false);
-        initialStage.centerOnScreen();
+        initialStage.setScene(new Scene(mainSplitLayoutView));
         initialStage.show();
+        initialStage.setMaximized(true);
     }
 
     public void newMainViewWithImportEXP(ViewModel caller) {
@@ -61,7 +57,6 @@ public class ViewManager {
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
             Stage newStage = new Stage();
             viewModelStageMap.put(mainViewModel, newStage);
-            initialStage.hide();
             newStage.setScene(new Scene(mainSplitLayoutView));
             newStage.show();
             newStage.setMaximized(true);

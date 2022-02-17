@@ -62,6 +62,7 @@ public class MainViewModel extends ViewModel {
     private final DoubleProperty vesCurvesYUpperBound;
     private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
     private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
+    private final BooleanProperty welcomeScreenVisible;
 
     /**
      * Data models
@@ -93,6 +94,7 @@ public class MainViewModel extends ViewModel {
         );
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
+        welcomeScreenVisible = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         vesText = new SimpleStringProperty("");
@@ -168,6 +170,8 @@ public class MainViewModel extends ViewModel {
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
         }
+
+        welcomeScreenVisible.set(false);
         importMOD();
     }
 
@@ -467,5 +471,13 @@ public class MainViewModel extends ViewModel {
 
     public ObjectProperty<ObservableList<ModelTableLine>> modelTableDataProperty() {
         return modelTableData;
+    }
+
+    public boolean isWelcomeScreenVisible() {
+        return welcomeScreenVisible.get();
+    }
+
+    public BooleanProperty welcomeScreenVisibleProperty() {
+        return welcomeScreenVisible;
     }
 }
