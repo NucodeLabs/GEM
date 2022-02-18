@@ -19,14 +19,6 @@ public class VESSeriesConverters {
     private VESSeriesConverters() {
     }
 
-    public static List<XYChart.Series<Double, Double>> toExperimentalCurveSeriesAll(ExperimentalData experimentalData) {
-        List<XYChart.Series<Double, Double>> seriesList = new ArrayList<>();
-        seriesList.add(toExperimentalCurveSeries(experimentalData));
-        seriesList.add(toErrorExperimentalCurveUpperBoundSeries(experimentalData));
-        seriesList.add(toErrorExperimentalCurveLowerBoundSeries(experimentalData));
-        return seriesList;
-    }
-
     public static XYChart.Series<Double, Double> toExperimentalCurveSeries(final ExperimentalData experimentalData) {
         XYChart.Series<Double, Double> experimentalCurveSeries = new XYChart.Series<>();
         for (int i = 0; i < experimentalData.getSize(); i++) {
