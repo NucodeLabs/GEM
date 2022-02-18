@@ -5,7 +5,6 @@ import javafx.stage.Stage;
 import java.util.ResourceBundle;
 
 /**
- * <h2>Application</h2>
  * Starting up everything.
  */
 public class GemApplication extends javafx.application.Application {

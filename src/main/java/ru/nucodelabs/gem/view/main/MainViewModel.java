@@ -31,7 +31,7 @@ import static java.lang.Math.abs;
 public class MainViewModel extends ViewModel {
 
     /**
-     * <h3>Constants</h3>
+     * Constants
      */
     private static final int EXP_CURVE_SERIES_CNT = 3;
     private static final int THEOR_CURVE_SERIES_CNT = 4;
@@ -50,7 +50,7 @@ public class MainViewModel extends ViewModel {
 
 
     /**
-     * <h3>Properties</h3>
+     * Properties
      */
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private final StringProperty vesText;
@@ -71,7 +71,6 @@ public class MainViewModel extends ViewModel {
     private final ConfigModel config;
 
     /**
-     * <h3>Constructor</h3>
      * Initialization
      *
      * @param viewManager  View Manager

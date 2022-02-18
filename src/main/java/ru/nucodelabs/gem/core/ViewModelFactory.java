@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.core;
 
 import ru.nucodelabs.gem.view.main.MainViewModel;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -28,15 +27,5 @@ public class ViewModelFactory {
                 modelFactory.getConfigModel(),
                 modelFactory.createVESDataModel()
         );
-    }
-
-    public MainViewModel createMainViewModel(File expFile) {
-        MainViewModel mainViewModel = new MainViewModel(
-                viewManager,
-                modelFactory.getConfigModel(),
-                modelFactory.createVESDataModel()
-        );
-        mainViewModel.addToCurrent(expFile);
-        return mainViewModel;
     }
 }
