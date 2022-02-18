@@ -56,10 +56,11 @@ public class ViewManager {
         File expFile = showEXPFileChooser(caller);
 
         if (expFile != null) {
-            MainViewModel mainViewModel = viewModelFactory.createMainViewModel(expFile);
+            MainViewModel mainViewModel = viewModelFactory.createMainViewModel();
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
             initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
             mainSplitLayoutView.initShortcutsVESCurvesNavigation();
+            mainViewModel.addToCurrent(expFile);
         }
     }
 
