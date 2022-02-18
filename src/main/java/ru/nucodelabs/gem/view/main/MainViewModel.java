@@ -342,7 +342,6 @@ public class MainViewModel extends ViewModel {
         }
 
         vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
-
     }
 
     private void updateModelCurve() {
@@ -388,8 +387,10 @@ public class MainViewModel extends ViewModel {
         vesCurvesData.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         vesCurvesData.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         vesCurvesData.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
-        vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
+        if (vesData.getModelData(currentPicket.get()) == null) {
+            vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
+            vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
+        }
     }
 
     private void updateExpTable() {
