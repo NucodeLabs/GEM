@@ -30,8 +30,6 @@ repositories {
 }
 
 ext {
-    junitVersion = '5.8.2'
-
     // Platform Info
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
@@ -88,12 +86,10 @@ javafx {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    implementation('org.openjfx:javafx-base:17.0.2')
-    implementation('org.openjfx:javafx-controls:17.0.2')
-    implementation('org.openjfx:javafx-fxml:17.0.2')
-    implementation 'com.google.code.gson:gson:2.8.9'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 task forwardSolver(type: Exec) {
@@ -160,8 +156,8 @@ task misfitFunctions(type: Exec) {
 
     doLast {
         if (currentOS.isWindows()) {
-            file("${projectDir}/lib/" + libName + ".exp").delete()
-            file("${workingDir}/lib/" + libName + ".lib").delete()
+            file("${projectDir}/lib/${libName}.exp").delete()
+            file("${workingDir}/lib/${libName}.lib").delete()
         }
     }
 }

@@ -6,7 +6,6 @@ import ru.nucodelabs.gem.model.VESDataManager;
 import ru.nucodelabs.gem.model.VESDataModel;
 
 /**
- * <h2>Model Factory</h2>
  * Gives references to models
  */
 public class ModelFactory {

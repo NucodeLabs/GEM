@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import ru.nucodelabs.mvvm.VBView;
 
 public class ImportOptionsPrompt extends VBView<MainViewModel> {
@@ -17,12 +16,12 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
         super(viewModel);
         addToNewBtn.setOnAction(e -> {
             viewModel.addToNew();
-            ((Stage) this.getScene().getWindow()).close();
+            selfClose();
         });
         addToCurrentBtn.setOnAction(e -> {
             viewModel.addToCurrent();
-            ((Stage) this.getScene().getWindow()).close();
+            selfClose();
         });
-        cancelBtn.setOnAction(e -> ((Stage) this.getScene().getWindow()).close());
+        cancelBtn.setOnAction(e -> selfClose());
     }
 }

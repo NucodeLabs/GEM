@@ -9,11 +9,11 @@
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-background-color: white;
-    -fx-text-fill: ForestGreen;
+    -fx-text-fill: DarkSlateGray;
 }
 
-#cancelBtn {
-    -fx-text-fill: DarkSlateGray;
+.default-btn {
+    -fx-text-fill: ForestGreen;
 }
 
 .button:hover {
