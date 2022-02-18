@@ -33,7 +33,6 @@ public class MainViewModel extends ViewModel {
     /**
      * Constants
      */
-    // TODO: get rid of them and replace with id or style classes.
     private static final int EXP_CURVE_SERIES_CNT = 3;
     private static final int THEOR_CURVE_SERIES_CNT = 4;
     private static final int MOD_CURVE_SERIES_CNT = 5;
