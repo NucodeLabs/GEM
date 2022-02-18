@@ -231,7 +231,7 @@ public class MainViewModel extends ViewModel {
     /**
      * Opens new window, in which asks which file and then imports it
      */
-    public void addToNew() {
+    public void addEXPToNew() {
         viewManager.newMainViewWithImportEXP(this);
     }
 
