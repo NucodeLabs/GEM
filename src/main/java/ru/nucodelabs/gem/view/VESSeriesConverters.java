@@ -28,7 +28,7 @@ public class VESSeriesConverters {
             experimentalCurveSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        experimentalCurveSeries.setName("Экспериментальная кривая");
+        experimentalCurveSeries.setName("Экспериментальная кривая"); //TODO Использовать UI.properties, переместить в MainViewModel
         return experimentalCurveSeries;
     }
 
