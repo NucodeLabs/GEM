@@ -19,7 +19,7 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
             selfClose();
         });
         addToCurrentBtn.setOnAction(e -> {
-            viewModel.addToCurrent();
+            viewModel.addEXPToCurrent();
             selfClose();
         });
         cancelBtn.setOnAction(e -> selfClose());

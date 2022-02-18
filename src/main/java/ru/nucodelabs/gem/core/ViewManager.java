@@ -60,7 +60,7 @@ public class ViewManager {
             MainSplitLayoutView mainSplitLayoutView = new MainSplitLayoutView(mainViewModel);
             initAndShowWindow("GEM", mainSplitLayoutView, mainViewModel);
             mainSplitLayoutView.initShortcutsVESCurvesNavigation();
-            mainViewModel.addToCurrent(expFile);
+            mainViewModel.addEXPToCurrent(expFile);
         }
     }
 
