@@ -3,6 +3,7 @@ package ru.nucodelabs.data.ves;
 import ru.nucodelabs.files.sonet.MODFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ModelData {
@@ -19,13 +20,10 @@ public class ModelData {
      */
     private List<Double> power; // get set
 
-    private Integer size;
-
     public ModelData() {
         resistance = new ArrayList<>();
         polarization = new ArrayList<>();
         power = new ArrayList<>();
-        size = 0;
     }
 
     public ModelData(MODFile modFile) {
@@ -33,7 +31,19 @@ public class ModelData {
         resistance = modFile.getResistance();
         polarization = modFile.getPolarization();
         power = modFile.getPower();
-        size = resistance.size();
+    }
+
+    private List<Integer> sizesList() {
+        List<Integer> sizes = new ArrayList<>();
+        if (resistance.size() > 0) sizes.add(resistance.size());
+        if (polarization.size() > 0) sizes.add(polarization.size());
+        if (power.size() > 0) sizes.add(power.size());
+
+        return sizes;
+    }
+
+    public int getSize() {
+        return Collections.min(sizesList());
     }
 
     //region getters and setters
@@ -61,8 +71,4 @@ public class ModelData {
         this.power = power;
     }
     //endregion
-
-    public Integer getSize() {
-        return size;
-    }
 }
