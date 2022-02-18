@@ -431,15 +431,16 @@ public class MainViewModel extends ViewModel {
      * Colorizes misfit stacks with green and red, green for ones that <100%, red for ≥100%
      */
     private void colorizeMisfitStacksSeries() {
-        misfitStacksData.getValue().forEach(
-                s -> {
-                    if (abs(s.getData().get(1).getYValue()) < 100f) {
-                        s.getNode().setStyle("-fx-stroke: LimeGreen;");
-                        s.getData().get(1).getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
-                        s.getData().get(0).getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
-                    }
-                }
-        );
+        var data = misfitStacksData.get();
+        for (var series : data) {
+            var nonZeroPoint = series.getData().get(1);
+            if (abs(nonZeroPoint.getYValue()) < 100f) {
+                series.getNode().setStyle("-fx-stroke: LimeGreen;");
+                nonZeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
+                var zeroPoint = series.getData().get(0);
+                zeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
+            }
+        }
     }
 
     public ObservableList<XYChart.Series<Double, Double>> getVesCurvesData() {
