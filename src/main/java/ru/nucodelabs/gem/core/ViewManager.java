@@ -85,9 +85,9 @@ public class ViewManager {
 
     public void alertExperimentalDataIsUnsafe(ViewModel caller) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Режим совместимости");
-        alert.setHeaderText("STT и EXP содержат разное количество строк");
-        alert.setContentText("Будет отображаться минимально возможное число данных");
+        alert.setTitle(uiProperties.getString("compatibilityMode"));
+        alert.setHeaderText(uiProperties.getString("EXPSTTMismatch"));
+        alert.setContentText(uiProperties.getString("minimalDataWillBeDisplayed"));
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
@@ -95,8 +95,8 @@ public class ViewManager {
 
     public void alertFileNotFound(ViewModel caller, FileNotFoundException e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Файл не найден!");
+        alert.setTitle(uiProperties.getString("error"));
+        alert.setHeaderText(uiProperties.getString("fileNotFound"));
         alert.setContentText(e.getMessage());
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
@@ -105,8 +105,8 @@ public class ViewManager {
 
     public void alertNoLib(ViewModel caller, UnsatisfiedLinkError e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Невозможно отрисовать график");
-        alert.setHeaderText("Отсутствует библиотека");
+        alert.setTitle(uiProperties.getString("unableToDrawChart"));
+        alert.setHeaderText(uiProperties.getString("noLib"));
         alert.setContentText(e.getMessage());
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
@@ -116,7 +116,7 @@ public class ViewManager {
     public void alertIncorrectFile(ViewModel caller, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
 //        alert.setTitle("Неверный формат файла");
-        alert.setHeaderText("Произошла ошибка при открытии файла");
+        alert.setHeaderText(uiProperties.getString("fileError"));
         alert.setContentText(e.getMessage());
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
