@@ -62,6 +62,9 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
 
+        nextButton.setOnAction(e -> viewModel.switchToNextPicket());
+        prevButton.setOnAction(e -> viewModel.switchToPrevPicket());
+
         vesCurves.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
         vesCurves.getLineChartXAxis().upperBoundProperty().bind(viewModel.vesCurvesXUpperBoundProperty());
         vesCurves.getLineChartYAxis().lowerBoundProperty().bind(viewModel.vesCurvesYLowerBoundProperty());

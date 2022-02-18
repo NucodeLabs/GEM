@@ -15,11 +15,11 @@ public class ImportOptionsPrompt extends VBView<MainViewModel> {
     public ImportOptionsPrompt(MainViewModel viewModel) {
         super(viewModel);
         addToNewBtn.setOnAction(e -> {
-            viewModel.addToNew();
+            viewModel.addEXPToNew();
             selfClose();
         });
         addToCurrentBtn.setOnAction(e -> {
-            viewModel.addToCurrent();
+            viewModel.addEXPToCurrent();
             selfClose();
         });
         cancelBtn.setOnAction(e -> selfClose());

@@ -33,7 +33,7 @@
                     <HBox style="-fx-padding: 5">
                         <Button style="-fx-pref-width: 35" text="%right" fx:id="nextButton"/>
                     </HBox>
-                    <Label style="-fx-padding: 5" fx:id="vesTitle" text="VES"/>
+                    <Label style="-fx-padding: 5" fx:id="vesTitle" text="%picket"/>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <HBox style="-fx-padding: 5">
                         <Button text="%inverse"/>
