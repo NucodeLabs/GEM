@@ -23,7 +23,7 @@
                 <Text text="%welcomeText"/>
             </HBox>
             <HBox fx:id="openEXPButtonContainer">
-                <Button fx:id="openEXPButton" text="%openEXPFile"/>
+                <Button defaultButton="true" styleClass="default-btn" fx:id="openEXPButton" text="%openEXPFile"/>
             </HBox>
         </VBox>
     </HBox>

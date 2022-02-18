@@ -12,7 +12,7 @@
     <AnchorPane VBox.vgrow="ALWAYS">
         <HBox alignment="BOTTOM_RIGHT" AnchorPane.bottomAnchor="20" AnchorPane.rightAnchor="20">
             <HBox style="-fx-padding: 5">
-                <Button fx:id="addToCurrentBtn" text="%addToCurrent"/>
+                <Button styleClass="default-btn" defaultButton="true" fx:id="addToCurrentBtn" text="%addToCurrent"/>
             </HBox>
             <HBox style="-fx-padding: 5">
                 <Button fx:id="addToNewBtn" text="%addToNew"/>
