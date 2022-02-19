@@ -25,6 +25,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
     private Button prevButton;
     @FXML
+    private Label picketNumber;
+    @FXML
     private Label vesTitle;
     @FXML
     private Button nextButton;
@@ -80,7 +82,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         vesCurves.getMinusBtn().setOnAction(e -> viewModel.zoomOutVesCurves());
 
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
-        vesTitle.textProperty().bind(viewModel.vesTextProperty());
+        vesTitle.textProperty().bind(viewModel.vesTitleProperty());
+        picketNumber.textProperty().bind(viewModel.vesNumberProperty());
 
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
         misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
