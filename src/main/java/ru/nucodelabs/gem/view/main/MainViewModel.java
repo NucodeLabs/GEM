@@ -63,7 +63,7 @@ public class MainViewModel extends ViewModel {
     private final DoubleProperty vesCurvesYUpperBound;
     private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
     private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
-    private final BooleanProperty welcomeScreenVisible;
+    private final BooleanProperty noFileOpened;
     private final IntegerProperty currentPicket;
 
     /**
@@ -98,7 +98,7 @@ public class MainViewModel extends ViewModel {
         );
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
-        welcomeScreenVisible = new SimpleBooleanProperty(true);
+        noFileOpened = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         for (int i = 0; i < MOD_CURVE_SERIES_CNT; i++) {
@@ -164,7 +164,7 @@ public class MainViewModel extends ViewModel {
         menuFileMODDisabled.setValue(false);
         updateAll();
 
-        welcomeScreenVisible.set(false);
+        noFileOpened.set(false);
     }
 
     /**
@@ -489,12 +489,12 @@ public class MainViewModel extends ViewModel {
         return modelTableData;
     }
 
-    public boolean isWelcomeScreenVisible() {
-        return welcomeScreenVisible.get();
+    public boolean getNoFileOpened() {
+        return noFileOpened.get();
     }
 
-    public BooleanProperty welcomeScreenVisibleProperty() {
-        return welcomeScreenVisible;
+    public BooleanProperty noFileOpenedProperty() {
+        return noFileOpened;
     }
 
     public int getCurrentPicket() {
