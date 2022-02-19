@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Data model which basically represents section, an ordered set of pickets
  */
-public interface VESDataModel extends Model {
+public interface Section extends Model {
     /**
      * Returns model data of picket
      *

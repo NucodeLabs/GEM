@@ -7,10 +7,10 @@ import ru.nucodelabs.data.ves.Picket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VESDataManager implements VESDataModel {
+public class SectionImpl implements Section {
     private final List<Picket> pickets;
 
-    public VESDataManager() {
+    public SectionImpl() {
         pickets = new ArrayList<>(1);
     }
 

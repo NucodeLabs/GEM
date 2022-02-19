@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
+import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable;
 import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable;
@@ -18,7 +19,7 @@ import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
-    private WelcomeScreen welcomeScreen;
+    private NoFileScreen noFileScreen;
     @FXML
     private MainMenuBar mainMenuBar;
     @FXML
@@ -54,11 +55,12 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
                 )
         );
 
-        welcomeScreen.visibleProperty().bind(viewModel.welcomeScreenVisibleProperty());
-        welcomeScreen.getOpenEXPButton().setOnAction(e -> viewModel.importEXP());
+        noFileScreen.visibleProperty().bind(viewModel.welcomeScreenVisibleProperty());
+        noFileScreen.getOpenEXPButton().setOnAction(e -> viewModel.importEXP());
 
         mainMenuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
         mainMenuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());
+        mainMenuBar.getMenuFileNewWindow().setOnAction(e -> viewModel.newWindow());
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
 

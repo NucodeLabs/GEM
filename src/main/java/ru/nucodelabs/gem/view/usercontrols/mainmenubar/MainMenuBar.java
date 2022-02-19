@@ -5,9 +5,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.mvvm.VBUserControl;
 
@@ -18,6 +15,8 @@ import java.util.ResourceBundle;
  */
 public class MainMenuBar extends VBUserControl {
 
+    @FXML
+    private MenuItem menuFileNewWindow;
     @FXML
     private MenuItem menuFileOpenEXP;
     @FXML
@@ -37,15 +36,6 @@ public class MainMenuBar extends VBUserControl {
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
-        menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
-                KeyCode.O,
-                KeyCombination.SHORTCUT_DOWN
-        ));
-        menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
-                KeyCode.O,
-                KeyCombination.SHORTCUT_DOWN,
-                KeyCombination.SHIFT_DOWN
-        ));
     }
 
     public MenuItem getMenuFileOpenEXP() {
@@ -62,5 +52,13 @@ public class MainMenuBar extends VBUserControl {
 
     public MenuBar getMenuBar() {
         return menuBar;
+    }
+
+    public MenuItem getMenuFileNewWindow() {
+        return menuFileNewWindow;
+    }
+
+    public Menu getMenuView() {
+        return menuView;
     }
 }
