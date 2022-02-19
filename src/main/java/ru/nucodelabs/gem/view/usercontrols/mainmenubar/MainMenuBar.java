@@ -14,7 +14,12 @@ import java.util.ResourceBundle;
  * Main Menu Bar
  */
 public class MainMenuBar extends VBUserControl {
-
+    @FXML
+    private MenuItem menuFileSaveSection;
+    @FXML
+    private Menu menuFileSavePicket;
+    @FXML
+    private MenuItem menuFileClose;
     @FXML
     private MenuItem menuFileNewWindow;
     @FXML
@@ -60,5 +65,17 @@ public class MainMenuBar extends VBUserControl {
 
     public Menu getMenuView() {
         return menuView;
+    }
+
+    public MenuItem getMenuFileSaveSection() {
+        return menuFileSaveSection;
+    }
+
+    public Menu getMenuFileSavePicket() {
+        return menuFileSavePicket;
+    }
+
+    public MenuItem getMenuFileClose() {
+        return menuFileClose;
     }
 }

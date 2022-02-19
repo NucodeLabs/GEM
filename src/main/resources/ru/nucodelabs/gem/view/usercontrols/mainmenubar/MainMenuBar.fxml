@@ -13,7 +13,10 @@
                     <MenuItem fx:id="menuFileOpenMOD" disable="true" text="MOD"/>
                 </Menu>
             </Menu>
-            <MenuItem fx:id="menuFileSave" text="%save"/>
+            <Menu text="%save">
+                <MenuItem fx:id="menuFileSaveSection" text="%section"/>
+                <Menu fx:id="menuFileSavePicket" text="%picket"/>
+            </Menu>
             <MenuItem fx:id="menuFileClose" text="%close"/>
         </Menu>
         <Menu text="%edit">
