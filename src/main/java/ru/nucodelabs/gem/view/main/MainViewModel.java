@@ -183,9 +183,7 @@ public class MainViewModel extends ViewModel {
         compatibilityModeAlert();
 
         menuFileMODDisabled.setValue(false);
-        updateVESText();
-        updateExpCurves();
-        updateExpTable();
+        updateAll();
 
         if (misfitStacksData.getValue() != null) {
             misfitStacksData.getValue().clear();
@@ -263,9 +261,7 @@ public class MainViewModel extends ViewModel {
             return;
         }
 
-        updateModelCurve();
-        updateModelTable();
-        updateVESText();
+        updateAll();
 
         try {
             updateMisfitStacks();
