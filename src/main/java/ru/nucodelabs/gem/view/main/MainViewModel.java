@@ -185,10 +185,6 @@ public class MainViewModel extends ViewModel {
         menuFileMODDisabled.setValue(false);
         updateAll();
 
-        if (misfitStacksData.getValue() != null) {
-            misfitStacksData.getValue().clear();
-        }
-
         welcomeScreenVisible.set(false);
     }
 
@@ -254,20 +250,7 @@ public class MainViewModel extends ViewModel {
         Picket picketWithModelData = addToVESDataModel(openedMOD);
         modelDataFileMap.put(picketWithModelData.getModelData(), file);
 
-        try {
-            updateTheoreticalCurve();
-        } catch (UnsatisfiedLinkError e) {
-            viewManager.alertNoLib(this, e);
-            return;
-        }
-
         updateAll();
-
-        try {
-            updateMisfitStacks();
-        } catch (UnsatisfiedLinkError e) {
-            viewManager.alertNoLib(this, e);
-        }
     }
 
     /**
@@ -332,9 +315,13 @@ public class MainViewModel extends ViewModel {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
         if (vesData.getModelData(currentPicket.get()) != null) {
-            theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                    vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
-            );
+            try {
+                theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
+                        vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
+                );
+            } catch (UnsatisfiedLinkError e) {
+                viewManager.alertNoLib(this, e);
+            }
         }
 
         vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
@@ -413,9 +400,13 @@ public class MainViewModel extends ViewModel {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         if (vesData.getModelData(currentPicket.get()) != null) {
-            misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                    vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
-            );
+            try {
+                misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
+                        vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
+                );
+            } catch (UnsatisfiedLinkError e) {
+                viewManager.alertNoLib(this, e);
+            }
         }
 
         misfitStacksData.set(FXCollections.observableList(new ArrayList<>()));
