@@ -9,7 +9,7 @@
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          prefHeight="400.0" prefWidth="600.0"
-         stylesheets="@../common.css, @WelcomeScreen.css" style="-fx-background-color: white">
+         stylesheets="@../../common.css, @NoFileScreen.css" style="-fx-background-color: white">
 
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
@@ -18,9 +18,9 @@
             </ImageView>
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
             <Label VBox.vgrow="ALWAYS"
-                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%welcomeToGem"/>
+                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
             <HBox fx:id="textContainer">
-                <Text text="%welcomeText"/>
+                <Text text="%noFileText"/>
             </HBox>
             <HBox fx:id="openEXPButtonContainer">
                 <Button defaultButton="true" styleClass="default-btn" fx:id="openEXPButton" text="%openEXPFile"/>

@@ -6,16 +6,16 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
+import ru.nucodelabs.gem.core.FileService;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
-import ru.nucodelabs.gem.model.VESDataModel;
+import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
@@ -24,9 +24,7 @@ import ru.nucodelabs.mvvm.ViewModel;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static java.lang.Math.abs;
@@ -50,10 +48,7 @@ public class MainViewModel extends ViewModel {
      */
     private ModelCurveDragger modelCurveDragger;
     private final VESCurvesNavigator vesCurvesNavigator;
-    private final Map<ExperimentalData, File> experimentalDataFileMap;
-    private final Map<ModelData, File> modelDataFileMap;
-    //TODO: Сделать некоторый объект-сервис для файлов, ведь дальше надо будет проверять сохранены измнения или нет и тп
-
+    private final FileService fileService;
 
     /**
      * Properties
@@ -74,23 +69,22 @@ public class MainViewModel extends ViewModel {
     /**
      * Data models
      */
-    private final VESDataModel vesData;
+    private final Section vesData;
     private final ConfigModel config;
 
     /**
      * Initialization
      *
-     * @param viewManager  View Manager
-     * @param configModel  Configuration
-     * @param vesDataModel VES Data
+     * @param viewManager View Manager
+     * @param configModel Configuration
+     * @param section     VES Data
      */
-    public MainViewModel(ViewManager viewManager, ConfigModel configModel, VESDataModel vesDataModel) {
+    public MainViewModel(ViewManager viewManager, ConfigModel configModel, Section section) {
         super(viewManager);
         this.config = configModel;
-        this.vesData = vesDataModel;
+        this.vesData = section;
 
-        experimentalDataFileMap = new HashMap<>();
-        modelDataFileMap = new HashMap<>();
+        fileService = new FileService();
         currentPicket = new SimpleIntegerProperty(-1);
 
         vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
@@ -129,33 +123,18 @@ public class MainViewModel extends ViewModel {
     }
 
     /**
-     * Asks about import option then either addToCurrent() or addToNew() is called from ImportOptionPrompt
+     * Asks which EXP files and then imports them to current window
      */
     public void importEXP() {
-        if (vesData.getPicketsCount() > 0) {
-            viewManager.askImportOption(this);
-        } else {
-            addEXPToCurrent(viewManager.showEXPFileChooser(this));
+        List<File> files = viewManager.showEXPFileChooser(this);
+        if (files != null && files.size() != 0) {
+            for (var file : files) {
+                importEXP(file);
+            }
         }
     }
 
-    /**
-     * Asks which file and then imports it to current window
-     */
-    public void addEXPToCurrent() {
-        addEXPToCurrent(viewManager.showEXPFileChooser(this));
-    }
-
-    /**
-     * Imports file to current window
-     *
-     * @param file file to import
-     */
-    public void addEXPToCurrent(File file) {
-        if (file == null) {
-            return;
-        }
-
+    private void importEXP(File file) {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -178,7 +157,7 @@ public class MainViewModel extends ViewModel {
         }
 
         Picket addedPicket = addToVESDataModel(openedEXP, openedSTT);
-        experimentalDataFileMap.put(addedPicket.getExperimentalData(), file);
+        fileService.addAssociation(addedPicket.getExperimentalData(), file);
         currentPicket.set(currentPicket.get() + 1);
         compatibilityModeAlert();
 
@@ -192,8 +171,8 @@ public class MainViewModel extends ViewModel {
      * Adds files names to vesText
      */
     private void updateVESText() {
-        File expDataFile = experimentalDataFileMap.get(vesData.getExperimentalData(currentPicket.get()));
-        File modDataFile = modelDataFileMap.get(vesData.getModelData(currentPicket.get()));
+        File expDataFile = fileService.getAssociatedFile(vesData.getExperimentalData(currentPicket.get()));
+        File modDataFile = fileService.getAssociatedFile(vesData.getModelData(currentPicket.get()));
         if (expDataFile != null && modDataFile != null) {
             vesText.set(expDataFile.getName() + " - " + modDataFile.getName());
         } else if (expDataFile != null) {
@@ -223,10 +202,10 @@ public class MainViewModel extends ViewModel {
     }
 
     /**
-     * Opens new window, in which asks which file and then imports it
+     * Opens new window
      */
-    public void addEXPToNew() {
-        viewManager.newMainViewWithImportEXP(this);
+    public void newWindow() {
+        viewManager.start();
     }
 
     /**
@@ -248,7 +227,7 @@ public class MainViewModel extends ViewModel {
         }
 
         Picket picketWithModelData = addToVESDataModel(openedMOD);
-        modelDataFileMap.put(picketWithModelData.getModelData(), file);
+        fileService.addAssociation(picketWithModelData.getModelData(), file);
 
         updateAll();
     }

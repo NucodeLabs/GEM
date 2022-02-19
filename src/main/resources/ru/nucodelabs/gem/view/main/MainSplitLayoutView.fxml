@@ -2,9 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import ru.nucodelabs.gem.view.main.WelcomeScreen?>
 <?import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar?>
 <?import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks?>
+<?import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen?>
 <?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
 <?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
 <?import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable?>
@@ -64,6 +64,6 @@
             </VBox>
         </SplitPane>
 
-        <WelcomeScreen fx:id="welcomeScreen"/>
+        <NoFileScreen fx:id="noFileScreen"/>
     </StackPane>
 </fx:root>
