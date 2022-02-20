@@ -2,11 +2,6 @@
     -fx-background-color: White;
 }
 
-#openEXPButtonContainer {
-    -fx-alignment: center;
-    -fx-padding: 0;
-}
-
 #textContainer {
     -fx-padding: 20px;
 }

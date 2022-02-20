@@ -59,6 +59,7 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
 
         noFileScreen.visibleProperty().bind(viewModel.noFileOpenedProperty());
         noFileScreen.getOpenEXPButton().setOnAction(e -> viewModel.importEXP());
+        noFileScreen.getOpenSectionButton().setOnAction(e -> viewModel.openSection());
 
         mainMenuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
         mainMenuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());

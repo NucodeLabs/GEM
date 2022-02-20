@@ -22,9 +22,9 @@
             <HBox fx:id="textContainer">
                 <Text text="%noFileText"/>
             </HBox>
-            <HBox fx:id="openEXPButtonContainer">
-                <Button defaultButton="true" fx:id="openEXPButton" text="%openEXPFile"/>
-            </HBox>
+            <Button fx:id="openSectionButton" text="%openSection" defaultButton="true"/>
+            <HBox maxHeight="10" prefHeight="10"/>
+            <Button fx:id="openEXPButton" text="%openEXPFile"/>
         </VBox>
     </HBox>
 
