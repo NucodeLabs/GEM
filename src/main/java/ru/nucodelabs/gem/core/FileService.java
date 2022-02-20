@@ -15,7 +15,7 @@ public class FileService {
         dataFileMap.put(data, file);
     }
 
-    public File getAssociatedFile(Object experimentalData) {
-        return dataFileMap.get(experimentalData);
+    public File getAssociatedFile(Object data) {
+        return dataFileMap.get(data);
     }
 }
