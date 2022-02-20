@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.EXPFile;
@@ -190,8 +191,9 @@ public class MainViewModel extends ViewModel {
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        if (section.getPicket(currentPicket.get()).getExperimentalData().isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe(this);
+        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
+        if (experimentalData.isUnsafe()) {
+            viewManager.alertExperimentalDataIsUnsafe(this, fileService.getAssociatedFile(experimentalData).getName());
         }
     }
 
