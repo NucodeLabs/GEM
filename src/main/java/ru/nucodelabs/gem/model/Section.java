@@ -85,4 +85,8 @@ public interface Section extends Model {
      * @return picket
      */
     Picket getLastPicket();
+
+    void setName(int picketNumber, String name);
+
+    String getName(int picketNumber);
 }

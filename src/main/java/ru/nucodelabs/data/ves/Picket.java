@@ -6,6 +6,10 @@ import ru.nucodelabs.files.sonet.STTFile;
 
 public class Picket {
     /**
+     * Наименование пикета
+     */
+    private String name;
+    /**
      * Экспериментальные(полевые) данные
      */
     private ExperimentalData experimentalData; // get set
@@ -14,12 +18,13 @@ public class Picket {
      */
     private ModelData modelData; // get set
 
-    public Picket() {
-        this.experimentalData = new ExperimentalData();
-        this.modelData = new ModelData();
-    }
-
     public Picket(EXPFile expFile, STTFile sttFile) {
+        String fileName = expFile.getFile().getName();
+        if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
+            this.name = fileName.substring(0, fileName.length() - 4);
+        } else {
+            name = fileName;
+        }
         experimentalData = new ExperimentalData(expFile, sttFile);
     }
 
@@ -44,5 +49,14 @@ public class Picket {
     public void setModelData(ModelData modelData) {
         this.modelData = modelData;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     //endregion
 }

@@ -15,9 +15,13 @@ import java.util.ResourceBundle;
  */
 public class MainMenuBar extends VBUserControl {
     @FXML
+    private MenuItem menuFileOpenPicket;
+    @FXML
+    private MenuItem menuFileOpenSection;
+    @FXML
     private MenuItem menuFileSaveSection;
     @FXML
-    private Menu menuFileSavePicket;
+    private MenuItem menuFileSavePicket;
     @FXML
     private MenuItem menuFileClose;
     @FXML
@@ -27,7 +31,7 @@ public class MainMenuBar extends VBUserControl {
     @FXML
     private MenuItem menuFileOpenMOD;
     @FXML
-    Menu menuView;
+    private Menu menuView;
     @FXML
     private CheckMenuItem menuViewLegendsVESCurves;
     @FXML
@@ -71,11 +75,19 @@ public class MainMenuBar extends VBUserControl {
         return menuFileSaveSection;
     }
 
-    public Menu getMenuFileSavePicket() {
+    public MenuItem getMenuFileSavePicket() {
         return menuFileSavePicket;
     }
 
     public MenuItem getMenuFileClose() {
         return menuFileClose;
+    }
+
+    public MenuItem getMenuFileOpenPicket() {
+        return menuFileOpenPicket;
+    }
+
+    public MenuItem getMenuFileOpenSection() {
+        return menuFileOpenSection;
     }
 }

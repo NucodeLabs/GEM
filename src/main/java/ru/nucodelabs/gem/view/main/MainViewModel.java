@@ -9,6 +9,7 @@ import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.files.gem.GemJson;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
@@ -23,6 +24,7 @@ import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,7 @@ public class MainViewModel extends ViewModel {
     /**
      * Data models
      */
-    private final Section section;
+    private Section section;
     private final ConfigModel config;
 
     /**
@@ -129,7 +131,7 @@ public class MainViewModel extends ViewModel {
      * Asks which EXP files and then imports them to current window
      */
     public void importEXP() {
-        List<File> files = viewManager.showEXPFileChooser(this);
+        List<File> files = viewManager.showOpenEXPFileChooser(this);
         if (files != null && files.size() != 0) {
             for (var file : files) {
                 importEXP(file);
@@ -164,10 +166,31 @@ public class MainViewModel extends ViewModel {
         currentPicket.set(currentPicket.get() + 1);
         compatibilityModeAlert();
 
-        menuFileMODDisabled.setValue(false);
         updateAll();
+    }
 
-        noFileOpened.set(false);
+    public void openSection() {
+        File file = viewManager.showOpenJsonFileChooser(this);
+        if (file != null) {
+            try {
+                section = GemJson.readSection(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            currentPicket.set(0);
+            updateAll();
+        }
+    }
+
+    public void saveSection() {
+        File file = viewManager.showSaveJsonFileChooser(this);
+        if (file != null) {
+            try {
+                GemJson.writeData(section, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -180,6 +203,10 @@ public class MainViewModel extends ViewModel {
             vesTitle.set(expDataFile.getName() + " - " + modDataFile.getName());
         } else if (expDataFile != null) {
             vesTitle.set(expDataFile.getName());
+        } else if (modDataFile != null) {
+            vesTitle.set(section.getName(currentPicket.get()) + " - " + modDataFile.getName());
+        } else {
+            vesTitle.set(section.getName(currentPicket.get()));
         }
     }
 
@@ -220,7 +247,7 @@ public class MainViewModel extends ViewModel {
      * Asks which file to import and then import it
      */
     public void importMOD() {
-        File file = viewManager.showMODFileChooser(this);
+        File file = viewManager.showOpenMODFileChooser(this);
 
         if (file == null) {
             return;
@@ -236,7 +263,6 @@ public class MainViewModel extends ViewModel {
 
         Picket picketWithModelData = addToVESDataModel(openedMOD);
         fileService.addAssociation(picketWithModelData.getModelData(), file);
-
         updateAll();
     }
 
@@ -251,11 +277,15 @@ public class MainViewModel extends ViewModel {
     }
 
     private void updateAll() {
+        if (section.getPicketsCount() > 0) {
+            noFileOpened.set(false);
+            menuFileMODDisabled.set(false);
+        }
         updateExpTable();
-        updateModelTable();
         updateExpCurves();
         updateTheoreticalCurve();
         updateModelCurve();
+        updateModelTable();
         updateMisfitStacks();
         updateVESText();
         updateVESNumber();

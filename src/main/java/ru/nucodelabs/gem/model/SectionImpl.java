@@ -11,7 +11,7 @@ public class SectionImpl implements Section {
     private final List<Picket> pickets;
 
     public SectionImpl() {
-        pickets = new ArrayList<>(1);
+        pickets = new ArrayList<>();
     }
 
     @Override
@@ -62,5 +62,15 @@ public class SectionImpl implements Section {
     @Override
     public Picket getLastPicket() {
         return pickets.get(pickets.size() - 1);
+    }
+
+    @Override
+    public void setName(int picketNumber, String name) {
+        pickets.get(picketNumber).setName(name);
+    }
+
+    @Override
+    public String getName(int picketNumber) {
+        return pickets.get(picketNumber).getName();
     }
 }

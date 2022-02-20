@@ -20,14 +20,7 @@ public class ModelData {
      */
     private List<Double> power; // get set
 
-    public ModelData() {
-        resistance = new ArrayList<>();
-        polarization = new ArrayList<>();
-        power = new ArrayList<>();
-    }
-
     public ModelData(MODFile modFile) {
-        this();
         resistance = modFile.getResistance();
         polarization = modFile.getPolarization();
         power = modFile.getPower();
@@ -35,15 +28,19 @@ public class ModelData {
 
     private List<Integer> sizesList() {
         List<Integer> sizes = new ArrayList<>();
-        if (resistance.size() > 0) sizes.add(resistance.size());
-        if (polarization.size() > 0) sizes.add(polarization.size());
-        if (power.size() > 0) sizes.add(power.size());
+        if (resistance != null && resistance.size() > 0) sizes.add(resistance.size());
+        if (polarization != null && polarization.size() > 0) sizes.add(polarization.size());
+        if (power != null && power.size() > 0) sizes.add(power.size());
 
         return sizes;
     }
 
     public int getSize() {
-        return Collections.min(sizesList());
+        if (sizesList().size() > 0) {
+            return Collections.min(sizesList());
+        } else {
+            return 0;
+        }
     }
 
     //region getters and setters
