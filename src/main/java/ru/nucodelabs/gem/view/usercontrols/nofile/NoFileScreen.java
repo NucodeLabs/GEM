@@ -7,8 +7,14 @@ import ru.nucodelabs.mvvm.VBUserControl;
 public class NoFileScreen extends VBUserControl {
     @FXML
     private Button openEXPButton;
+    @FXML
+    private Button openSectionButton;
 
     public Button getOpenEXPButton() {
         return openEXPButton;
+    }
+
+    public Button getOpenSectionButton() {
+        return openSectionButton;
     }
 }
