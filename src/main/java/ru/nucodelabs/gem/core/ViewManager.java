@@ -72,10 +72,10 @@ public class ViewManager {
         return chooser.showOpenDialog(viewModelStageMap.get(caller));
     }
 
-    public void alertExperimentalDataIsUnsafe(ViewModel caller) {
+    public void alertExperimentalDataIsUnsafe(ViewModel caller, String picketName) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(uiProperties.getString("compatibilityMode"));
-        alert.setHeaderText(uiProperties.getString("EXPSTTMismatch"));
+        alert.setHeaderText(picketName + " - " + uiProperties.getString("EXPSTTMismatch"));
         alert.setContentText(uiProperties.getString("minimalDataWillBeDisplayed"));
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
