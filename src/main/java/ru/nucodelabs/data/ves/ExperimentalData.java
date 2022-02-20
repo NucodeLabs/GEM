@@ -43,17 +43,6 @@ public class ExperimentalData {
      */
     private List<Double> errorPolarizationApparent; // get set
 
-    public ExperimentalData() {
-        AB_2 = new ArrayList<>();
-        MN_2 = new ArrayList<>();
-        amperage = new ArrayList<>();
-        voltage = new ArrayList<>();
-        resistanceApparent = new ArrayList<>();
-        errorResistanceApparent = new ArrayList<>();
-        polarizationApparent = new ArrayList<>();
-        errorPolarizationApparent = new ArrayList<>();
-    }
-
     public ExperimentalData(EXPFile expFile, STTFile sttFile) throws IndexOutOfBoundsException {
         AB_2 = sttFile.getAB_2();
         MN_2 = sttFile.getMN_2();

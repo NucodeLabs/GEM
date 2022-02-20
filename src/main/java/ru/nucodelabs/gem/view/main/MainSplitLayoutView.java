@@ -65,6 +65,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         mainMenuBar.getMenuFileNewWindow().setOnAction(e -> viewModel.newWindow());
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
+        mainMenuBar.getMenuFileSaveSection().setOnAction(e -> viewModel.saveSection());
+        mainMenuBar.getMenuFileOpenSection().setOnAction(e -> viewModel.openSection());
 
         nextButton.setOnAction(e -> viewModel.switchToNextPicket());
         prevButton.setOnAction(e -> viewModel.switchToPrevPicket());

@@ -53,7 +53,7 @@ public class ViewManager {
         viewModelStageMap.put(viewModel, stage);
     }
 
-    public List<File> showEXPFileChooser(ViewModel caller) {
+    public List<File> showOpenEXPFileChooser(ViewModel caller) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл полевых данных для интерпретации");
         chooser.getExtensionFilters().addAll(
@@ -63,7 +63,7 @@ public class ViewManager {
 //      если закрыть окно выбора файла, ничего не выбрав, то FileChooser вернет null
     }
 
-    public File showMODFileChooser(ViewModel caller) {
+    public File showOpenMODFileChooser(ViewModel caller) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл модели");
         chooser.getExtensionFilters().addAll(
@@ -110,5 +110,23 @@ public class ViewManager {
         alert.initOwner(viewModelStageMap.get(caller));
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();
+    }
+
+    public File showSaveJsonFileChooser(ViewModel caller) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle(uiProperties.getString("save") + " " + uiProperties.getString("section"));
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("json", "*.json")
+        );
+        return chooser.showSaveDialog(viewModelStageMap.get(caller));
+    }
+
+    public File showOpenJsonFileChooser(ViewModel caller) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle(uiProperties.getString("open") + " " + uiProperties.getString("section"));
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("json", "*.json")
+        );
+        return chooser.showOpenDialog(viewModelStageMap.get(caller));
     }
 }

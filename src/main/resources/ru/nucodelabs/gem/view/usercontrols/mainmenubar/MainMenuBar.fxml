@@ -7,6 +7,10 @@
     <MenuBar fx:id="menuBar">
         <Menu text="%file">
             <MenuItem fx:id="menuFileNewWindow" text="%newWindow"/>
+            <Menu text="%open">
+                <MenuItem fx:id="menuFileOpenSection" text="%section"/>
+                <MenuItem fx:id="menuFileOpenPicket" text="%picket"/>
+            </Menu>
             <Menu text="%import">
                 <Menu text="%picket">
                     <MenuItem fx:id="menuFileOpenEXP" text="EXP"/>
@@ -15,7 +19,7 @@
             </Menu>
             <Menu text="%save">
                 <MenuItem fx:id="menuFileSaveSection" text="%section"/>
-                <Menu fx:id="menuFileSavePicket" text="%picket"/>
+                <MenuItem fx:id="menuFileSavePicket" text="%picket"/>
             </Menu>
             <MenuItem fx:id="menuFileClose" text="%close"/>
         </Menu>
