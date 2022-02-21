@@ -12,8 +12,18 @@
     -fx-text-fill: DarkSlateGray;
 }
 
-.default-btn {
-    -fx-text-fill: ForestGreen;
+.button:default {
+    -fx-text-fill: White;
+    -fx-background-color: ForestGreen;
+    -fx-border-color: DarkGreen;
+}
+
+.button:default:hover {
+    -fx-background-color: Green;
+}
+
+.button:default:pressed {
+    -fx-background-color: DarkGreen;
 }
 
 .button:hover {
@@ -24,16 +34,9 @@
     -fx-background-color: GainsBoro;
 }
 
-.menu-button:hover, .menu-item:hover {
-    -fx-background-color: Green;
-}
-
-.menu-button:pressed {
-    -fx-background-color: DarkGreen;
-}
-
 .menu-button:focused, .menu-button:showing,
-.menu-item:showing, .menu-item:focused {
+.menu-item:showing, .menu-item:focused, .menu-button:pressed,
+.menu-button:hover, .menu-item:hover {
     -fx-background-color: ForestGreen;
 }
 

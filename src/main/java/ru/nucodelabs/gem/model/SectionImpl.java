@@ -7,11 +7,11 @@ import ru.nucodelabs.data.ves.Picket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VESDataManager implements VESDataModel {
+public class SectionImpl implements Section {
     private final List<Picket> pickets;
 
-    public VESDataManager() {
-        pickets = new ArrayList<>(1);
+    public SectionImpl() {
+        pickets = new ArrayList<>();
     }
 
     @Override
@@ -62,5 +62,15 @@ public class VESDataManager implements VESDataModel {
     @Override
     public Picket getLastPicket() {
         return pickets.get(pickets.size() - 1);
+    }
+
+    @Override
+    public void setName(int picketNumber, String name) {
+        pickets.get(picketNumber).setName(name);
+    }
+
+    @Override
+    public String getName(int picketNumber) {
+        return pickets.get(picketNumber).getName();
     }
 }

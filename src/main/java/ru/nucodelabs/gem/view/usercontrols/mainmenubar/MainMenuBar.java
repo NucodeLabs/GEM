@@ -5,9 +5,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.mvvm.VBUserControl;
 
@@ -17,13 +14,24 @@ import java.util.ResourceBundle;
  * Main Menu Bar
  */
 public class MainMenuBar extends VBUserControl {
-
+    @FXML
+    private MenuItem menuFileOpenPicket;
+    @FXML
+    private MenuItem menuFileOpenSection;
+    @FXML
+    private MenuItem menuFileSaveSection;
+    @FXML
+    private MenuItem menuFileSavePicket;
+    @FXML
+    private MenuItem menuFileClose;
+    @FXML
+    private MenuItem menuFileNewWindow;
     @FXML
     private MenuItem menuFileOpenEXP;
     @FXML
     private MenuItem menuFileOpenMOD;
     @FXML
-    Menu menuView;
+    private Menu menuView;
     @FXML
     private CheckMenuItem menuViewLegendsVESCurves;
     @FXML
@@ -37,15 +45,6 @@ public class MainMenuBar extends VBUserControl {
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
-        menuFileOpenEXP.setAccelerator(new KeyCodeCombination(
-                KeyCode.O,
-                KeyCombination.SHORTCUT_DOWN
-        ));
-        menuFileOpenMOD.setAccelerator(new KeyCodeCombination(
-                KeyCode.O,
-                KeyCombination.SHORTCUT_DOWN,
-                KeyCombination.SHIFT_DOWN
-        ));
     }
 
     public MenuItem getMenuFileOpenEXP() {
@@ -62,5 +61,33 @@ public class MainMenuBar extends VBUserControl {
 
     public MenuBar getMenuBar() {
         return menuBar;
+    }
+
+    public MenuItem getMenuFileNewWindow() {
+        return menuFileNewWindow;
+    }
+
+    public Menu getMenuView() {
+        return menuView;
+    }
+
+    public MenuItem getMenuFileSaveSection() {
+        return menuFileSaveSection;
+    }
+
+    public MenuItem getMenuFileSavePicket() {
+        return menuFileSavePicket;
+    }
+
+    public MenuItem getMenuFileClose() {
+        return menuFileClose;
+    }
+
+    public MenuItem getMenuFileOpenPicket() {
+        return menuFileOpenPicket;
+    }
+
+    public MenuItem getMenuFileOpenSection() {
+        return menuFileOpenSection;
     }
 }
