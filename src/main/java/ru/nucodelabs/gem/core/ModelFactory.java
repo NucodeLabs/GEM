@@ -2,8 +2,8 @@ package ru.nucodelabs.gem.core;
 
 import ru.nucodelabs.gem.model.ConfigManager;
 import ru.nucodelabs.gem.model.ConfigModel;
-import ru.nucodelabs.gem.model.VESDataManager;
-import ru.nucodelabs.gem.model.VESDataModel;
+import ru.nucodelabs.gem.model.Section;
+import ru.nucodelabs.gem.model.SectionImpl;
 
 /**
  * Gives references to models
@@ -16,8 +16,8 @@ public class ModelFactory {
         configModel = new ConfigManager();
     }
 
-    public VESDataModel createVESDataModel() {
-        return new VESDataManager();
+    public Section createVESDataModel() {
+        return new SectionImpl();
     }
 
     public ConfigModel getConfigModel() {

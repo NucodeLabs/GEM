@@ -9,24 +9,25 @@ import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.files.gem.GemJson;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
+import ru.nucodelabs.gem.core.FileService;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.model.ConfigModel;
-import ru.nucodelabs.gem.model.VESDataModel;
+import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static java.lang.Math.abs;
@@ -50,16 +51,14 @@ public class MainViewModel extends ViewModel {
      */
     private ModelCurveDragger modelCurveDragger;
     private final VESCurvesNavigator vesCurvesNavigator;
-    private final Map<ExperimentalData, File> experimentalDataFileMap;
-    private final Map<ModelData, File> modelDataFileMap;
-    //TODO: Сделать некоторый объект-сервис для файлов, ведь дальше надо будет проверять сохранены измнения или нет и тп
-
+    private final FileService fileService;
 
     /**
      * Properties
      */
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
-    private final StringProperty vesText;
+    private final StringProperty vesTitle;
+    private final StringProperty vesNumber;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
     private final BooleanProperty menuFileMODDisabled;
     private final DoubleProperty vesCurvesXLowerBound;
@@ -68,29 +67,28 @@ public class MainViewModel extends ViewModel {
     private final DoubleProperty vesCurvesYUpperBound;
     private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
     private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
-    private final BooleanProperty welcomeScreenVisible;
+    private final BooleanProperty noFileOpened;
     private final IntegerProperty currentPicket;
 
     /**
      * Data models
      */
-    private final VESDataModel vesData;
+    private Section section;
     private final ConfigModel config;
 
     /**
      * Initialization
      *
-     * @param viewManager  View Manager
-     * @param configModel  Configuration
-     * @param vesDataModel VES Data
+     * @param viewManager View Manager
+     * @param configModel Configuration
+     * @param section     VES Data
      */
-    public MainViewModel(ViewManager viewManager, ConfigModel configModel, VESDataModel vesDataModel) {
+    public MainViewModel(ViewManager viewManager, ConfigModel configModel, Section section) {
         super(viewManager);
         this.config = configModel;
-        this.vesData = vesDataModel;
+        this.section = section;
 
-        experimentalDataFileMap = new HashMap<>();
-        modelDataFileMap = new HashMap<>();
+        fileService = new FileService();
         currentPicket = new SimpleIntegerProperty(-1);
 
         vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
@@ -104,19 +102,20 @@ public class MainViewModel extends ViewModel {
         );
 
         menuFileMODDisabled = new SimpleBooleanProperty(true);
-        welcomeScreenVisible = new SimpleBooleanProperty(true);
+        noFileOpened = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         for (int i = 0; i < MOD_CURVE_SERIES_CNT; i++) {
             vesCurvesData.get().add(new XYChart.Series<>());
         }
 
-        vesText = new SimpleStringProperty("");
+        vesTitle = new SimpleStringProperty("");
 
         misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
 
         expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         modelTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
+        vesNumber = new SimpleStringProperty("0/0");
     }
 
     /**
@@ -129,33 +128,18 @@ public class MainViewModel extends ViewModel {
     }
 
     /**
-     * Asks about import option then either addToCurrent() or addToNew() is called from ImportOptionPrompt
+     * Asks which EXP files and then imports them to current window
      */
     public void importEXP() {
-        if (vesData.getPicketsCount() > 0) {
-            viewManager.askImportOption(this);
-        } else {
-            addEXPToCurrent(viewManager.showEXPFileChooser(this));
+        List<File> files = viewManager.showOpenEXPFileChooser(this);
+        if (files != null && files.size() != 0) {
+            for (var file : files) {
+                importEXP(file);
+            }
         }
     }
 
-    /**
-     * Asks which file and then imports it to current window
-     */
-    public void addEXPToCurrent() {
-        addEXPToCurrent(viewManager.showEXPFileChooser(this));
-    }
-
-    /**
-     * Imports file to current window
-     *
-     * @param file file to import
-     */
-    public void addEXPToCurrent(File file) {
-        if (file == null) {
-            return;
-        }
-
+    private void importEXP(File file) {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -178,35 +162,65 @@ public class MainViewModel extends ViewModel {
         }
 
         Picket addedPicket = addToVESDataModel(openedEXP, openedSTT);
-        experimentalDataFileMap.put(addedPicket.getExperimentalData(), file);
+        fileService.addAssociation(addedPicket.getExperimentalData(), file);
         currentPicket.set(currentPicket.get() + 1);
         compatibilityModeAlert();
 
-        menuFileMODDisabled.setValue(false);
         updateAll();
+    }
 
-        welcomeScreenVisible.set(false);
+    public void openSection() {
+        File file = viewManager.showOpenJsonFileChooser(this);
+        if (file != null) {
+            try {
+                section = GemJson.readSection(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            currentPicket.set(0);
+            updateAll();
+        }
+    }
+
+    public void saveSection() {
+        File file = viewManager.showSaveJsonFileChooser(this);
+        if (file != null) {
+            try {
+                GemJson.writeData(section, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
      * Adds files names to vesText
      */
     private void updateVESText() {
-        File expDataFile = experimentalDataFileMap.get(vesData.getExperimentalData(currentPicket.get()));
-        File modDataFile = modelDataFileMap.get(vesData.getModelData(currentPicket.get()));
+        File expDataFile = fileService.getAssociatedFile(section.getExperimentalData(currentPicket.get()));
+        File modDataFile = fileService.getAssociatedFile(section.getModelData(currentPicket.get()));
         if (expDataFile != null && modDataFile != null) {
-            vesText.set(expDataFile.getName() + " - " + modDataFile.getName());
+            vesTitle.set(expDataFile.getName() + " - " + modDataFile.getName());
         } else if (expDataFile != null) {
-            vesText.set(expDataFile.getName());
+            vesTitle.set(expDataFile.getName());
+        } else if (modDataFile != null) {
+            vesTitle.set(section.getName(currentPicket.get()) + " - " + modDataFile.getName());
+        } else {
+            vesTitle.set(section.getName(currentPicket.get()));
         }
+    }
+
+    private void updateVESNumber() {
+        vesNumber.set(currentPicket.get() + 1 + "/" + section.getPicketsCount());
     }
 
     /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        if (vesData.getPicket(currentPicket.get()).getExperimentalData().isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe(this);
+        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
+        if (experimentalData.isUnsafe()) {
+            viewManager.alertExperimentalDataIsUnsafe(this, fileService.getAssociatedFile(experimentalData).getName());
         }
     }
 
@@ -218,22 +232,22 @@ public class MainViewModel extends ViewModel {
      * @return added picket
      */
     private Picket addToVESDataModel(EXPFile openedEXP, STTFile openedSTT) {
-        vesData.addPicket(new Picket(openedEXP, openedSTT));
-        return vesData.getLastPicket();
+        section.addPicket(new Picket(openedEXP, openedSTT));
+        return section.getLastPicket();
     }
 
     /**
-     * Opens new window, in which asks which file and then imports it
+     * Opens new window
      */
-    public void addEXPToNew() {
-        viewManager.newMainViewWithImportEXP(this);
+    public void newWindow() {
+        viewManager.start();
     }
 
     /**
      * Asks which file to import and then import it
      */
     public void importMOD() {
-        File file = viewManager.showMODFileChooser(this);
+        File file = viewManager.showOpenMODFileChooser(this);
 
         if (file == null) {
             return;
@@ -248,8 +262,7 @@ public class MainViewModel extends ViewModel {
         }
 
         Picket picketWithModelData = addToVESDataModel(openedMOD);
-        modelDataFileMap.put(picketWithModelData.getModelData(), file);
-
+        fileService.addAssociation(picketWithModelData.getModelData(), file);
         updateAll();
     }
 
@@ -259,29 +272,34 @@ public class MainViewModel extends ViewModel {
      * @return picket which model data assigned to
      */
     private Picket addToVESDataModel(MODFile openedMOD) {
-        vesData.setModelData(currentPicket.get(), new ModelData(openedMOD));
-        return vesData.getPicket(currentPicket.get());
+        section.setModelData(currentPicket.get(), new ModelData(openedMOD));
+        return section.getPicket(currentPicket.get());
     }
 
     private void updateAll() {
+        if (section.getPicketsCount() > 0) {
+            noFileOpened.set(false);
+            menuFileMODDisabled.set(false);
+        }
         updateExpTable();
-        updateModelTable();
         updateExpCurves();
         updateTheoreticalCurve();
         updateModelCurve();
+        updateModelTable();
         updateMisfitStacks();
         updateVESText();
+        updateVESNumber();
     }
 
     public void switchToNextPicket() {
-        if (vesData.getPicketsCount() > currentPicket.get() + 1) {
+        if (section.getPicketsCount() > currentPicket.get() + 1) {
             currentPicket.set(currentPicket.get() + 1);
             updateAll();
         }
     }
 
     public void switchToPrevPicket() {
-        if (currentPicket.get() > 0 && vesData.getPicketsCount() > 0) {
+        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
             currentPicket.set(currentPicket.get() - 1);
             updateAll();
         }
@@ -314,10 +332,10 @@ public class MainViewModel extends ViewModel {
     private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
-        if (vesData.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(currentPicket.get()) != null) {
             try {
                 theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                        vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
+                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
                 );
             } catch (UnsatisfiedLinkError e) {
                 viewManager.alertNoLib(this, e);
@@ -330,9 +348,9 @@ public class MainViewModel extends ViewModel {
     private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        if (vesData.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(currentPicket.get()) != null) {
             modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                    vesData.getModelData(currentPicket.get())
+                    section.getModelData(currentPicket.get())
             );
             vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
             addDraggingToModelCurveSeries(modelCurveSeries);
@@ -343,7 +361,7 @@ public class MainViewModel extends ViewModel {
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         try {
-            modelCurveDragger.initModelData(vesData.getModelData(currentPicket.get()));
+            modelCurveDragger.initModelData(section.getModelData(currentPicket.get()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,18 +377,18 @@ public class MainViewModel extends ViewModel {
 
     private void updateExpCurves() {
         XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
-                vesData.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(currentPicket.get())
         );
         XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
-                vesData.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(currentPicket.get())
         );
         XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
-                vesData.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(currentPicket.get())
         );
         vesCurvesData.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         vesCurvesData.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         vesCurvesData.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (vesData.getModelData(currentPicket.get()) == null) {
+        if (section.getModelData(currentPicket.get()) == null) {
             vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
             vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
         }
@@ -379,7 +397,7 @@ public class MainViewModel extends ViewModel {
     private void updateExpTable() {
         expTableData.setValue(
                 VESTablesConverters.toExperimentalTableData(
-                        vesData.getExperimentalData(currentPicket.get())
+                        section.getExperimentalData(currentPicket.get())
                 )
         );
     }
@@ -387,9 +405,9 @@ public class MainViewModel extends ViewModel {
     private void updateModelTable() {
         ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
 
-        if (vesData.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(currentPicket.get()) != null) {
             modelTableLines = VESTablesConverters.toModelTableData(
-                    vesData.getModelData(currentPicket.get())
+                    section.getModelData(currentPicket.get())
             );
         }
 
@@ -399,10 +417,10 @@ public class MainViewModel extends ViewModel {
     private void updateMisfitStacks() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
-        if (vesData.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(currentPicket.get()) != null) {
             try {
                 misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        vesData.getExperimentalData(currentPicket.get()), vesData.getModelData(currentPicket.get())
+                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
                 );
             } catch (UnsatisfiedLinkError e) {
                 viewManager.alertNoLib(this, e);
@@ -454,12 +472,12 @@ public class MainViewModel extends ViewModel {
         return menuFileMODDisabled;
     }
 
-    public String getVesText() {
-        return vesText.get();
+    public String getVesTitle() {
+        return vesTitle.get();
     }
 
-    public StringProperty vesTextProperty() {
-        return vesText;
+    public StringProperty vesTitleProperty() {
+        return vesTitle;
     }
 
     public double getVesCurvesXLowerBound() {
@@ -510,12 +528,12 @@ public class MainViewModel extends ViewModel {
         return modelTableData;
     }
 
-    public boolean isWelcomeScreenVisible() {
-        return welcomeScreenVisible.get();
+    public boolean getNoFileOpened() {
+        return noFileOpened.get();
     }
 
-    public BooleanProperty welcomeScreenVisibleProperty() {
-        return welcomeScreenVisible;
+    public BooleanProperty noFileOpenedProperty() {
+        return noFileOpened;
     }
 
     public int getCurrentPicket() {
@@ -524,5 +542,13 @@ public class MainViewModel extends ViewModel {
 
     public IntegerProperty currentPicketProperty() {
         return currentPicket;
+    }
+
+    public String getVesNumber() {
+        return vesNumber.get();
+    }
+
+    public StringProperty vesNumberProperty() {
+        return vesNumber;
     }
 }

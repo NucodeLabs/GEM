@@ -3,7 +3,6 @@ package ru.nucodelabs.mvvm;
 import javafx.stage.Stage;
 
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 /**
  * Abstract class of views that have VBox as root container.
@@ -16,12 +15,6 @@ public abstract class VBView<VM extends ViewModel> extends VBUserControl {
     protected VM viewModel;
 
     public VBView(VM viewModel) {
-        this.viewModel = viewModel;
-        Initializers.addCloseShortcutMacOS(this);
-    }
-
-    public VBView(VM viewModel, ResourceBundle uiProperties) {
-        super(uiProperties);
         this.viewModel = viewModel;
         Initializers.addCloseShortcutMacOS(this);
     }

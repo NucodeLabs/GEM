@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import ru.nucodelabs.gem.view.usercontrols.mainmenubar.MainMenuBar;
 import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks;
+import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable;
 import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable;
@@ -18,11 +19,13 @@ import java.util.Objects;
 
 public class MainSplitLayoutView extends VBView<MainViewModel> {
     @FXML
-    private WelcomeScreen welcomeScreen;
+    private NoFileScreen noFileScreen;
     @FXML
     private MainMenuBar mainMenuBar;
     @FXML
     private Button prevButton;
+    @FXML
+    private Label picketNumber;
     @FXML
     private Label vesTitle;
     @FXML
@@ -54,13 +57,23 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
                 )
         );
 
-        welcomeScreen.visibleProperty().bind(viewModel.welcomeScreenVisibleProperty());
-        welcomeScreen.getOpenEXPButton().setOnAction(e -> viewModel.importEXP());
+        noFileScreen.visibleProperty().bind(viewModel.noFileOpenedProperty());
+        noFileScreen.getOpenEXPButton().setOnAction(e -> viewModel.importEXP());
+        noFileScreen.getOpenSectionButton().setOnAction(e -> viewModel.openSection());
 
         mainMenuBar.getMenuFileOpenEXP().setOnAction(e -> viewModel.importEXP());
         mainMenuBar.getMenuFileOpenMOD().setOnAction(e -> viewModel.importMOD());
+        mainMenuBar.getMenuFileNewWindow().setOnAction(e -> viewModel.newWindow());
         mainMenuBar.getMenuFileOpenMOD().disableProperty().bind(viewModel.menuFileMODDisabledProperty());
         mainMenuBar.getMenuViewLegendsVESCurves().selectedProperty().bindBidirectional(vesCurves.getLineChart().legendVisibleProperty());
+        mainMenuBar.getMenuFileSaveSection().setOnAction(e -> viewModel.saveSection());
+        mainMenuBar.getMenuFileOpenSection().setOnAction(e -> viewModel.openSection());
+        mainMenuBar.getMenuFileClose().setOnAction(e -> {
+            selfClose();
+            viewModel.newWindow();
+        });
+        mainMenuBar.getMenuFileSaveSection().disableProperty().bind(viewModel.noFileOpenedProperty());
+        mainMenuBar.getMenuFileSavePicket().disableProperty().bind(viewModel.noFileOpenedProperty());
 
         nextButton.setOnAction(e -> viewModel.switchToNextPicket());
         prevButton.setOnAction(e -> viewModel.switchToPrevPicket());
@@ -78,7 +91,8 @@ public class MainSplitLayoutView extends VBView<MainViewModel> {
         vesCurves.getMinusBtn().setOnAction(e -> viewModel.zoomOutVesCurves());
 
         vesCurves.getLineChart().dataProperty().bindBidirectional(viewModel.vesCurvesDataProperty());
-        vesTitle.textProperty().bind(viewModel.vesTextProperty());
+        vesTitle.textProperty().bind(viewModel.vesTitleProperty());
+        picketNumber.textProperty().bind(viewModel.vesNumberProperty());
 
         misfitStacks.getLineChart().dataProperty().bind(viewModel.misfitStacksDataProperty());
         misfitStacks.getLineChartXAxis().lowerBoundProperty().bind(viewModel.vesCurvesXLowerBoundProperty());
