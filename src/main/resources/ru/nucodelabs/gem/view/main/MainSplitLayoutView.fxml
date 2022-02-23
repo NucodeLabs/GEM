@@ -31,7 +31,7 @@
                           disable="${controller.noFileOpened}"/>
                 <MenuItem text="%picket"/>
             </Menu>
-            <MenuItem text="%close"/>
+            <MenuItem text="%close" onAction="#closeFile"/>
         </Menu>
         <Menu text="%edit">
             <MenuItem text="Delete"/>

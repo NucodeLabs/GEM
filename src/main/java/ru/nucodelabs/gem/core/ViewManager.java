@@ -50,6 +50,10 @@ public class ViewManager {
         controllerStageMap.put(fxmlLoader.getController(), stage);
     }
 
+    public void close(Controller caller) {
+        controllerStageMap.get(caller).close();
+    }
+
     public List<File> showOpenEXPFileChooser(Controller caller) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Выберите файл полевых данных для интерпретации");

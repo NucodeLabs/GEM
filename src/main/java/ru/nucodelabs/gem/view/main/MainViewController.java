@@ -149,6 +149,11 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    public void closeFile() {
+        viewManager.close(this);
+        viewManager.start();
+    }
+
     /**
      * Asks which EXP files and then imports them to current window
      */
