@@ -13,7 +13,6 @@ import javafx.scene.control.MenuBar;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.gem.GemJson;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
@@ -28,7 +27,6 @@ import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTabl
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -78,7 +76,7 @@ public class MainViewController extends Controller implements Initializable {
     /**
      * Data models
      */
-    private Section section;
+    private final Section section;
 
     /**
      * Initialization
@@ -125,7 +123,6 @@ public class MainViewController extends Controller implements Initializable {
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
@@ -198,9 +195,9 @@ public class MainViewController extends Controller implements Initializable {
         File file = viewManager.showOpenJsonFileChooser(this);
         if (file != null) {
             try {
-                section = GemJson.readSection(file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                section.loadFromJson(file);
+            } catch (Exception e) {
+                viewManager.alertIncorrectFile(this, e);
             }
             currentPicket.set(0);
             updateAll();
@@ -211,9 +208,9 @@ public class MainViewController extends Controller implements Initializable {
         File file = viewManager.showSaveJsonFileChooser(this);
         if (file != null) {
             try {
-                GemJson.writeData(section, file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                section.saveToJson(file);
+            } catch (Exception e) {
+                viewManager.alertIncorrectFile(this, e);
             }
         }
     }

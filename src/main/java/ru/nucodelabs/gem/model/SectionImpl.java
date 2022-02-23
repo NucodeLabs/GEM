@@ -3,12 +3,15 @@ package ru.nucodelabs.gem.model;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.files.gem.GemJson;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionImpl implements Section {
-    private final List<Picket> pickets;
+public class SectionImpl implements Section, Serializable {
+    private List<Picket> pickets;
 
     public SectionImpl() {
         pickets = new ArrayList<>();
@@ -72,5 +75,16 @@ public class SectionImpl implements Section {
     @Override
     public String getName(int picketNumber) {
         return pickets.get(picketNumber).getName();
+    }
+
+    @Override
+    public void loadFromJson(File file) throws Exception {
+        Section fromFile = GemJson.readSection(file);
+        this.pickets = fromFile.getPickets();
+    }
+
+    @Override
+    public void saveToJson(File file) throws Exception {
+        GemJson.writeData(this, file);
     }
 }
