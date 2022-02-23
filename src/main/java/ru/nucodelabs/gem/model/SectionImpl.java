@@ -4,17 +4,25 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.gem.GemJson;
+import ru.nucodelabs.files.sonet.EXPFile;
+import ru.nucodelabs.files.sonet.MODFile;
+import ru.nucodelabs.files.sonet.STTFile;
+import ru.nucodelabs.files.sonet.SonetImport;
+import ru.nucodelabs.gem.core.FileService;
 
 import java.io.File;
-import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionImpl implements Section, Serializable {
+public class SectionImpl implements Section {
+
+    private final FileService fileService;
     private List<Picket> pickets;
 
     public SectionImpl() {
         pickets = new ArrayList<>();
+        fileService = new FileService();
     }
 
     @Override
@@ -78,13 +86,42 @@ public class SectionImpl implements Section, Serializable {
     }
 
     @Override
+    public void loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
+        EXPFile expFile = SonetImport.readEXP(file);
+        Path expFilePath = file.toPath();
+        STTFile sttFile = SonetImport.readSTT(new File(
+                expFilePath.getParent().toString()
+                        + File.separator
+                        + expFile.getSTTFileName()));
+
+        Picket newPicket = new Picket(expFile, sttFile);
+        if (pickets.size() > picketNumber + 1) {
+            pickets.set(picketNumber, newPicket);
+        } else {
+            addPicket(newPicket);
+        }
+
+        fileService.addAssociation(newPicket.getExperimentalData(), file);
+    }
+
+    @Override
+    public void loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
+        MODFile modFile = SonetImport.readMOD(file);
+        ModelData modelData = new ModelData(modFile);
+        setModelData(picketNumber, modelData);
+
+        fileService.addAssociation(modelData, file);
+    }
+
+    @Override
     public void loadFromJson(File file) throws Exception {
-        Section fromFile = GemJson.readSection(file);
-        this.pickets = fromFile.getPickets();
+        this.pickets = GemJson.readPicketList(file);
+
+        fileService.addAssociation(pickets, file);
     }
 
     @Override
     public void saveToJson(File file) throws Exception {
-        GemJson.writeData(this, file);
+        GemJson.writeData(pickets, file);
     }
 }

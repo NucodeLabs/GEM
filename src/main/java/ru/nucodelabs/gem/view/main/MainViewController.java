@@ -11,13 +11,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.MODFile;
-import ru.nucodelabs.files.sonet.STTFile;
-import ru.nucodelabs.files.sonet.SonetImport;
-import ru.nucodelabs.gem.core.FileService;
 import ru.nucodelabs.gem.core.ViewManager;
 import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.gem.model.Section;
@@ -28,7 +21,6 @@ import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,7 +46,6 @@ public class MainViewController extends Controller implements Initializable {
      */
     private ModelCurveDragger modelCurveDragger;
     private final VESCurvesNavigator vesCurvesNavigator;
-    private final FileService fileService;
     private final ViewManager viewManager;
 
     /**
@@ -88,7 +79,6 @@ public class MainViewController extends Controller implements Initializable {
         this.viewManager = viewManager;
         this.section = section;
 
-        fileService = new FileService();
         currentPicket = new SimpleIntegerProperty(-1);
 
         vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
@@ -123,6 +113,7 @@ public class MainViewController extends Controller implements Initializable {
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
@@ -167,32 +158,13 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     private void addEXP(File file) {
-        EXPFile openedEXP;
         try {
-            openedEXP = SonetImport.readEXP(file);
+            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
         } catch (Exception e) {
             viewManager.alertIncorrectFile(this, e);
-            return;
         }
-
-        Path openedFilePath = file.toPath();
-
-        STTFile openedSTT;
-        try {
-            openedSTT = SonetImport.readSTT(new File(
-                    openedFilePath.getParent().toString()
-                            + File.separator
-                            + openedEXP.getSTTFileName()));
-        } catch (Exception e) {
-            viewManager.alertIncorrectFile(this, e);
-            return;
-        }
-
-        Picket addedPicket = addToVESDataModel(openedEXP, openedSTT);
-        fileService.addAssociation(addedPicket.getExperimentalData(), file);
         currentPicket.set(currentPicket.get() + 1);
         compatibilityModeAlert();
-
         updateAll();
     }
 
@@ -224,17 +196,7 @@ public class MainViewController extends Controller implements Initializable {
      * Adds files names to vesText
      */
     private void updateVESText() {
-        File expDataFile = fileService.getAssociatedFile(section.getExperimentalData(currentPicket.get()));
-        File modDataFile = fileService.getAssociatedFile(section.getModelData(currentPicket.get()));
-        if (expDataFile != null && modDataFile != null) {
-            vesTitle.set(expDataFile.getName() + " - " + modDataFile.getName());
-        } else if (expDataFile != null) {
-            vesTitle.set(expDataFile.getName());
-        } else if (modDataFile != null) {
-            vesTitle.set(section.getName(currentPicket.get()) + " - " + modDataFile.getName());
-        } else {
-            vesTitle.set(section.getName(currentPicket.get()));
-        }
+        vesTitle.set(section.getName(currentPicket.get()));
     }
 
     private void updateVESNumber() {
@@ -247,20 +209,8 @@ public class MainViewController extends Controller implements Initializable {
     private void compatibilityModeAlert() {
         ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
         if (experimentalData.isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe(this, fileService.getAssociatedFile(experimentalData).getName());
+            viewManager.alertExperimentalDataIsUnsafe(this, section.getPicket(currentPicket.get()).getName());
         }
-    }
-
-    /**
-     * Adds new picket defined by files to section
-     *
-     * @param openedEXP EXP
-     * @param openedSTT STT
-     * @return added picket
-     */
-    private Picket addToVESDataModel(EXPFile openedEXP, STTFile openedSTT) {
-        section.addPicket(new Picket(openedEXP, openedSTT));
-        return section.getLastPicket();
     }
 
     /**
@@ -280,27 +230,13 @@ public class MainViewController extends Controller implements Initializable {
             return;
         }
 
-        MODFile openedMOD;
         try {
-            openedMOD = SonetImport.readMOD(file);
+            section.loadModelDataFromMODFile(currentPicket.get(), file);
         } catch (Exception e) {
             viewManager.alertIncorrectFile(this, e);
-            return;
         }
 
-        Picket picketWithModelData = addToVESDataModel(openedMOD);
-        fileService.addAssociation(picketWithModelData.getModelData(), file);
         updateAll();
-    }
-
-    /**
-     * Adds ModelData to picket
-     *
-     * @return picket which model data assigned to
-     */
-    private Picket addToVESDataModel(MODFile openedMOD) {
-        section.setModelData(currentPicket.get(), new ModelData(openedMOD));
-        return section.getPicket(currentPicket.get());
     }
 
     private void updateAll() {

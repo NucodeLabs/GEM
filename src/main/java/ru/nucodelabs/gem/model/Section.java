@@ -4,6 +4,7 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -100,4 +101,20 @@ public interface Section extends Model {
      * @return name
      */
     String getName(int picketNumber);
+
+    /**
+     * Loads experimental data from EXP file parameter and from STT file with same name to picket
+     *
+     * @param picketNumber index of picket
+     * @param file         EXP file
+     */
+    void loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception;
+
+    /**
+     * Loads model data from MOD file parameter to picket
+     *
+     * @param picketNumber index of picket
+     * @param file         MOD file
+     */
+    void loadModelDataFromMODFile(int picketNumber, File file) throws Exception;
 }

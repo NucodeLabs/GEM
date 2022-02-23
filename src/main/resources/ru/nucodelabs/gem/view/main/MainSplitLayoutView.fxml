@@ -23,7 +23,7 @@
             <Menu text="%import">
                 <Menu text="%picket">
                     <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
-                    <MenuItem disable="${controller.noFileOpened}" text="MOD"/>
+                    <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
                 </Menu>
             </Menu>
             <Menu text="%save">
