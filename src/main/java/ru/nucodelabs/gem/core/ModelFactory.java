@@ -16,7 +16,7 @@ public class ModelFactory {
         configModel = new ConfigManager();
     }
 
-    public Section createVESDataModel() {
+    public Section createSection() {
         return new SectionImpl();
     }
 
