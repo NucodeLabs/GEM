@@ -85,7 +85,19 @@ public interface Section extends Model {
      */
     Picket getLastPicket();
 
+    /**
+     * Sets name of the picket
+     *
+     * @param picketNumber index of picket
+     * @param name         name to set
+     */
     void setName(int picketNumber, String name);
 
+    /**
+     * Returns name of the picket
+     *
+     * @param picketNumber index of picket
+     * @return name
+     */
     String getName(int picketNumber);
 }
