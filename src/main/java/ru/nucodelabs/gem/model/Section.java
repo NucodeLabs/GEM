@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.model;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.mvvm.Model;
 
 import java.util.List;
 
