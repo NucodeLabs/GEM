@@ -162,6 +162,7 @@ public class MainViewController extends Controller implements Initializable {
             section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
         } catch (Exception e) {
             viewManager.alertIncorrectFile(this, e);
+            return;
         }
         currentPicket.set(currentPicket.get() + 1);
         compatibilityModeAlert();
@@ -175,6 +176,7 @@ public class MainViewController extends Controller implements Initializable {
                 section.loadFromJson(file);
             } catch (Exception e) {
                 viewManager.alertIncorrectFile(this, e);
+                return;
             }
             currentPicket.set(0);
             updateAll();
