@@ -150,7 +150,7 @@ public class ModelCurveDragger {
      * Call this if model data array structure will change
      */
     private void updateMappings() {
-        initModelData(modelData);
+        mapModelData(modelData);
     }
 
     /**
@@ -158,7 +158,7 @@ public class ModelCurveDragger {
      *
      * @param modelData model data that match curve
      */
-    public void initModelData(ModelData modelData) {
+    public void mapModelData(ModelData modelData) {
         String E_MSG = "ModelData array size: %d does not match mapping size: %d";
 
         pointResistanceMap = new HashMap<>();

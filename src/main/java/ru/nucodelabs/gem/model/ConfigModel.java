@@ -1,7 +1,5 @@
 package ru.nucodelabs.gem.model;
 
-import ru.nucodelabs.mvvm.Model;
-
 import java.io.File;
 
 /**

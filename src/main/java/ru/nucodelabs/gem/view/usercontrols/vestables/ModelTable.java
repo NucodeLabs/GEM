@@ -1,16 +1,25 @@
 package ru.nucodelabs.gem.view.usercontrols.vestables;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
-import ru.nucodelabs.mvvm.VBUserControl;
 
 public class ModelTable extends VBUserControl {
-
     @FXML
     private TableView<ModelTableLine> modelTable;
 
-    public TableView<ModelTableLine> getModelTable() {
-        return modelTable;
+    public ObjectProperty<ObservableList<ModelTableLine>> itemsProperty() {
+        return modelTable.itemsProperty();
+    }
+
+    public ObservableList<ModelTableLine> getItems() {
+        return modelTable.getItems();
+    }
+
+    public void setItems(ObservableList<ModelTableLine> value) {
+        modelTable.setItems(value);
     }
 }

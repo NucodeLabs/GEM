@@ -3,36 +3,39 @@ package ru.nucodelabs.gem.view.main;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.gem.GemJson;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 import ru.nucodelabs.gem.core.FileService;
 import ru.nucodelabs.gem.core.ViewManager;
-import ru.nucodelabs.gem.model.ConfigModel;
+import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
+import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
-import ru.nucodelabs.mvvm.ViewModel;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MainViewModel extends ViewModel {
+public class MainViewController extends Controller implements Initializable {
 
     /**
      * Constants
@@ -52,6 +55,7 @@ public class MainViewModel extends ViewModel {
     private ModelCurveDragger modelCurveDragger;
     private final VESCurvesNavigator vesCurvesNavigator;
     private final FileService fileService;
+    private final ViewManager viewManager;
 
     /**
      * Properties
@@ -60,7 +64,6 @@ public class MainViewModel extends ViewModel {
     private final StringProperty vesTitle;
     private final StringProperty vesNumber;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
-    private final BooleanProperty menuFileMODDisabled;
     private final DoubleProperty vesCurvesXLowerBound;
     private final DoubleProperty vesCurvesXUpperBound;
     private final DoubleProperty vesCurvesYLowerBound;
@@ -73,19 +76,16 @@ public class MainViewModel extends ViewModel {
     /**
      * Data models
      */
-    private Section section;
-    private final ConfigModel config;
+    private final Section section;
 
     /**
      * Initialization
      *
      * @param viewManager View Manager
-     * @param configModel Configuration
      * @param section     VES Data
      */
-    public MainViewModel(ViewManager viewManager, ConfigModel configModel, Section section) {
-        super(viewManager);
-        this.config = configModel;
+    public MainViewController(ViewManager viewManager, Section section) {
+        this.viewManager = viewManager;
         this.section = section;
 
         fileService = new FileService();
@@ -101,7 +101,6 @@ public class MainViewModel extends ViewModel {
                 0.1
         );
 
-        menuFileMODDisabled = new SimpleBooleanProperty(true);
         noFileOpened = new SimpleBooleanProperty(true);
 
         vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
@@ -118,13 +117,41 @@ public class MainViewModel extends ViewModel {
         vesNumber = new SimpleStringProperty("0/0");
     }
 
-    /**
-     * Initializes model dragger
-     *
-     * @param coordinateInSceneToValue line chart node dependent function to convert X and Y in values for axis
-     */
-    public void initModelCurveDragger(Function<Point2D, XYChart.Data<Double, Double>> coordinateInSceneToValue) {
-        modelCurveDragger = new ModelCurveDragger(coordinateInSceneToValue, vesCurvesData, MOD_CURVE_SERIES_INDEX);
+    @FXML
+    public VESCurves vesCurves;
+    @FXML
+    public MenuBar menuBar;
+    @FXML
+    public Menu menuView;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        modelCurveDragger = new ModelCurveDragger((pointInScene) ->
+                new XYChart.Data<>(
+                        (Double) vesCurves
+                                .getLineChartXAxis()
+                                .getValueForDisplay(
+                                        vesCurves.getLineChartXAxis().sceneToLocal(pointInScene).getX()
+                                ),
+                        (Double) vesCurves
+                                .getLineChartYAxis()
+                                .getValueForDisplay(
+                                        vesCurves.getLineChartYAxis().sceneToLocal(pointInScene).getY()
+                                )
+                ),
+                vesCurvesData,
+                MOD_CURVE_SERIES_INDEX
+        );
+        if (new OSDetector().isMacOS()) {
+            ResourceBundle uiProps = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
+            CheckMenuItem useSystemMenu = new CheckMenuItem(uiProps.getString("useSystemMenu"));
+            menuView.getItems().add(0, useSystemMenu);
+            useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+        }
+    }
+
+    public void closeFile() {
+        viewManager.close(this);
+        viewManager.start();
     }
 
     /**
@@ -134,12 +161,12 @@ public class MainViewModel extends ViewModel {
         List<File> files = viewManager.showOpenEXPFileChooser(this);
         if (files != null && files.size() != 0) {
             for (var file : files) {
-                importEXP(file);
+                addEXP(file);
             }
         }
     }
 
-    private void importEXP(File file) {
+    private void addEXP(File file) {
         EXPFile openedEXP;
         try {
             openedEXP = SonetImport.readEXP(file);
@@ -173,9 +200,9 @@ public class MainViewModel extends ViewModel {
         File file = viewManager.showOpenJsonFileChooser(this);
         if (file != null) {
             try {
-                section = GemJson.readSection(file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                section.loadFromJson(file);
+            } catch (Exception e) {
+                viewManager.alertIncorrectFile(this, e);
             }
             currentPicket.set(0);
             updateAll();
@@ -186,9 +213,9 @@ public class MainViewModel extends ViewModel {
         File file = viewManager.showSaveJsonFileChooser(this);
         if (file != null) {
             try {
-                GemJson.writeData(section, file);
-            } catch (IOException e) {
-                e.printStackTrace();
+                section.saveToJson(file);
+            } catch (Exception e) {
+                viewManager.alertIncorrectFile(this, e);
             }
         }
     }
@@ -279,7 +306,6 @@ public class MainViewModel extends ViewModel {
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
-            menuFileMODDisabled.set(false);
         }
         updateExpTable();
         updateExpCurves();
@@ -361,7 +387,7 @@ public class MainViewModel extends ViewModel {
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         try {
-            modelCurveDragger.initModelData(section.getModelData(currentPicket.get()));
+            modelCurveDragger.mapModelData(section.getModelData(currentPicket.get()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -427,7 +453,7 @@ public class MainViewModel extends ViewModel {
             }
         }
 
-        misfitStacksData.set(FXCollections.observableList(new ArrayList<>()));
+        misfitStacksData.get().clear();
         misfitStacksData.get().addAll(misfitStacksSeriesList);
         colorizeMisfitStacksSeries();
     }
@@ -462,14 +488,6 @@ public class MainViewModel extends ViewModel {
 
     public ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksDataProperty() {
         return misfitStacksData;
-    }
-
-    public boolean isMenuFileMODDisabled() {
-        return menuFileMODDisabled.get();
-    }
-
-    public BooleanProperty menuFileMODDisabledProperty() {
-        return menuFileMODDisabled;
     }
 
     public String getVesTitle() {

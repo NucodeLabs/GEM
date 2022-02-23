@@ -16,11 +16,11 @@
         <Label fx:id="uclabel" text="%misfit" VBox.vgrow="NEVER"/>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" title="\%"
-               titleSide="LEFT" minHeight="0" minWidth="0">
+               titleSide="LEFT" minHeight="0" minWidth="0" animated="false">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false"
                         side="BOTTOM" minorTickVisible="false" tickLabelsVisible="false" tickMarkVisible="false"
-                        tickUnit="100.0" autoRanging="false"/>
+                        tickUnit="100.0" autoRanging="false" lowerBound="-1" upperBound="4"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" cache="true" forceZeroInRange="false"

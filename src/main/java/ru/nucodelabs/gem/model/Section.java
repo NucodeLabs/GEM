@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.model;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.mvvm.Model;
 
 import java.util.List;
 
@@ -86,7 +85,19 @@ public interface Section extends Model {
      */
     Picket getLastPicket();
 
+    /**
+     * Sets name of the picket
+     *
+     * @param picketNumber index of picket
+     * @param name         name to set
+     */
     void setName(int picketNumber, String name);
 
+    /**
+     * Returns name of the picket
+     *
+     * @param picketNumber index of picket
+     * @return name
+     */
     String getName(int picketNumber);
 }

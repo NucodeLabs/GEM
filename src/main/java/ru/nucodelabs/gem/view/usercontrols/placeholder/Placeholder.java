@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.view.usercontrols.placeholder;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ru.nucodelabs.mvvm.VBUserControl;
+import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
 
 public class Placeholder extends VBUserControl {
     @FXML

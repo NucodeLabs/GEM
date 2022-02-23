@@ -1,4 +1,4 @@
-package ru.nucodelabs.mvvm;
+package ru.nucodelabs.gem.core.utils;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -7,7 +7,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.utils.OSDetector;
 
 import java.io.IOException;
 import java.util.Locale;
