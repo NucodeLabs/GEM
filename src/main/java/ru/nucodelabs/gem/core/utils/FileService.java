@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.core;
+package ru.nucodelabs.gem.core.utils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -18,6 +18,4 @@ public class FileService {
     public File getAssociatedFile(Object data) {
         return dataFileMap.get(data);
     }
-
-
 }

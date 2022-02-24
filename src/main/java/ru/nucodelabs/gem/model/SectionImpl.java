@@ -8,7 +8,7 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
-import ru.nucodelabs.gem.core.FileService;
+import ru.nucodelabs.gem.core.utils.FileService;
 
 import java.io.File;
 import java.nio.file.Path;

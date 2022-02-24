@@ -13,15 +13,6 @@ import java.util.List;
 public interface Section extends Model {
 
     /**
-     * Factory method
-     *
-     * @return new section instance
-     */
-    static Section create() {
-        return new SectionImpl();
-    }
-
-    /**
      * Returns model data of picket
      *
      * @param picketNumber index of picket in list of pickets
