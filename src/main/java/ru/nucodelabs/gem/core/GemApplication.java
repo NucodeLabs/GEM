@@ -10,9 +10,9 @@ import java.util.ResourceBundle;
 public class GemApplication extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
-        ModelFactory modelFactory = new ModelFactory();
+        ModelProvider modelProvider = new ModelProvider();
         ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        ViewManager viewManager = new ViewManager(modelFactory, uiProperties);
+        ViewManager viewManager = new ViewManager(modelProvider, uiProperties);
 
         viewManager.start();
     }

@@ -83,7 +83,7 @@ public class MainViewController extends Controller implements Initializable {
 
         vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
         vesCurvesXUpperBound = new SimpleDoubleProperty(4);
-        vesCurvesYLowerBound = new SimpleDoubleProperty(-1);
+        vesCurvesYLowerBound = new SimpleDoubleProperty(0);
         vesCurvesYUpperBound = new SimpleDoubleProperty(4);
         vesCurvesNavigator = new VESCurvesNavigator(
                 vesCurvesXLowerBound, vesCurvesXUpperBound,

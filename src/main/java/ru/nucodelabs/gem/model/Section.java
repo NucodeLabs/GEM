@@ -11,6 +11,16 @@ import java.util.List;
  * Data model which basically represents section, an ordered set of pickets
  */
 public interface Section extends Model {
+
+    /**
+     * Factory method
+     *
+     * @return new section instance
+     */
+    static Section create() {
+        return new SectionImpl();
+    }
+
     /**
      * Returns model data of picket
      *
