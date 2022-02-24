@@ -14,17 +14,17 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Creates and opens Views and giving them references to their ViewModels linked with Models.
+ * Creates and opens Views and giving them references to their Controllers linked with Models.
  * Also changing Views dynamically if ViewModel asks to do so.
  */
 public class ViewManager {
 
-    private final ControllerFactory controllerFactory;
+    private final ControllerProvider controllerProvider;
     private final ResourceBundle uiProperties;
     private final Map<Controller, Stage> controllerStageMap;
 
-    public ViewManager(ModelFactory modelFactory, ResourceBundle uiProperties) {
-        this.controllerFactory = new ControllerFactory(this, modelFactory);
+    public ViewManager(ModelProvider modelProvider, ResourceBundle uiProperties) {
+        this.controllerProvider = new ControllerProvider(this, modelProvider);
         this.uiProperties = uiProperties;
         controllerStageMap = new HashMap<>();
     }
@@ -33,10 +33,10 @@ public class ViewManager {
      * Opens new main view
      */
     public void start() {
-        FXMLLoader fxmlLoader = null;
+        FXMLLoader fxmlLoader;
         fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
-        fxmlLoader.setControllerFactory(controllerFactory::create);
+        fxmlLoader.setControllerFactory(controllerProvider::create);
         try {
             fxmlLoader.load();
         } catch (IOException e) {

@@ -7,13 +7,13 @@ import ru.nucodelabs.gem.view.main.MainViewController;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-public class ControllerFactory {
+public class ControllerProvider {
 
-    private final ModelFactory modelFactory;
+    private final ModelProvider modelProvider;
     private final ViewManager viewManager;
 
-    public ControllerFactory(ViewManager viewManager, ModelFactory modelFactory) {
-        this.modelFactory = modelFactory;
+    public ControllerProvider(ViewManager viewManager, ModelProvider modelProvider) {
+        this.modelProvider = modelProvider;
         this.viewManager = viewManager;
     }
 
@@ -30,10 +30,8 @@ public class ControllerFactory {
 
     private MainViewController createMainViewController() throws InstantiationException, IllegalAccessException, InvocationTargetException {
         for (var constructor : MainViewController.class.getConstructors()) {
-            if (constructor.getParameterCount() == 2) {
-                if (Arrays.equals(constructor.getParameterTypes(), new Object[]{ViewManager.class, Section.class})) {
-                    return (MainViewController) constructor.newInstance(viewManager, modelFactory.createSection());
-                }
+            if (Arrays.equals(constructor.getParameterTypes(), new Object[]{ViewManager.class, Section.class})) {
+                return (MainViewController) constructor.newInstance(viewManager, modelProvider.getSection());
             }
         }
         return null;
