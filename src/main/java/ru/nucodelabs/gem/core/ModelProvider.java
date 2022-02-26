@@ -10,7 +10,7 @@ import ru.nucodelabs.gem.model.SectionImpl;
  */
 public class ModelProvider {
 
-    private final Config config; // singleton
+    private final Config config;
 
     public ModelProvider() {
         config = new ConfigImpl();

@@ -8,7 +8,6 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.MODFile;
 import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
-import ru.nucodelabs.gem.core.utils.FileService;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -17,12 +16,10 @@ import java.util.List;
 
 public class SectionImpl implements Section {
 
-    private final FileService fileService;
     private List<Picket> pickets;
 
     public SectionImpl() {
         pickets = new ArrayList<>();
-        fileService = new FileService();
     }
 
     @Override
@@ -100,8 +97,6 @@ public class SectionImpl implements Section {
         } else {
             addPicket(newPicket);
         }
-
-        fileService.addAssociation(newPicket.getExperimentalData(), file);
     }
 
     @Override
@@ -109,15 +104,11 @@ public class SectionImpl implements Section {
         MODFile modFile = SonetImport.readMOD(file);
         ModelData modelData = new ModelData(modFile);
         setModelData(picketNumber, modelData);
-
-        fileService.addAssociation(modelData, file);
     }
 
     @Override
     public void loadFromJson(File file) throws Exception {
         this.pickets = GemJson.readPicketList(file);
-
-        fileService.addAssociation(pickets, file);
     }
 
     @Override
