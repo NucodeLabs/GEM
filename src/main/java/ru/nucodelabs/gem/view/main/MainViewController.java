@@ -10,8 +10,10 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.gem.core.ViewManager;
+import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.utils.OSDetector;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
@@ -46,7 +48,7 @@ public class MainViewController extends Controller implements Initializable {
      */
     private ModelCurveDragger modelCurveDragger;
     private final VESCurvesNavigator vesCurvesNavigator;
-    private final ViewManager viewManager;
+    private final ViewService viewService;
 
     /**
      * Properties
@@ -72,11 +74,11 @@ public class MainViewController extends Controller implements Initializable {
     /**
      * Initialization
      *
-     * @param viewManager View Manager
+     * @param viewService View Manager
      * @param section     VES Data
      */
-    public MainViewController(ViewManager viewManager, Section section) {
-        this.viewManager = viewManager;
+    public MainViewController(ViewService viewService, Section section) {
+        this.viewService = viewService;
         this.section = section;
 
         currentPicket = new SimpleIntegerProperty(-1);
@@ -107,6 +109,8 @@ public class MainViewController extends Controller implements Initializable {
         vesNumber = new SimpleStringProperty("0/0");
     }
 
+    @FXML
+    public VBox root;
     @FXML
     public VESCurves vesCurves;
     @FXML
@@ -140,16 +144,20 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    private Stage getStage() {
+        return (Stage) root.getScene().getWindow();
+    }
+
     public void closeFile() {
-        viewManager.close(this);
-        viewManager.start();
+        viewService.close(getStage());
+        viewService.start();
     }
 
     /**
      * Asks which EXP files and then imports them to current window
      */
     public void importEXP() {
-        List<File> files = viewManager.showOpenEXPFileChooser(this);
+        List<File> files = viewService.showOpenEXPFileChooser(getStage());
         if (files != null && files.size() != 0) {
             for (var file : files) {
                 addEXP(file);
@@ -161,7 +169,7 @@ public class MainViewController extends Controller implements Initializable {
         try {
             section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
         } catch (Exception e) {
-            viewManager.alertIncorrectFile(this, e);
+            viewService.alertIncorrectFile(getStage(), e);
             return;
         }
         currentPicket.set(currentPicket.get() + 1);
@@ -170,12 +178,12 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     public void openSection() {
-        File file = viewManager.showOpenJsonFileChooser(this);
+        File file = viewService.showOpenJsonFileChooser(getStage());
         if (file != null) {
             try {
                 section.loadFromJson(file);
             } catch (Exception e) {
-                viewManager.alertIncorrectFile(this, e);
+                viewService.alertIncorrectFile(getStage(), e);
                 return;
             }
             currentPicket.set(0);
@@ -184,12 +192,12 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     public void saveSection() {
-        File file = viewManager.showSaveJsonFileChooser(this);
+        File file = viewService.showSaveJsonFileChooser(getStage());
         if (file != null) {
             try {
                 section.saveToJson(file);
             } catch (Exception e) {
-                viewManager.alertIncorrectFile(this, e);
+                viewService.alertIncorrectFile(getStage(), e);
             }
         }
     }
@@ -211,7 +219,7 @@ public class MainViewController extends Controller implements Initializable {
     private void compatibilityModeAlert() {
         ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
         if (experimentalData.isUnsafe()) {
-            viewManager.alertExperimentalDataIsUnsafe(this, section.getPicket(currentPicket.get()).getName());
+            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).getName());
         }
     }
 
@@ -219,14 +227,14 @@ public class MainViewController extends Controller implements Initializable {
      * Opens new window
      */
     public void newWindow() {
-        viewManager.start();
+        viewService.start();
     }
 
     /**
      * Asks which file to import and then import it
      */
     public void importMOD() {
-        File file = viewManager.showOpenMODFileChooser(this);
+        File file = viewService.showOpenMODFileChooser(getStage());
 
         if (file == null) {
             return;
@@ -235,7 +243,7 @@ public class MainViewController extends Controller implements Initializable {
         try {
             section.loadModelDataFromMODFile(currentPicket.get(), file);
         } catch (Exception e) {
-            viewManager.alertIncorrectFile(this, e);
+            viewService.alertIncorrectFile(getStage(), e);
         }
 
         updateAll();
@@ -302,7 +310,7 @@ public class MainViewController extends Controller implements Initializable {
                         section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewManager.alertNoLib(this, e);
+                viewService.alertNoLib(getStage(), e);
             }
         }
 
@@ -387,7 +395,7 @@ public class MainViewController extends Controller implements Initializable {
                         section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewManager.alertNoLib(this, e);
+                viewService.alertNoLib(getStage(), e);
             }
         }
 
