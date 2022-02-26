@@ -36,8 +36,7 @@ public class ViewService {
      * Opens new main view
      */
     public void start() {
-        FXMLLoader fxmlLoader;
-        fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
+        FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
         fxmlLoader.setControllerFactory(createMainViewController);
         try {
