@@ -12,7 +12,7 @@
       xmlns:fx="http://javafx.com/fxml"
       stylesheets="@../common.css"
       maxWidth="Infinity" maxHeight="Infinity"
-      fx:controller="ru.nucodelabs.gem.view.main.MainViewController">
+      fx:controller="ru.nucodelabs.gem.view.main.MainViewController" fx:id="root">
     <MenuBar fx:id="menuBar">
         <Menu text="%file">
             <MenuItem text="%newWindow" onAction="#newWindow"/>

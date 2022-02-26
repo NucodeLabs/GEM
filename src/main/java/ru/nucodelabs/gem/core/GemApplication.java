@@ -12,8 +12,8 @@ public class GemApplication extends javafx.application.Application {
     public void start(Stage stage) {
         ModelProvider modelProvider = new ModelProvider();
         ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        ViewManager viewManager = new ViewManager(modelProvider, uiProperties);
+        ViewService viewService = new ViewService(modelProvider, uiProperties);
 
-        viewManager.start();
+        viewService.start();
     }
 }
