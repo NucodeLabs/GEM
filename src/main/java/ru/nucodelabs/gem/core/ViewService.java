@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
@@ -24,21 +23,15 @@ public class ViewService {
     private final ModelProvider modelProvider;
     private final ResourceBundle uiProperties;
 
-    private final Callback<Class<?>, Object> createMainViewController;
-
     public ViewService(ModelProvider modelProvider, ResourceBundle uiProperties) {
         this.modelProvider = modelProvider;
         this.uiProperties = uiProperties;
-        createMainViewController = (controllerClass) -> new MainViewController(this, modelProvider.getSection());
     }
 
-    /**
-     * Opens new main view
-     */
     public void start() {
         FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
-        fxmlLoader.setControllerFactory(createMainViewController);
+        fxmlLoader.setControllerFactory(this::createMainViewController);
         try {
             fxmlLoader.load();
         } catch (IOException e) {
@@ -49,6 +42,16 @@ public class ViewService {
         stage.setWidth(1280);
         stage.setHeight(720);
         stage.show();
+    }
+
+    /**
+     * Main View Controller factory method
+     *
+     * @param type class of controller
+     * @return new controller instance
+     */
+    private Object createMainViewController(Class<?> type) {
+        return new MainViewController(this, modelProvider.getSection());
     }
 
     /**
