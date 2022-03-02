@@ -49,7 +49,7 @@ public class MainViewController extends Controller implements Initializable {
     private ModelCurveDragger modelCurveDragger;
     private final ViewService viewService;
 
-    private final ResourceBundle uiProperties;
+    private ResourceBundle uiProperties;
 
     /**
      * Properties
@@ -78,10 +78,9 @@ public class MainViewController extends Controller implements Initializable {
      * @param viewService View Manager
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section, ResourceBundle uiProperties) {
+    public MainViewController(ViewService viewService, Section section) {
         this.viewService = viewService;
         this.section = section;
-        this.uiProperties = uiProperties;
 
         currentPicket = new SimpleIntegerProperty(-1);
 
@@ -117,6 +116,7 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        uiProperties = resources;
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
                 new XYChart.Data<>(
                         (Double) vesCurves
