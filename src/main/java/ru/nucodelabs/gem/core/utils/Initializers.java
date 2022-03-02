@@ -56,7 +56,7 @@ public class Initializers {
      * @param <N>  class of root node
      */
     public static <N extends Node> void addCloseShortcutMacOS(N root) {
-        if (new OSDetector().isMacOS()) {
+        if (OSDetect.isMacOS()) {
             root.addEventFilter(KeyEvent.KEY_PRESSED,
                     e -> {
                         KeyCodeCombination closeShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);

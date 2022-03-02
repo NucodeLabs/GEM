@@ -127,12 +127,12 @@ public class ModelCurveDragger {
                 if (modelData != null) {
                     int index1 = pointPowerMap.get(point1);
                     int index2 = index1 + 1; // neighbor
-                    double initialValue1 = modelData.getPower().get(index1);
-                    double initialValue2 = modelData.getPower().get(index2);
+                    double initialValue1 = modelData.power().get(index1);
+                    double initialValue2 = modelData.power().get(index2);
                     double newValue1 = pow(10, log10(initialValue1) - diff);
                     double newValue2 = pow(10, log10(initialValue2) + diff);
-                    modelData.getPower().set(index1, newValue1);
-                    modelData.getPower().set(index2, newValue2);
+                    modelData.power().set(index1, newValue1);
+                    modelData.power().set(index2, newValue2);
                 }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
@@ -140,7 +140,7 @@ public class ModelCurveDragger {
                 if (modelData != null) {
                     int index = pointResistanceMap.get(point1);
                     double newValue = pow(10, mouseY);
-                    modelData.getResistance().set(index, newValue);
+                    modelData.resistance().set(index, newValue);
                 }
             }
         }
@@ -164,7 +164,7 @@ public class ModelCurveDragger {
         pointResistanceMap = new HashMap<>();
         this.modelData = modelData;
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
-        var resistance = modelData.getResistance();
+        var resistance = modelData.resistance();
         for (var point : points) {
             for (int i = 0; i < resistance.size(); i++) {
                 if (point.getYValue() == log10(resistance.get(i))) {
@@ -173,17 +173,17 @@ public class ModelCurveDragger {
             }
         }
 
-        if (pointResistanceMap.values().stream().distinct().count() != modelData.getResistance().size()) {
+        if (pointResistanceMap.values().stream().distinct().count() != modelData.resistance().size()) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
                             pointResistanceMap.values().stream().distinct().count(),
-                            modelData.getResistance().size()
+                            modelData.resistance().size()
                     )
             );
         }
 
         pointPowerMap = new HashMap<>();
-        var power = modelData.getPower();
+        var power = modelData.power();
         double currentHeight = 0;
         List<Double> height = new ArrayList<>();
 
@@ -200,11 +200,11 @@ public class ModelCurveDragger {
             }
         }
 
-        if (pointPowerMap.values().stream().distinct().count() != modelData.getPower().size() - 1) {
+        if (pointPowerMap.values().stream().distinct().count() != modelData.power().size() - 1) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
                             pointPowerMap.values().stream().distinct().count(),
-                            modelData.getPower().size()
+                            modelData.power().size()
                     )
             );
         }

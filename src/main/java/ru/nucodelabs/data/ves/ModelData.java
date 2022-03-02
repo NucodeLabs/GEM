@@ -1,29 +1,26 @@
 package ru.nucodelabs.data.ves;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.MODFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ModelData {
-    /**
-     * Сопротивление, Ом * м
-     */
-    private List<Double> resistance; // get set
-    /**
-     * Поляризация, %
-     */
-    private List<Double> polarization; // get set
-    /**
-     * Мощность, м
-     */
-    private List<Double> power; // get set
-
-    public ModelData(MODFile modFile) {
-        resistance = modFile.getResistance();
-        polarization = modFile.getPolarization();
-        power = modFile.getPower();
+public record ModelData(
+        // Сопротивление, Ом * м
+        List<Double> resistance,
+        // Поляризация, %
+        List<Double> polarization,
+        // Мощность, м
+        List<Double> power
+) {
+    public static ModelData of(MODFile modFile) {
+        return new ModelData(
+                modFile.getResistance(),
+                modFile.getPolarization(),
+                modFile.getPower()
+        );
     }
 
     private List<Integer> sizesList() {
@@ -35,6 +32,7 @@ public class ModelData {
         return sizes;
     }
 
+    @JsonIgnore
     public int getSize() {
         if (sizesList().size() > 0) {
             return Collections.min(sizesList());
@@ -42,30 +40,4 @@ public class ModelData {
             return 0;
         }
     }
-
-    //region getters and setters
-    public List<Double> getResistance() {
-        return resistance;
-    }
-
-    public void setResistance(List<Double> resistance) {
-        this.resistance = resistance;
-    }
-
-    public List<Double> getPolarization() {
-        return polarization;
-    }
-
-    public void setPolarization(List<Double> polarization) {
-        this.polarization = polarization;
-    }
-
-    public List<Double> getPower() {
-        return power;
-    }
-
-    public void setPower(List<Double> power) {
-        this.power = power;
-    }
-    //endregion
 }
