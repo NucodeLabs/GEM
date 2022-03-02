@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.ViewService;
-import ru.nucodelabs.gem.core.utils.OSDetector;
+import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
@@ -136,7 +136,7 @@ public class MainViewController extends Controller implements Initializable {
                 vesCurvesData,
                 MOD_CURVE_SERIES_INDEX
         );
-        if (new OSDetector().isMacOS()) {
+        if (OSDetect.isMacOS()) {
             ResourceBundle uiProps = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProps.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
@@ -217,9 +217,9 @@ public class MainViewController extends Controller implements Initializable {
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
+        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).experimentalData();
         if (experimentalData.isUnsafe()) {
-            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).getName());
+            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).name());
         }
     }
 

@@ -24,27 +24,31 @@ public class SectionImpl implements Section {
 
     @Override
     public ModelData getModelData(int picketNumber) {
-        return pickets.get(picketNumber).getModelData();
+        return pickets.get(picketNumber).modelData();
     }
 
     @Override
     public void setModelData(int picketNumber, ModelData modelData) {
-        pickets.get(picketNumber).setModelData(modelData);
+        Picket oldP = pickets.get(picketNumber);
+        Picket newP = new Picket(oldP.name(), oldP.experimentalData(), modelData);
+        pickets.set(picketNumber, newP);
     }
 
     @Override
     public ExperimentalData getExperimentalData(int picketNumber) {
-        return pickets.get(picketNumber).getExperimentalData();
+        return pickets.get(picketNumber).experimentalData();
     }
 
     @Override
     public void setExperimentalData(int picketNumber, ExperimentalData experimentalData) {
-        pickets.get(picketNumber).setExperimentalData(experimentalData);
+        Picket oldP = pickets.get(picketNumber);
+        Picket newP = new Picket(oldP.name(), experimentalData, oldP.modelData());
+        pickets.set(picketNumber, newP);
     }
 
     @Override
     public List<Picket> getPickets() {
-        return pickets;
+        return pickets.stream().toList();
     }
 
     @Override
@@ -74,12 +78,14 @@ public class SectionImpl implements Section {
 
     @Override
     public void setName(int picketNumber, String name) {
-        pickets.get(picketNumber).setName(name);
+        Picket oldP = pickets.get(picketNumber);
+        Picket newP = new Picket(name, oldP.experimentalData(), oldP.modelData());
+        pickets.set(picketNumber, newP);
     }
 
     @Override
     public String getName(int picketNumber) {
-        return pickets.get(picketNumber).getName();
+        return pickets.get(picketNumber).name();
     }
 
     @Override
@@ -91,7 +97,7 @@ public class SectionImpl implements Section {
                         + File.separator
                         + expFile.getSTTFileName()));
 
-        Picket newPicket = new Picket(expFile, sttFile);
+        Picket newPicket = Picket.of(sttFile, expFile);
         if (pickets.size() > picketNumber + 1) {
             pickets.set(picketNumber, newPicket);
         } else {
@@ -102,7 +108,7 @@ public class SectionImpl implements Section {
     @Override
     public void loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
         MODFile modFile = SonetImport.readMOD(file);
-        ModelData modelData = new ModelData(modFile);
+        ModelData modelData = ModelData.of(modFile);
         setModelData(picketNumber, modelData);
     }
 
