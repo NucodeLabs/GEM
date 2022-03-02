@@ -17,11 +17,11 @@ public class MisfitStacksSeriesConverters {
     }
 
     public static List<XYChart.Series<Double, Double>> toMisfitStacksSeriesList(final ExperimentalData experimentalData, final ModelData modelData) {
-        final List<Double> resistance = modelData.getResistance();
-        final List<Double> power = modelData.getPower();
-        final List<Double> ab_2 = experimentalData.getAB_2();
-        final List<Double> resistanceApparent = experimentalData.getResistanceApparent();
-        final List<Double> errorResistanceApparent = experimentalData.getErrorResistanceApparent();
+        final List<Double> resistance = modelData.resistance();
+        final List<Double> power = modelData.power();
+        final List<Double> ab_2 = experimentalData.ab_2();
+        final List<Double> resistanceApparent = experimentalData.resistanceApparent();
+        final List<Double> errorResistanceApparent = experimentalData.errorResistanceApparent();
         final int size = experimentalData.getSize();
 
         ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(

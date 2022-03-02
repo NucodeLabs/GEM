@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.ViewService;
-import ru.nucodelabs.gem.core.utils.OSDetector;
+import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
@@ -47,8 +47,9 @@ public class MainViewController extends Controller implements Initializable {
      * Service-objects
      */
     private ModelCurveDragger modelCurveDragger;
-    private final VESCurvesNavigator vesCurvesNavigator;
     private final ViewService viewService;
+
+    private final ResourceBundle uiProperties;
 
     /**
      * Properties
@@ -77,9 +78,10 @@ public class MainViewController extends Controller implements Initializable {
      * @param viewService View Manager
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section) {
+    public MainViewController(ViewService viewService, Section section, ResourceBundle uiProperties) {
         this.viewService = viewService;
         this.section = section;
+        this.uiProperties = uiProperties;
 
         currentPicket = new SimpleIntegerProperty(-1);
 
@@ -87,11 +89,6 @@ public class MainViewController extends Controller implements Initializable {
         vesCurvesXUpperBound = new SimpleDoubleProperty(4);
         vesCurvesYLowerBound = new SimpleDoubleProperty(0);
         vesCurvesYUpperBound = new SimpleDoubleProperty(4);
-        vesCurvesNavigator = new VESCurvesNavigator(
-                vesCurvesXLowerBound, vesCurvesXUpperBound,
-                vesCurvesYLowerBound, vesCurvesYUpperBound,
-                0.1
-        );
 
         noFileOpened = new SimpleBooleanProperty(true);
 
@@ -136,9 +133,8 @@ public class MainViewController extends Controller implements Initializable {
                 vesCurvesData,
                 MOD_CURVE_SERIES_INDEX
         );
-        if (new OSDetector().isMacOS()) {
-            ResourceBundle uiProps = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-            CheckMenuItem useSystemMenu = new CheckMenuItem(uiProps.getString("useSystemMenu"));
+        if (OSDetect.isMacOS()) {
+            CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
@@ -217,9 +213,9 @@ public class MainViewController extends Controller implements Initializable {
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).getExperimentalData();
+        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).experimentalData();
         if (experimentalData.isUnsafe()) {
-            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).getName());
+            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).name());
         }
     }
 
@@ -277,30 +273,6 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    public void zoomInVesCurves() {
-        vesCurvesNavigator.zoomIn();
-    }
-
-    public void zoomOutVesCurves() {
-        vesCurvesNavigator.zoomOut();
-    }
-
-    public void moveLeftVesCurves() {
-        vesCurvesNavigator.moveLeft();
-    }
-
-    public void moveRightVesCurves() {
-        vesCurvesNavigator.moveRight();
-    }
-
-    public void moveUpVesCurves() {
-        vesCurvesNavigator.moveUp();
-    }
-
-    public void moveDownVesCurves() {
-        vesCurvesNavigator.moveDown();
-    }
-
     private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
@@ -314,6 +286,7 @@ public class MainViewController extends Controller implements Initializable {
             }
         }
 
+        theorCurveSeries.setName(uiProperties.getString("theorCurve"));
         vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
     }
 
@@ -326,9 +299,10 @@ public class MainViewController extends Controller implements Initializable {
             );
             vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
             addDraggingToModelCurveSeries(modelCurveSeries);
-        } else {
-            vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
         }
+
+        modelCurveSeries.setName(uiProperties.getString("modCurve"));
+        vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
@@ -351,12 +325,15 @@ public class MainViewController extends Controller implements Initializable {
         XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
                 section.getExperimentalData(currentPicket.get())
         );
+        expCurveSeries.setName(uiProperties.getString("expCurve"));
         XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
                 section.getExperimentalData(currentPicket.get())
         );
+        errUpperExp.setName(uiProperties.getString("expCurveUpper"));
         XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
                 section.getExperimentalData(currentPicket.get())
         );
+        errLowerExp.setName(uiProperties.getString("expCurveLower"));
         vesCurvesData.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         vesCurvesData.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         vesCurvesData.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);

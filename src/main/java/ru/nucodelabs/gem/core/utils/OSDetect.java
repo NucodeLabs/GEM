@@ -2,27 +2,30 @@ package ru.nucodelabs.gem.core.utils;
 
 import java.util.Locale;
 
-public class OSDetector {
-    private final boolean macOS;
-    private final boolean windows;
-    private final boolean linux;
+public class OSDetect {
+    private final static boolean macOS;
+    private final static boolean windows;
+    private final static boolean linux;
 
-    public OSDetector() {
+    private OSDetect() {
+    }
+
+    static {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         macOS = osName.contains("mac");
         windows = osName.contains("windows");
         linux = !macOS && !windows;
     }
 
-    public boolean isMacOS() {
+    public static boolean isMacOS() {
         return macOS;
     }
 
-    public boolean isWindows() {
+    public static boolean isWindows() {
         return windows;
     }
 
-    public boolean isLinux() {
+    public static boolean isLinux() {
         return linux;
     }
 }

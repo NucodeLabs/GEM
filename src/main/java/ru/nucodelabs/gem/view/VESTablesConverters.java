@@ -23,21 +23,21 @@ public class VESTablesConverters {
                 tableLines.add(
                         new ExperimentalTableLine(
                                 Objects.requireNonNullElse(
-                                        experimentalData.getResistanceApparent().get(i), 0d),
+                                        experimentalData.resistanceApparent().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getAB_2().get(i), 0d),
+                                        experimentalData.ab_2().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getMN_2().get(i), 0d),
+                                        experimentalData.mn_2().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getErrorResistanceApparent().get(i), 0d),
+                                        experimentalData.errorResistanceApparent().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getPolarizationApparent().get(i), 0d),
+                                        experimentalData.polarizationApparent().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getErrorPolarizationApparent().get(i), 0d),
+                                        experimentalData.errorPolarizationApparent().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getAmperage().get(i), 0d),
+                                        experimentalData.amperage().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        experimentalData.getVoltage().get(i), 0d)
+                                        experimentalData.voltage().get(i), 0d)
                         )
                 );
             }
@@ -52,11 +52,11 @@ public class VESTablesConverters {
                 tableLines.add(
                         new ModelTableLine(
                                 Objects.requireNonNullElse(
-                                        modelData.getResistance().get(i), 0d),
+                                        modelData.resistance().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        modelData.getPower().get(i), 0d),
+                                        modelData.power().get(i), 0d),
                                 Objects.requireNonNullElse(
-                                        modelData.getPolarization().get(i), 0d)
+                                        modelData.polarization().get(i), 0d)
                         )
                 );
             }

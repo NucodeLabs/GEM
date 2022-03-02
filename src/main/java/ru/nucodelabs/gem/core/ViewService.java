@@ -51,7 +51,7 @@ public class ViewService {
      * @return new controller instance
      */
     private Object createMainViewController(Class<?> type) {
-        return new MainViewController(this, modelProvider.getSection());
+        return new MainViewController(this, modelProvider.getSection(), uiProperties);
     }
 
     /**
