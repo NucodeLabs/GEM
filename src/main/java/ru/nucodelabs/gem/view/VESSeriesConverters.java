@@ -28,7 +28,6 @@ public class VESSeriesConverters {
             experimentalCurveSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        experimentalCurveSeries.setName("Экспериментальная кривая"); //TODO Использовать UI.properties, переместить в MainViewModel
         return experimentalCurveSeries;
     }
 
@@ -50,7 +49,6 @@ public class VESSeriesConverters {
             errorExperimentalCurveUpperBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        errorExperimentalCurveUpperBoundSeries.setName("Верхняя граница погрешности");
         return errorExperimentalCurveUpperBoundSeries;
     }
 
@@ -74,7 +72,6 @@ public class VESSeriesConverters {
             errorExperimentalCurveLowerBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        errorExperimentalCurveLowerBoundSeries.setName("Нижняя граница погрешности");
         return errorExperimentalCurveLowerBoundSeries;
     }
 
@@ -100,7 +97,6 @@ public class VESSeriesConverters {
             theoreticalCurveSeries.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        theoreticalCurveSeries.setName("Теоретическая кривая");
         return theoreticalCurveSeries;
     }
 
@@ -148,7 +144,6 @@ public class VESSeriesConverters {
                 )
         );
 
-        modelCurveSeries.setName("Кривая модели");
         return modelCurveSeries;
     }
 }
