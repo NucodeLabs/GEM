@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static ru.nucodelabs.data.ves.Sizes.isEqualSizes;
+import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ExperimentalData(
         // AB/2, м
@@ -39,27 +40,13 @@ public record ExperimentalData(
         );
     }
 
-    private List<Integer> sizesList() {
-        List<Integer> sizes = new ArrayList<>();
-        if (ab_2.size() > 0) sizes.add(ab_2.size());
-        if (mn_2.size() > 0) sizes.add(mn_2.size());
-        if (amperage.size() > 0) sizes.add(amperage.size());
-        if (voltage.size() > 0) sizes.add(voltage.size());
-        if (resistanceApparent.size() > 0) sizes.add(resistanceApparent.size());
-        if (errorResistanceApparent.size() > 0) sizes.add(errorPolarizationApparent.size());
-        if (polarizationApparent.size() > 0) sizes.add(polarizationApparent.size());
-        if (errorPolarizationApparent.size() > 0) sizes.add(errorPolarizationApparent.size());
-
-        return sizes;
-    }
-
     @JsonIgnore
     public boolean isUnsafe() {
-        return sizesList().stream().distinct().count() != 1;
+        return !isEqualSizes(this, true);
     }
 
     @JsonIgnore
     public Integer getSize() {
-        return Collections.min(sizesList());
+        return minSize(this, true);
     }
 }
