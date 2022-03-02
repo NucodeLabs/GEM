@@ -33,6 +33,13 @@ public class Sizes {
         return res;
     }
 
+    /**
+     * Counts minimal size of all fields that are {@code List} of {@code Number} in object {@code data}
+     *
+     * @param data         object with lists of numbers
+     * @param nonEmptyOnly exclude empty lists
+     * @return minimal size of lists
+     */
     protected static int minSize(Object data, boolean nonEmptyOnly) {
         var sizesList = sizesList(data, nonEmptyOnly);
         if (sizesList.isEmpty()) {
@@ -42,6 +49,13 @@ public class Sizes {
         }
     }
 
+    /**
+     * Returns if all sizes of all fields that are {@code List} of {@code Number} in object {@code data} are equal
+     *
+     * @param data         object with lists of numbers
+     * @param nonEmptyOnly exclude empty lists
+     * @return if lists sizes are equal
+     */
     protected static boolean isEqualSizes(Object data, boolean nonEmptyOnly) {
         return sizesList(data, nonEmptyOnly).stream().distinct().count() == 1;
     }
