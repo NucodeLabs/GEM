@@ -140,7 +140,8 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    private Stage getStage() {
+    @Override
+    protected Stage getStage() {
         return (Stage) root.getScene().getWindow();
     }
 
