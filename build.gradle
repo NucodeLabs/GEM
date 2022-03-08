@@ -6,7 +6,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 buildscript {
     dependencies {
-        classpath 'io.github.fvarrui:javapackager:1.6.3'
+        classpath 'io.github.fvarrui:javapackager:1.6.4'
     }
 }
 
@@ -178,6 +178,7 @@ javapackager {
     bundleJre = true
     organizationName = "NucodeLabs"
     name = "GEM"
+    applicationName = "GEM"
     version = "0.1"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
@@ -198,11 +199,11 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
 }
 
 task packageWindowsExe(type: PackageTask, dependsOn: build) {
-    generateInstaller = true
+    generateInstaller = false
     winConfig {
-        generateSetup = true
+        generateSetup = false
         generateMsi = false
-        exeCreationTool = WindowsExeCreationTool.winrun4j
+        exeCreationTool = WindowsExeCreationTool.launch4j
         icoFile = file("src/main/resources/img/gem.ico")
         setupMode = SetupMode.askTheUser
         removeOldLibs = true
