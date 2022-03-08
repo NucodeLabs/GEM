@@ -6,7 +6,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 buildscript {
     dependencies {
-        classpath 'io.github.fvarrui:javapackager:1.6.4'
+        classpath "io.github.fvarrui:javapackager:${DefaultNativePlatform.currentOperatingSystem.isMacOsX() ? "1.6.3" : "1.6.4"}"
     }
 }
 
@@ -189,11 +189,10 @@ javapackager {
 }
 
 task packageMacApp(type: PackageTask, dependsOn: build) {
-    useResourcesAsWorkingDir = true
-    generateInstaller = true
+    generateInstaller = false
     macConfig {
         icnsFile = file("src/main/resources/img/gem.icns")
-        generateDmg = true
+        generateDmg = false
         generatePkg = false
     }
 }
