@@ -145,8 +145,7 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     public void closeFile() {
-        viewService.close(getStage());
-        viewService.start();
+        getStage().close();
     }
 
     /**
@@ -297,12 +296,14 @@ public class MainViewController extends Controller implements Initializable {
             modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
                     section.getModelData(currentPicket.get())
             );
-            vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
-            addDraggingToModelCurveSeries(modelCurveSeries);
         }
 
         modelCurveSeries.setName(uiProperties.getString("modCurve"));
         vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
+
+        if (section.getModelData(currentPicket.get()) != null) {
+            addDraggingToModelCurveSeries(modelCurveSeries);
+        }
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {

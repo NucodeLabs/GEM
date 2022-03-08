@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.core;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.MainViewController;
@@ -41,6 +42,8 @@ public class ViewService {
         stage.setScene(new Scene(fxmlLoader.getRoot()));
         stage.setWidth(1280);
         stage.setHeight(720);
+        stage.setTitle("GEM");
+        stage.getIcons().add(new Image("img/gem.png"));
         stage.show();
     }
 
@@ -52,15 +55,6 @@ public class ViewService {
      */
     private Object createMainViewController(Class<?> type) {
         return new MainViewController(this, modelProvider.getSection());
-    }
-
-    /**
-     * Closes stage (window) that associated with controller
-     *
-     * @param stage stage to close
-     */
-    public void close(Stage stage) {
-        stage.close();
     }
 
     /**
