@@ -103,7 +103,11 @@
                         </Tab>
                         <Tab text="%modelTable" closable="false">
                             <ModelTable
-                                    items="${controller.modelTableData}"/>
+                                    items="${controller.modelTableData}">
+                                <placeholder>
+                                    <Button text="%newModel"/>
+                                </placeholder>
+                            </ModelTable>
                         </Tab>
                     </TabPane>
                 </SplitPane>

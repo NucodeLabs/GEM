@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
+import static java.util.Objects.requireNonNull;
 
 public class MainViewController extends Controller implements Initializable {
 
@@ -79,8 +80,8 @@ public class MainViewController extends Controller implements Initializable {
      * @param section     VES Data
      */
     public MainViewController(ViewService viewService, Section section) {
-        this.viewService = viewService;
-        this.section = section;
+        this.viewService = requireNonNull(viewService);
+        this.section = requireNonNull(section);
 
         currentPicket = new SimpleIntegerProperty(-1);
 
@@ -116,7 +117,7 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        uiProperties = resources;
+        uiProperties = requireNonNull(resources);
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
                 new XYChart.Data<>(
                         (Double) vesCurves
