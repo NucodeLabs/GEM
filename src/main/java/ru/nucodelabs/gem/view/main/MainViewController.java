@@ -146,6 +146,11 @@ public class MainViewController extends Controller implements Initializable {
         return (Stage) root.getScene().getWindow();
     }
 
+    /**
+     * <h1>Event Handlers</h1>
+     */
+
+    @FXML
     public void closeFile() {
         getStage().close();
     }
@@ -163,18 +168,7 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    private void addEXP(File file) {
-        try {
-            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
-        } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
-            return;
-        }
-        currentPicket.set(currentPicket.get() + 1);
-        compatibilityModeAlert();
-        updateAll();
-    }
-
+    @FXML
     public void openSection() {
         File file = viewService.showOpenJsonFileChooser(getStage());
         if (file != null) {
@@ -189,6 +183,7 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    @FXML
     public void saveSection() {
         File file = viewService.showSaveJsonFileChooser(getStage());
         if (file != null) {
@@ -198,6 +193,62 @@ public class MainViewController extends Controller implements Initializable {
                 viewService.alertIncorrectFile(getStage(), e);
             }
         }
+    }
+
+    /**
+     * Opens new window
+     */
+    @FXML
+    public void newWindow() {
+        viewService.start();
+    }
+
+    /**
+     * Asks which file to import and then import it
+     */
+    @FXML
+    public void importMOD() {
+        File file = viewService.showOpenMODFileChooser(getStage());
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            section.loadModelDataFromMODFile(currentPicket.get(), file);
+        } catch (Exception e) {
+            viewService.alertIncorrectFile(getStage(), e);
+        }
+
+        updateAll();
+    }
+
+    @FXML
+    public void switchToNextPicket() {
+        if (section.getPicketsCount() > currentPicket.get() + 1) {
+            currentPicket.set(currentPicket.get() + 1);
+            updateAll();
+        }
+    }
+
+    @FXML
+    public void switchToPrevPicket() {
+        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
+            currentPicket.set(currentPicket.get() - 1);
+            updateAll();
+        }
+    }
+
+    private void addEXP(File file) {
+        try {
+            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
+        } catch (Exception e) {
+            viewService.alertIncorrectFile(getStage(), e);
+            return;
+        }
+        currentPicket.set(currentPicket.get() + 1);
+        compatibilityModeAlert();
+        updateAll();
     }
 
     /**
@@ -221,31 +272,6 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    /**
-     * Opens new window
-     */
-    public void newWindow() {
-        viewService.start();
-    }
-
-    /**
-     * Asks which file to import and then import it
-     */
-    public void importMOD() {
-        File file = viewService.showOpenMODFileChooser(getStage());
-
-        if (file == null) {
-            return;
-        }
-
-        try {
-            section.loadModelDataFromMODFile(currentPicket.get(), file);
-        } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
-        }
-
-        updateAll();
-    }
 
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
@@ -259,20 +285,6 @@ public class MainViewController extends Controller implements Initializable {
         updateMisfitStacks();
         updateVESText();
         updateVESNumber();
-    }
-
-    public void switchToNextPicket() {
-        if (section.getPicketsCount() > currentPicket.get() + 1) {
-            currentPicket.set(currentPicket.get() + 1);
-            updateAll();
-        }
-    }
-
-    public void switchToPrevPicket() {
-        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
-            currentPicket.set(currentPicket.get() - 1);
-            updateAll();
-        }
     }
 
     private void updateTheoreticalCurve() {
