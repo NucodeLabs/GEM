@@ -1,122 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks?>
 <?import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen?>
 <?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
 <?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
 <?import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable?>
 <?import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      stylesheets="@../common.css"
-      maxWidth="Infinity" maxHeight="Infinity"
-      fx:controller="ru.nucodelabs.gem.view.main.MainViewController" fx:id="root">
-    <MenuBar fx:id="menuBar">
-        <Menu text="%file">
-            <MenuItem text="%newWindow" onAction="#newWindow"/>
-            <Menu text="%open">
-                <MenuItem text="%section" fx:id="menuFileOpenSection" onAction="#openSection"/>
-                <MenuItem text="%picket"/>
-            </Menu>
-            <Menu text="%import">
-                <Menu text="%picket">
-                    <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
-                    <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
-                </Menu>
-            </Menu>
-            <Menu text="%save">
-                <MenuItem text="%section" onAction="#saveSection"
-                          disable="${controller.noFileOpened}"/>
-                <MenuItem text="%picket"/>
-            </Menu>
-            <MenuItem text="%close" onAction="#closeFile"/>
-        </Menu>
-        <Menu text="%edit">
-            <MenuItem text="Delete"/>
-        </Menu>
-        <Menu fx:id="menuView" text="%view">
-            <Menu text="%legend">
-                <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%ves"/>
-            </Menu>
-        </Menu>
-        <Menu text="%help">
-            <MenuItem text="%about"/>
-        </Menu>
-    </MenuBar>
-    <StackPane>
+<Stage xmlns="http://javafx.com/javafx"
+       xmlns:fx="http://javafx.com/fxml"
+       maxWidth="Infinity" maxHeight="Infinity"
+       fx:controller="ru.nucodelabs.gem.view.main.MainViewController"
+       fx:id="root"
+       width="1280"
+       height="720"
+       title="GEM">
+    <icons>
+        <Image url="@../../../../../img/gem.png"/>
+    </icons>
+    <scene>
+        <Scene stylesheets="@../common.css">
+            <VBox>
+                <MenuBar fx:id="menuBar">
+                    <Menu text="%file">
+                        <MenuItem text="%newWindow" onAction="#newWindow"/>
+                        <Menu text="%open">
+                            <MenuItem text="%section" fx:id="menuFileOpenSection" onAction="#openSection"/>
+                            <MenuItem text="%picket"/>
+                        </Menu>
+                        <Menu text="%import">
+                            <Menu text="%picket">
+                                <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
+                                <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
+                            </Menu>
+                        </Menu>
+                        <Menu text="%save">
+                            <MenuItem text="%section" onAction="#saveSection" disable="${controller.noFileOpened}"/>
+                            <MenuItem text="%picket"/>
+                        </Menu>
+                        <MenuItem text="%close" onAction="#closeFile"/>
+                    </Menu>
+                    <Menu text="%edit">
+                        <MenuItem text="Delete"/>
+                    </Menu>
+                    <Menu fx:id="menuView" text="%view">
+                        <Menu text="%legend">
+                            <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%ves"/>
+                        </Menu>
+                    </Menu>
+                    <Menu text="%help">
+                        <MenuItem text="%about"/>
+                    </Menu>
+                </MenuBar>
+                <StackPane>
 
-        <SplitPane orientation="VERTICAL">
-            <SplitPane orientation="VERTICAL">
-                <Placeholder text="%pseudoSection"/>
-                <Placeholder text="%geoSection"/>
-            </SplitPane>
+                    <SplitPane orientation="VERTICAL">
+                        <SplitPane orientation="VERTICAL">
+                            <Placeholder text="%pseudoSection"/>
+                            <Placeholder text="%geoSection"/>
+                        </SplitPane>
 
-            <VBox maxWidth="Infinity"
-                  maxHeight="Infinity"
-                  VBox.vgrow="ALWAYS">
+                        <VBox maxWidth="Infinity"
+                              maxHeight="Infinity"
+                              VBox.vgrow="ALWAYS">
 
-                <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-background-color: WhiteSmoke">
-                    <HBox style="-fx-padding: 5">
-                        <Button style="-fx-pref-width: 35" text="%left"
-                                onAction="#switchToPrevPicket"/>
-                    </HBox>
-                    <HBox style="-fx-padding: 5">
-                        <Button style="-fx-pref-width: 35" text="%right"
-                                onAction="#switchToNextPicket"/>
-                    </HBox>
-                    <Label style="-fx-padding: 5; -fx-text-fill: Gray"
-                           text="${controller.vesNumber}"/>
-                    <Label style="-fx-padding: 5"
-                           text="${controller.vesTitle}"/>
-                    <HBox HBox.hgrow="ALWAYS"/>
-                    <HBox style="-fx-padding: 5">
-                        <Button text="%inverse"/>
-                    </HBox>
-                    <HBox style="-fx-padding: 5">
-                        <Button text="Button 2"/>
-                    </HBox>
-                    <HBox style="-fx-padding: 5">
-                        <Button text="Button 3"/>
-                    </HBox>
+                            <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-background-color: WhiteSmoke">
+                                <HBox style="-fx-padding: 5">
+                                    <Button style="-fx-pref-width: 35" text="%left" onAction="#switchToPrevPicket"/>
+                                </HBox>
+                                <HBox style="-fx-padding: 5">
+                                    <Button style="-fx-pref-width: 35" text="%right" onAction="#switchToNextPicket"/>
+                                </HBox>
+                                <Label style="-fx-padding: 5; -fx-text-fill: Gray" text="${controller.vesNumber}"/>
+                                <Label style="-fx-padding: 5" text="${controller.vesTitle}"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <HBox style="-fx-padding: 5">
+                                    <Button text="%inverse"/>
+                                </HBox>
+                                <HBox style="-fx-padding: 5">
+                                    <Button text="Button 2"/>
+                                </HBox>
+                                <HBox style="-fx-padding: 5">
+                                    <Button text="Button 3"/>
+                                </HBox>
 
-                </HBox>
-                <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                            </HBox>
+                            <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
+                                       VBox.vgrow="ALWAYS">
 
-                    <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity" VBox.vgrow="ALWAYS">
-                        <MisfitStacks
-                                lowerBoundX="${vesCurves.lowerBoundX}"
-                                data="${controller.misfitStacksData}"/>
-                        <VESCurves fx:id="vesCurves"
-                                   lowerBoundX="${controller.vesCurvesXLowerBound}"
-                                   upperBoundX="${controller.vesCurvesXUpperBound}"
-                                   lowerBoundY="${controller.vesCurvesYLowerBound}"
-                                   upperBoundY="${controller.vesCurvesYUpperBound}"
-                                   legendVisible="${menuViewVESCurvesLegend.selected}"
-                                   data="${controller.vesCurvesData}"/>
+                                <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
+                                           VBox.vgrow="ALWAYS">
+                                    <MisfitStacks
+                                            lowerBoundX="${vesCurves.lowerBoundX}"
+                                            data="${controller.misfitStacksData}"/>
+                                    <VESCurves fx:id="vesCurves"
+                                               lowerBoundX="${controller.vesCurvesXLowerBound}"
+                                               upperBoundX="${controller.vesCurvesXUpperBound}"
+                                               lowerBoundY="${controller.vesCurvesYLowerBound}"
+                                               upperBoundY="${controller.vesCurvesYUpperBound}"
+                                               legendVisible="${menuViewVESCurvesLegend.selected}"
+                                               data="${controller.vesCurvesData}"/>
+                                </SplitPane>
+                                <TabPane VBox.vgrow="ALWAYS">
+                                    <Tab text="%experimentalTable" closable="false">
+                                        <ExperimentalTable
+                                                items="${controller.expTableData}"/>
+                                    </Tab>
+                                    <Tab text="%modelTable" closable="false">
+                                        <ModelTable
+                                                items="${controller.modelTableData}">
+                                            <placeholder>
+                                                <Button text="%newModel"/>
+                                            </placeholder>
+                                        </ModelTable>
+                                    </Tab>
+                                </TabPane>
+                            </SplitPane>
+                        </VBox>
                     </SplitPane>
-                    <TabPane VBox.vgrow="ALWAYS">
-                        <Tab text="%experimentalTable" closable="false">
-                            <ExperimentalTable
-                                    items="${controller.expTableData}"/>
-                        </Tab>
-                        <Tab text="%modelTable" closable="false">
-                            <ModelTable
-                                    items="${controller.modelTableData}">
-                                <placeholder>
-                                    <Button text="%newModel"/>
-                                </placeholder>
-                            </ModelTable>
-                        </Tab>
-                    </TabPane>
-                </SplitPane>
-            </VBox>
-        </SplitPane>
 
-        <NoFileScreen fx:id="noFileScreen"
-                      visible="${controller.noFileOpened}"
-                      openSectionOnAction="${menuFileOpenSection.onAction}"
-                      openEXPOnAction="${menuFileOpenEXP.onAction}"/>
-    </StackPane>
-</VBox>
+                    <NoFileScreen fx:id="noFileScreen"
+                                  visible="${controller.noFileOpened}"
+                                  openSectionOnAction="${menuFileOpenSection.onAction}"
+                                  openEXPOnAction="${menuFileOpenEXP.onAction}"/>
+                </StackPane>
+            </VBox>
+        </Scene>
+    </scene>
+</Stage>
