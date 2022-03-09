@@ -1,15 +1,12 @@
 package ru.nucodelabs.gem.core;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -34,17 +31,10 @@ public class ViewService {
         Objects.requireNonNull(fxmlLoader);
         fxmlLoader.setControllerFactory(this::createMainViewController);
         try {
-            fxmlLoader.load();
+            ((Stage) fxmlLoader.load()).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage stage = new Stage();
-        stage.setScene(new Scene(fxmlLoader.getRoot()));
-        stage.setWidth(1280);
-        stage.setHeight(720);
-        stage.setTitle("GEM");
-        stage.getIcons().add(new Image("img/gem.png"));
-        stage.show();
     }
 
     /**
@@ -122,16 +112,6 @@ public class ViewService {
         alert.setTitle(uiProperties.getString("compatibilityMode"));
         alert.setHeaderText(picketName + " - " + uiProperties.getString("EXPSTTMismatch"));
         alert.setContentText(uiProperties.getString("minimalDataWillBeDisplayed"));
-        alert.initOwner(stage);
-        alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
-        alert.show();
-    }
-
-    public void alertFileNotFound(Stage stage, FileNotFoundException e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(uiProperties.getString("error"));
-        alert.setHeaderText(uiProperties.getString("fileNotFound"));
-        alert.setContentText(e.getMessage());
         alert.initOwner(stage);
         alert.getDialogPane().getStylesheets().add("ru/nucodelabs/gem/view/common.css");
         alert.show();

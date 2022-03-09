@@ -10,7 +10,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ExperimentalTableLine;
@@ -107,7 +106,7 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     @FXML
-    public VBox root;
+    public Stage root;
     @FXML
     public VESCurves vesCurves;
     @FXML
@@ -143,7 +142,7 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     protected Stage getStage() {
-        return (Stage) root.getScene().getWindow();
+        return root;
     }
 
     /**
