@@ -213,3 +213,11 @@ task packageWindowsExe(type: PackageTask, dependsOn: build) {
     }
 }
 
+task packageLinuxApplication(type: PackageTask, dependsOn: build) {
+    generateInstaller = true
+    linuxConfig {
+        generateDeb = true
+        generateRpm = true
+        wrapJar = true
+    }
+}
