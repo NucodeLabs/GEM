@@ -76,8 +76,7 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'ru.nucodelabs'
-    mainClass = 'ru.nucodelabs.gem.StartGemApplication'
+    mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
 }
 
 javafx {

@@ -13,13 +13,13 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
+import ru.nucodelabs.data.ves.ExperimentalTableLine;
+import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.io.File;
 import java.net.URL;
@@ -153,6 +153,7 @@ public class MainViewController extends Controller implements Initializable {
     /**
      * Asks which EXP files and then imports them to current window
      */
+    @FXML
     public void importEXP() {
         List<File> files = viewService.showOpenEXPFileChooser(getStage());
         if (files != null && files.size() != 0) {

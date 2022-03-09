@@ -4,8 +4,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import ru.nucodelabs.data.ves.ExperimentalTableLine;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
 
 public class ExperimentalTable extends VBUserControl {
     @FXML

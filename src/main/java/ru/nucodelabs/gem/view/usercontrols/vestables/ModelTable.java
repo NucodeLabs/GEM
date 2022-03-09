@@ -5,8 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
+import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 public class ModelTable extends VBUserControl {
     @FXML
