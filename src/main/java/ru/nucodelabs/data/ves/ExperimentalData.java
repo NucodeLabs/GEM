@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNullElse;
 import static ru.nucodelabs.data.ves.Sizes.isEqualSizes;
 import static ru.nucodelabs.data.ves.Sizes.minSize;
 
@@ -38,6 +40,26 @@ public record ExperimentalData(
                 expFile.getPolarizationApparent(),
                 expFile.getErrorPolarizationApparent()
         );
+    }
+
+    @JsonIgnore
+    public List<ExperimentalTableLine> getLines() {
+        List<ExperimentalTableLine> res = new ArrayList<>();
+        for (int i = 0; i < getSize(); i++) {
+            res.add(
+                    new ExperimentalTableLine(
+                            requireNonNullElse(resistanceApparent().get(i), 0d),
+                            requireNonNullElse(ab_2().get(i), 0d),
+                            requireNonNullElse(mn_2().get(i), 0d),
+                            requireNonNullElse(errorResistanceApparent().get(i), 0d),
+                            requireNonNullElse(polarizationApparent().get(i), 0d),
+                            requireNonNullElse(errorPolarizationApparent().get(i), 0d),
+                            requireNonNullElse(amperage().get(i), 0d),
+                            requireNonNullElse(voltage().get(i), 0d)
+                    )
+            );
+        }
+        return res;
     }
 
     @JsonIgnore

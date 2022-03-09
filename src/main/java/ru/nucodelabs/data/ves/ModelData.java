@@ -3,8 +3,10 @@ package ru.nucodelabs.data.ves;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.MODFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNullElse;
 import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ModelData(
@@ -26,5 +28,20 @@ public record ModelData(
     @JsonIgnore
     public int getSize() {
         return minSize(this, true);
+    }
+
+    @JsonIgnore
+    public List<ModelTableLine> getLines() {
+        List<ModelTableLine> res = new ArrayList<>();
+        for (int i = 0; i < getSize(); i++) {
+            res.add(
+                    new ModelTableLine(
+                            requireNonNullElse(resistance().get(i), 0d),
+                            requireNonNullElse(power().get(i), 0d),
+                            requireNonNullElse(polarization().get(i), 0d)
+                    )
+            );
+        }
+        return res;
     }
 }
