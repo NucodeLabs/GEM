@@ -161,3 +161,7 @@
     -fx-background-radius: 5;
     -fx-border-radius: 5;
 }
+
+.centered-column {
+    -fx-alignment: center;
+}

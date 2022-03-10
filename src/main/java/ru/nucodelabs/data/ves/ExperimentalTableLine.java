@@ -1,15 +1,19 @@
 package ru.nucodelabs.data.ves;
 
 public record ExperimentalTableLine(
-        Double resistanceApparent,
-        Double ab_2,
-        Double mn_2,
-        Double errorResistanceApparent,
-        Double polarizationApparent,
-        Double errorPolarizationApparent,
-        Double amperage,
-        Double voltage
+        int index,
+        double resistanceApparent,
+        double ab_2,
+        double mn_2,
+        double errorResistanceApparent,
+        double polarizationApparent,
+        double errorPolarizationApparent,
+        double amperage,
+        double voltage
 ) {
+    public int getIndex() {
+        return index();
+    }
 
     public double getResistanceApparent() {
         return resistanceApparent();
