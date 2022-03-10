@@ -36,6 +36,7 @@ public record ModelData(
         for (int i = 0; i < getSize(); i++) {
             res.add(
                     new ModelTableLine(
+                            i + 1,
                             requireNonNullElse(resistance().get(i), 0d),
                             requireNonNullElse(power().get(i), 0d),
                             requireNonNullElse(polarization().get(i), 0d)
