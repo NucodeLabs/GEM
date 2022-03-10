@@ -12,6 +12,7 @@ import ru.nucodelabs.files.sonet.SonetImport;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SectionImpl implements Section {
@@ -48,7 +49,7 @@ public class SectionImpl implements Section {
 
     @Override
     public List<Picket> getPickets() {
-        return pickets.stream().toList();
+        return Collections.unmodifiableList(pickets);
     }
 
     @Override
