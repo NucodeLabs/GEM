@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.core;
 
+import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
@@ -7,7 +8,7 @@ import java.util.ResourceBundle;
 /**
  * Starting up everything.
  */
-public class GemApplication extends javafx.application.Application {
+public class GemApplication extends Application {
     @Override
     public void start(Stage stage) {
         ModelProvider modelProvider = new ModelProvider();

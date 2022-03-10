@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
 
 public class VESCurves extends VBUserControl {
@@ -18,18 +17,6 @@ public class VESCurves extends VBUserControl {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
-    @FXML
-    private Button minusBtn;
-    @FXML
-    private Button plusBtn;
-    @FXML
-    private Button leftBtn;
-    @FXML
-    private Button rightBtn;
-    @FXML
-    private Button upBtn;
-    @FXML
-    private Button downBtn;
 
     public LineChart<Double, Double> getLineChart() {
         return lineChart;
