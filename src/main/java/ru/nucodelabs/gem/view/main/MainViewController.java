@@ -10,16 +10,15 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
+import ru.nucodelabs.data.ves.ExperimentalTableLine;
+import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.*;
 import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ExperimentalTableLine;
-import ru.nucodelabs.gem.view.usercontrols.vestables.tablelines.ModelTableLine;
 
 import java.io.File;
 import java.net.URL;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
+import static java.util.Objects.requireNonNull;
 
 public class MainViewController extends Controller implements Initializable {
 
@@ -79,8 +79,8 @@ public class MainViewController extends Controller implements Initializable {
      * @param section     VES Data
      */
     public MainViewController(ViewService viewService, Section section) {
-        this.viewService = viewService;
-        this.section = section;
+        this.viewService = requireNonNull(viewService);
+        this.section = requireNonNull(section);
 
         currentPicket = new SimpleIntegerProperty(-1);
 
@@ -106,7 +106,7 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     @FXML
-    public VBox root;
+    public Stage root;
     @FXML
     public VESCurves vesCurves;
     @FXML
@@ -116,7 +116,7 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        uiProperties = resources;
+        uiProperties = requireNonNull(resources);
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
                 new XYChart.Data<>(
                         (Double) vesCurves
@@ -142,9 +142,14 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     protected Stage getStage() {
-        return (Stage) root.getScene().getWindow();
+        return root;
     }
 
+    /**
+     * <h1>Event Handlers</h1>
+     */
+
+    @FXML
     public void closeFile() {
         getStage().close();
     }
@@ -152,6 +157,7 @@ public class MainViewController extends Controller implements Initializable {
     /**
      * Asks which EXP files and then imports them to current window
      */
+    @FXML
     public void importEXP() {
         List<File> files = viewService.showOpenEXPFileChooser(getStage());
         if (files != null && files.size() != 0) {
@@ -161,18 +167,7 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    private void addEXP(File file) {
-        try {
-            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
-        } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
-            return;
-        }
-        currentPicket.set(currentPicket.get() + 1);
-        compatibilityModeAlert();
-        updateAll();
-    }
-
+    @FXML
     public void openSection() {
         File file = viewService.showOpenJsonFileChooser(getStage());
         if (file != null) {
@@ -187,6 +182,7 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    @FXML
     public void saveSection() {
         File file = viewService.showSaveJsonFileChooser(getStage());
         if (file != null) {
@@ -196,6 +192,62 @@ public class MainViewController extends Controller implements Initializable {
                 viewService.alertIncorrectFile(getStage(), e);
             }
         }
+    }
+
+    /**
+     * Opens new window
+     */
+    @FXML
+    public void newWindow() {
+        viewService.start();
+    }
+
+    /**
+     * Asks which file to import and then import it
+     */
+    @FXML
+    public void importMOD() {
+        File file = viewService.showOpenMODFileChooser(getStage());
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            section.loadModelDataFromMODFile(currentPicket.get(), file);
+        } catch (Exception e) {
+            viewService.alertIncorrectFile(getStage(), e);
+        }
+
+        updateAll();
+    }
+
+    @FXML
+    public void switchToNextPicket() {
+        if (section.getPicketsCount() > currentPicket.get() + 1) {
+            currentPicket.set(currentPicket.get() + 1);
+            updateAll();
+        }
+    }
+
+    @FXML
+    public void switchToPrevPicket() {
+        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
+            currentPicket.set(currentPicket.get() - 1);
+            updateAll();
+        }
+    }
+
+    private void addEXP(File file) {
+        try {
+            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
+        } catch (Exception e) {
+            viewService.alertIncorrectFile(getStage(), e);
+            return;
+        }
+        currentPicket.set(currentPicket.get() + 1);
+        compatibilityModeAlert();
+        updateAll();
     }
 
     /**
@@ -219,31 +271,6 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
-    /**
-     * Opens new window
-     */
-    public void newWindow() {
-        viewService.start();
-    }
-
-    /**
-     * Asks which file to import and then import it
-     */
-    public void importMOD() {
-        File file = viewService.showOpenMODFileChooser(getStage());
-
-        if (file == null) {
-            return;
-        }
-
-        try {
-            section.loadModelDataFromMODFile(currentPicket.get(), file);
-        } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
-        }
-
-        updateAll();
-    }
 
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
@@ -257,20 +284,6 @@ public class MainViewController extends Controller implements Initializable {
         updateMisfitStacks();
         updateVESText();
         updateVESNumber();
-    }
-
-    public void switchToNextPicket() {
-        if (section.getPicketsCount() > currentPicket.get() + 1) {
-            currentPicket.set(currentPicket.get() + 1);
-            updateAll();
-        }
-    }
-
-    public void switchToPrevPicket() {
-        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
-            currentPicket.set(currentPicket.get() - 1);
-            updateAll();
-        }
     }
 
     private void updateTheoreticalCurve() {

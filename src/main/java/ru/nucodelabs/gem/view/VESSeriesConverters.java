@@ -19,6 +19,8 @@ public class VESSeriesConverters {
     private VESSeriesConverters() {
     }
 
+    private enum BoundType {UPPER_BOUND, LOWER_BOUND}
+
     public static XYChart.Series<Double, Double> toExperimentalCurveSeries(final ExperimentalData experimentalData) {
         XYChart.Series<Double, Double> experimentalCurveSeries = new XYChart.Series<>();
         for (int i = 0; i < experimentalData.getSize(); i++) {
@@ -32,28 +34,15 @@ public class VESSeriesConverters {
     }
 
     public static XYChart.Series<Double, Double> toErrorExperimentalCurveUpperBoundSeries(final ExperimentalData experimentalData) {
-        XYChart.Series<Double, Double> errorExperimentalCurveUpperBoundSeries = new XYChart.Series<>();
-        final int size = experimentalData.getSize();
-        final List<Double> ab_2 = experimentalData.ab_2();
-        final List<Double> errorResistanceApparent = experimentalData.errorResistanceApparent();
-        final List<Double> resistanceApparent = experimentalData.resistanceApparent();
-
-        for (int i = 0; i < size; i++) {
-            double dotX = log10(ab_2.get(i));
-            double error = errorResistanceApparent.get(i) / 100f;
-            double dotY = max(
-                    log10(resistanceApparent.get(i) + resistanceApparent.get(i) * error),
-                    0
-            );
-
-            errorExperimentalCurveUpperBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
-        }
-
-        return errorExperimentalCurveUpperBoundSeries;
+        return toErrorBoundSeries(experimentalData, BoundType.UPPER_BOUND);
     }
 
     public static XYChart.Series<Double, Double> toErrorExperimentalCurveLowerBoundSeries(final ExperimentalData experimentalData) {
-        XYChart.Series<Double, Double> errorExperimentalCurveLowerBoundSeries = new XYChart.Series<>();
+        return toErrorBoundSeries(experimentalData, BoundType.LOWER_BOUND);
+    }
+
+    private static XYChart.Series<Double, Double> toErrorBoundSeries(final ExperimentalData experimentalData, BoundType boundType) {
+        XYChart.Series<Double, Double> series = new XYChart.Series<>();
         final int size = experimentalData.getSize();
         final List<Double> ab_2 = experimentalData.ab_2();
         final List<Double> errorResistanceApparent = experimentalData.errorResistanceApparent();
@@ -62,17 +51,19 @@ public class VESSeriesConverters {
         for (int i = 0; i < size; i++) {
             double dotX = log10(ab_2.get(i));
             double error = errorResistanceApparent.get(i) / 100f;
-            double dotY = max(
-                    log10(
-                            resistanceApparent.get(i) - resistanceApparent.get(i) * error
-                    ),
-                    0
-            );
+            double dotY;
+            if (boundType == BoundType.UPPER_BOUND) {
+                dotY = max(
+                        log10(resistanceApparent.get(i) + resistanceApparent.get(i) * error), 0);
+            } else {
+                dotY = max(
+                        log10(resistanceApparent.get(i) - resistanceApparent.get(i) * error), 0);
+            }
 
-            errorExperimentalCurveLowerBoundSeries.getData().add(new XYChart.Data<>(dotX, dotY));
+            series.getData().add(new XYChart.Data<>(dotX, dotY));
         }
 
-        return errorExperimentalCurveLowerBoundSeries;
+        return series;
     }
 
     public static XYChart.Series<Double, Double> toTheoreticalCurveSeries(final ExperimentalData experimentalData, final ModelData modelData) {
@@ -101,14 +92,17 @@ public class VESSeriesConverters {
     }
 
     public static XYChart.Series<Double, Double> toModelCurveSeries(ModelData modelData) {
+        final double FIRST_X = 1e-2;
+        final double LAST_X = 1e100;
+
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
         final List<Double> power = modelData.power();
         final List<Double> resistance = modelData.resistance();
 
-//        first point
+        // first point
         modelCurveSeries.getData().add(
                 new XYChart.Data<>(
-                        log10(1e-3),
+                        log10(FIRST_X),
                         log10(resistance.get(0))
                 )
         );
@@ -135,11 +129,11 @@ public class VESSeriesConverters {
             prevSum += currentPower;
         }
 
-//        last point
+        // last point
         final int lastResistanceIndex = resistance.size() - 1;
         modelCurveSeries.getData().add(
                 new XYChart.Data<>(
-                        100d,
+                        log10(LAST_X),
                         log10(resistance.get(lastResistanceIndex))
                 )
         );
