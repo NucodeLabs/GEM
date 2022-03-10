@@ -48,7 +48,7 @@ public record ExperimentalData(
         for (int i = 0; i < getSize(); i++) {
             res.add(
                     new ExperimentalTableLine(
-                            i + 1,
+                            i,
                             requireNonNullElse(resistanceApparent().get(i), 0d),
                             requireNonNullElse(ab_2().get(i), 0d),
                             requireNonNullElse(mn_2().get(i), 0d),
