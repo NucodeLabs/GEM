@@ -35,7 +35,7 @@ public class VESCurvesController extends Controller implements Initializable {
     private final ViewService viewService;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
-    private Runnable updateOthers;
+    private Runnable updateOthers = () -> System.out.println(this.getClass() + ": updateOthers method not specified!");
 
     @FXML
     private LineChart<Double, Double> lineChart;
