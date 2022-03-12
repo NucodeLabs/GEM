@@ -1,8 +1,9 @@
 package ru.nucodelabs.gem.view.main;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
@@ -10,8 +11,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ExperimentalTableLine;
-import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
@@ -23,7 +22,6 @@ import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -43,8 +41,6 @@ public class MainViewController extends Controller implements Initializable {
      */
     private final StringProperty vesTitle;
     private final StringProperty vesNumber;
-    private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
-    private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
     private final BooleanProperty noFileOpened;
     private int currentPicket;
 
@@ -67,8 +63,6 @@ public class MainViewController extends Controller implements Initializable {
         noFileOpened = new SimpleBooleanProperty(true);
         vesTitle = new SimpleStringProperty("");
 
-        expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
-        modelTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         vesNumber = new SimpleStringProperty("0/0");
     }
 
@@ -286,22 +280,6 @@ public class MainViewController extends Controller implements Initializable {
 
     public StringProperty vesTitleProperty() {
         return vesTitle;
-    }
-
-    public ObservableList<ExperimentalTableLine> getExpTableData() {
-        return expTableData.get();
-    }
-
-    public ObjectProperty<ObservableList<ExperimentalTableLine>> expTableDataProperty() {
-        return expTableData;
-    }
-
-    public ObservableList<ModelTableLine> getModelTableData() {
-        return modelTableData.get();
-    }
-
-    public ObjectProperty<ObservableList<ModelTableLine>> modelTableDataProperty() {
-        return modelTableData;
     }
 
     public boolean getNoFileOpened() {
