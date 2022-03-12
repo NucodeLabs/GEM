@@ -8,18 +8,15 @@ import ru.nucodelabs.gem.view.Controller;
 
 public class NoFileScreenController extends Controller {
 
+    private Runnable importEXP;
+    private Runnable openSection;
+
     @FXML
     public VBox root;
     @FXML
     private Button openEXPButton;
     @FXML
     private Button openSectionButton;
-
-    private Runnable importEXP;
-    private Runnable openSection;
-
-    public NoFileScreenController() {
-    }
 
     @FXML
     private void importEXP() {
@@ -40,11 +37,11 @@ public class NoFileScreenController extends Controller {
         root.setVisible(false);
     }
 
-    public void setImportEXP(Runnable importEXP) {
+    public void setImportEXPAction(Runnable importEXP) {
         this.importEXP = importEXP;
     }
 
-    public void setOpenSection(Runnable openSection) {
+    public void setOpenSectionAction(Runnable openSection) {
         this.openSection = openSection;
     }
 }

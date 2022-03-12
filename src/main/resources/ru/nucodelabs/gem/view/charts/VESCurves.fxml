@@ -5,12 +5,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import ru.nucodelabs.gem.view.PowerOf10Formatter?>
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         alignment="CENTER"
-         maxHeight="Infinity"
-         maxWidth="Infinity"
-         stylesheets="@../../common.css, @VESCurves.css"
-         VBox.vgrow="ALWAYS">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      stylesheets="@../common.css, @VESCurves.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.charts.VESCurvesController">
     <HBox maxWidth="Infinity">
         <Label fx:id="uclabel" text="%ves" VBox.vgrow="NEVER"/>
     </HBox>
@@ -70,4 +71,4 @@
     <!--            </tooltip>-->
     <!--        </Button>-->
     <!--    </HBox>-->
-</fx:root>
+</VBox>
