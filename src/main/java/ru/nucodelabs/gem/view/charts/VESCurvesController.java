@@ -35,7 +35,7 @@ public class VESCurvesController extends Controller implements Initializable {
     private final ViewService viewService;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
-    private Runnable updateOthers = () -> System.out.println(this.getClass() + ": updateOthers method not specified!");
+    private Runnable onDragAction = () -> System.out.println(this.getClass() + ": onDrag method not specified!");
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -54,8 +54,8 @@ public class VESCurvesController extends Controller implements Initializable {
         this.section = section;
     }
 
-    public void setUpdateView(Runnable updateOthers) {
-        this.updateOthers = updateOthers;
+    public void setOnDragAction(Runnable onDragAction) {
+        this.onDragAction = onDragAction;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class VESCurvesController extends Controller implements Initializable {
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            updateOthers.run();
+            onDragAction.run();
         });
     }
 

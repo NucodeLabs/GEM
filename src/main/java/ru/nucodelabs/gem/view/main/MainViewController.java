@@ -111,7 +111,7 @@ public class MainViewController extends Controller implements Initializable {
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setUpdateView(this::updateOnDrag);
+        vesCurvesController.setOnDragAction(this::updateOnDrag);
     }
 
     private void initModelTableController() {
