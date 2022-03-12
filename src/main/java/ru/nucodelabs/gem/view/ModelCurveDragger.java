@@ -129,8 +129,8 @@ public class ModelCurveDragger {
                     int index2 = index1 + 1; // neighbor
                     double initialValue1 = modelData.power().get(index1);
                     double initialValue2 = modelData.power().get(index2);
-                    double newValue1 = pow(10, log10(initialValue1) - diff);
-                    double newValue2 = pow(10, log10(initialValue2) + diff);
+                    double newValue1 = pow(10, log10(initialValue1) + diff);
+                    double newValue2 = pow(10, log10(initialValue2) - diff);
                     modelData.power().set(index1, newValue1);
                     modelData.power().set(index2, newValue2);
                 }
