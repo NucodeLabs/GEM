@@ -33,7 +33,7 @@ public class ExperimentalTableController extends Controller implements Initializ
         return (Stage) table.getScene().getWindow();
     }
 
-    public void updateExpTable(int pickerNumber) {
+    public void update(int pickerNumber) {
         table.itemsProperty().setValue(
                 VESTablesConverters.toExperimentalTableData(
                         section.getExperimentalData(pickerNumber)

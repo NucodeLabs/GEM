@@ -84,6 +84,12 @@ public class VESCurvesController extends Controller implements Initializable {
         return (Stage) lineChart.getScene().getWindow();
     }
 
+    public void updateAll(int picketNumber) {
+        updateExpCurves(picketNumber);
+        updateTheoreticalCurve(picketNumber);
+        updateModelCurve(picketNumber);
+    }
+
     public void updateTheoreticalCurve(int picketNumber) {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
