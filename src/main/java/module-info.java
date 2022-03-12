@@ -6,7 +6,6 @@ module GEM.main {
     opens ru.nucodelabs.gem.view.usercontrols.vestables;
     opens ru.nucodelabs.gem.view.usercontrols.vescurves;
     opens ru.nucodelabs.gem.view.usercontrols.misfitstacks;
-    opens ru.nucodelabs.gem.view.usercontrols.nofile;
     opens ru.nucodelabs.gem.view.usercontrols.placeholder;
 
     opens ru.nucodelabs.data.ves;
@@ -17,4 +16,5 @@ module GEM.main {
     requires javafx.fxml;
     requires javafx.controls;
     requires java.naming;
+    requires com.google.common;
 }
