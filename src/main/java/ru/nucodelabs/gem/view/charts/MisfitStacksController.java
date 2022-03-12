@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.charts;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -46,14 +45,6 @@ public class MisfitStacksController extends Controller implements Initializable 
 
     public void setSection(Section section) {
         this.section = section;
-    }
-
-    public void setLowerBoundXProperty(DoubleProperty property) {
-        lineChartXAxis.lowerBoundProperty().bind(property);
-    }
-
-    public void setUpperBoundXProperty(DoubleProperty property) {
-        lineChartXAxis.upperBoundProperty().bind(property);
     }
 
     public void updateMisfitStacks(int picketNumber) {
