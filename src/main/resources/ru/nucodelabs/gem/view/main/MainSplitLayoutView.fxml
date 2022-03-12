@@ -5,12 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<?import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks?>
-<?import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen?>
 <?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
-<?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
-<?import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable?>
-<?import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        maxWidth="Infinity" maxHeight="Infinity"
@@ -94,39 +89,22 @@
 
                                 <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
                                            VBox.vgrow="ALWAYS">
-                                    <MisfitStacks
-                                            lowerBoundX="${vesCurves.lowerBoundX}"
-                                            data="${controller.misfitStacksData}"/>
-                                    <VESCurves fx:id="vesCurves"
-                                               lowerBoundX="${controller.vesCurvesXLowerBound}"
-                                               upperBoundX="${controller.vesCurvesXUpperBound}"
-                                               lowerBoundY="${controller.vesCurvesYLowerBound}"
-                                               upperBoundY="${controller.vesCurvesYUpperBound}"
-                                               legendVisible="${menuViewVESCurvesLegend.selected}"
-                                               data="${controller.vesCurvesData}"/>
+                                    <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"/>
+                                    <fx:include fx:id="vesCurves" source="../charts/VESCurves.fxml"/>
                                 </SplitPane>
                                 <TabPane VBox.vgrow="ALWAYS">
                                     <Tab text="%experimentalTable" closable="false">
-                                        <ExperimentalTable
-                                                items="${controller.expTableData}"/>
+                                        <fx:include fx:id="experimentalTable"
+                                                    source="../tables/ExperimentalTable.fxml"/>
                                     </Tab>
                                     <Tab text="%modelTable" closable="false">
-                                        <ModelTable
-                                                items="${controller.modelTableData}">
-                                            <placeholder>
-                                                <Button text="%newModel"/>
-                                            </placeholder>
-                                        </ModelTable>
+                                        <fx:include fx:id="modelTable" source="../tables/ModelTable.fxml"/>
                                     </Tab>
                                 </TabPane>
                             </SplitPane>
                         </VBox>
                     </SplitPane>
-
-                    <NoFileScreen fx:id="noFileScreen"
-                                  visible="${controller.noFileOpened}"
-                                  openSectionOnAction="${menuFileOpenSection.onAction}"
-                                  openEXPOnAction="${menuFileOpenEXP.onAction}"/>
+                    <fx:include fx:id="noFileScreen" source="NoFileScreen.fxml"/>
                 </StackPane>
             </VBox>
         </Scene>

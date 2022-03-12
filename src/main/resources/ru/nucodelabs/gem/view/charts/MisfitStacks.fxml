@@ -4,14 +4,15 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         alignment="CENTER"
-         maxHeight="Infinity"
-         maxWidth="Infinity"
-         minHeight="0"
-         minWidth="0"
-         stylesheets="@../../common.css, @MisfitStacks.css"
-         VBox.vgrow="ALWAYS">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      minHeight="0"
+      minWidth="0"
+      stylesheets="@../common.css, @MisfitStacks.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.charts.MisfitStacksController">
     <HBox maxWidth="Infinity">
         <Label fx:id="uclabel" text="%misfit" VBox.vgrow="NEVER"/>
     </HBox>
@@ -32,4 +33,4 @@
                         tickUnit="100.0"/>
         </yAxis>
     </LineChart>
-</fx:root>
+</VBox>
