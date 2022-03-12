@@ -1,10 +1,11 @@
 package ru.nucodelabs.gem.core;
 
-import com.google.common.eventbus.EventBus;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.view.charts.MisfitStacksController;
+import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.NoFileScreenController;
 
@@ -22,12 +23,10 @@ public class ViewService {
 
     private final ModelProvider modelProvider;
     private final ResourceBundle uiProperties;
-    private final EventBus eventBus;
 
-    public ViewService(ModelProvider modelProvider, ResourceBundle uiProperties, EventBus eventBus) {
+    public ViewService(ModelProvider modelProvider, ResourceBundle uiProperties) {
         this.modelProvider = modelProvider;
         this.uiProperties = uiProperties;
-        this.eventBus = eventBus;
     }
 
     public void start() {
@@ -49,10 +48,16 @@ public class ViewService {
      */
     private Object controllerFactory(Class<?> type) {
         if (type == MainViewController.class) {
-            return new MainViewController(this, eventBus, modelProvider.getSection());
+            return new MainViewController(this, modelProvider.getSection());
         }
         if (type == NoFileScreenController.class) {
             return new NoFileScreenController();
+        }
+        if (type == MisfitStacksController.class) {
+            return new MisfitStacksController(this);
+        }
+        if (type == VESCurvesController.class) {
+            return new VESCurvesController(this);
         }
         throw new IllegalArgumentException();
     }
