@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.charts;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,8 +24,7 @@ import static java.lang.Math.abs;
 public class MisfitStacksController extends Controller implements Initializable {
 
     private Section section;
-    private IntegerProperty currentPicket;
-    private ViewService viewService;
+    private final ViewService viewService;
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -35,7 +33,7 @@ public class MisfitStacksController extends Controller implements Initializable 
     @FXML
     private NumberAxis lineChartYAxis;
 
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
+    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     public MisfitStacksController(ViewService viewService) {
         this.viewService = viewService;
@@ -43,7 +41,7 @@ public class MisfitStacksController extends Controller implements Initializable 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        misfitStacksData = lineChart.dataProperty();
+        dataProperty = lineChart.dataProperty();
     }
 
     public void setSection(Section section) {
@@ -58,30 +56,26 @@ public class MisfitStacksController extends Controller implements Initializable 
         lineChartXAxis.upperBoundProperty().bind(property);
     }
 
-    public void setCurrentPicketProperty(IntegerProperty currentPicketProperty) {
-        currentPicket = currentPicketProperty;
-    }
-
-    public void updateMisfitStacks() {
+    public void updateMisfitStacks(int picketNumber) {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
-        if (section.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(picketNumber) != null) {
             try {
                 misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
+                        section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
                 );
             } catch (UnsatisfiedLinkError e) {
                 viewService.alertNoLib(getStage(), e);
             }
         }
 
-        misfitStacksData.get().clear();
-        misfitStacksData.get().addAll(misfitStacksSeriesList);
+        dataProperty.get().clear();
+        dataProperty.get().addAll(misfitStacksSeriesList);
         colorizeMisfitStacksSeries();
     }
 
     private void colorizeMisfitStacksSeries() {
-        var data = misfitStacksData.get();
+        var data = dataProperty.get();
         for (var series : data) {
             var nonZeroPoint = series.getData().get(1);
             if (abs(nonZeroPoint.getYValue()) < 100f) {
