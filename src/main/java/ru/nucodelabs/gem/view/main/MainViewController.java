@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
+import com.google.common.eventbus.EventBus;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +49,7 @@ public class MainViewController extends Controller implements Initializable {
      */
     private ModelCurveDragger modelCurveDragger;
     private final ViewService viewService;
+    private final EventBus eventBus;
 
     private ResourceBundle uiProperties;
 
@@ -76,11 +78,14 @@ public class MainViewController extends Controller implements Initializable {
      * Initialization
      *
      * @param viewService View Manager
+     * @param eventBus    event bus
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section) {
+    public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
         this.viewService = requireNonNull(viewService);
         this.section = requireNonNull(section);
+        this.eventBus = requireNonNull(eventBus);
+        eventBus.register(this);
 
         currentPicket = new SimpleIntegerProperty(-1);
 
@@ -113,9 +118,13 @@ public class MainViewController extends Controller implements Initializable {
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
+    @FXML
+    public NoFileScreenController noFileScreenController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        noFileScreenController.setImportEXP(this::importEXP);
+        noFileScreenController.setOpenSection(this::openSection);
         uiProperties = requireNonNull(resources);
         modelCurveDragger = new ModelCurveDragger((pointInScene) ->
                 new XYChart.Data<>(
@@ -275,6 +284,7 @@ public class MainViewController extends Controller implements Initializable {
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
+            noFileScreenController.hide();
         }
         updateExpTable();
         updateExpCurves();

@@ -6,7 +6,6 @@
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.usercontrols.misfitstacks.MisfitStacks?>
-<?import ru.nucodelabs.gem.view.usercontrols.nofile.NoFileScreen?>
 <?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
 <?import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves?>
 <?import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable?>
@@ -122,11 +121,7 @@
                             </SplitPane>
                         </VBox>
                     </SplitPane>
-
-                    <NoFileScreen fx:id="noFileScreen"
-                                  visible="${controller.noFileOpened}"
-                                  openSectionOnAction="${menuFileOpenSection.onAction}"
-                                  openEXPOnAction="${menuFileOpenEXP.onAction}"/>
+                    <fx:include fx:id="noFileScreen" source="NoFileScreen.fxml"/>
                 </StackPane>
             </VBox>
         </Scene>
