@@ -47,7 +47,7 @@ public class MisfitStacksController extends Controller implements Initializable 
         this.section = section;
     }
 
-    public void updateMisfitStacks(int picketNumber) {
+    public void update(int picketNumber) {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         if (section.getModelData(picketNumber) != null) {

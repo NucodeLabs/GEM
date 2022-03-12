@@ -255,8 +255,8 @@ public class MainViewController extends Controller implements Initializable {
 
     private void updateOnDrag() {
         vesCurvesController.updateTheoreticalCurve(currentPicket);
-        misfitStacksController.updateMisfitStacks(currentPicket);
-        modelTableController.updateModelTable(currentPicket);
+        misfitStacksController.update(currentPicket);
+        modelTableController.update(currentPicket);
     }
 
     private void updateAll() {
@@ -264,12 +264,10 @@ public class MainViewController extends Controller implements Initializable {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
-        experimentalTableController.updateExpTable(currentPicket);
-        vesCurvesController.updateExpCurves(currentPicket);
-        vesCurvesController.updateTheoreticalCurve(currentPicket);
-        vesCurvesController.updateModelCurve(currentPicket);
-        modelTableController.updateModelTable(currentPicket);
-        misfitStacksController.updateMisfitStacks(currentPicket);
+        experimentalTableController.update(currentPicket);
+        vesCurvesController.updateAll(currentPicket);
+        modelTableController.update(currentPicket);
+        misfitStacksController.update(currentPicket);
         updateVESText();
         updateVESNumber();
     }

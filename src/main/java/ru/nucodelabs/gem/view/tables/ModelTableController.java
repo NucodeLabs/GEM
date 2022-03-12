@@ -35,7 +35,7 @@ public class ModelTableController extends Controller implements Initializable {
         return (Stage) table.getScene().getWindow();
     }
 
-    public void updateModelTable(int picketNumber) {
+    public void update(int picketNumber) {
         ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
 
         if (section.getModelData(picketNumber) != null) {
