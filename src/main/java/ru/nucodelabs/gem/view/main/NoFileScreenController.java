@@ -1,22 +1,17 @@
 package ru.nucodelabs.gem.view.main;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.Controller;
 
 public class NoFileScreenController extends Controller {
 
-    private Runnable importEXP;
-    private Runnable openSection;
+    private Runnable importEXP = () -> System.out.println(this.getClass() + ": importEXP action not specified!");
+    private Runnable openSection = () -> System.out.println(this.getClass() + ": openSection action not specified!");
 
     @FXML
     public VBox root;
-    @FXML
-    private Button openEXPButton;
-    @FXML
-    private Button openSectionButton;
 
     @FXML
     private void importEXP() {
@@ -30,7 +25,7 @@ public class NoFileScreenController extends Controller {
 
     @Override
     protected Stage getStage() {
-        return (Stage) openEXPButton.getScene().getWindow();
+        return (Stage) root.getScene().getWindow();
     }
 
     public void hide() {
