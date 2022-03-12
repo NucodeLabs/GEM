@@ -8,6 +8,8 @@ import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.NoFileScreenController;
+import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
+import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,12 @@ public class ViewService {
         }
         if (type == VESCurvesController.class) {
             return new VESCurvesController(this);
+        }
+        if (type == ModelTableController.class) {
+            return new ModelTableController();
+        }
+        if (type == ExperimentalTableController.class) {
+            return new ExperimentalTableController();
         }
         throw new IllegalArgumentException();
     }

@@ -6,8 +6,6 @@
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
-<?import ru.nucodelabs.gem.view.usercontrols.vestables.ExperimentalTable?>
-<?import ru.nucodelabs.gem.view.usercontrols.vestables.ModelTable?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        maxWidth="Infinity" maxHeight="Infinity"
@@ -96,16 +94,11 @@
                                 </SplitPane>
                                 <TabPane VBox.vgrow="ALWAYS">
                                     <Tab text="%experimentalTable" closable="false">
-                                        <ExperimentalTable
-                                                items="${controller.expTableData}"/>
+                                        <fx:include fx:id="experimentalTable"
+                                                    source="../tables/ExperimentalTable.fxml"/>
                                     </Tab>
                                     <Tab text="%modelTable" closable="false">
-                                        <ModelTable
-                                                items="${controller.modelTableData}">
-                                            <placeholder>
-                                                <Button text="%newModel"/>
-                                            </placeholder>
-                                        </ModelTable>
+                                        <fx:include fx:id="modelTable" source="../tables/ModelTable.fxml"/>
                                     </Tab>
                                 </TabPane>
                             </SplitPane>

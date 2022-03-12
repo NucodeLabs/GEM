@@ -16,9 +16,10 @@ import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.VESTablesConverters;
 import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
+import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import java.io.File;
 import java.net.URL;
@@ -45,7 +46,7 @@ public class MainViewController extends Controller implements Initializable {
     private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
     private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
     private final BooleanProperty noFileOpened;
-    private final IntegerProperty currentPicket;
+    private int currentPicket;
 
     /**
      * Data models
@@ -62,10 +63,8 @@ public class MainViewController extends Controller implements Initializable {
         this.viewService = requireNonNull(viewService);
         this.section = requireNonNull(section);
 
-        currentPicket = new SimpleIntegerProperty(-1);
-
+        currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
-
         vesTitle = new SimpleStringProperty("");
 
         expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
@@ -85,12 +84,18 @@ public class MainViewController extends Controller implements Initializable {
     public NoFileScreenController noFileScreenController;
     @FXML
     public MisfitStacksController misfitStacksController;
+    @FXML
+    public ModelTableController modelTableController;
+    @FXML
+    public ExperimentalTableController experimentalTableController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initNoFileScreenController();
         initMisfitStacksController();
         initVESCurvesController();
+        initModelTableController();
+        initExperimentalTableController();
 
         uiProperties = requireNonNull(resources);
 
@@ -102,7 +107,6 @@ public class MainViewController extends Controller implements Initializable {
     }
 
     private void initMisfitStacksController() {
-        misfitStacksController.setCurrentPicketProperty(currentPicket);
         misfitStacksController.setSection(section);
     }
 
@@ -113,8 +117,15 @@ public class MainViewController extends Controller implements Initializable {
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setCurrentPicketProperty(currentPicket);
         vesCurvesController.setUpdateView(this::updateOnDrag);
+    }
+
+    private void initModelTableController() {
+        modelTableController.setSection(section);
+    }
+
+    private void initExperimentalTableController() {
+        experimentalTableController.setSection(section);
     }
 
     @Override
@@ -154,7 +165,7 @@ public class MainViewController extends Controller implements Initializable {
                 viewService.alertIncorrectFile(getStage(), e);
                 return;
             }
-            currentPicket.set(0);
+            currentPicket = 0;
             updateAll();
         }
     }
@@ -191,7 +202,7 @@ public class MainViewController extends Controller implements Initializable {
         }
 
         try {
-            section.loadModelDataFromMODFile(currentPicket.get(), file);
+            section.loadModelDataFromMODFile(currentPicket, file);
         } catch (Exception e) {
             viewService.alertIncorrectFile(getStage(), e);
         }
@@ -201,28 +212,28 @@ public class MainViewController extends Controller implements Initializable {
 
     @FXML
     public void switchToNextPicket() {
-        if (section.getPicketsCount() > currentPicket.get() + 1) {
-            currentPicket.set(currentPicket.get() + 1);
+        if (section.getPicketsCount() > currentPicket + 1) {
+            currentPicket++;
             updateAll();
         }
     }
 
     @FXML
     public void switchToPrevPicket() {
-        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
-            currentPicket.set(currentPicket.get() - 1);
+        if (currentPicket > 0 && section.getPicketsCount() > 0) {
+            currentPicket--;
             updateAll();
         }
     }
 
     private void addEXP(File file) {
         try {
-            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
+            section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
         } catch (Exception e) {
             viewService.alertIncorrectFile(getStage(), e);
             return;
         }
-        currentPicket.set(currentPicket.get() + 1);
+        currentPicket++;
         compatibilityModeAlert();
         updateAll();
     }
@@ -231,27 +242,27 @@ public class MainViewController extends Controller implements Initializable {
      * Adds files names to vesText
      */
     private void updateVESText() {
-        vesTitle.set(section.getName(currentPicket.get()));
+        vesTitle.set(section.getName(currentPicket));
     }
 
     private void updateVESNumber() {
-        vesNumber.set(currentPicket.get() + 1 + "/" + section.getPicketsCount());
+        vesNumber.set(currentPicket + 1 + "/" + section.getPicketsCount());
     }
 
     /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).experimentalData();
+        ExperimentalData experimentalData = section.getPicket(currentPicket).experimentalData();
         if (experimentalData.isUnsafe()) {
-            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).name());
+            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket).name());
         }
     }
 
     private void updateOnDrag() {
-        vesCurvesController.updateTheoreticalCurve();
-        misfitStacksController.updateMisfitStacks();
-        updateModelTable();
+        vesCurvesController.updateTheoreticalCurve(currentPicket);
+        misfitStacksController.updateMisfitStacks(currentPicket);
+        modelTableController.updateModelTable(currentPicket);
     }
 
     private void updateAll() {
@@ -259,34 +270,14 @@ public class MainViewController extends Controller implements Initializable {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
-        updateExpTable();
-        vesCurvesController.updateExpCurves();
-        vesCurvesController.updateTheoreticalCurve();
-        vesCurvesController.updateModelCurve();
-        updateModelTable();
-        misfitStacksController.updateMisfitStacks();
+        experimentalTableController.updateExpTable(currentPicket);
+        vesCurvesController.updateExpCurves(currentPicket);
+        vesCurvesController.updateTheoreticalCurve(currentPicket);
+        vesCurvesController.updateModelCurve(currentPicket);
+        modelTableController.updateModelTable(currentPicket);
+        misfitStacksController.updateMisfitStacks(currentPicket);
         updateVESText();
         updateVESNumber();
-    }
-
-    private void updateExpTable() {
-        expTableData.setValue(
-                VESTablesConverters.toExperimentalTableData(
-                        section.getExperimentalData(currentPicket.get())
-                )
-        );
-    }
-
-    private void updateModelTable() {
-        ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            modelTableLines = VESTablesConverters.toModelTableData(
-                    section.getModelData(currentPicket.get())
-            );
-        }
-
-        modelTableData.setValue(modelTableLines);
     }
 
     public String getVesTitle() {
@@ -319,14 +310,6 @@ public class MainViewController extends Controller implements Initializable {
 
     public BooleanProperty noFileOpenedProperty() {
         return noFileOpened;
-    }
-
-    public int getCurrentPicket() {
-        return currentPicket.get();
-    }
-
-    public IntegerProperty currentPicketProperty() {
-        return currentPicket;
     }
 
     public String getVesNumber() {

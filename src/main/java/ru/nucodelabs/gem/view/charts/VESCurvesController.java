@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.charts;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,7 +34,6 @@ public class VESCurvesController extends Controller implements Initializable {
     private Section section;
     private final ViewService viewService;
     private ResourceBundle uiProperties;
-    private IntegerProperty currentPicket;
     private ModelCurveDragger modelCurveDragger;
     private Runnable updateOthers;
 
@@ -54,10 +52,6 @@ public class VESCurvesController extends Controller implements Initializable {
 
     public void setSection(Section section) {
         this.section = section;
-    }
-
-    public void setCurrentPicketProperty(IntegerProperty property) {
-        currentPicket = property;
     }
 
     public void setUpdateView(Runnable updateOthers) {
@@ -90,13 +84,13 @@ public class VESCurvesController extends Controller implements Initializable {
         return (Stage) lineChart.getScene().getWindow();
     }
 
-    public void updateTheoreticalCurve() {
+    public void updateTheoreticalCurve(int picketNumber) {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(picketNumber) != null) {
             try {
                 theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
+                        section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
                 );
             } catch (UnsatisfiedLinkError e) {
                 viewService.alertNoLib(getStage(), e);
@@ -107,26 +101,26 @@ public class VESCurvesController extends Controller implements Initializable {
         dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
     }
 
-    public void updateModelCurve() {
+    public void updateModelCurve(int picketNumber) {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(currentPicket.get()) != null) {
+        if (section.getModelData(picketNumber) != null) {
             modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                    section.getModelData(currentPicket.get())
+                    section.getModelData(picketNumber)
             );
         }
 
         modelCurveSeries.setName(uiProperties.getString("modCurve"));
         dataProperty.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
 
-        if (section.getModelData(currentPicket.get()) != null) {
-            addDraggingToModelCurveSeries(modelCurveSeries);
+        if (section.getModelData(picketNumber) != null) {
+            addDraggingToModelCurveSeries(picketNumber, modelCurveSeries);
         }
     }
 
-    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
+    private void addDraggingToModelCurveSeries(int picketNumber, XYChart.Series<Double, Double> modelCurveSeries) {
         try {
-            modelCurveDragger.mapModelData(section.getModelData(currentPicket.get()));
+            modelCurveDragger.mapModelData(section.getModelData(picketNumber));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,23 +132,23 @@ public class VESCurvesController extends Controller implements Initializable {
         });
     }
 
-    public void updateExpCurves() {
+    public void updateExpCurves(int picketNumber) {
         XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
-                section.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(picketNumber)
         );
         expCurveSeries.setName(uiProperties.getString("expCurve"));
         XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
-                section.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(picketNumber)
         );
         errUpperExp.setName(uiProperties.getString("expCurveUpper"));
         XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
-                section.getExperimentalData(currentPicket.get())
+                section.getExperimentalData(picketNumber)
         );
         errLowerExp.setName(uiProperties.getString("expCurveLower"));
         dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (section.getModelData(currentPicket.get()) == null) {
+        if (section.getModelData(picketNumber) == null) {
             dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
             dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
         }
