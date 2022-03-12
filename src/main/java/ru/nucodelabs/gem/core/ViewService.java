@@ -4,7 +4,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.view.charts.MisfitStacksController;
+import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.main.MainViewController;
+import ru.nucodelabs.gem.view.main.NoFileScreenController;
+import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
+import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +34,7 @@ public class ViewService {
     public void start() {
         FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
-        fxmlLoader.setControllerFactory(this::createMainViewController);
+        fxmlLoader.setControllerFactory(this::controllerFactory);
         try {
             ((Stage) fxmlLoader.load()).show();
         } catch (IOException e) {
@@ -38,13 +43,31 @@ public class ViewService {
     }
 
     /**
-     * Main View Controller factory method
+     * Controller factory method
      *
      * @param type class of controller
      * @return new controller instance
      */
-    private Object createMainViewController(Class<?> type) {
-        return new MainViewController(this, modelProvider.getSection());
+    private Object controllerFactory(Class<?> type) {
+        if (type == MainViewController.class) {
+            return new MainViewController(this, modelProvider.getSection());
+        }
+        if (type == NoFileScreenController.class) {
+            return new NoFileScreenController();
+        }
+        if (type == MisfitStacksController.class) {
+            return new MisfitStacksController(this);
+        }
+        if (type == VESCurvesController.class) {
+            return new VESCurvesController(this);
+        }
+        if (type == ModelTableController.class) {
+            return new ModelTableController();
+        }
+        if (type == ExperimentalTableController.class) {
+            return new ExperimentalTableController();
+        }
+        throw new IllegalArgumentException();
     }
 
     /**

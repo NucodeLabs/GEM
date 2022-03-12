@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.VBox?>
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         alignment="CENTER"
-         maxHeight="Infinity"
-         maxWidth="Infinity"
-         stylesheets="@../../common.css"
-         VBox.vgrow="ALWAYS">
-    <TableView fx:id="modelTable" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      stylesheets="@../common.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.tables.ModelTableController">
+    <TableView fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+        <placeholder>
+            <Button text="%newModel"/>
+        </placeholder>
         <columns>
             <TableColumn maxWidth="25" prefWidth="25" sortable="false" text="N" styleClass="centered-column"
                          resizable="false">
@@ -37,4 +41,4 @@
             </TableColumn>
         </columns>
     </TableView>
-</fx:root>
+</VBox>
