@@ -1,0 +1,11 @@
+#container {
+    -fx-alignment: center-left;
+    -fx-padding: 0;
+    -fx-pref-height: 25;
+}
+
+.button {
+    -fx-pref-height: 25;
+    -fx-border-radius: 0;
+    -fx-pref-width: 20000;
+}
