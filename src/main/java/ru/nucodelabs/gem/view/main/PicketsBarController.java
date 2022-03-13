@@ -55,7 +55,7 @@ public class PicketsBarController extends Controller {
                 eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));
             });
 
-            MenuItem delete = new MenuItem("Удалить");
+            MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
             delete.setOnAction(e -> {
                 section.removePicket(picketNumber);
                 eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));

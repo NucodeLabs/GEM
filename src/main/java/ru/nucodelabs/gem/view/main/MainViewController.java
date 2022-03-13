@@ -56,7 +56,7 @@ public class MainViewController extends Controller {
      * Initialization
      *
      * @param viewService View Manager
-     * @param eventBus
+     * @param eventBus    event bus
      * @param section     VES Data
      */
     public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
