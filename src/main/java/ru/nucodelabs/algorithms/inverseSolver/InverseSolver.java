@@ -1,12 +1,13 @@
 package ru.nucodelabs.algorithms.inverseSolver;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.optim.*;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
-import org.apache.commons.math3.util.FastMath;
 import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
@@ -38,7 +39,7 @@ public class InverseSolver {
         modelPower = modelData.power();
 
         int dimension = modelData.getSize() * 2;
-        double sideLength = 1; //Надо настраивать, а лучше использовать другую сигнатуру
+        double sideLength = 0.00001; //Надо настраивать, а лучше использовать другую сигнатуру
         NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength); //power_1, res_1, ..., power_n, res_n
 
         SimplexOptimizer optimizer = new SimplexOptimizer(1e-10, 1e-30);
