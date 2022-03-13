@@ -290,11 +290,6 @@ public class MainViewController extends Controller {
         modelTableController.update(currentPicket);
     }
 
-    private void setCurrentPicket(int currentPicket) {
-        this.currentPicket = currentPicket;
-        updateAll();
-    }
-
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
