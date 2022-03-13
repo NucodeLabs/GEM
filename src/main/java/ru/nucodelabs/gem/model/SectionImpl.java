@@ -68,6 +68,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
+    public void swapPickets(int picketNumber1, int picketNumber2) {
+        Collections.swap(pickets, picketNumber1, picketNumber2);
+    }
+
+    @Override
     public int getPicketsCount() {
         return pickets.size();
     }

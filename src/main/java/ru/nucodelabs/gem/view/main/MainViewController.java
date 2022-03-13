@@ -1,71 +1,51 @@
 package ru.nucodelabs.gem.view.main;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ExperimentalTableLine;
-import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModificationType;
+import ru.nucodelabs.gem.core.events.UpdateViewEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.*;
-import ru.nucodelabs.gem.view.usercontrols.vescurves.VESCurves;
+import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.charts.MisfitStacksController;
+import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
+import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static java.lang.Math.abs;
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller implements Initializable {
-
-    /**
-     * Constants
-     */
-    private static final int EXP_CURVE_SERIES_CNT = 3;
-    private static final int THEOR_CURVE_SERIES_CNT = 4;
-    private static final int MOD_CURVE_SERIES_CNT = 5;
-    private static final int EXP_CURVE_SERIES_INDEX = 0;
-    private static final int EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1;
-    private static final int EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2;
-    private static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
-    private static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
+public class MainViewController extends Controller {
 
     /**
      * Service-objects
      */
-    private ModelCurveDragger modelCurveDragger;
     private final ViewService viewService;
-
+    private final EventBus eventBus;
     private ResourceBundle uiProperties;
 
     /**
      * Properties
      */
-    private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
     private final StringProperty vesTitle;
     private final StringProperty vesNumber;
-    private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksData;
-    private final DoubleProperty vesCurvesXLowerBound;
-    private final DoubleProperty vesCurvesXUpperBound;
-    private final DoubleProperty vesCurvesYLowerBound;
-    private final DoubleProperty vesCurvesYUpperBound;
-    private final ObjectProperty<ObservableList<ExperimentalTableLine>> expTableData;
-    private final ObjectProperty<ObservableList<ModelTableLine>> modelTableData;
     private final BooleanProperty noFileOpened;
-    private final IntegerProperty currentPicket;
+    private int currentPicket;
 
     /**
      * Data models
@@ -76,68 +56,83 @@ public class MainViewController extends Controller implements Initializable {
      * Initialization
      *
      * @param viewService View Manager
+     * @param eventBus    event bus
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section) {
+    public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
         this.viewService = requireNonNull(viewService);
+        this.eventBus = eventBus;
         this.section = requireNonNull(section);
 
-        currentPicket = new SimpleIntegerProperty(-1);
+        eventBus.register(this);
 
-        vesCurvesXLowerBound = new SimpleDoubleProperty(-1);
-        vesCurvesXUpperBound = new SimpleDoubleProperty(4);
-        vesCurvesYLowerBound = new SimpleDoubleProperty(0);
-        vesCurvesYUpperBound = new SimpleDoubleProperty(4);
-
+        currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
-
-        vesCurvesData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
-        for (int i = 0; i < MOD_CURVE_SERIES_CNT; i++) {
-            vesCurvesData.get().add(new XYChart.Series<>());
-        }
-
         vesTitle = new SimpleStringProperty("");
 
-        misfitStacksData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
-
-        expTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
-        modelTableData = new SimpleObjectProperty<>(FXCollections.observableList(new ArrayList<>()));
         vesNumber = new SimpleStringProperty("0/0");
     }
 
     @FXML
     public Stage root;
     @FXML
-    public VESCurves vesCurves;
+    public VESCurvesController vesCurvesController;
     @FXML
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
+    @FXML
+    public PicketsBarController picketsBarController;
+    @FXML
+    public NoFileScreenController noFileScreenController;
+    @FXML
+    public MisfitStacksController misfitStacksController;
+    @FXML
+    public ModelTableController modelTableController;
+    @FXML
+    public ExperimentalTableController experimentalTableController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initPicketsBarController();
+        initNoFileScreenController();
+        initMisfitStacksController();
+        initVESCurvesController();
+        initModelTableController();
+        initExperimentalTableController();
+
         uiProperties = requireNonNull(resources);
-        modelCurveDragger = new ModelCurveDragger((pointInScene) ->
-                new XYChart.Data<>(
-                        (Double) vesCurves
-                                .getLineChartXAxis()
-                                .getValueForDisplay(
-                                        vesCurves.getLineChartXAxis().sceneToLocal(pointInScene).getX()
-                                ),
-                        (Double) vesCurves
-                                .getLineChartYAxis()
-                                .getValueForDisplay(
-                                        vesCurves.getLineChartYAxis().sceneToLocal(pointInScene).getY()
-                                )
-                ),
-                vesCurvesData,
-                MOD_CURVE_SERIES_INDEX
-        );
+
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
+    }
+
+    private void initMisfitStacksController() {
+        misfitStacksController.setSection(section);
+    }
+
+    private void initNoFileScreenController() {
+        noFileScreenController.setImportEXPAction(this::importEXP);
+        noFileScreenController.setOpenSectionAction(this::openSection);
+    }
+
+    private void initVESCurvesController() {
+        vesCurvesController.setSection(section);
+    }
+
+    private void initModelTableController() {
+        modelTableController.setSection(section);
+    }
+
+    private void initExperimentalTableController() {
+        experimentalTableController.setSection(section);
+    }
+
+    private void initPicketsBarController() {
+        picketsBarController.setSection(section);
     }
 
     @Override
@@ -177,7 +172,7 @@ public class MainViewController extends Controller implements Initializable {
                 viewService.alertIncorrectFile(getStage(), e);
                 return;
             }
-            currentPicket.set(0);
+            currentPicket = 0;
             updateAll();
         }
     }
@@ -214,7 +209,7 @@ public class MainViewController extends Controller implements Initializable {
         }
 
         try {
-            section.loadModelDataFromMODFile(currentPicket.get(), file);
+            section.loadModelDataFromMODFile(currentPicket, file);
         } catch (Exception e) {
             viewService.alertIncorrectFile(getStage(), e);
         }
@@ -224,28 +219,39 @@ public class MainViewController extends Controller implements Initializable {
 
     @FXML
     public void switchToNextPicket() {
-        if (section.getPicketsCount() > currentPicket.get() + 1) {
-            currentPicket.set(currentPicket.get() + 1);
+        if (section.getPicketsCount() > currentPicket + 1) {
+            currentPicket++;
             updateAll();
         }
     }
 
     @FXML
     public void switchToPrevPicket() {
-        if (currentPicket.get() > 0 && section.getPicketsCount() > 0) {
-            currentPicket.set(currentPicket.get() - 1);
+        if (currentPicket > 0 && section.getPicketsCount() > 0) {
+            currentPicket--;
             updateAll();
+        }
+    }
+
+    @Subscribe
+    public void handleUpdateViewEvent(UpdateViewEvent event) {
+        if (event.type() == ModificationType.MODEL_CURVE_DRAGGED) {
+            updateOnDrag();
+        }
+        if (event.type() == ModificationType.PICKETS_BAR_CHANGE) {
+            currentPicket = picketsBarController.getCurrentPicket();
+            updateOnPicketsBarChange();
         }
     }
 
     private void addEXP(File file) {
         try {
-            section.loadExperimentalDataFromEXPFile(currentPicket.get() + 1, file);
+            section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
         } catch (Exception e) {
             viewService.alertIncorrectFile(getStage(), e);
             return;
         }
-        currentPicket.set(currentPicket.get() + 1);
+        currentPicket++;
         compatibilityModeAlert();
         updateAll();
     }
@@ -254,178 +260,48 @@ public class MainViewController extends Controller implements Initializable {
      * Adds files names to vesText
      */
     private void updateVESText() {
-        vesTitle.set(section.getName(currentPicket.get()));
+        vesTitle.set(section.getName(currentPicket));
     }
 
     private void updateVESNumber() {
-        vesNumber.set(currentPicket.get() + 1 + "/" + section.getPicketsCount());
+        vesNumber.set(currentPicket + 1 + "/" + section.getPicketsCount());
     }
 
     /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = section.getPicket(currentPicket.get()).experimentalData();
+        ExperimentalData experimentalData = section.getPicket(currentPicket).experimentalData();
         if (experimentalData.isUnsafe()) {
-            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket.get()).name());
+            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket).name());
         }
     }
 
+    private void updateOnPicketsBarChange() {
+        if (currentPicket >= section.getPicketsCount()) {
+            currentPicket = section.getPicketsCount() - 1;
+        }
+        updateAll();
+    }
+
+    private void updateOnDrag() {
+        vesCurvesController.updateTheoreticalCurve(currentPicket);
+        misfitStacksController.update(currentPicket);
+        modelTableController.update(currentPicket);
+    }
 
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
+            noFileScreenController.hide();
         }
-        updateExpTable();
-        updateExpCurves();
-        updateTheoreticalCurve();
-        updateModelCurve();
-        updateModelTable();
-        updateMisfitStacks();
+        picketsBarController.update();
+        experimentalTableController.update(currentPicket);
+        vesCurvesController.updateAll(currentPicket);
+        modelTableController.update(currentPicket);
+        misfitStacksController.update(currentPicket);
         updateVESText();
         updateVESNumber();
-    }
-
-    private void updateTheoreticalCurve() {
-        XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            try {
-                theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
-                );
-            } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
-            }
-        }
-
-        theorCurveSeries.setName(uiProperties.getString("theorCurve"));
-        vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
-    }
-
-    private void updateModelCurve() {
-        XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                    section.getModelData(currentPicket.get())
-            );
-        }
-
-        modelCurveSeries.setName(uiProperties.getString("modCurve"));
-        vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            addDraggingToModelCurveSeries(modelCurveSeries);
-        }
-    }
-
-    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
-        try {
-            modelCurveDragger.mapModelData(section.getModelData(currentPicket.get()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        modelCurveSeries.getNode().setCursor(Cursor.HAND);
-        modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
-        modelCurveSeries.getNode().setOnMouseDragged(e -> {
-            modelCurveDragger.dragHandler(e);
-            updateMisfitStacks();
-            updateTheoreticalCurve();
-            updateModelTable();
-        });
-    }
-
-    private void updateExpCurves() {
-        XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
-                section.getExperimentalData(currentPicket.get())
-        );
-        expCurveSeries.setName(uiProperties.getString("expCurve"));
-        XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
-                section.getExperimentalData(currentPicket.get())
-        );
-        errUpperExp.setName(uiProperties.getString("expCurveUpper"));
-        XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
-                section.getExperimentalData(currentPicket.get())
-        );
-        errLowerExp.setName(uiProperties.getString("expCurveLower"));
-        vesCurvesData.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
-        vesCurvesData.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
-        vesCurvesData.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (section.getModelData(currentPicket.get()) == null) {
-            vesCurvesData.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
-            vesCurvesData.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
-        }
-    }
-
-    private void updateExpTable() {
-        expTableData.setValue(
-                VESTablesConverters.toExperimentalTableData(
-                        section.getExperimentalData(currentPicket.get())
-                )
-        );
-    }
-
-    private void updateModelTable() {
-        ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            modelTableLines = VESTablesConverters.toModelTableData(
-                    section.getModelData(currentPicket.get())
-            );
-        }
-
-        modelTableData.setValue(modelTableLines);
-    }
-
-    private void updateMisfitStacks() {
-        List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
-
-        if (section.getModelData(currentPicket.get()) != null) {
-            try {
-                misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        section.getExperimentalData(currentPicket.get()), section.getModelData(currentPicket.get())
-                );
-            } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
-            }
-        }
-
-        misfitStacksData.get().clear();
-        misfitStacksData.get().addAll(misfitStacksSeriesList);
-        colorizeMisfitStacksSeries();
-    }
-
-    /**
-     * Colorizes misfit stacks with green and red, green for ones that <100%, red for ≥100%
-     */
-    private void colorizeMisfitStacksSeries() {
-        var data = misfitStacksData.get();
-        for (var series : data) {
-            var nonZeroPoint = series.getData().get(1);
-            if (abs(nonZeroPoint.getYValue()) < 100f) {
-                series.getNode().setStyle("-fx-stroke: LimeGreen;");
-                nonZeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
-                var zeroPoint = series.getData().get(0);
-                zeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
-            }
-        }
-    }
-
-    public ObservableList<XYChart.Series<Double, Double>> getVesCurvesData() {
-        return vesCurvesData.get();
-    }
-
-    public ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesDataProperty() {
-        return vesCurvesData;
-    }
-
-    public ObservableList<XYChart.Series<Double, Double>> getMisfitStacksData() {
-        return misfitStacksData.get();
-    }
-
-    public ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> misfitStacksDataProperty() {
-        return misfitStacksData;
     }
 
     public String getVesTitle() {
@@ -436,68 +312,12 @@ public class MainViewController extends Controller implements Initializable {
         return vesTitle;
     }
 
-    public double getVesCurvesXLowerBound() {
-        return vesCurvesXLowerBound.get();
-    }
-
-    public DoubleProperty vesCurvesXLowerBoundProperty() {
-        return vesCurvesXLowerBound;
-    }
-
-    public double getVesCurvesXUpperBound() {
-        return vesCurvesXUpperBound.get();
-    }
-
-    public DoubleProperty vesCurvesXUpperBoundProperty() {
-        return vesCurvesXUpperBound;
-    }
-
-    public double getVesCurvesYLowerBound() {
-        return vesCurvesYLowerBound.get();
-    }
-
-    public DoubleProperty vesCurvesYLowerBoundProperty() {
-        return vesCurvesYLowerBound;
-    }
-
-    public double getVesCurvesYUpperBound() {
-        return vesCurvesYUpperBound.get();
-    }
-
-    public DoubleProperty vesCurvesYUpperBoundProperty() {
-        return vesCurvesYUpperBound;
-    }
-
-    public ObservableList<ExperimentalTableLine> getExpTableData() {
-        return expTableData.get();
-    }
-
-    public ObjectProperty<ObservableList<ExperimentalTableLine>> expTableDataProperty() {
-        return expTableData;
-    }
-
-    public ObservableList<ModelTableLine> getModelTableData() {
-        return modelTableData.get();
-    }
-
-    public ObjectProperty<ObservableList<ModelTableLine>> modelTableDataProperty() {
-        return modelTableData;
-    }
-
     public boolean getNoFileOpened() {
         return noFileOpened.get();
     }
 
     public BooleanProperty noFileOpenedProperty() {
         return noFileOpened;
-    }
-
-    public int getCurrentPicket() {
-        return currentPicket.get();
-    }
-
-    public IntegerProperty currentPicketProperty() {
-        return currentPicket;
     }
 
     public String getVesNumber() {

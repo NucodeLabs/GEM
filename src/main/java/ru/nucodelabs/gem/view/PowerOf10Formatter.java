@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view;
 
 import javafx.util.StringConverter;
 
+import javax.naming.OperationNotSupportedException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -55,6 +56,11 @@ public class PowerOf10Formatter extends StringConverter<Number> {
 
     @Override
     public Number fromString(String string) {
+        try {
+            throw new OperationNotSupportedException();
+        } catch (OperationNotSupportedException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
