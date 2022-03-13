@@ -1,17 +1,20 @@
 package ru.nucodelabs.gem.view.main;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModificationType;
+import ru.nucodelabs.gem.core.events.UpdateViewEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
@@ -27,13 +30,13 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller implements Initializable {
+public class MainViewController extends Controller {
 
     /**
      * Service-objects
      */
     private final ViewService viewService;
-
+    private final EventBus eventBus;
     private ResourceBundle uiProperties;
 
     /**
@@ -53,11 +56,15 @@ public class MainViewController extends Controller implements Initializable {
      * Initialization
      *
      * @param viewService View Manager
+     * @param eventBus    event bus
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section) {
+    public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
         this.viewService = requireNonNull(viewService);
+        this.eventBus = eventBus;
         this.section = requireNonNull(section);
+
+        eventBus.register(this);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -75,6 +82,8 @@ public class MainViewController extends Controller implements Initializable {
     @FXML
     public Menu menuView;
     @FXML
+    public PicketsBarController picketsBarController;
+    @FXML
     public NoFileScreenController noFileScreenController;
     @FXML
     public MisfitStacksController misfitStacksController;
@@ -85,6 +94,7 @@ public class MainViewController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initPicketsBarController();
         initNoFileScreenController();
         initMisfitStacksController();
         initVESCurvesController();
@@ -111,7 +121,6 @@ public class MainViewController extends Controller implements Initializable {
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setOnDragAction(this::updateOnDrag);
     }
 
     private void initModelTableController() {
@@ -120,6 +129,10 @@ public class MainViewController extends Controller implements Initializable {
 
     private void initExperimentalTableController() {
         experimentalTableController.setSection(section);
+    }
+
+    private void initPicketsBarController() {
+        picketsBarController.setSection(section);
     }
 
     @Override
@@ -220,6 +233,17 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    @Subscribe
+    public void handleUpdateViewEvent(UpdateViewEvent event) {
+        if (event.type() == ModificationType.MODEL_CURVE_DRAGGED) {
+            updateOnDrag();
+        }
+        if (event.type() == ModificationType.PICKETS_BAR_CHANGE) {
+            currentPicket = picketsBarController.getCurrentPicket();
+            updateOnPicketsBarChange();
+        }
+    }
+
     private void addEXP(File file) {
         try {
             section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
@@ -253,6 +277,13 @@ public class MainViewController extends Controller implements Initializable {
         }
     }
 
+    private void updateOnPicketsBarChange() {
+        if (currentPicket >= section.getPicketsCount()) {
+            currentPicket = section.getPicketsCount() - 1;
+        }
+        updateAll();
+    }
+
     private void updateOnDrag() {
         vesCurvesController.updateTheoreticalCurve(currentPicket);
         misfitStacksController.update(currentPicket);
@@ -264,6 +295,7 @@ public class MainViewController extends Controller implements Initializable {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
+        picketsBarController.update();
         experimentalTableController.update(currentPicket);
         vesCurvesController.updateAll(currentPicket);
         modelTableController.update(currentPicket);
