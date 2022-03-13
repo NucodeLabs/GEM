@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -11,6 +13,8 @@ import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModificationType;
+import ru.nucodelabs.gem.core.events.UpdateViewEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
@@ -32,7 +36,7 @@ public class MainViewController extends Controller {
      * Service-objects
      */
     private final ViewService viewService;
-
+    private final EventBus eventBus;
     private ResourceBundle uiProperties;
 
     /**
@@ -52,11 +56,15 @@ public class MainViewController extends Controller {
      * Initialization
      *
      * @param viewService View Manager
+     * @param eventBus
      * @param section     VES Data
      */
-    public MainViewController(ViewService viewService, Section section) {
+    public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
         this.viewService = requireNonNull(viewService);
+        this.eventBus = eventBus;
         this.section = requireNonNull(section);
+
+        eventBus.register(this);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -113,7 +121,6 @@ public class MainViewController extends Controller {
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setOnSectionModificationAction(this::updateOnDrag);
     }
 
     private void initModelTableController() {
@@ -126,8 +133,6 @@ public class MainViewController extends Controller {
 
     private void initPicketsBarController() {
         picketsBarController.setSection(section);
-        picketsBarController.setOnSectionModificationAction(this::updateOnRemovePicket);
-        picketsBarController.setButtonNumberAction(this::setCurrentPicket);
     }
 
     @Override
@@ -228,6 +233,17 @@ public class MainViewController extends Controller {
         }
     }
 
+    @Subscribe
+    public void handleUpdateViewEvent(UpdateViewEvent event) {
+        if (event.type() == ModificationType.MODEL_CURVE_DRAGGED) {
+            updateOnDrag();
+        }
+        if (event.type() == ModificationType.PICKETS_BAR_CHANGE) {
+            currentPicket = picketsBarController.getCurrentPicket();
+            updateOnPicketsBarChange();
+        }
+    }
+
     private void addEXP(File file) {
         try {
             section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
@@ -261,7 +277,7 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void updateOnRemovePicket() {
+    private void updateOnPicketsBarChange() {
         if (currentPicket >= section.getPicketsCount()) {
             currentPicket = section.getPicketsCount() - 1;
         }

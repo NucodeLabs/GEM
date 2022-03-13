@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.charts;
 
+import com.google.common.eventbus.EventBus;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,6 +10,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModificationType;
+import ru.nucodelabs.gem.core.events.UpdateViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
@@ -34,7 +37,6 @@ public class VESCurvesController extends Controller {
     private final ViewService viewService;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
-    private Runnable onSectionModificationAction;
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -44,17 +46,15 @@ public class VESCurvesController extends Controller {
     private NumberAxis lineChartYAxis;
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
+    private final EventBus eventBus;
 
-    public VESCurvesController(ViewService viewService) {
+    public VESCurvesController(ViewService viewService, EventBus eventBus) {
         this.viewService = viewService;
+        this.eventBus = eventBus;
     }
 
     public void setSection(Section section) {
         this.section = section;
-    }
-
-    public void setOnSectionModificationAction(Runnable onSectionModificationAction) {
-        this.onSectionModificationAction = onSectionModificationAction;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class VESCurvesController extends Controller {
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            onSectionModificationAction.run();
+            eventBus.post(new UpdateViewEvent(ModificationType.MODEL_CURVE_DRAGGED));
         });
     }
 

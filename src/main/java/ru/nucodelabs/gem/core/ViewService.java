@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.core;
 
+import com.google.common.eventbus.EventBus;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
@@ -26,10 +27,12 @@ public class ViewService {
 
     private final ModelProvider modelProvider;
     private final ResourceBundle uiProperties;
+    private final EventBus eventBus;
 
-    public ViewService(ModelProvider modelProvider, ResourceBundle uiProperties) {
+    public ViewService(ModelProvider modelProvider, ResourceBundle uiProperties, EventBus eventBus) {
         this.modelProvider = modelProvider;
         this.uiProperties = uiProperties;
+        this.eventBus = eventBus;
     }
 
     public void start() {
@@ -51,7 +54,7 @@ public class ViewService {
      */
     private Object createController(Class<?> type) {
         if (type == MainViewController.class) {
-            return new MainViewController(this, modelProvider.getSection());
+            return new MainViewController(this, eventBus, modelProvider.getSection());
         }
         if (type == NoFileScreenController.class) {
             return new NoFileScreenController();
@@ -60,7 +63,7 @@ public class ViewService {
             return new MisfitStacksController(this);
         }
         if (type == VESCurvesController.class) {
-            return new VESCurvesController(this);
+            return new VESCurvesController(this, eventBus);
         }
         if (type == ModelTableController.class) {
             return new ModelTableController();
@@ -69,7 +72,7 @@ public class ViewService {
             return new ExperimentalTableController();
         }
         if (type == PicketsBarController.class) {
-            return new PicketsBarController();
+            return new PicketsBarController(eventBus);
         }
         throw new IllegalArgumentException();
     }
