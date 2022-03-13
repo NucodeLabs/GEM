@@ -34,7 +34,7 @@ public class VESCurvesController extends Controller {
     private final ViewService viewService;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
-    private Runnable onDragAction = () -> System.out.println(this.getClass() + ": onDrag method not specified!");
+    private Runnable onSectionModificationAction;
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -53,8 +53,8 @@ public class VESCurvesController extends Controller {
         this.section = section;
     }
 
-    public void setOnDragAction(Runnable onDragAction) {
-        this.onDragAction = onDragAction;
+    public void setOnSectionModificationAction(Runnable onSectionModificationAction) {
+        this.onSectionModificationAction = onSectionModificationAction;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class VESCurvesController extends Controller {
         modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            onDragAction.run();
+            onSectionModificationAction.run();
         });
     }
 
