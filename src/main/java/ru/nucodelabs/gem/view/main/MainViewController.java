@@ -11,6 +11,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
+import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.core.events.ModificationType;
@@ -231,6 +232,13 @@ public class MainViewController extends Controller {
             currentPicket--;
             updateAll();
         }
+    }
+
+    @FXML
+    public void inverseSolve() {
+        section.setModelData(currentPicket,
+                InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
+        updateAll();
     }
 
     @Subscribe
