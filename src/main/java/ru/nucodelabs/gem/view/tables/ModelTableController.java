@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.tables;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelTableLine;
@@ -14,7 +13,7 @@ import ru.nucodelabs.gem.view.VESTablesConverters;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ModelTableController extends Controller implements Initializable {
+public class ModelTableController extends Controller {
 
     private Section section;
 

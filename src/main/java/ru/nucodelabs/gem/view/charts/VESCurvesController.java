@@ -1,15 +1,17 @@
 package ru.nucodelabs.gem.view.charts;
 
+import com.google.common.eventbus.EventBus;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModificationType;
+import ru.nucodelabs.gem.core.events.UpdateViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
@@ -18,7 +20,7 @@ import ru.nucodelabs.gem.view.VESSeriesConverters;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController extends Controller implements Initializable {
+public class VESCurvesController extends Controller {
     /**
      * Constants
      */
@@ -33,9 +35,9 @@ public class VESCurvesController extends Controller implements Initializable {
 
     private Section section;
     private final ViewService viewService;
+    private final EventBus eventBus;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
-    private Runnable onDragAction = () -> System.out.println(this.getClass() + ": onDrag method not specified!");
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -46,16 +48,13 @@ public class VESCurvesController extends Controller implements Initializable {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public VESCurvesController(ViewService viewService) {
+    public VESCurvesController(ViewService viewService, EventBus eventBus) {
         this.viewService = viewService;
+        this.eventBus = eventBus;
     }
 
     public void setSection(Section section) {
         this.section = section;
-    }
-
-    public void setOnDragAction(Runnable onDragAction) {
-        this.onDragAction = onDragAction;
     }
 
     @Override
@@ -131,10 +130,14 @@ public class VESCurvesController extends Controller implements Initializable {
             e.printStackTrace();
         }
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
-        modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
+        modelCurveSeries.getNode().setOnMousePressed(e -> {
+            modelCurveDragger.resetStyle();
+            modelCurveDragger.lineToDragDetector(e);
+            modelCurveDragger.setStyle();
+        });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            onDragAction.run();
+            eventBus.post(new UpdateViewEvent(ModificationType.MODEL_CURVE_DRAGGED));
         });
     }
 

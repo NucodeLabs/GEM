@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.core;
 
+import com.google.common.eventbus.EventBus;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -13,7 +14,8 @@ public class GemApplication extends Application {
     public void start(Stage stage) {
         ModelProvider modelProvider = new ModelProvider();
         ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        ViewService viewService = new ViewService(modelProvider, uiProperties);
+        EventBus eventBus = new EventBus();
+        ViewService viewService = new ViewService(modelProvider, uiProperties, eventBus);
 
         viewService.start();
     }

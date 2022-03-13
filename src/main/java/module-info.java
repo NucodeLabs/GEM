@@ -14,5 +14,5 @@ module GEM.main {
     requires javafx.fxml;
     requires javafx.controls;
     requires java.naming;
-//    requires com.google.common;
+    requires com.google.common;
 }
