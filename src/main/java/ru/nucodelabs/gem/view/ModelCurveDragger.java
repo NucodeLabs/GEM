@@ -100,6 +100,18 @@ public class ModelCurveDragger {
         }
     }
 
+    public void setStyle() {
+        if (point1 != null && point2 != null) {
+            String style = """
+                    -fx-pref-width: 10;
+                    -fx-pref-height: 10;
+                    -fx-background-radius: 50%;
+                    """;
+            point1.getNode().lookup(".chart-line-symbol").setStyle(style);
+            point2.getNode().lookup(".chart-line-symbol").setStyle(style);
+        }
+    }
+
     /**
      * Drags the points by mouse and modifies ModelData values if called initModelData() previously
      *
@@ -129,8 +141,8 @@ public class ModelCurveDragger {
                     int index2 = index1 + 1; // neighbor
                     double initialValue1 = modelData.power().get(index1);
                     double initialValue2 = modelData.power().get(index2);
-                    double newValue1 = pow(10, log10(initialValue1) - diff);
-                    double newValue2 = pow(10, log10(initialValue2) + diff);
+                    double newValue1 = pow(10, log10(initialValue1) + diff);
+                    double newValue2 = pow(10, log10(initialValue2) - diff);
                     modelData.power().set(index1, newValue1);
                     modelData.power().set(index2, newValue2);
                 }
@@ -224,5 +236,17 @@ public class ModelCurveDragger {
 
     private XYChart.Data<Double, Double> coordinatesToValues(Point2D pointInScene) {
         return coordinatesInSceneToValue.apply(pointInScene);
+    }
+
+    public void resetStyle() {
+        if (point1 != null && point2 != null) {
+            String style = """
+                     -fx-pref-width: 0;
+                     -fx-pref-height: 0;
+                     -fx-background-radius: 0;
+                    """;
+            point1.getNode().lookup(".chart-line-symbol").setStyle(style);
+            point2.getNode().lookup(".chart-line-symbol").setStyle(style);
+        }
     }
 }
