@@ -130,7 +130,11 @@ public class VESCurvesController extends Controller {
             e.printStackTrace();
         }
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
-        modelCurveSeries.getNode().setOnMousePressed(e -> modelCurveDragger.lineToDragDetector(e));
+        modelCurveSeries.getNode().setOnMousePressed(e -> {
+            modelCurveDragger.resetStyle();
+            modelCurveDragger.lineToDragDetector(e);
+            modelCurveDragger.setStyle();
+        });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
             eventBus.post(new UpdateViewEvent(ModificationType.MODEL_CURVE_DRAGGED));
