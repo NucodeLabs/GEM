@@ -74,6 +74,8 @@ public class MainViewController extends Controller {
     @FXML
     public Menu menuView;
     @FXML
+    public PicketsBarController picketsBarController;
+    @FXML
     public NoFileScreenController noFileScreenController;
     @FXML
     public MisfitStacksController misfitStacksController;
@@ -84,6 +86,7 @@ public class MainViewController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initPicketsBarController();
         initNoFileScreenController();
         initMisfitStacksController();
         initVESCurvesController();
@@ -119,6 +122,12 @@ public class MainViewController extends Controller {
 
     private void initExperimentalTableController() {
         experimentalTableController.setSection(section);
+    }
+
+    private void initPicketsBarController() {
+        picketsBarController.setSection(section);
+        picketsBarController.setOnSectionModificationAction(this::updateOnRemovePicket);
+        picketsBarController.setButtonNumberAction(this::setCurrentPicket);
     }
 
     @Override
@@ -252,10 +261,22 @@ public class MainViewController extends Controller {
         }
     }
 
+    private void updateOnRemovePicket() {
+        if (currentPicket >= section.getPicketsCount()) {
+            currentPicket = section.getPicketsCount() - 1;
+        }
+        updateAll();
+    }
+
     private void updateOnDrag() {
         vesCurvesController.updateTheoreticalCurve(currentPicket);
         misfitStacksController.update(currentPicket);
         modelTableController.update(currentPicket);
+    }
+
+    private void setCurrentPicket(int currentPicket) {
+        this.currentPicket = currentPicket;
+        updateAll();
     }
 
     private void updateAll() {
@@ -263,6 +284,7 @@ public class MainViewController extends Controller {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
+        picketsBarController.update();
         experimentalTableController.update(currentPicket);
         vesCurvesController.updateAll(currentPicket);
         modelTableController.update(currentPicket);

@@ -45,7 +45,7 @@ public interface Section extends Model {
     void setExperimentalData(int picketNumber, ExperimentalData experimentalData);
 
     /**
-     * Returns list of pickets
+     * Returns unmodifiable list of pickets
      *
      * @return list of pickets
      */
@@ -72,6 +72,14 @@ public interface Section extends Model {
      * @param picketNumber index of picket in list of pickets
      */
     void removePicket(int picketNumber);
+
+    /**
+     * Swaps two pickets
+     *
+     * @param picketNumber1 picket 1
+     * @param picketNumber2 picket 2
+     */
+    void swapPickets(int picketNumber1, int picketNumber2);
 
     /**
      * Returns size of pickets list

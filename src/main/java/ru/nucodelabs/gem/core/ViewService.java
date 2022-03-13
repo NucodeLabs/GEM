@@ -8,6 +8,7 @@ import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.NoFileScreenController;
+import ru.nucodelabs.gem.view.main.PicketsBarController;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 
@@ -34,7 +35,7 @@ public class ViewService {
     public void start() {
         FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
-        fxmlLoader.setControllerFactory(this::controllerFactory);
+        fxmlLoader.setControllerFactory(this::createController);
         try {
             ((Stage) fxmlLoader.load()).show();
         } catch (IOException e) {
@@ -48,7 +49,7 @@ public class ViewService {
      * @param type class of controller
      * @return new controller instance
      */
-    private Object controllerFactory(Class<?> type) {
+    private Object createController(Class<?> type) {
         if (type == MainViewController.class) {
             return new MainViewController(this, modelProvider.getSection());
         }
@@ -66,6 +67,9 @@ public class ViewService {
         }
         if (type == ExperimentalTableController.class) {
             return new ExperimentalTableController();
+        }
+        if (type == PicketsBarController.class) {
+            return new PicketsBarController();
         }
         throw new IllegalArgumentException();
     }
