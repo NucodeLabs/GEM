@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.charts;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -18,7 +17,7 @@ import ru.nucodelabs.gem.view.VESSeriesConverters;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController extends Controller implements Initializable {
+public class VESCurvesController extends Controller {
     /**
      * Constants
      */

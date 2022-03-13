@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.tables;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalTableLine;
@@ -12,7 +11,7 @@ import ru.nucodelabs.gem.view.VESTablesConverters;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ExperimentalTableController extends Controller implements Initializable {
+public class ExperimentalTableController extends Controller {
 
     private Section section;
 

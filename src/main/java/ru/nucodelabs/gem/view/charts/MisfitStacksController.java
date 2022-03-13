@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.charts;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -20,7 +19,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController extends Controller implements Initializable {
+public class MisfitStacksController extends Controller {
 
     private Section section;
     private final ViewService viewService;
