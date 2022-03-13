@@ -35,6 +35,7 @@ public class VESCurvesController extends Controller {
 
     private Section section;
     private final ViewService viewService;
+    private final EventBus eventBus;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
 
@@ -46,7 +47,6 @@ public class VESCurvesController extends Controller {
     private NumberAxis lineChartYAxis;
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
-    private final EventBus eventBus;
 
     public VESCurvesController(ViewService viewService, EventBus eventBus) {
         this.viewService = viewService;
