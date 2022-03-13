@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 public class PicketsBarController extends Controller {
 
     private Section section;
-    private Consumer<Integer> buttonNumberAction = (n) -> System.out.println(this.getClass() + ": method not specified");
+    private Consumer<Integer> buttonNumberAction;
     private Runnable onSectionModificationAction;
 
     @FXML

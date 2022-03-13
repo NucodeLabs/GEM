@@ -10,8 +10,8 @@ import java.util.ResourceBundle;
 
 public class NoFileScreenController extends Controller {
 
-    private Runnable importEXP = () -> System.out.println(this.getClass() + ": importEXP action not specified!");
-    private Runnable openSection = () -> System.out.println(this.getClass() + ": openSection action not specified!");
+    private Runnable importEXP;
+    private Runnable openSection;
 
     @FXML
     public VBox root;

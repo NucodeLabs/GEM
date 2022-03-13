@@ -113,7 +113,7 @@ public class MainViewController extends Controller {
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setOnDragAction(this::updateOnDrag);
+        vesCurvesController.setOnSectionModificationAction(this::updateOnDrag);
     }
 
     private void initModelTableController() {
