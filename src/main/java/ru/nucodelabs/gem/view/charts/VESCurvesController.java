@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,7 +10,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.UpdateViewRequest;
+import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
+import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
+import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
@@ -32,6 +35,7 @@ public class VESCurvesController extends Controller {
     public static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
+    private int currentPicket;
     private Section section;
     private EventBus eventBus;
     private ResourceBundle uiProperties;
@@ -52,6 +56,7 @@ public class VESCurvesController extends Controller {
 
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
+        eventBus.register(this);
     }
 
     @Override
@@ -80,19 +85,35 @@ public class VESCurvesController extends Controller {
         return (Stage) lineChart.getScene().getWindow();
     }
 
-    public void updateAll(int picketNumber) {
-        updateExpCurves(picketNumber);
-        updateTheoreticalCurve(picketNumber);
-        updateModelCurve(picketNumber);
+    @Subscribe
+    private void handlePicketSwitchEvent(PicketSwitchEvent event) {
+        currentPicket = event.newPicketNumber();
+        update();
     }
 
-    public void updateTheoreticalCurve(int picketNumber) {
+    @Subscribe
+    private void handleModelDraggedEvent(ModelDraggedEvent event) {
+        updateTheoreticalCurve();
+    }
+
+    @Subscribe
+    private void handleSectionChangeEvent(SectionChangeEvent event) {
+        update();
+    }
+
+    private void update() {
+        updateExpCurves();
+        updateTheoreticalCurve();
+        updateModelCurve();
+    }
+
+    private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(picketNumber) != null) {
+        if (section.getModelData(currentPicket) != null) {
             try {
                 theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                        section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
+                        section.getExperimentalData(currentPicket), section.getModelData(currentPicket)
                 );
             } catch (UnsatisfiedLinkError e) {
                 new NoLibErrorAlert(e, getStage());
@@ -103,26 +124,26 @@ public class VESCurvesController extends Controller {
         dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
     }
 
-    public void updateModelCurve(int picketNumber) {
+    private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(picketNumber) != null) {
+        if (section.getModelData(currentPicket) != null) {
             modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                    section.getModelData(picketNumber)
+                    section.getModelData(currentPicket)
             );
         }
 
         modelCurveSeries.setName(uiProperties.getString("modCurve"));
         dataProperty.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
 
-        if (section.getModelData(picketNumber) != null) {
-            addDraggingToModelCurveSeries(picketNumber, modelCurveSeries);
+        if (section.getModelData(currentPicket) != null) {
+            addDraggingToModelCurveSeries(modelCurveSeries);
         }
     }
 
-    private void addDraggingToModelCurveSeries(int picketNumber, XYChart.Series<Double, Double> modelCurveSeries) {
+    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         try {
-            modelCurveDragger.mapModelData(section.getModelData(picketNumber));
+            modelCurveDragger.mapModelData(section.getModelData(currentPicket));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,27 +155,27 @@ public class VESCurvesController extends Controller {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            eventBus.post(new UpdateViewRequest(this));
+            eventBus.post(new ModelDraggedEvent());
         });
     }
 
-    public void updateExpCurves(int picketNumber) {
+    private void updateExpCurves() {
         XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         expCurveSeries.setName(uiProperties.getString("expCurve"));
         XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         errUpperExp.setName(uiProperties.getString("expCurveUpper"));
         XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         errLowerExp.setName(uiProperties.getString("expCurveLower"));
         dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (section.getModelData(picketNumber) == null) {
+        if (section.getExperimentalData(currentPicket) == null) {
             dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
             dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
         }
