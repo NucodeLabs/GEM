@@ -38,34 +38,31 @@ public class InverseSolver {
         modelResistance = modelData.resistance();
         modelPower = modelData.power();
 
-        int dimension = modelData.getSize() * 2;
-        double sideLength = 0.00001; //Надо настраивать, а лучше использовать другую сигнатуру
+        int dimension = modelData.getSize() * 2 - 1; // -1 - мощность последнего слоя не передается как параметр
+        double sideLength = 0.1; //Надо настраивать, а лучше использовать другую сигнатуру!
         NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength); //power_1, res_1, ..., power_n, res_n
 
         SimplexOptimizer optimizer = new SimplexOptimizer(1e-10, 1e-30);
 
         final FunctionValue functionValue = new FunctionValue();
-        double[] startPoint = new double[dimension]; //power_1, res_1, ..., power_n, res_n
+        double[] startPoint = new double[dimension]; //power_1, res_1, ..., power_(n - 1), res_(n - 1), res_n
+        //power_n = 0, поэтому используем 2n - 1 размерность. При нахождении значения функции подставлять 0
         //Начальная модель
-        for (int i = 0; i < dimension; i += 2) {
-            startPoint[i] = modelPower.get(i / 2);
-            startPoint[i + 1] = modelResistance.get(i / 2);
+        //ВРЕМЕННО
+        for (int i = 0; i < dimension - 1; i += 2) {
+            startPoint[i] = Math.log(modelPower.get(i / 2));
+            startPoint[i + 1] = Math.log(modelResistance.get(i / 2));
         }
+        startPoint[dimension - 1] = Math.log(modelResistance.get((dimension - 1) / 2));
+
         InitialGuess initialGuess = new InitialGuess(startPoint);
-
-        //Выходит из алгоритма, как и при достижении MaxEval
-        double[] lowerBounds = new double[dimension];
-        Arrays.fill(lowerBounds, 0);
-
-        double[] upperBounds = new double[dimension];
-        Arrays.fill(upperBounds, 1000);
 
         PointValuePair pointValuePair = optimizer.optimize(
                 new MaxEval(10000),
                 new ObjectiveFunction(functionValue),
                 GoalType.MINIMIZE,
                 initialGuess,
-                nelderMeadSimplex//, new SimpleBounds(lowerBounds, upperBounds)
+                nelderMeadSimplex
         );
 
         double[] key = pointValuePair.getKey();
@@ -73,14 +70,14 @@ public class InverseSolver {
         List<Double> newModelPower = new ArrayList<>();
         List<Double> newModelResistance = new ArrayList<>();
 
-        for (int i = 0; i < key.length; i += 2) {
-            newModelPower.add(key[i]);
-            newModelResistance.add(key[i + 1]);
+        for (int i = 0; i < key.length - 1; i += 2) {
+            newModelPower.add(Math.exp(key[i]));
+            newModelResistance.add(Math.exp(key[i + 1]));
         }
+        newModelPower.add(0.0);
+        newModelResistance.add(Math.exp(key[key.length - 1]));
 
-        ModelData newModelData = new ModelData(newModelResistance, modelData.polarization(), newModelPower);
-
-        return newModelData;
+        return new ModelData(newModelResistance, modelData.polarization(), newModelPower);
     }
 
     private static class FunctionValue implements MultivariateFunction {
@@ -99,10 +96,12 @@ public class InverseSolver {
             List<Double> currentModelPower = new ArrayList<>();
             List<Double> currentModelResistance = new ArrayList<>();
 
-            for (int i = 0; i < variables.length; i += 2) {
-                currentModelPower.add(variables[i]);
-                currentModelResistance.add(variables[i + 1]);
+            for (int i = 0; i < variables.length - 1; i += 2) {
+                currentModelPower.add(Math.exp(variables[i]));
+                currentModelResistance.add(Math.exp(variables[i + 1]));
             }
+            currentModelPower.add(0.0);
+            currentModelResistance.add(Math.exp(variables[variables.length - 1]));
 
             List<Double> solvedResistance = ForwardSolver.ves(currentModelResistance, currentModelPower, experimentalAB_2);
 

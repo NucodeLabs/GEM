@@ -30,7 +30,7 @@ public class ShiraPicket {
 
         ExperimentalData experimentalData = ExperimentalData.of(sttFile, expFile);
 
-        File file = new File("data/SHIRA_M4.mod");
+        File file = new File("data/SHIRA_M2.mod");
         MODFile modFile = SonetImport.readMOD(file);
 
         ModelData modelData = ModelData.of(modFile);
