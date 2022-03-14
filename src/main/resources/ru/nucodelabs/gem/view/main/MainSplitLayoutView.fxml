@@ -77,7 +77,7 @@
                                     <Label style="-fx-padding: 5" text="${controller.vesTitle}"/>
                                     <HBox HBox.hgrow="ALWAYS"/>
                                     <HBox style="-fx-padding: 5">
-                                        <Button text="%inverse"/>
+                                        <Button text="%inverse" onAction="#inverseSolve"/>
                                     </HBox>
                                     <HBox style="-fx-padding: 5">
                                         <Button text="Button 2"/>
