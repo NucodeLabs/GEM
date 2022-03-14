@@ -169,7 +169,6 @@ public class MainViewController extends Controller {
                 addEXP(file);
             }
         }
-        noFileOpened.set(false);
     }
 
     @FXML
@@ -184,7 +183,6 @@ public class MainViewController extends Controller {
             }
             viewEvents.post(new PicketSwitchEvent(0));
         }
-        noFileOpened.set(false);
     }
 
     @FXML
@@ -223,8 +221,6 @@ public class MainViewController extends Controller {
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
         }
-
-        noFileOpened.set(false);
     }
 
     @FXML
@@ -254,13 +250,15 @@ public class MainViewController extends Controller {
             noFileScreenController.hide();
         }
         this.currentPicket = picketSwitchEvent.newPicketNumber();
-        updateAll();
+        update();
     }
 
     @Subscribe
     private void handleSectionChangeEvent(SectionChangeEvent event) {
         if (currentPicket == section.getPicketsCount()) {
             viewEvents.post(new PicketSwitchEvent(currentPicket - 1));
+        } else {
+            update();
         }
     }
 
@@ -296,7 +294,7 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void updateAll() {
+    private void update() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
             noFileScreenController.hide();

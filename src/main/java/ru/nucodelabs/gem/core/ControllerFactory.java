@@ -13,16 +13,16 @@ import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 public class ControllerFactory implements Callback<Class<?>, Object> {
 
-    private final EventBus appEventBus;
+    private final EventBus appEvents;
 
-    public ControllerFactory(EventBus appEventBus) {
-        this.appEventBus = appEventBus;
+    public ControllerFactory(EventBus appEvents) {
+        this.appEvents = appEvents;
     }
 
     @Override
     public Object call(Class<?> param) {
         if (param == MainViewController.class) {
-            return new MainViewController(appEventBus, new SectionImpl());
+            return new MainViewController(appEvents, new SectionImpl());
         }
         if (param == NoFileScreenController.class) {
             return new NoFileScreenController();

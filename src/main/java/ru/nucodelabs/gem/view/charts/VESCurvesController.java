@@ -98,7 +98,11 @@ public class VESCurvesController extends Controller {
 
     @Subscribe
     private void handleSectionChangeEvent(SectionChangeEvent event) {
-        update();
+        if (currentPicket == section.getPicketsCount()) {
+            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
+        } else {
+            update();
+        }
     }
 
     private void update() {

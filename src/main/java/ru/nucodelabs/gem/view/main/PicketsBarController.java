@@ -48,7 +48,11 @@ public class PicketsBarController extends Controller {
 
     @Subscribe
     private void handleSectionChangeEvent(SectionChangeEvent event) {
-        update();
+        if (currentPicket == section.getPicketsCount()) {
+            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
+        } else {
+            update();
+        }
     }
 
     @Override
