@@ -9,13 +9,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.ViewService;
-import ru.nucodelabs.gem.core.events.ModificationType;
-import ru.nucodelabs.gem.core.events.UpdateViewEvent;
+import ru.nucodelabs.gem.core.events.UpdateViewRequest;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
+import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,8 +33,7 @@ public class VESCurvesController extends Controller {
     public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
     private Section section;
-    private final ViewService viewService;
-    private final EventBus eventBus;
+    private EventBus eventBus;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
 
@@ -48,13 +46,12 @@ public class VESCurvesController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public VESCurvesController(ViewService viewService, EventBus eventBus) {
-        this.viewService = viewService;
-        this.eventBus = eventBus;
-    }
-
     public void setSection(Section section) {
         this.section = section;
+    }
+
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -98,7 +95,7 @@ public class VESCurvesController extends Controller {
                         section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
+                new NoLibErrorAlert(e, getStage());
             }
         }
 
@@ -137,7 +134,7 @@ public class VESCurvesController extends Controller {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            eventBus.post(new UpdateViewEvent(ModificationType.MODEL_CURVE_DRAGGED));
+            eventBus.post(new UpdateViewRequest(this));
         });
     }
 
