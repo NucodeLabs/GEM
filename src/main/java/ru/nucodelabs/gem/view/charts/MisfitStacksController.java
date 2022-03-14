@@ -57,7 +57,11 @@ public class MisfitStacksController extends Controller {
 
     @Subscribe
     private void handleSectionChangeEvent(SectionChangeEvent event) {
-        update();
+        if (currentPicket == section.getPicketsCount()) {
+            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
+        } else {
+            update();
+        }
     }
 
     public void setSection(Section section) {

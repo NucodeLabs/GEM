@@ -17,11 +17,11 @@ import java.util.ResourceBundle;
  */
 public class GemApplication extends Application {
     private final ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-    private final EventBus eventBus = new EventBus();
+    private final EventBus appEvents = new EventBus();
 
     @Override
     public void start(Stage stage) {
-        eventBus.register(this);
+        appEvents.register(this);
 
         showMainView();
     }
@@ -29,7 +29,7 @@ public class GemApplication extends Application {
     private void showMainView() {
         FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
         Objects.requireNonNull(fxmlLoader);
-        fxmlLoader.setControllerFactory(new ControllerFactory(eventBus));
+        fxmlLoader.setControllerFactory(new ControllerFactory(appEvents));
         try {
             ((Stage) fxmlLoader.load()).show();
         } catch (IOException e) {
