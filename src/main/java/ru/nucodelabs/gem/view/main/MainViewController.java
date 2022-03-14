@@ -14,7 +14,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.events.NewWindowRequest;
-import ru.nucodelabs.gem.core.events.UpdateViewRequest;
+import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
+import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
@@ -40,8 +41,8 @@ public class MainViewController extends Controller {
     /**
      * Service-objects
      */
-    private final EventBus appEventBus;
-    private final EventBus viewEventBus;
+    private final EventBus appEvents;
+    private final EventBus viewEvents;
     private ResourceBundle uiProperties;
 
     /**
@@ -60,14 +61,14 @@ public class MainViewController extends Controller {
     /**
      * Initialization
      *
-     * @param appEventBus event bus
-     * @param section     VES Data
+     * @param appEvents event bus
+     * @param section   VES Data
      */
-    public MainViewController(EventBus appEventBus, Section section) {
-        this.appEventBus = requireNonNull(appEventBus);
+    public MainViewController(EventBus appEvents, Section section) {
+        this.appEvents = requireNonNull(appEvents);
         this.section = requireNonNull(section);
-        viewEventBus = new EventBus();
-        viewEventBus.register(this);
+        viewEvents = new EventBus();
+        viewEvents.register(this);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -113,32 +114,34 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void initMisfitStacksController() {
-        misfitStacksController.setSection(section);
-        misfitStacksController.setEventBus(viewEventBus);
-    }
-
     private void initNoFileScreenController() {
         noFileScreenController.setImportEXPAction(this::importEXP);
         noFileScreenController.setOpenSectionAction(this::openSection);
     }
 
+    private void initMisfitStacksController() {
+        misfitStacksController.setSection(section);
+        misfitStacksController.setEventBus(viewEvents);
+    }
+
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
-        vesCurvesController.setEventBus(viewEventBus);
+        vesCurvesController.setEventBus(viewEvents);
     }
 
     private void initModelTableController() {
         modelTableController.setSection(section);
+        modelTableController.setEventBus(viewEvents);
     }
 
     private void initExperimentalTableController() {
         experimentalTableController.setSection(section);
+        experimentalTableController.setEventBus(viewEvents);
     }
 
     private void initPicketsBarController() {
         picketsBarController.setSection(section);
-        picketsBarController.setEventBus(viewEventBus);
+        picketsBarController.setEventBus(viewEvents);
     }
 
     @Override
@@ -166,6 +169,7 @@ public class MainViewController extends Controller {
                 addEXP(file);
             }
         }
+        noFileOpened.set(false);
     }
 
     @FXML
@@ -178,9 +182,9 @@ public class MainViewController extends Controller {
                 new IncorrectFileAlert(e, getStage()).show();
                 return;
             }
-            currentPicket = 0;
-            updateAll();
+            viewEvents.post(new PicketSwitchEvent(0));
         }
+        noFileOpened.set(false);
     }
 
     @FXML
@@ -200,7 +204,7 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void newWindow() {
-        appEventBus.post(new NewWindowRequest());
+        appEvents.post(new NewWindowRequest());
     }
 
     /**
@@ -220,22 +224,20 @@ public class MainViewController extends Controller {
             new IncorrectFileAlert(e, getStage()).show();
         }
 
-        updateAll();
+        noFileOpened.set(false);
     }
 
     @FXML
     public void switchToNextPicket() {
         if (section.getPicketsCount() > currentPicket + 1) {
-            currentPicket++;
-            updateAll();
+            viewEvents.post(new PicketSwitchEvent(currentPicket + 1));
         }
     }
 
     @FXML
     public void switchToPrevPicket() {
         if (currentPicket > 0 && section.getPicketsCount() > 0) {
-            currentPicket--;
-            updateAll();
+            viewEvents.post(new PicketSwitchEvent(currentPicket - 1));
         }
     }
 
@@ -243,17 +245,22 @@ public class MainViewController extends Controller {
     public void inverseSolve() {
         section.setModelData(currentPicket,
                 InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
+        viewEvents.post(new SectionChangeEvent());
+    }
+
+    @Subscribe
+    public void handlePicketSwitchEvent(PicketSwitchEvent picketSwitchEvent) {
+        if (!noFileOpened.get()) {
+            noFileScreenController.hide();
+        }
+        this.currentPicket = picketSwitchEvent.newPicketNumber();
         updateAll();
     }
 
     @Subscribe
-    public void handleUpdateViewEvent(UpdateViewRequest event) {
-        if (event.caller() instanceof VESCurvesController) {
-            updateOnDrag();
-        }
-        if (event.caller() instanceof PicketsBarController) {
-            currentPicket = picketsBarController.getCurrentPicket();
-            updateOnPicketsBarChange();
+    private void handleSectionChangeEvent(SectionChangeEvent event) {
+        if (currentPicket == section.getPicketsCount()) {
+            viewEvents.post(new PicketSwitchEvent(currentPicket - 1));
         }
     }
 
@@ -264,9 +271,8 @@ public class MainViewController extends Controller {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        currentPicket++;
+        viewEvents.post(new PicketSwitchEvent(currentPicket++));
         compatibilityModeAlert();
-        updateAll();
     }
 
     /**
@@ -290,30 +296,11 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void updateOnPicketsBarChange() {
-        if (currentPicket >= section.getPicketsCount()) {
-            currentPicket = section.getPicketsCount() - 1;
-        }
-        updateAll();
-    }
-
-    private void updateOnDrag() {
-        vesCurvesController.updateTheoreticalCurve(currentPicket);
-        misfitStacksController.update(currentPicket);
-        modelTableController.update(currentPicket);
-    }
-
     private void updateAll() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
-        picketsBarController.setCurrentPicket(currentPicket);
-        picketsBarController.update();
-        experimentalTableController.update(currentPicket);
-        vesCurvesController.updateAll(currentPicket);
-        modelTableController.update(currentPicket);
-        misfitStacksController.update(currentPicket);
         updateVESText();
         updateVESNumber();
     }
