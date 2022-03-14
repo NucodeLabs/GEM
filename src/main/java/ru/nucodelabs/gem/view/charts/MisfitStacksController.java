@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.charts;
 
+import com.google.common.eventbus.EventBus;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,10 +8,10 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.ViewService;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
+import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import static java.lang.Math.abs;
 public class MisfitStacksController extends Controller {
 
     private Section section;
-    private final ViewService viewService;
+    private EventBus eventBus;
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -33,8 +34,8 @@ public class MisfitStacksController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public MisfitStacksController(ViewService viewService) {
-        this.viewService = viewService;
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class MisfitStacksController extends Controller {
                         section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
+                new NoLibErrorAlert(e, getStage()).show();
             }
         }
 
