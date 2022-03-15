@@ -13,6 +13,7 @@ import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.VESTablesConverters;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,6 +22,7 @@ public class ModelTableController extends AbstractSectionController {
     @FXML
     private TableView<ModelTableLine> table;
 
+    @Inject
     public ModelTableController(EventBus eventBus, Section section) {
         super(eventBus, section);
     }
