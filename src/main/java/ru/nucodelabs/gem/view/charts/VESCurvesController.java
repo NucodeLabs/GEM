@@ -11,10 +11,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
-import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
-import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
@@ -22,7 +20,7 @@ import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController extends Controller {
+public class VESCurvesController extends AbstractSectionController {
     /**
      * Constants
      */
@@ -35,9 +33,6 @@ public class VESCurvesController extends Controller {
     public static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
-    private int currentPicket;
-    private Section section;
-    private EventBus eventBus;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
 
@@ -50,12 +45,8 @@ public class VESCurvesController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public void setSection(Section section) {
-        this.section = section;
-    }
-
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public VESCurvesController(EventBus eventBus, Section section) {
+        super(eventBus, section);
     }
 
     @Override
@@ -85,26 +76,12 @@ public class VESCurvesController extends Controller {
     }
 
     @Subscribe
-    private void handlePicketSwitchEvent(PicketSwitchEvent event) {
-        currentPicket = event.newPicketNumber();
-        update();
-    }
-
-    @Subscribe
     private void handleModelDraggedEvent(ModelDraggedEvent event) {
         updateTheoreticalCurve();
     }
 
-    @Subscribe
-    private void handleSectionChangeEvent(SectionChangeEvent event) {
-        if (currentPicket == section.getPicketsCount()) {
-            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
-        } else {
-            update();
-        }
-    }
-
-    private void update() {
+    @Override
+    protected void update() {
         updateExpCurves();
         updateTheoreticalCurve();
         updateModelCurve();
@@ -158,7 +135,7 @@ public class VESCurvesController extends Controller {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            eventBus.post(new ModelDraggedEvent());
+            viewEvents.post(new ModelDraggedEvent());
         });
     }
 

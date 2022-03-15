@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.tables;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
+import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.VESTablesConverters;
 
@@ -18,6 +20,10 @@ public class ModelTableController extends AbstractSectionController {
 
     @FXML
     private TableView<ModelTableLine> table;
+
+    public ModelTableController(EventBus eventBus, Section section) {
+        super(eventBus, section);
+    }
 
     @Subscribe
     private void handleModelDraggedEvent(ModelDraggedEvent modelDraggedEvent) {

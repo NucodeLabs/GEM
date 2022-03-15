@@ -56,11 +56,10 @@ public class MainViewController extends AbstractSectionController {
      * @param appEvents event bus
      * @param section   VES Data
      */
-    public MainViewController(EventBus appEvents, Section section) {
+    public MainViewController(EventBus appEvents, EventBus viewEvents, Section section) {
+        super(viewEvents, section);
         this.appEvents = requireNonNull(appEvents);
-        this.section = requireNonNull(section);
-        viewEvents = new EventBus();
-        viewEvents.register(this);
+        this.viewEvents.register(this);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -90,14 +89,11 @@ public class MainViewController extends AbstractSectionController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initPicketsBarController();
-        initNoFileScreenController();
-        initMisfitStacksController();
-        initVESCurvesController();
-        initModelTableController();
-        initExperimentalTableController();
-
         uiProperties = requireNonNull(resources);
+        registerControllers();
+
+        noFileScreenController.setImportEXPAction(this::importEXP);
+        noFileScreenController.setOpenSectionAction(this::openSection);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
@@ -106,49 +102,18 @@ public class MainViewController extends AbstractSectionController {
         }
     }
 
-    private void initNoFileScreenController() {
-        noFileScreenController.setImportEXPAction(this::importEXP);
-        noFileScreenController.setOpenSectionAction(this::openSection);
-    }
-
-    private void initMisfitStacksController() {
-        misfitStacksController.setSection(section);
-        misfitStacksController.setEventBus(viewEvents);
-        viewEvents.register(misfitStacksController);
-    }
-
-    private void initVESCurvesController() {
-        vesCurvesController.setSection(section);
-        vesCurvesController.setEventBus(viewEvents);
-        viewEvents.register(vesCurvesController);
-    }
-
-    private void initModelTableController() {
-        modelTableController.setSection(section);
-        modelTableController.setViewEvents(viewEvents);
-        viewEvents.register(modelTableController);
-    }
-
-    private void initExperimentalTableController() {
-        experimentalTableController.setSection(section);
-        experimentalTableController.setViewEvents(viewEvents);
-        viewEvents.register(experimentalTableController);
-    }
-
-    private void initPicketsBarController() {
-        picketsBarController.setSection(section);
-        picketsBarController.setViewEvents(viewEvents);
+    private void registerControllers() {
         viewEvents.register(picketsBarController);
+        viewEvents.register(misfitStacksController);
+        viewEvents.register(vesCurvesController);
+        viewEvents.register(modelTableController);
+        viewEvents.register(experimentalTableController);
     }
 
     @Override
     protected Stage getStage() {
         return root;
     }
-
-    /**
-     * <h1>Event Handlers</h1>
-     */
 
     @FXML
     public void closeFile() {

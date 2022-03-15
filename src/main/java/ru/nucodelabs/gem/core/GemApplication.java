@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.NewWindowRequest;
+import ru.nucodelabs.gem.core.factory.ControllerFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.IOException;

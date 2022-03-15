@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
+import com.google.common.eventbus.EventBus;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -8,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
+import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 
 import java.net.URL;
@@ -19,6 +21,10 @@ public class PicketsBarController extends AbstractSectionController {
 
     @FXML
     public HBox container;
+
+    public PicketsBarController(EventBus eventBus, Section section) {
+        super(eventBus, section);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

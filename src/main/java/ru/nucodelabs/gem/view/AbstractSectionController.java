@@ -7,16 +7,13 @@ import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.model.Section;
 
 public abstract class AbstractSectionController extends Controller {
-    protected Section section;
-    protected EventBus viewEvents;
+    protected final Section section;
+    protected final EventBus viewEvents;
     protected int currentPicket;
 
-    public void setSection(Section section) {
-        this.section = section;
-    }
-
-    public void setViewEvents(EventBus viewEvents) {
+    public AbstractSectionController(EventBus viewEvents, Section section) {
         this.viewEvents = viewEvents;
+        this.section = section;
     }
 
     @Subscribe
