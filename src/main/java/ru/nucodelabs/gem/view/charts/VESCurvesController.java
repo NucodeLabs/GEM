@@ -56,7 +56,6 @@ public class VESCurvesController extends Controller {
 
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
-        eventBus.register(this);
     }
 
     @Override

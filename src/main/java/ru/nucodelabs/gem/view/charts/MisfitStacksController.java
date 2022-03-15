@@ -41,7 +41,6 @@ public class MisfitStacksController extends Controller {
 
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
-        eventBus.register(this);
     }
 
     @Subscribe
