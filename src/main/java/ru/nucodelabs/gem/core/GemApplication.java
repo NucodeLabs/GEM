@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.core;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.MainViewFactory;
+import ru.nucodelabs.gem.view.main.MainViewFactory;
 
 import java.io.IOException;
 

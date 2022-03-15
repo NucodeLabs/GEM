@@ -14,8 +14,8 @@ import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
-import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
+import ru.nucodelabs.gem.view.convert.VESSeriesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
