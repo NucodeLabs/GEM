@@ -1,7 +1,5 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -10,50 +8,17 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
-import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PicketsBarController extends Controller {
-
-    private Section section;
-    private int currentPicket;
-    private EventBus eventBus;
+public class PicketsBarController extends AbstractSectionController {
 
     @FXML
     public HBox container;
-
-    public void setSection(Section section) {
-        this.section = section;
-    }
-
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
-        eventBus.register(this);
-    }
-
-    @Subscribe
-    private void handlePicketSwitchEvent(PicketSwitchEvent event) {
-        if (event.newPicketNumber() == section.getPicketsCount()) {
-            currentPicket = event.newPicketNumber() - 1;
-        } else {
-            currentPicket = event.newPicketNumber();
-        }
-        update();
-    }
-
-    @Subscribe
-    private void handleSectionChangeEvent(SectionChangeEvent event) {
-        if (currentPicket == section.getPicketsCount()) {
-            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
-        } else {
-            update();
-        }
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,7 +29,8 @@ public class PicketsBarController extends Controller {
         return (Stage) container.getScene().getWindow();
     }
 
-    private void update() {
+    @Override
+    protected void update() {
         List<Button> buttons = new ArrayList<>();
 
         for (int i = 0; i < section.getPicketsCount(); i++) {
@@ -77,25 +43,25 @@ public class PicketsBarController extends Controller {
             }
 
             button.setOnAction(e -> {
-                eventBus.post(new PicketSwitchEvent(picketNumber));
+                viewEvents.post(new PicketSwitchEvent(picketNumber));
             });
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
             delete.setOnAction(e -> {
                 section.removePicket(picketNumber);
-                eventBus.post(new SectionChangeEvent());
+                viewEvents.post(new SectionChangeEvent());
             });
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
             moveLeft.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber - 1);
-                eventBus.post(new PicketSwitchEvent(picketNumber - 1));
+                viewEvents.post(new SectionChangeEvent());
             });
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
             moveRight.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber + 1);
-                eventBus.post(new PicketSwitchEvent(picketNumber + 1));
+                viewEvents.post(new SectionChangeEvent());
             });
 
             if (section.getPicketsCount() == 1) {

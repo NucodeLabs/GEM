@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,7 +17,7 @@ import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
 import ru.nucodelabs.gem.view.charts.MisfitStacksController;
@@ -36,13 +35,12 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller {
+public class MainViewController extends AbstractSectionController {
 
     /**
      * Service-objects
      */
     private final EventBus appEvents;
-    private final EventBus viewEvents;
     private ResourceBundle uiProperties;
 
     /**
@@ -51,12 +49,6 @@ public class MainViewController extends Controller {
     private final StringProperty vesTitle;
     private final StringProperty vesNumber;
     private final BooleanProperty noFileOpened;
-    private int currentPicket;
-
-    /**
-     * Data models
-     */
-    private final Section section;
 
     /**
      * Initialization
@@ -122,26 +114,31 @@ public class MainViewController extends Controller {
     private void initMisfitStacksController() {
         misfitStacksController.setSection(section);
         misfitStacksController.setEventBus(viewEvents);
+        viewEvents.register(misfitStacksController);
     }
 
     private void initVESCurvesController() {
         vesCurvesController.setSection(section);
         vesCurvesController.setEventBus(viewEvents);
+        viewEvents.register(vesCurvesController);
     }
 
     private void initModelTableController() {
         modelTableController.setSection(section);
-        modelTableController.setEventBus(viewEvents);
+        modelTableController.setViewEvents(viewEvents);
+        viewEvents.register(modelTableController);
     }
 
     private void initExperimentalTableController() {
         experimentalTableController.setSection(section);
-        experimentalTableController.setEventBus(viewEvents);
+        experimentalTableController.setViewEvents(viewEvents);
+        viewEvents.register(experimentalTableController);
     }
 
     private void initPicketsBarController() {
         picketsBarController.setSection(section);
-        picketsBarController.setEventBus(viewEvents);
+        picketsBarController.setViewEvents(viewEvents);
+        viewEvents.register(picketsBarController);
     }
 
     @Override
@@ -244,24 +241,6 @@ public class MainViewController extends Controller {
         viewEvents.post(new SectionChangeEvent());
     }
 
-    @Subscribe
-    public void handlePicketSwitchEvent(PicketSwitchEvent picketSwitchEvent) {
-        if (!noFileOpened.get()) {
-            noFileScreenController.hide();
-        }
-        this.currentPicket = picketSwitchEvent.newPicketNumber();
-        update();
-    }
-
-    @Subscribe
-    private void handleSectionChangeEvent(SectionChangeEvent event) {
-        if (currentPicket == section.getPicketsCount()) {
-            viewEvents.post(new PicketSwitchEvent(currentPicket - 1));
-        } else {
-            update();
-        }
-    }
-
     private void addEXP(File file) {
         try {
             section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
@@ -294,7 +273,8 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void update() {
+    @Override
+    protected void update() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
             noFileScreenController.hide();
