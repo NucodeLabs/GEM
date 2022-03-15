@@ -19,7 +19,7 @@
     </icons>
     <scene>
         <Scene stylesheets="@../common.css">
-            <VBox>
+            <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
                         <MenuItem text="%newWindow" onAction="#newWindow"/>
@@ -51,11 +51,11 @@
                         <MenuItem text="%about"/>
                     </Menu>
                 </MenuBar>
-                <StackPane>
-                    <VBox>
+                <StackPane maxWidth="Infinity" maxHeight="Infinity">
+                    <VBox maxWidth="Infinity" maxHeight="Infinity">
                         <fx:include fx:id="picketsBar" source="PicketsBar.fxml"/>
-                        <SplitPane orientation="VERTICAL">
-                            <SplitPane orientation="VERTICAL">
+                        <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
+                            <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
                                 <Placeholder text="%pseudoSection"/>
                                 <Placeholder text="%geoSection"/>
                             </SplitPane>
