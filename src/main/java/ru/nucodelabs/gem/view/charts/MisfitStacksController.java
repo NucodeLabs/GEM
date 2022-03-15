@@ -10,10 +10,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
-import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
-import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
@@ -24,11 +22,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController extends Controller {
-
-    private int currentPicket;
-    private Section section;
-    private EventBus eventBus;
+public class MisfitStacksController extends AbstractSectionController {
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -39,14 +33,8 @@ public class MisfitStacksController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
-
-    @Subscribe
-    private void handlePicketSwitchEvent(PicketSwitchEvent picketSwitchEvent) {
-        currentPicket = picketSwitchEvent.newPicketNumber();
-        update();
+    public MisfitStacksController(EventBus eventBus, Section section) {
+        super(eventBus, section);
     }
 
     @Subscribe
@@ -54,25 +42,13 @@ public class MisfitStacksController extends Controller {
         update();
     }
 
-    @Subscribe
-    private void handleSectionChangeEvent(SectionChangeEvent event) {
-        if (currentPicket == section.getPicketsCount()) {
-            eventBus.post(new PicketSwitchEvent(currentPicket - 1));
-        } else {
-            update();
-        }
-    }
-
-    public void setSection(Section section) {
-        this.section = section;
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dataProperty = lineChart.dataProperty();
     }
 
-    private void update() {
+    @Override
+    protected void update() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         if (section.getPicket(currentPicket).modelData() != null) {

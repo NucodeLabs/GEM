@@ -1,8 +1,7 @@
-package ru.nucodelabs.gem.core;
+package ru.nucodelabs.gem.core.factory;
 
 import com.google.common.eventbus.EventBus;
 import javafx.util.Callback;
-import ru.nucodelabs.gem.model.SectionImpl;
 import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.main.MainViewController;
@@ -14,6 +13,8 @@ import ru.nucodelabs.gem.view.tables.ModelTableController;
 public class ControllerFactory implements Callback<Class<?>, Object> {
 
     private final EventBus appEvents;
+    private final EventBusFactory eventBusFactory = new EventBusFactory();
+    private final SectionFactory sectionFactory = new SectionFactory();
 
     public ControllerFactory(EventBus appEvents) {
         this.appEvents = appEvents;
@@ -22,25 +23,38 @@ public class ControllerFactory implements Callback<Class<?>, Object> {
     @Override
     public Object call(Class<?> param) {
         if (param == MainViewController.class) {
-            return new MainViewController(appEvents, new SectionImpl());
+            return new MainViewController(
+                    appEvents,
+                    eventBusFactory.create(),
+                    sectionFactory.create());
         }
         if (param == NoFileScreenController.class) {
             return new NoFileScreenController();
         }
         if (param == MisfitStacksController.class) {
-            return new MisfitStacksController();
+            return new MisfitStacksController(
+                    eventBusFactory.getLastCreated(),
+                    sectionFactory.getLastCreated());
         }
         if (param == VESCurvesController.class) {
-            return new VESCurvesController();
+            return new VESCurvesController(
+                    eventBusFactory.getLastCreated(),
+                    sectionFactory.getLastCreated());
         }
         if (param == ModelTableController.class) {
-            return new ModelTableController();
+            return new ModelTableController(
+                    eventBusFactory.getLastCreated(),
+                    sectionFactory.getLastCreated());
         }
         if (param == ExperimentalTableController.class) {
-            return new ExperimentalTableController();
+            return new ExperimentalTableController(
+                    eventBusFactory.getLastCreated(),
+                    sectionFactory.getLastCreated());
         }
         if (param == PicketsBarController.class) {
-            return new PicketsBarController();
+            return new PicketsBarController(
+                    eventBusFactory.getLastCreated(),
+                    sectionFactory.getLastCreated());
         }
         throw new IllegalArgumentException();
     }
