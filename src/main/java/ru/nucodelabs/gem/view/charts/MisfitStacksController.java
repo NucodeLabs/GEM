@@ -15,6 +15,7 @@ import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class MisfitStacksController extends AbstractSectionController {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
+    @Inject
     public MisfitStacksController(EventBus eventBus, Section section) {
         super(eventBus, section);
     }

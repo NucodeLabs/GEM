@@ -9,6 +9,7 @@ import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.VESTablesConverters;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -17,6 +18,7 @@ public class ExperimentalTableController extends AbstractSectionController {
     @FXML
     private TableView<ExperimentalTableLine> table;
 
+    @Inject
     public ExperimentalTableController(EventBus eventBus, Section section) {
         super(eventBus, section);
     }

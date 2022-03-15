@@ -12,6 +12,7 @@ import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class PicketsBarController extends AbstractSectionController {
     @FXML
     public HBox container;
 
+    @Inject
     public PicketsBarController(EventBus eventBus, Section section) {
         super(eventBus, section);
     }

@@ -17,6 +17,7 @@ import ru.nucodelabs.gem.view.ModelCurveDragger;
 import ru.nucodelabs.gem.view.VESSeriesConverters;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -45,6 +46,7 @@ public class VESCurvesController extends AbstractSectionController {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
+    @Inject
     public VESCurvesController(EventBus eventBus, Section section) {
         super(eventBus, section);
     }

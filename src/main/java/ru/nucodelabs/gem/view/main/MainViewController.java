@@ -12,12 +12,13 @@ import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.gem.core.events.NewWindowRequest;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.gem.view.MainViewFactory;
+import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
 import ru.nucodelabs.gem.view.charts.MisfitStacksController;
@@ -28,7 +29,9 @@ import ru.nucodelabs.gem.view.filechoosers.MODFileChooserFactory;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 
+import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -37,10 +40,6 @@ import static java.util.Objects.requireNonNull;
 
 public class MainViewController extends AbstractSectionController {
 
-    /**
-     * Service-objects
-     */
-    private final EventBus appEvents;
     private ResourceBundle uiProperties;
 
     /**
@@ -50,15 +49,9 @@ public class MainViewController extends AbstractSectionController {
     private final StringProperty vesNumber;
     private final BooleanProperty noFileOpened;
 
-    /**
-     * Initialization
-     *
-     * @param appEvents event bus
-     * @param section   VES Data
-     */
-    public MainViewController(EventBus appEvents, EventBus viewEvents, Section section) {
+    @Inject
+    public MainViewController(EventBus viewEvents, Section section) {
         super(viewEvents, section);
-        this.appEvents = requireNonNull(appEvents);
         this.viewEvents.register(this);
 
         currentPicket = -1;
@@ -164,7 +157,11 @@ public class MainViewController extends AbstractSectionController {
      */
     @FXML
     public void newWindow() {
-        appEvents.post(new NewWindowRequest());
+        try {
+            new MainViewFactory().create().show();
+        } catch (IOException e) {
+            new ExceptionAlert(e).show();
+        }
     }
 
     /**
