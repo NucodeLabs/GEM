@@ -17,7 +17,6 @@ import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
-import ru.nucodelabs.gem.view.MainViewFactory;
 import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;

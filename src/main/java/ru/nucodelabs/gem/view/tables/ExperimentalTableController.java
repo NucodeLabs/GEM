@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalTableLine;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
-import ru.nucodelabs.gem.view.VESTablesConverters;
+import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;

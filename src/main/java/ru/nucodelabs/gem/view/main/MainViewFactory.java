@@ -1,10 +1,9 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.IOException;
 import java.util.Objects;
