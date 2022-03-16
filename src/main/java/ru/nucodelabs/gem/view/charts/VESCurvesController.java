@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.charts;
 
-import com.google.common.eventbus.Subscribe;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -82,7 +81,6 @@ public class VESCurvesController extends AbstractSectionController {
         return (Stage) lineChart.getScene().getWindow();
     }
 
-    @Subscribe
     private void handleModelDraggedEvent(ModelDraggedEvent event) {
         updateTheoreticalCurve();
     }

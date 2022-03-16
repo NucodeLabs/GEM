@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.subjects.Subject;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.SectionChangeEvent;
 import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.view.Controller;
 
@@ -24,14 +23,7 @@ public class NoFileScreenController extends Controller {
 
     @Inject
     public NoFileScreenController(Subject<ViewEvent> viewEventSubject) {
-        viewEventSubject
-                .filter(e -> e instanceof SectionChangeEvent)
-                .cast(SectionChangeEvent.class)
-                .subscribe(this::handleSectionChangeEvent);
-    }
-
-    private void handleSectionChangeEvent(SectionChangeEvent event) {
-        this.hide();
+        viewEventSubject.subscribe(e -> this.hide());
     }
 
     @FXML

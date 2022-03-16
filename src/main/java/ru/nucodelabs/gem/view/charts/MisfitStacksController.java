@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.charts;
 
-import com.google.common.eventbus.Subscribe;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -44,7 +43,6 @@ public class MisfitStacksController extends AbstractSectionController {
                 .subscribe(this::handleModelDraggedEvent);
     }
 
-    @Subscribe
     private void handleModelDraggedEvent(ModelDraggedEvent event) {
         update();
     }
