@@ -2,11 +2,13 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-import ru.nucodelabs.gem.core.events.ViewEvent;
+import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.model.SectionImpl;
 
@@ -17,12 +19,12 @@ public class MainViewModule extends AbstractModule {
     protected void configure() {
         bind(Section.class).to(SectionImpl.class).in(SINGLETON);
         bind(MainViewController.class).in(SINGLETON);
-    }
-
-    @Singleton
-    @Provides
-    private Subject<ViewEvent> provideSubject() {
-        return PublishSubject.create();
+        bind(new TypeLiteral<Subject<Section>>() {}).toProvider(PublishSubject::create).in(SINGLETON);
+        bind(new TypeLiteral<Subject<Picket>>() {}).toProvider(PublishSubject::create).in(SINGLETON);
+        bind(new TypeLiteral<Subject<ModelData>>() {}).toProvider(PublishSubject::create).in(SINGLETON);
+        bind(new TypeLiteral<Observable<Section>>() {}).to(new TypeLiteral<Subject<Section>>() {});
+        bind(new TypeLiteral<Observable<Picket>>() {}).to(new TypeLiteral<Subject<Picket>>() {});
+        bind(new TypeLiteral<Observable<ModelData>>() {}).to(new TypeLiteral<Subject<ModelData>>() {});
     }
 
     @Provides

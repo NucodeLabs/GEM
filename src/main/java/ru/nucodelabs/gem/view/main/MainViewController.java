@@ -12,12 +12,10 @@ import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
-import ru.nucodelabs.gem.core.events.SectionChangeEvent;
-import ru.nucodelabs.gem.core.events.ViewEvent;
+import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
@@ -34,9 +32,15 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends AbstractSectionController {
+public class MainViewController implements Controller {
 
+    private final Subject<Section> sectionSubject;
+    private final Subject<Picket> picketSubject;
     private ResourceBundle uiProperties;
+
+    @Inject
+    private Section section;
+    private Picket picket;
 
     /**
      * Properties
@@ -46,9 +50,21 @@ public class MainViewController extends AbstractSectionController {
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
     @Inject
-    public MainViewController(Subject<ViewEvent> viewEvents, Section section) {
-        super(viewEvents, section);
-        currentPicket = -1;
+    public MainViewController(
+            Subject<Section> sectionSubject,
+            Subject<Picket> picketSubject) {
+        this.sectionSubject = sectionSubject;
+        this.picketSubject = picketSubject;
+        sectionSubject
+                .subscribe(section1 -> {
+                    section = section1;
+                    update();
+                });
+        picketSubject
+                .subscribe(picket1 -> {
+                    picket = picket1;
+                    update();
+                });
     }
 
     @FXML
@@ -57,6 +73,8 @@ public class MainViewController extends AbstractSectionController {
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
+    @FXML
+    public NoFileScreenController noFileScreenController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,7 +88,7 @@ public class MainViewController extends AbstractSectionController {
     }
 
     @Override
-    protected Stage getStage() {
+    public Stage getStage() {
         return root;
     }
 
@@ -102,8 +120,8 @@ public class MainViewController extends AbstractSectionController {
                 new IncorrectFileAlert(e, getStage()).show();
                 return;
             }
-            viewEvents.onNext(new PicketSwitchEvent(0));
-            viewEvents.onNext(new SectionChangeEvent());
+            picketSubject.onNext(section.getLastPicket());
+            sectionSubject.onNext(section);
         }
     }
 
@@ -143,47 +161,51 @@ public class MainViewController extends AbstractSectionController {
         }
 
         try {
-            section.loadModelDataFromMODFile(currentPicket, file);
+            Picket newPicket = section.loadModelDataFromMODFile(picketIndex(), file);
+            picketSubject.onNext(newPicket);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
         }
-        viewEvents.onNext(new SectionChangeEvent());
     }
 
     @FXML
     public void switchToNextPicket() {
-        if (section.getPicketsCount() > currentPicket + 1) {
-            viewEvents.onNext(new PicketSwitchEvent(currentPicket + 1));
+        if (section.getPicketsCount() > picketIndex() + 1) {
+            picketSubject.onNext(section.getPicket(picketIndex() + 1));
         }
+    }
+
+    private int picketIndex() {
+        return section.getPickets().indexOf(picket);
     }
 
     @FXML
     public void switchToPrevPicket() {
-        if (currentPicket > 0 && section.getPicketsCount() > 0) {
-            viewEvents.onNext(new PicketSwitchEvent(currentPicket - 1));
+        if (picketIndex() > 0 && section.getPicketsCount() > 0) {
+            picketSubject.onNext(section.getPicket(picketIndex() - 1));
         }
     }
 
     @FXML
     public void inverseSolve() {
         try {
-            section.setModelData(currentPicket,
-                    InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
-            viewEvents.onNext(new SectionChangeEvent());
+            Picket solvedPicket = section.setModelData(picketIndex(),
+                    InverseSolver.getOptimizedPicket(section.getPicket(picketIndex())));
+            picketSubject.onNext(solvedPicket);
         } catch (Exception e) {
-            new UnsafeDataAlert(section.getName(currentPicket), getStage()).show();
+            new UnsafeDataAlert(section.getName(picketIndex()), getStage()).show();
         }
     }
 
     private void addEXP(File file) {
         try {
-            section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
+            section.loadExperimentalDataFromEXPFile(section.getPicketsCount(), file);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        viewEvents.onNext(new PicketSwitchEvent(currentPicket + 1));
-        viewEvents.onNext(new SectionChangeEvent());
+        picketSubject.onNext(section.getLastPicket());
+        sectionSubject.onNext(section);
         compatibilityModeAlert();
     }
 
@@ -191,27 +213,27 @@ public class MainViewController extends AbstractSectionController {
      * Adds files names to vesText
      */
     private void updateVESText() {
-        vesTitle.set(section.getName(currentPicket));
+        vesTitle.set(section.getName(picketIndex()));
     }
 
     private void updateVESNumber() {
-        vesNumber.set(currentPicket + 1 + "/" + section.getPicketsCount());
+        vesNumber.set(picketIndex() + 1 + "/" + section.getPicketsCount());
     }
 
     /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = section.getPicket(currentPicket).experimentalData();
+        ExperimentalData experimentalData = section.getPicket(picketIndex()).experimentalData();
         if (experimentalData.isUnsafe()) {
-            new UnsafeDataAlert(section.getName(currentPicket), getStage()).show();
+            new UnsafeDataAlert(section.getName(picketIndex()), getStage()).show();
         }
     }
 
-    @Override
     protected void update() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
+            noFileScreenController.hide();
         }
         updateVESText();
         updateVESNumber();
