@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +10,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
@@ -35,8 +36,12 @@ public class MisfitStacksController extends AbstractSectionController {
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     @Inject
-    public MisfitStacksController(EventBus eventBus, Section section) {
-        super(eventBus, section);
+    public MisfitStacksController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
+        this.viewEvents
+                .filter(e -> e instanceof ModelDraggedEvent)
+                .cast(ModelDraggedEvent.class)
+                .subscribe(this::handleModelDraggedEvent);
     }
 
     @Subscribe

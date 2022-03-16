@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.common.eventbus.EventBus;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 
@@ -24,8 +25,8 @@ public class PicketsBarController extends AbstractSectionController {
     public HBox container;
 
     @Inject
-    public PicketsBarController(EventBus eventBus, Section section) {
-        super(eventBus, section);
+    public PicketsBarController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
     }
 
     @Override
@@ -51,25 +52,25 @@ public class PicketsBarController extends AbstractSectionController {
             }
 
             button.setOnAction(e -> {
-                viewEvents.post(new PicketSwitchEvent(picketNumber));
+                viewEvents.onNext(new PicketSwitchEvent(picketNumber));
             });
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
             delete.setOnAction(e -> {
                 section.removePicket(picketNumber);
-                viewEvents.post(new SectionChangeEvent());
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
             moveLeft.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber - 1);
-                viewEvents.post(new SectionChangeEvent());
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
             moveRight.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber + 1);
-                viewEvents.post(new SectionChangeEvent());
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             if (section.getPicketsCount() == 1) {

@@ -1,10 +1,11 @@
 package ru.nucodelabs.gem.view.tables;
 
-import com.google.common.eventbus.EventBus;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalTableLine;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
@@ -19,8 +20,8 @@ public class ExperimentalTableController extends AbstractSectionController {
     private TableView<ExperimentalTableLine> table;
 
     @Inject
-    public ExperimentalTableController(EventBus eventBus, Section section) {
-        super(eventBus, section);
+    public ExperimentalTableController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
     }
 
     @Override
