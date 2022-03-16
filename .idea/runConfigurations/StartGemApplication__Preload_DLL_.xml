@@ -5,7 +5,7 @@
     <option name="PROGRAM_PARAMETERS" value="--preload-lib" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="ru.nucodelabs.gem.core.*" />
+        <option name="PATTERN" value="ru.nucodelabs.gem.core.factory.EventBusFactory" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

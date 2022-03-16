@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
+import com.google.common.eventbus.Subscribe;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,11 +9,14 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.ViewService;
+import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.MisfitStacksSeriesConverters;
+import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
+import ru.nucodelabs.gem.view.convert.MisfitStacksSeriesConverters;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +24,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController extends Controller {
-
-    private Section section;
-    private final ViewService viewService;
+public class MisfitStacksController extends AbstractSectionController {
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -33,8 +35,18 @@ public class MisfitStacksController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public MisfitStacksController(ViewService viewService) {
-        this.viewService = viewService;
+    @Inject
+    public MisfitStacksController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
+        this.viewEvents
+                .filter(e -> e instanceof ModelDraggedEvent)
+                .cast(ModelDraggedEvent.class)
+                .subscribe(this::handleModelDraggedEvent);
+    }
+
+    @Subscribe
+    private void handleModelDraggedEvent(ModelDraggedEvent event) {
+        update();
     }
 
     @Override
@@ -42,20 +54,17 @@ public class MisfitStacksController extends Controller {
         dataProperty = lineChart.dataProperty();
     }
 
-    public void setSection(Section section) {
-        this.section = section;
-    }
-
-    public void update(int picketNumber) {
+    @Override
+    protected void update() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
-        if (section.getModelData(picketNumber) != null) {
+        if (section.getPicket(currentPicket).modelData() != null) {
             try {
                 misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
+                        section.getPicket(currentPicket).experimentalData(), section.getPicket(currentPicket).modelData()
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
+                new NoLibErrorAlert(e, getStage()).show();
             }
         }
 

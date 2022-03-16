@@ -120,11 +120,11 @@ public class SectionImpl implements Section {
 
     @Override
     public void loadFromJson(File file) throws Exception {
-        this.pickets = GemJson.readPicketList(file);
+        this.pickets = new GemJson().readPicketList(file);
     }
 
     @Override
     public void saveToJson(File file) throws Exception {
-        GemJson.writeData(pickets, file);
+        new GemJson().writeData(pickets, file);
     }
 }

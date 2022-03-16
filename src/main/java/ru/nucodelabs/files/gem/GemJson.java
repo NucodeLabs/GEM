@@ -13,23 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GemJson {
-    private static final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    private GemJson() {
-    }
-
-    static {
+    public GemJson() {
         objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    public static void writeData(Object data, File file) throws Exception {
+    public void writeData(Object data, File file) throws Exception {
         file.createNewFile();
         FileWriter fileWriter = new FileWriter(file);
         objectMapper.writeValue(fileWriter, data);
         fileWriter.close();
     }
 
-    public static List<Picket> readPicketList(File file) throws IOException {
+    public List<Picket> readPicketList(File file) throws IOException {
         FileReader fileReader = new FileReader(file);
         TypeReference<ArrayList<Picket>> listTypeReference = new TypeReference<>() {
         };
