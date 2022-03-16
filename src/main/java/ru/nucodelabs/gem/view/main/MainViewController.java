@@ -152,6 +152,7 @@ public class MainViewController extends AbstractSectionController {
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
         }
+        viewEvents.onNext(new SectionChangeEvent());
     }
 
     @FXML
