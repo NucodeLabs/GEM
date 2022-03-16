@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.main;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import ru.nucodelabs.gem.core.events.ViewEvent;
@@ -15,11 +16,24 @@ public class MainViewModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Section.class).to(SectionImpl.class).in(SINGLETON);
+        bind(MainViewController.class).in(SINGLETON);
     }
 
     @Singleton
     @Provides
     private Subject<ViewEvent> provideSubject() {
         return PublishSubject.create();
+    }
+
+    @Provides
+    @Named("ImportEXP")
+    private Runnable provideImportEXP(MainViewController controller) {
+        return controller::importEXP;
+    }
+
+    @Provides
+    @Named("OpenSection")
+    private Runnable provideOpenSection(MainViewController controller) {
+        return controller::openSection;
     }
 }
