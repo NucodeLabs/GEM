@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.common.eventbus.EventBus;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,6 +14,7 @@ import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
@@ -49,9 +50,8 @@ public class MainViewController extends AbstractSectionController {
     private final BooleanProperty noFileOpened;
 
     @Inject
-    public MainViewController(EventBus viewEvents, Section section) {
+    public MainViewController(Subject<ViewEvent> viewEvents, Section section) {
         super(viewEvents, section);
-        this.viewEvents.register(this);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -82,7 +82,6 @@ public class MainViewController extends AbstractSectionController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
-        registerControllers();
 
         noFileScreenController.setImportEXPAction(this::importEXP);
         noFileScreenController.setOpenSectionAction(this::openSection);
@@ -92,14 +91,6 @@ public class MainViewController extends AbstractSectionController {
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
-    }
-
-    private void registerControllers() {
-        viewEvents.register(picketsBarController);
-        viewEvents.register(misfitStacksController);
-        viewEvents.register(vesCurvesController);
-        viewEvents.register(modelTableController);
-        viewEvents.register(experimentalTableController);
     }
 
     @Override
@@ -135,7 +126,7 @@ public class MainViewController extends AbstractSectionController {
                 new IncorrectFileAlert(e, getStage()).show();
                 return;
             }
-            viewEvents.post(new PicketSwitchEvent(0));
+            viewEvents.onNext(new PicketSwitchEvent(0));
         }
     }
 
@@ -184,14 +175,14 @@ public class MainViewController extends AbstractSectionController {
     @FXML
     public void switchToNextPicket() {
         if (section.getPicketsCount() > currentPicket + 1) {
-            viewEvents.post(new PicketSwitchEvent(currentPicket + 1));
+            viewEvents.onNext(new PicketSwitchEvent(currentPicket + 1));
         }
     }
 
     @FXML
     public void switchToPrevPicket() {
         if (currentPicket > 0 && section.getPicketsCount() > 0) {
-            viewEvents.post(new PicketSwitchEvent(currentPicket - 1));
+            viewEvents.onNext(new PicketSwitchEvent(currentPicket - 1));
         }
     }
 
@@ -199,7 +190,7 @@ public class MainViewController extends AbstractSectionController {
     public void inverseSolve() {
         section.setModelData(currentPicket,
                 InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
-        viewEvents.post(new SectionChangeEvent());
+        viewEvents.onNext(new SectionChangeEvent());
     }
 
     private void addEXP(File file) {
@@ -209,7 +200,7 @@ public class MainViewController extends AbstractSectionController {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        viewEvents.post(new PicketSwitchEvent(currentPicket++));
+        viewEvents.onNext(new PicketSwitchEvent(currentPicket++));
         compatibilityModeAlert();
     }
 
