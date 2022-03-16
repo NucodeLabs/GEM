@@ -170,9 +170,13 @@ public class MainViewController extends AbstractSectionController {
 
     @FXML
     public void inverseSolve() {
-        section.setModelData(currentPicket,
-                InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
-        viewEvents.onNext(new SectionChangeEvent());
+        try {
+            section.setModelData(currentPicket,
+                    InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
+            viewEvents.onNext(new SectionChangeEvent());
+        } catch (Exception e) {
+            new UnsafeDataAlert(section.getName(currentPicket), getStage()).show();
+        }
     }
 
     private void addEXP(File file) {
