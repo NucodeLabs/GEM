@@ -21,13 +21,9 @@ import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
-import ru.nucodelabs.gem.view.charts.MisfitStacksController;
-import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.filechoosers.EXPFileChooserFactory;
 import ru.nucodelabs.gem.view.filechoosers.JsonFileChooserFactory;
 import ru.nucodelabs.gem.view.filechoosers.MODFileChooserFactory;
-import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
-import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -63,28 +59,13 @@ public class MainViewController extends AbstractSectionController {
     @FXML
     public Stage root;
     @FXML
-    public VESCurvesController vesCurvesController;
-    @FXML
     public MenuBar menuBar;
     @FXML
     public Menu menuView;
-    @FXML
-    public PicketsBarController picketsBarController;
-    @FXML
-    public NoFileScreenController noFileScreenController;
-    @FXML
-    public MisfitStacksController misfitStacksController;
-    @FXML
-    public ModelTableController modelTableController;
-    @FXML
-    public ExperimentalTableController experimentalTableController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
-
-        noFileScreenController.setImportEXPAction(this::importEXP);
-        noFileScreenController.setOpenSectionAction(this::openSection);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
@@ -127,6 +108,7 @@ public class MainViewController extends AbstractSectionController {
                 return;
             }
             viewEvents.onNext(new PicketSwitchEvent(0));
+            viewEvents.onNext(new SectionChangeEvent());
         }
     }
 
@@ -200,7 +182,8 @@ public class MainViewController extends AbstractSectionController {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        viewEvents.onNext(new PicketSwitchEvent(currentPicket++));
+        viewEvents.onNext(new PicketSwitchEvent(currentPicket + 1));
+        viewEvents.onNext(new SectionChangeEvent());
         compatibilityModeAlert();
     }
 
@@ -229,7 +212,6 @@ public class MainViewController extends AbstractSectionController {
     protected void update() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
-            noFileScreenController.hide();
         }
         updateVESText();
         updateVESNumber();
