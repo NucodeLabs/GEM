@@ -8,4 +8,6 @@
     -fx-pref-height: 25;
     -fx-border-radius: 0;
     -fx-pref-width: 20000;
+    -fx-background-radius: 0;
+    -fx-border-width: 1;
 }

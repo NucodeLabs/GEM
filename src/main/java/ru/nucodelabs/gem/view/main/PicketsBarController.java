@@ -1,37 +1,32 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.common.eventbus.EventBus;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.ModificationType;
-import ru.nucodelabs.gem.core.events.UpdateViewEvent;
+import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
+import ru.nucodelabs.gem.core.events.SectionChangeEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PicketsBarController extends Controller {
-
-    private Section section;
-    private int currentPicket;
-    private final EventBus eventBus;
+public class PicketsBarController extends AbstractSectionController {
 
     @FXML
     public HBox container;
 
-    public PicketsBarController(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
-
-    public void setSection(Section section) {
-        this.section = section;
+    @Inject
+    public PicketsBarController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
     }
 
     @Override
@@ -43,34 +38,39 @@ public class PicketsBarController extends Controller {
         return (Stage) container.getScene().getWindow();
     }
 
-    public void update() {
+    @Override
+    protected void update() {
         List<Button> buttons = new ArrayList<>();
 
         for (int i = 0; i < section.getPicketsCount(); i++) {
             final int picketNumber = i;
             Button button = new Button(section.getName(i));
 
+            if (i == currentPicket) {
+                button.setStyle(
+                        "-fx-background-color: LightGray;");
+            }
+
             button.setOnAction(e -> {
-                currentPicket = picketNumber;
-                eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));
+                viewEvents.onNext(new PicketSwitchEvent(picketNumber));
             });
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
             delete.setOnAction(e -> {
                 section.removePicket(picketNumber);
-                eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
             moveLeft.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber - 1);
-                eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
             moveRight.setOnAction(e -> {
                 section.swapPickets(picketNumber, picketNumber + 1);
-                eventBus.post(new UpdateViewEvent(ModificationType.PICKETS_BAR_CHANGE));
+                viewEvents.onNext(new SectionChangeEvent());
             });
 
             if (section.getPicketsCount() == 1) {
@@ -89,11 +89,6 @@ public class PicketsBarController extends Controller {
             button.setOnContextMenuRequested(e -> contextMenu.show(getStage(), e.getScreenX(), e.getScreenY()));
             buttons.add(button);
         }
-
         container.getChildren().setAll(buttons);
-    }
-
-    public int getCurrentPicket() {
-        return currentPicket;
     }
 }

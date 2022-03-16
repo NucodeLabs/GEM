@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.view.convert;
 
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.algorithms.ForwardSolver;

@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,31 +12,34 @@ import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.gem.core.ViewService;
-import ru.nucodelabs.gem.core.events.ModificationType;
-import ru.nucodelabs.gem.core.events.UpdateViewEvent;
+import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
+import ru.nucodelabs.gem.core.events.SectionChangeEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.core.utils.OSDetect;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
+import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
+import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
 import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.filechoosers.EXPFileChooserFactory;
+import ru.nucodelabs.gem.view.filechoosers.JsonFileChooserFactory;
+import ru.nucodelabs.gem.view.filechoosers.MODFileChooserFactory;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 
+import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller {
+public class MainViewController extends AbstractSectionController {
 
-    /**
-     * Service-objects
-     */
-    private final ViewService viewService;
-    private final EventBus eventBus;
     private ResourceBundle uiProperties;
 
     /**
@@ -46,26 +48,10 @@ public class MainViewController extends Controller {
     private final StringProperty vesTitle;
     private final StringProperty vesNumber;
     private final BooleanProperty noFileOpened;
-    private int currentPicket;
 
-    /**
-     * Data models
-     */
-    private final Section section;
-
-    /**
-     * Initialization
-     *
-     * @param viewService View Manager
-     * @param eventBus    event bus
-     * @param section     VES Data
-     */
-    public MainViewController(ViewService viewService, EventBus eventBus, Section section) {
-        this.viewService = requireNonNull(viewService);
-        this.eventBus = eventBus;
-        this.section = requireNonNull(section);
-
-        eventBus.register(this);
+    @Inject
+    public MainViewController(Subject<ViewEvent> viewEvents, Section section) {
+        super(viewEvents, section);
 
         currentPicket = -1;
         noFileOpened = new SimpleBooleanProperty(true);
@@ -95,14 +81,10 @@ public class MainViewController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initPicketsBarController();
-        initNoFileScreenController();
-        initMisfitStacksController();
-        initVESCurvesController();
-        initModelTableController();
-        initExperimentalTableController();
-
         uiProperties = requireNonNull(resources);
+
+        noFileScreenController.setImportEXPAction(this::importEXP);
+        noFileScreenController.setOpenSectionAction(this::openSection);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
@@ -111,39 +93,10 @@ public class MainViewController extends Controller {
         }
     }
 
-    private void initMisfitStacksController() {
-        misfitStacksController.setSection(section);
-    }
-
-    private void initNoFileScreenController() {
-        noFileScreenController.setImportEXPAction(this::importEXP);
-        noFileScreenController.setOpenSectionAction(this::openSection);
-    }
-
-    private void initVESCurvesController() {
-        vesCurvesController.setSection(section);
-    }
-
-    private void initModelTableController() {
-        modelTableController.setSection(section);
-    }
-
-    private void initExperimentalTableController() {
-        experimentalTableController.setSection(section);
-    }
-
-    private void initPicketsBarController() {
-        picketsBarController.setSection(section);
-    }
-
     @Override
     protected Stage getStage() {
         return root;
     }
-
-    /**
-     * <h1>Event Handlers</h1>
-     */
 
     @FXML
     public void closeFile() {
@@ -155,7 +108,7 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importEXP() {
-        List<File> files = viewService.showOpenEXPFileChooser(getStage());
+        List<File> files = new EXPFileChooserFactory().create().showOpenMultipleDialog(getStage());
         if (files != null && files.size() != 0) {
             for (var file : files) {
                 addEXP(file);
@@ -165,27 +118,26 @@ public class MainViewController extends Controller {
 
     @FXML
     public void openSection() {
-        File file = viewService.showOpenJsonFileChooser(getStage());
+        File file = new JsonFileChooserFactory().create().showOpenDialog(getStage());
         if (file != null) {
             try {
                 section.loadFromJson(file);
             } catch (Exception e) {
-                viewService.alertIncorrectFile(getStage(), e);
+                new IncorrectFileAlert(e, getStage()).show();
                 return;
             }
-            currentPicket = 0;
-            updateAll();
+            viewEvents.onNext(new PicketSwitchEvent(0));
         }
     }
 
     @FXML
     public void saveSection() {
-        File file = viewService.showSaveJsonFileChooser(getStage());
+        File file = new JsonFileChooserFactory().create().showSaveDialog(getStage());
         if (file != null) {
             try {
                 section.saveToJson(file);
             } catch (Exception e) {
-                viewService.alertIncorrectFile(getStage(), e);
+                new IncorrectFileAlert(e, getStage()).show();
             }
         }
     }
@@ -195,7 +147,11 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void newWindow() {
-        viewService.start();
+        try {
+            new MainViewFactory().create().show();
+        } catch (IOException e) {
+            new ExceptionAlert(e).show();
+        }
     }
 
     /**
@@ -203,7 +159,7 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importMOD() {
-        File file = viewService.showOpenMODFileChooser(getStage());
+        File file = new MODFileChooserFactory().create().showOpenDialog(getStage());
 
         if (file == null) {
             return;
@@ -212,25 +168,21 @@ public class MainViewController extends Controller {
         try {
             section.loadModelDataFromMODFile(currentPicket, file);
         } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
+            new IncorrectFileAlert(e, getStage()).show();
         }
-
-        updateAll();
     }
 
     @FXML
     public void switchToNextPicket() {
         if (section.getPicketsCount() > currentPicket + 1) {
-            currentPicket++;
-            updateAll();
+            viewEvents.onNext(new PicketSwitchEvent(currentPicket + 1));
         }
     }
 
     @FXML
     public void switchToPrevPicket() {
         if (currentPicket > 0 && section.getPicketsCount() > 0) {
-            currentPicket--;
-            updateAll();
+            viewEvents.onNext(new PicketSwitchEvent(currentPicket - 1));
         }
     }
 
@@ -238,30 +190,18 @@ public class MainViewController extends Controller {
     public void inverseSolve() {
         section.setModelData(currentPicket,
                 InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
-        updateAll();
-    }
-
-    @Subscribe
-    public void handleUpdateViewEvent(UpdateViewEvent event) {
-        if (event.type() == ModificationType.MODEL_CURVE_DRAGGED) {
-            updateOnDrag();
-        }
-        if (event.type() == ModificationType.PICKETS_BAR_CHANGE) {
-            currentPicket = picketsBarController.getCurrentPicket();
-            updateOnPicketsBarChange();
-        }
+        viewEvents.onNext(new SectionChangeEvent());
     }
 
     private void addEXP(File file) {
         try {
             section.loadExperimentalDataFromEXPFile(currentPicket + 1, file);
         } catch (Exception e) {
-            viewService.alertIncorrectFile(getStage(), e);
+            new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        currentPicket++;
+        viewEvents.onNext(new PicketSwitchEvent(currentPicket++));
         compatibilityModeAlert();
-        updateAll();
     }
 
     /**
@@ -281,33 +221,16 @@ public class MainViewController extends Controller {
     private void compatibilityModeAlert() {
         ExperimentalData experimentalData = section.getPicket(currentPicket).experimentalData();
         if (experimentalData.isUnsafe()) {
-            viewService.alertExperimentalDataIsUnsafe(getStage(), section.getPicket(currentPicket).name());
+            new UnsafeDataAlert(section.getName(currentPicket), getStage()).show();
         }
     }
 
-    private void updateOnPicketsBarChange() {
-        if (currentPicket >= section.getPicketsCount()) {
-            currentPicket = section.getPicketsCount() - 1;
-        }
-        updateAll();
-    }
-
-    private void updateOnDrag() {
-        vesCurvesController.updateTheoreticalCurve(currentPicket);
-        misfitStacksController.update(currentPicket);
-        modelTableController.update(currentPicket);
-    }
-
-    private void updateAll() {
+    @Override
+    protected void update() {
         if (section.getPicketsCount() > 0) {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }
-        picketsBarController.update();
-        experimentalTableController.update(currentPicket);
-        vesCurvesController.updateAll(currentPicket);
-        modelTableController.update(currentPicket);
-        misfitStacksController.update(currentPicket);
         updateVESText();
         updateVESNumber();
     }

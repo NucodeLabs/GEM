@@ -133,7 +133,7 @@ public class ModelCurveDragger {
         if (point1 != null && point2 != null) {
             if (Objects.equals(point1.getXValue(), point2.getXValue())
                     && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX) {
-                double diff = mouseX - point1.getXValue();
+                double diff = pow(10, mouseX) - pow(10, point1.getXValue());
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
                 if (modelData != null) {
@@ -141,10 +141,12 @@ public class ModelCurveDragger {
                     int index2 = index1 + 1; // neighbor
                     double initialValue1 = modelData.power().get(index1);
                     double initialValue2 = modelData.power().get(index2);
-                    double newValue1 = pow(10, log10(initialValue1) + diff);
-                    double newValue2 = pow(10, log10(initialValue2) - diff);
+                    double newValue1 = initialValue1 + diff;
+                    double newValue2 = initialValue2 - diff;
                     modelData.power().set(index1, newValue1);
-                    modelData.power().set(index2, newValue2);
+                    if (index2 != modelData.getSize() - 1) {
+                        modelData.power().set(index2, newValue2);
+                    }
                 }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);

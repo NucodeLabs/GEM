@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,18 +10,19 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.ViewService;
-import ru.nucodelabs.gem.core.events.ModificationType;
-import ru.nucodelabs.gem.core.events.UpdateViewEvent;
+import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
+import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractSectionController;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
-import ru.nucodelabs.gem.view.VESSeriesConverters;
+import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
+import ru.nucodelabs.gem.view.convert.VESSeriesConverters;
 
+import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController extends Controller {
+public class VESCurvesController extends AbstractSectionController {
     /**
      * Constants
      */
@@ -33,9 +35,6 @@ public class VESCurvesController extends Controller {
     public static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
-    private Section section;
-    private final ViewService viewService;
-    private final EventBus eventBus;
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
 
@@ -48,13 +47,13 @@ public class VESCurvesController extends Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    public VESCurvesController(ViewService viewService, EventBus eventBus) {
-        this.viewService = viewService;
-        this.eventBus = eventBus;
-    }
-
-    public void setSection(Section section) {
-        this.section = section;
+    @Inject
+    public VESCurvesController(Subject<ViewEvent> viewEventSubject, Section section) {
+        super(viewEventSubject, section);
+        this.viewEvents
+                .filter(e -> e instanceof ModelDraggedEvent)
+                .cast(ModelDraggedEvent.class)
+                .subscribe(this::handleModelDraggedEvent);
     }
 
     @Override
@@ -83,22 +82,28 @@ public class VESCurvesController extends Controller {
         return (Stage) lineChart.getScene().getWindow();
     }
 
-    public void updateAll(int picketNumber) {
-        updateExpCurves(picketNumber);
-        updateTheoreticalCurve(picketNumber);
-        updateModelCurve(picketNumber);
+    @Subscribe
+    private void handleModelDraggedEvent(ModelDraggedEvent event) {
+        updateTheoreticalCurve();
     }
 
-    public void updateTheoreticalCurve(int picketNumber) {
+    @Override
+    protected void update() {
+        updateExpCurves();
+        updateTheoreticalCurve();
+        updateModelCurve();
+    }
+
+    private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(picketNumber) != null) {
+        if (section.getModelData(currentPicket) != null) {
             try {
                 theorCurveSeries = VESSeriesConverters.toTheoreticalCurveSeries(
-                        section.getExperimentalData(picketNumber), section.getModelData(picketNumber)
+                        section.getExperimentalData(currentPicket), section.getModelData(currentPicket)
                 );
             } catch (UnsatisfiedLinkError e) {
-                viewService.alertNoLib(getStage(), e);
+                new NoLibErrorAlert(e, getStage());
             }
         }
 
@@ -106,26 +111,26 @@ public class VESCurvesController extends Controller {
         dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
     }
 
-    public void updateModelCurve(int picketNumber) {
+    private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        if (section.getModelData(picketNumber) != null) {
+        if (section.getModelData(currentPicket) != null) {
             modelCurveSeries = VESSeriesConverters.toModelCurveSeries(
-                    section.getModelData(picketNumber)
+                    section.getModelData(currentPicket)
             );
         }
 
         modelCurveSeries.setName(uiProperties.getString("modCurve"));
         dataProperty.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
 
-        if (section.getModelData(picketNumber) != null) {
-            addDraggingToModelCurveSeries(picketNumber, modelCurveSeries);
+        if (section.getModelData(currentPicket) != null) {
+            addDraggingToModelCurveSeries(modelCurveSeries);
         }
     }
 
-    private void addDraggingToModelCurveSeries(int picketNumber, XYChart.Series<Double, Double> modelCurveSeries) {
+    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         try {
-            modelCurveDragger.mapModelData(section.getModelData(picketNumber));
+            modelCurveDragger.mapModelData(section.getModelData(currentPicket));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,27 +142,27 @@ public class VESCurvesController extends Controller {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             modelCurveDragger.dragHandler(e);
-            eventBus.post(new UpdateViewEvent(ModificationType.MODEL_CURVE_DRAGGED));
+            viewEvents.onNext(new ModelDraggedEvent());
         });
     }
 
-    public void updateExpCurves(int picketNumber) {
+    private void updateExpCurves() {
         XYChart.Series<Double, Double> expCurveSeries = VESSeriesConverters.toExperimentalCurveSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         expCurveSeries.setName(uiProperties.getString("expCurve"));
         XYChart.Series<Double, Double> errUpperExp = VESSeriesConverters.toErrorExperimentalCurveUpperBoundSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         errUpperExp.setName(uiProperties.getString("expCurveUpper"));
         XYChart.Series<Double, Double> errLowerExp = VESSeriesConverters.toErrorExperimentalCurveLowerBoundSeries(
-                section.getExperimentalData(picketNumber)
+                section.getExperimentalData(currentPicket)
         );
         errLowerExp.setName(uiProperties.getString("expCurveLower"));
         dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (section.getModelData(picketNumber) == null) {
+        if (section.getExperimentalData(currentPicket) == null) {
             dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
             dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
         }

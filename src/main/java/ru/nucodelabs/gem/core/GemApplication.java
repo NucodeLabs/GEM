@@ -1,22 +1,22 @@
 package ru.nucodelabs.gem.core;
 
-import com.google.common.eventbus.EventBus;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.view.main.MainViewFactory;
 
-import java.util.ResourceBundle;
+import java.io.IOException;
 
 /**
  * Starting up everything.
  */
 public class GemApplication extends Application {
+
     @Override
     public void start(Stage stage) {
-        ModelProvider modelProvider = new ModelProvider();
-        ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        EventBus eventBus = new EventBus();
-        ViewService viewService = new ViewService(modelProvider, uiProperties, eventBus);
-
-        viewService.start();
+        try {
+            new MainViewFactory().create().show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
