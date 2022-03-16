@@ -29,10 +29,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setModelData(int picketNumber, ModelData modelData) {
+    public Picket setModelData(int picketNumber, ModelData modelData) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(oldP.name(), oldP.experimentalData(), modelData);
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -41,10 +42,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setExperimentalData(int picketNumber, ExperimentalData experimentalData) {
+    public Picket setExperimentalData(int picketNumber, ExperimentalData experimentalData) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(oldP.name(), experimentalData, oldP.modelData());
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -83,10 +85,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setName(int picketNumber, String name) {
+    public Picket setName(int picketNumber, String name) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(name, oldP.experimentalData(), oldP.modelData());
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -95,7 +98,7 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
+    public Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
         EXPFile expFile = SonetImport.readEXP(file);
         Path expFilePath = file.toPath();
         STTFile sttFile = SonetImport.readSTT(new File(
@@ -109,13 +112,14 @@ public class SectionImpl implements Section {
         } else {
             addPicket(newPicket);
         }
+        return newPicket;
     }
 
     @Override
-    public void loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
+    public Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
         MODFile modFile = SonetImport.readMOD(file);
         ModelData modelData = ModelData.of(modFile);
-        setModelData(picketNumber, modelData);
+        return setModelData(picketNumber, modelData);
     }
 
     @Override
