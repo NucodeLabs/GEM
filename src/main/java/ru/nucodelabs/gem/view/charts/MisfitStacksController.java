@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.view.charts;
 
-import io.reactivex.rxjava3.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,10 +8,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.ModelDraggedEvent;
-import ru.nucodelabs.gem.core.events.ViewEvent;
-import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 import ru.nucodelabs.gem.view.convert.MisfitStacksSeriesConverters;
 
@@ -23,7 +22,9 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController extends AbstractSectionController {
+public class MisfitStacksController implements Controller {
+
+    private Picket picket;
 
     @FXML
     private LineChart<Double, Double> lineChart;
@@ -35,16 +36,19 @@ public class MisfitStacksController extends AbstractSectionController {
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     @Inject
-    public MisfitStacksController(Subject<ViewEvent> viewEventSubject, Section section) {
-        super(viewEventSubject, section);
-        this.viewEvents
-                .filter(e -> e instanceof ModelDraggedEvent)
-                .cast(ModelDraggedEvent.class)
-                .subscribe(this::handleModelDraggedEvent);
-    }
-
-    private void handleModelDraggedEvent(ModelDraggedEvent event) {
-        update();
+    public MisfitStacksController(
+            Observable<Picket> picketObservable,
+            Observable<ModelData> modelDataObservable) {
+        picketObservable
+                .subscribe(picket1 -> {
+                    picket = picket1;
+                    update();
+                });
+        modelDataObservable
+                .subscribe(modelData -> {
+                    picket = new Picket(picket.name(), picket.experimentalData(), modelData);
+                    update();
+                });
     }
 
     @Override
@@ -52,14 +56,13 @@ public class MisfitStacksController extends AbstractSectionController {
         dataProperty = lineChart.dataProperty();
     }
 
-    @Override
     protected void update() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
-        if (section.getPicket(currentPicket).modelData() != null) {
+        if (picket.modelData() != null) {
             try {
                 misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        section.getPicket(currentPicket).experimentalData(), section.getPicket(currentPicket).modelData()
+                        picket.experimentalData(), picket.modelData()
                 );
             } catch (UnsatisfiedLinkError e) {
                 new NoLibErrorAlert(e, getStage()).show();
@@ -85,7 +88,7 @@ public class MisfitStacksController extends AbstractSectionController {
     }
 
     @Override
-    protected Stage getStage() {
+    public Stage getStage() {
         return (Stage) lineChartXAxis.getScene().getWindow();
     }
 }
