@@ -144,7 +144,9 @@ public class ModelCurveDragger {
                     double newValue1 = initialValue1 + diff;
                     double newValue2 = initialValue2 - diff;
                     modelData.power().set(index1, newValue1);
-                    modelData.power().set(index2, newValue2);
+                    if (index2 != modelData.getSize() - 1) {
+                        modelData.power().set(index2, newValue2);
+                    }
                 }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
