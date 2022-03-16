@@ -41,19 +41,14 @@ public class MainViewController extends AbstractSectionController {
     /**
      * Properties
      */
-    private final StringProperty vesTitle;
-    private final StringProperty vesNumber;
-    private final BooleanProperty noFileOpened;
+    private final StringProperty vesTitle = new SimpleStringProperty("");
+    private final StringProperty vesNumber = new SimpleStringProperty("0/0");
+    private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
     @Inject
     public MainViewController(Subject<ViewEvent> viewEvents, Section section) {
         super(viewEvents, section);
-
         currentPicket = -1;
-        noFileOpened = new SimpleBooleanProperty(true);
-        vesTitle = new SimpleStringProperty("");
-
-        vesNumber = new SimpleStringProperty("0/0");
     }
 
     @FXML
