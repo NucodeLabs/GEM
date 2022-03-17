@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
-import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ModelData(
         // Сопротивление, Ом * м
@@ -18,18 +17,13 @@ public record ModelData(
         @NotNull List<@Positive Double> polarization,
         // Мощность, м
         @NotNull List<@Positive Double> power
-) {
+) implements Sizeable {
     public static ModelData of(MODFile modFile) {
         return new ModelData(
                 modFile.getResistance(),
                 modFile.getPolarization(),
                 modFile.getPower()
         );
-    }
-
-    @JsonIgnore
-    public int getSize() {
-        return minSize(this, true);
     }
 
     @JsonIgnore
