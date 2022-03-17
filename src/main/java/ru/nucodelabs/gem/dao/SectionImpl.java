@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
@@ -10,6 +10,7 @@ import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,18 +102,31 @@ public class SectionImpl implements Section {
     public Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
         EXPFile expFile = SonetImport.readEXP(file);
         Path expFilePath = file.toPath();
-        STTFile sttFile = SonetImport.readSTT(new File(
+        STTFile sttFile = sttFileOf(expFilePath, expFile);
+
+        Picket oldPicket = pickets.get(picketNumber);
+        Picket expPicket = Picket.of(sttFile, expFile);
+        Picket newPicket = new Picket(expPicket.name(), expPicket.experimentalData(), oldPicket.modelData());
+        pickets.set(picketNumber, newPicket);
+        return newPicket;
+    }
+
+    @Override
+    public Picket loadExperimentalDataFromEXPFile(File file) throws Exception {
+        EXPFile expFile = SonetImport.readEXP(file);
+        Path expFilePath = file.toPath();
+        STTFile sttFile = sttFileOf(expFilePath, expFile);
+
+        Picket expPicket = Picket.of(sttFile, expFile);
+        pickets.add(expPicket);
+        return expPicket;
+    }
+
+    private STTFile sttFileOf(Path expFilePath, EXPFile expFile) throws FileNotFoundException {
+        return SonetImport.readSTT(new File(
                 expFilePath.getParent().toString()
                         + File.separator
                         + expFile.getSTTFileName()));
-
-        Picket newPicket = Picket.of(sttFile, expFile);
-        if (pickets.size() > picketNumber + 1) {
-            pickets.set(picketNumber, newPicket);
-        } else {
-            addPicket(newPicket);
-        }
-        return newPicket;
     }
 
     @Override

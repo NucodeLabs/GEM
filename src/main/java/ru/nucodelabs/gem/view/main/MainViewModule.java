@@ -7,13 +7,18 @@ import com.google.inject.name.Named;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import javafx.stage.FileChooser;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.model.SectionImpl;
+import ru.nucodelabs.gem.dao.Section;
+import ru.nucodelabs.gem.dao.SectionImpl;
 
 import static com.google.inject.Scopes.SINGLETON;
 
+/**
+ * Зависимости в пределах одного главного окна
+ * (при создании нового используются новые синглтоны, разделяемые контроллерами)
+ */
 public class MainViewModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -34,8 +39,38 @@ public class MainViewModule extends AbstractModule {
     }
 
     @Provides
-    @Named("OpenSection")
+    @Named("OpenJSON")
     private Runnable provideOpenSection(MainViewController controller) {
         return controller::openSection;
+    }
+
+    @Provides
+    @Named("EXP")
+    private FileChooser provideEXPFileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
+        );
+        return chooser;
+    }
+
+    @Provides
+    @Named("JSON")
+    private FileChooser provideJSONFileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON", "*.json")
+        );
+        return chooser;
+    }
+
+    @Provides
+    @Named("MOD")
+    private FileChooser provideMODFileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
+        );
+        return chooser;
     }
 }

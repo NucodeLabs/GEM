@@ -16,13 +16,20 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ModelTableController implements Controller {
+public class ModelTableController extends Controller {
 
     private Picket picket;
 
     @FXML
     private TableView<ModelTableLine> table;
 
+    /**
+     * Отображает модельные данные в таблице для конкретного пикета.
+     * Если меняются только модельные данные, обновляется.
+     *
+     * @param picketObservable    пикет
+     * @param modelDataObservable модельные данные
+     */
     @Inject
     public ModelTableController(
             Observable<Picket> picketObservable,
@@ -44,7 +51,7 @@ public class ModelTableController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) table.getScene().getWindow();
     }
 
