@@ -85,6 +85,9 @@ javafx {
 }
 
 dependencies {
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.3.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'

@@ -3,6 +3,8 @@ package ru.nucodelabs.data.ves;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.MODFile;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +13,11 @@ import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ModelData(
         // Сопротивление, Ом * м
-        List<Double> resistance,
+        @NotNull List<@Positive Double> resistance,
         // Поляризация, %
-        List<Double> polarization,
+        @NotNull List<@Positive Double> polarization,
         // Мощность, м
-        List<Double> power
+        @NotNull List<@Positive Double> power
 ) {
     public static ModelData of(MODFile modFile) {
         return new ModelData(
