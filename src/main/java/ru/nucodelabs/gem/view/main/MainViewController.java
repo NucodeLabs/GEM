@@ -10,7 +10,9 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
+import org.apache.commons.math3.analysis.MultivariateFunction;
+import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
+import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
 import ru.nucodelabs.gem.core.events.SectionChangeEvent;
@@ -171,9 +173,21 @@ public class MainViewController extends AbstractSectionController {
 
     @FXML
     public void inverseSolve() {
+        //Размер симплекса (по каждому измерению)
+        final double SIDE_LENGTH = 0.1;
+
+        //Какие-то константы для SimplexOptimize
+        final double RELATIVE_THRESHOLD = 1e-10;
+        double ABSOLUTE_THRESHOLD = 1e-30;
+
+        MultivariateFunction multivariateFunction = new SquaresDiff(section.getPicket(currentPicket).experimentalData());
+
+        InverseSolver inverseSolver =
+                new InverseSolver(section.getPicket(currentPicket), SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, multivariateFunction);
+
         try {
             section.setModelData(currentPicket,
-                    InverseSolver.getOptimizedPicket(section.getPicket(currentPicket)));
+                    inverseSolver.getOptimizedPicket());
             viewEvents.onNext(new SectionChangeEvent());
         } catch (Exception e) {
             new UnsafeDataAlert(section.getName(currentPicket), getStage()).show();

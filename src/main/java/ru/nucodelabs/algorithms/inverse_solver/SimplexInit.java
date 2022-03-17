@@ -1,4 +1,4 @@
-package ru.nucodelabs.algorithms.inverseSolver;
+package ru.nucodelabs.algorithms.inverse_solver;
 
 class SimplexInit {
     public SimplexInit() {
