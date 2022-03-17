@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.charts;
 
+import com.google.inject.name.Named;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
@@ -45,7 +46,8 @@ public class VESCurvesController extends Controller {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
-
+    @Inject
+    @Named("VESCurves")
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     /**
@@ -70,11 +72,8 @@ public class VESCurvesController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        lineChart.dataProperty().bind(dataProperty);
         uiProperties = resources;
-        dataProperty = lineChart.dataProperty();
-        for (int i = 0; i < MOD_CURVE_SERIES_CNT; i++) {
-            dataProperty.get().add(new XYChart.Series<>());
-        }
         modelCurveDragger = new ModelCurveDragger(
                 (pointInScene) -> new XYChart.Data<>(
                         (Double) lineChartXAxis.getValueForDisplay(

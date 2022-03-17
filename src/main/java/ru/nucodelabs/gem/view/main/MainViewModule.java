@@ -7,13 +7,21 @@ import com.google.inject.name.Named;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
 import javafx.stage.FileChooser;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.dao.Section;
 import ru.nucodelabs.gem.dao.SectionImpl;
 
+import java.util.ArrayList;
+
 import static com.google.inject.Scopes.SINGLETON;
+import static ru.nucodelabs.gem.view.charts.VESCurvesController.MOD_CURVE_SERIES_CNT;
 
 /**
  * Зависимости в пределах одного главного окна
@@ -72,5 +80,23 @@ public class MainViewModule extends AbstractModule {
                 new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
         );
         return chooser;
+    }
+
+    @Provides
+    @Named("VESCurves")
+    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> provideVESDataProperty() {
+        ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty =
+                new SimpleObjectProperty<>(
+                        FXCollections.observableArrayList(new ArrayList<>()));
+        for (int i = 0; i < MOD_CURVE_SERIES_CNT; i++) {
+            dataProperty.get().add(new XYChart.Series<>());
+        }
+        return dataProperty;
+    }
+
+    @Provides
+    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> provideChartData() {
+        return new SimpleObjectProperty<>(
+                FXCollections.observableArrayList(new ArrayList<>()));
     }
 }
