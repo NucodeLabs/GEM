@@ -124,7 +124,7 @@ public interface Section extends Model {
     Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception;
 
     /**
-     * Loads experimental data from EXP file to new Picket
+     * Loads experimental data from EXP file to new Picket and adds it to picket list
      *
      * @param file EXP File
      * @return picket with experimental data
