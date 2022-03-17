@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
-import static ru.nucodelabs.data.ves.Sizes.isEqualSizes;
-import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ExperimentalData(
         // AB/2, м
@@ -30,7 +28,7 @@ public record ExperimentalData(
         @NotNull List<@Positive Double> polarizationApparent,
         // Погрешность, %
         @NotNull List<@Positive Double> errorPolarizationApparent
-) {
+) implements Sizeable {
     public static ExperimentalData of(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
@@ -63,15 +61,5 @@ public record ExperimentalData(
             );
         }
         return res;
-    }
-
-    @JsonIgnore
-    public boolean isUnsafe() {
-        return !isEqualSizes(this, true);
-    }
-
-    @JsonIgnore
-    public Integer getSize() {
-        return minSize(this, true);
     }
 }
