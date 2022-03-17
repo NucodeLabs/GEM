@@ -12,6 +12,7 @@ import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
+import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
@@ -180,10 +181,15 @@ public class MainViewController extends AbstractSectionController {
         final double RELATIVE_THRESHOLD = 1e-10;
         double ABSOLUTE_THRESHOLD = 1e-30;
 
-        MultivariateFunction multivariateFunction = new SquaresDiff(section.getPicket(currentPicket).experimentalData());
+        MultivariateFunction multivariateFunction = new FunctionValue(
+                section.getPicket(currentPicket).experimentalData(),
+                new SquaresDiff());
 
-        InverseSolver inverseSolver =
-                new InverseSolver(section.getPicket(currentPicket), SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, multivariateFunction);
+        InverseSolver inverseSolver = new InverseSolver(
+                section.getPicket(currentPicket),
+                SIDE_LENGTH, RELATIVE_THRESHOLD,
+                ABSOLUTE_THRESHOLD,
+                multivariateFunction);
 
         try {
             section.setModelData(currentPicket,
