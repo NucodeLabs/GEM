@@ -32,7 +32,7 @@ public class MisfitStacksController extends Controller {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
-
+    @Inject
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     /**
@@ -60,7 +60,7 @@ public class MisfitStacksController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dataProperty = lineChart.dataProperty();
+        lineChart.dataProperty().bind(dataProperty);
     }
 
     protected void update() {
