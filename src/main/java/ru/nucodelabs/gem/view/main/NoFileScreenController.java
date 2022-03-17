@@ -10,13 +10,13 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NoFileScreenController implements Controller {
+public class NoFileScreenController extends Controller {
 
     @Inject
     @Named("ImportEXP")
     private Runnable importEXP;
     @Inject
-    @Named("OpenSection")
+    @Named("OpenJSON")
     private Runnable openSection;
 
     @FXML
@@ -37,7 +37,7 @@ public class NoFileScreenController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) root.getScene().getWindow();
     }
 

@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController implements Controller {
+public class VESCurvesController extends Controller {
     /**
      * Constants
      */
@@ -48,6 +48,14 @@ public class VESCurvesController implements Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
+    /**
+     * Отображает интерпретацию ВЭЗ для конкретного пикета, модифицирует модельные данные драг-н-дропом.
+     * При смене пикета, обновляется.
+     * Пишет изменения в модельные данные, сам на них не реагирует.
+     *
+     * @param picketObservable пикет
+     * @param modelDataSubject модельные данные
+     */
     @Inject
     public VESCurvesController(
             Observable<Picket> picketObservable,
@@ -82,7 +90,7 @@ public class VESCurvesController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) lineChart.getScene().getWindow();
     }
 

@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
+import com.google.inject.name.Named;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,19 +10,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.core.utils.OSDetect;
-import ru.nucodelabs.gem.model.Section;
+import ru.nucodelabs.gem.dao.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
 import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
-import ru.nucodelabs.gem.view.filechoosers.EXPFileChooserFactory;
-import ru.nucodelabs.gem.view.filechoosers.JsonFileChooserFactory;
-import ru.nucodelabs.gem.view.filechoosers.MODFileChooserFactory;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -32,23 +31,48 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController implements Controller {
+public class MainViewController extends Controller {
 
     private final Subject<Section> sectionSubject;
     private final Subject<Picket> picketSubject;
-    private ResourceBundle uiProperties;
 
-    @Inject
-    private Section section;
-    private Picket picket;
-
-    /**
-     * Properties
-     */
     private final StringProperty vesTitle = new SimpleStringProperty("");
     private final StringProperty vesNumber = new SimpleStringProperty("0/0");
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
+    @FXML
+    private Stage root;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private Menu menuView;
+    @FXML
+    private NoFileScreenController noFileScreenController;
+    private ResourceBundle uiProperties;
+    @Inject
+    private MainViewFactory mainViewFactory;
+    @Inject
+    private Section section;
+    private Picket picket;
+    @Inject
+    @Named("EXP")
+    private FileChooser expFileChooser;
+    @Inject
+    @Named("JSON")
+    private FileChooser jsonFileChooser;
+    @Inject
+    @Named("MOD")
+    private FileChooser modFileChooser;
 
+    /**
+     * Главный контроллер
+     * <br> - отслеживает изменения структуры разреза из других контроллеров
+     * <br> - изменяет структуру разреза сам, при загрузке пикетов из файлов
+     * <br> - отслеживает изменения текущего отображаемого пикета из других контроллеров
+     * <br> - изменяет текущий пикет сам, при нажатии кнопок "Влево" и "Вправо"
+     *
+     * @param sectionSubject разрез
+     * @param picketSubject  текущий отображаемый пикет
+     */
     @Inject
     public MainViewController(
             Subject<Section> sectionSubject,
@@ -67,15 +91,6 @@ public class MainViewController implements Controller {
                 });
     }
 
-    @FXML
-    public Stage root;
-    @FXML
-    public MenuBar menuBar;
-    @FXML
-    public Menu menuView;
-    @FXML
-    public NoFileScreenController noFileScreenController;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
@@ -88,7 +103,7 @@ public class MainViewController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return root;
     }
 
@@ -97,12 +112,9 @@ public class MainViewController implements Controller {
         getStage().close();
     }
 
-    /**
-     * Asks which EXP files and then imports them to current window
-     */
     @FXML
     public void importEXP() {
-        List<File> files = new EXPFileChooserFactory().create().showOpenMultipleDialog(getStage());
+        List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
         if (files != null && files.size() != 0) {
             for (var file : files) {
                 addEXP(file);
@@ -112,7 +124,7 @@ public class MainViewController implements Controller {
 
     @FXML
     public void openSection() {
-        File file = new JsonFileChooserFactory().create().showOpenDialog(getStage());
+        File file = jsonFileChooser.showOpenDialog(getStage());
         if (file != null) {
             try {
                 section.loadFromJson(file);
@@ -127,7 +139,7 @@ public class MainViewController implements Controller {
 
     @FXML
     public void saveSection() {
-        File file = new JsonFileChooserFactory().create().showSaveDialog(getStage());
+        File file = jsonFileChooser.showSaveDialog(getStage());
         if (file != null) {
             try {
                 section.saveToJson(file);
@@ -143,7 +155,7 @@ public class MainViewController implements Controller {
     @FXML
     public void newWindow() {
         try {
-            new MainViewFactory().create().show();
+            mainViewFactory.create().show();
         } catch (IOException e) {
             new ExceptionAlert(e).show();
         }
@@ -154,7 +166,7 @@ public class MainViewController implements Controller {
      */
     @FXML
     public void importMOD() {
-        File file = new MODFileChooserFactory().create().showOpenDialog(getStage());
+        File file = modFileChooser.showOpenDialog(getStage());
 
         if (file == null) {
             return;
@@ -199,7 +211,7 @@ public class MainViewController implements Controller {
 
     private void addEXP(File file) {
         try {
-            section.loadExperimentalDataFromEXPFile(section.getPicketsCount(), file);
+            section.loadExperimentalDataFromEXPFile(file);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
             return;

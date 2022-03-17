@@ -1,21 +1,27 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Named;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 
+import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
+/**
+ * Реализует factory method для создания нового MainView
+ */
 public class MainViewFactory {
+    @Inject
+    @Named("MainView")
+    private FXMLLoader loader;
+
+    @Inject
+    private Injector injector;
+
     public Stage create() throws IOException {
-        ResourceBundle uiProperties = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        FXMLLoader fxmlLoader = new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
-        Objects.requireNonNull(fxmlLoader);
-        Injector injector = Guice.createInjector(new MainViewModule());
-        fxmlLoader.setControllerFactory(injector::getInstance);
-        return fxmlLoader.load();
+        loader.setControllerFactory(
+                injector.createChildInjector(new MainViewModule())::getInstance);
+        return loader.load();
     }
 }

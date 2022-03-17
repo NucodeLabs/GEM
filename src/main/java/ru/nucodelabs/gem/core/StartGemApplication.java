@@ -5,7 +5,7 @@ import javafx.application.Application;
 import java.util.Arrays;
 
 /**
- * Starts the Application
+ * Main, запускает приложение JavaFX
  */
 public class StartGemApplication {
     public static void main(String[] args) {

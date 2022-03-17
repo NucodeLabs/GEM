@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController implements Controller {
+public class MisfitStacksController extends Controller {
 
     private Picket picket;
 
@@ -35,6 +35,13 @@ public class MisfitStacksController implements Controller {
 
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
+    /**
+     * Отображает отклонение модельных данных от экспериментальных для конкретного пикета.
+     * Если меняются только модельные данные, обновляется.
+     *
+     * @param picketObservable    пикет
+     * @param modelDataObservable модельные данные
+     */
     @Inject
     public MisfitStacksController(
             Observable<Picket> picketObservable,
@@ -88,7 +95,7 @@ public class MisfitStacksController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) lineChartXAxis.getScene().getWindow();
     }
 }

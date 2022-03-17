@@ -8,7 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.model.Section;
+import ru.nucodelabs.gem.dao.Section;
 import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PicketsBarController implements Controller {
+public class PicketsBarController extends Controller {
 
     @Inject
     private Section section;
@@ -29,6 +29,14 @@ public class PicketsBarController implements Controller {
     @FXML
     public HBox container;
 
+    /**
+     * Контроллер для панели пикетов в стиле вкладок.
+     * Изменяет структуру разреза, при удалении пикетов.
+     * Изменяет текущий отображаемый пикет при нажатии соотв. ему кнопки.
+     *
+     * @param sectionSubject разрез
+     * @param picketSubject  пикет
+     */
     @Inject
     public PicketsBarController(
             Subject<Section> sectionSubject,
@@ -52,7 +60,7 @@ public class PicketsBarController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) container.getScene().getWindow();
     }
 

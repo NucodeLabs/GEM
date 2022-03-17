@@ -13,13 +13,19 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ExperimentalTableController implements Controller {
+public class ExperimentalTableController extends Controller {
 
     private Picket picket;
 
     @FXML
     private TableView<ExperimentalTableLine> table;
 
+    /**
+     * Отображает таблицу экспериментальных данных для конкретного пикета.
+     * Пикет не изменяет.
+     *
+     * @param picketObservable пикет
+     */
     @Inject
     public ExperimentalTableController(Observable<Picket> picketObservable) {
         picketObservable
@@ -34,7 +40,7 @@ public class ExperimentalTableController implements Controller {
     }
 
     @Override
-    public Stage getStage() {
+    protected Stage getStage() {
         return (Stage) table.getScene().getWindow();
     }
 
