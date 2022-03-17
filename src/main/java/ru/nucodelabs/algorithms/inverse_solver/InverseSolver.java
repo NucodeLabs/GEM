@@ -21,7 +21,12 @@ public class InverseSolver {
     private final double absoluteThreshold;
     private final MultivariateFunction multivariateFunction;
 
-    public InverseSolver(Picket picket, double sideLength, double relativeThreshold, double absoluteThreshold, MultivariateFunction multivariateFunction) {
+    public InverseSolver(
+            Picket picket,
+            double sideLength,
+            double relativeThreshold,
+            double absoluteThreshold,
+            MultivariateFunction multivariateFunction) {
         this.picket = picket;
         this.sideLength = sideLength;
         this.relativeThreshold = relativeThreshold;
@@ -37,18 +42,19 @@ public class InverseSolver {
         List<Double> modelResistance = modelData.resistance();
         List<Double> modelPower = modelData.power();
 
-        int dimension = modelData.getSize() * 2 - 1; // -1 - мощность последнего слоя не передается как параметр
-        NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength); //power_1, res_1, ..., power_n, res_n
+        //anyArray = resistance.size...(model.size - 1)
+        int dimension = modelResistance.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
+        NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength);
 
         SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
 
-        double[] startPoint = new double[dimension]; //power_1, res_1, ..., power_(n - 1), res_(n - 1), res_n
-        //power_n = 0, поэтому используем 2n - 1 размерность. При нахождении значения функции подставлять 0
-        for (int i = 0; i < dimension - 1; i += 2) {
-            startPoint[i] = Math.log(modelPower.get(i / 2));
-            startPoint[i + 1] = Math.log(modelResistance.get(i / 2));
+        double[] startPoint = new double[dimension]; //res_1, ..., res_n, power_1, ..., power_n-1
+        for (int i = 0; i < modelResistance.size(); i++) {
+            startPoint[i] = Math.log(modelResistance.get(i));
         }
-        startPoint[dimension - 1] = Math.log(modelResistance.get((dimension - 1) / 2));
+        for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
+            startPoint[i] = Math.log(modelPower.get(i - modelResistance.size()));
+        }
 
         InitialGuess initialGuess = new InitialGuess(startPoint);
 
@@ -65,13 +71,13 @@ public class InverseSolver {
         List<Double> newModelPower = new ArrayList<>();
         List<Double> newModelResistance = new ArrayList<>();
 
-        for (int i = 0; i < key.length - 1; i += 2) {
-            newModelPower.add(Math.exp(key[i]));
-            newModelResistance.add(Math.exp(key[i + 1]));
+        for (int i = 0; i < modelResistance.size(); i++) {
+            newModelResistance.add(Math.exp(key[i]));
         }
-
-        newModelPower.add(0.0);
-        newModelResistance.add(Math.exp(key[key.length - 1]));
+        for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
+            newModelPower.add(Math.exp(key[i]));
+        }
+        newModelPower.add(0.0); //Для последнего слоя
 
         return new ModelData(newModelResistance, modelData.polarization(), newModelPower);
     }
