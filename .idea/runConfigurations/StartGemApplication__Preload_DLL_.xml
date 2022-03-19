@@ -1,5 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="StartGemApplication (Preload DLL)" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="openjdk-17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="ru.nucodelabs.gem.core.StartGemApplication" />
     <module name="GEM.main" />
     <option name="PROGRAM_PARAMETERS" value="--preload-lib" />

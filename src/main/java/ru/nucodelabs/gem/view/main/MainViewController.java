@@ -105,6 +105,7 @@ public class MainViewController extends AbstractSectionController {
             viewEvents.onNext(new PicketSwitchEvent(0));
             viewEvents.onNext(new SectionChangeEvent());
         }
+
     }
 
     @FXML
