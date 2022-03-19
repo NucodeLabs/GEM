@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.cross_section;
 
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
@@ -10,10 +9,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
+import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.model.Section;
 import ru.nucodelabs.gem.view.AbstractSectionController;
-import ru.nucodelabs.gem.view.convert.GeoSectionConverters;
+import ru.nucodelabs.gem.view.convert.CrossSectionConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -27,7 +27,7 @@ public class CrossSectionController extends AbstractSectionController {
     @FXML
     public NumberAxis sectionBarChartYAxis;
     @FXML
-    StackedBarChart<Double, Double> sectionBarChart;
+    StackedBarChart<String, Double> sectionBarChart;
 
     private ResourceBundle uiProperties;
     private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty;
@@ -40,25 +40,38 @@ public class CrossSectionController extends AbstractSectionController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = resources;
-        dataProperty = new SimpleObjectProperty<>();        //???
+        dataProperty = sectionBarChart.dataProperty();
     }
 
     public void update() {
-        ArrayList<XYChart.Series<String, Double>> barSeries = new ArrayList<>();
-        int maxLayers = section.getPickets().stream()
-                .max(
-                        (picket1, picket2) -> Math.max(
-                                picket1.modelData().getSize(),
-                                picket2.modelData().getSize())
-                ).get().modelData().getSize();
+        ArrayList<Boolean> blanks = new ArrayList<>();
+        int maxLayers = 0;
 
-        for (int i = 0; i < maxLayers; i++) {
-            barSeries.add(GeoSectionConverters
-                    .getLayerOfPowers(
-                            section.getPickets(), i));
+        for (Picket p : section.getPickets()) {
+            if (p.modelData() == null) {
+                blanks.add(false);
+            } else {
+                blanks.add(true);
+            }
         }
 
-        dataProperty.get().setAll(barSeries);
+        for (int i = 0; i < section.getPicketsCount(); i++) {
+            if (blanks.get(i) && maxLayers < section.getModelData(i).getSize()) {
+                maxLayers = section.getModelData(i).getSize();
+            }
+        }
+
+        if (maxLayers == 0) {
+            maxLayers = 1;
+        }
+
+        for (int i = 0; i < maxLayers; i++) {
+            XYChart.Series<String, Double> tempSeries = CrossSectionConverters.getLayerOfPowers(section.getPickets(), i);
+            tempSeries.setName(((Integer) i).toString());
+
+            dataProperty.get().add(new XYChart.Series<>());
+            dataProperty.get().set(i, tempSeries);
+        }
     }
 
     protected Stage getStage() {
