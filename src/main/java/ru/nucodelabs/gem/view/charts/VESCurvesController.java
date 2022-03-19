@@ -126,7 +126,6 @@ public class VESCurvesController extends Controller {
             modelCurveSeries.getNode().setCursor(Cursor.HAND);
             modelCurveSeries.getNode().setOnMousePressed(e -> {
                 isDragging = true;
-                modelCurveDragger.resetStyle();
                 modelCurveDragger.detectPoints(e);
                 modelCurveDragger.setStyle();
             });

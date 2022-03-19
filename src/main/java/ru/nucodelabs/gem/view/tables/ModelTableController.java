@@ -27,10 +27,9 @@ public class ModelTableController extends Controller {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {
-            if (oldValue == null) {
-                update();
-            } else if (oldValue.modelData() != null
-                    && !oldValue.modelData().equals(newValue.modelData())) {
+            if (oldValue == null
+                    || oldValue.modelData() == null
+                    || !oldValue.modelData().equals(newValue.modelData())) {
                 update();
             }
         });

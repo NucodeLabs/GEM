@@ -26,10 +26,9 @@ public class ExperimentalTableController extends Controller {
 
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
-            if (oldValue == null) {
-                update();
-            } else if (oldValue.experimentalData() != null
-                    && !oldValue.experimentalData().equals(newValue.experimentalData())) {
+            if (oldValue == null
+                    || oldValue.experimentalData() == null
+                    || !oldValue.experimentalData().equals(newValue.experimentalData())) {
                 update();
             }
         });

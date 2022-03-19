@@ -79,13 +79,6 @@
                                     <HBox style="-fx-padding: 5">
                                         <Button text="%inverse" onAction="#inverseSolve"/>
                                     </HBox>
-                                    <HBox style="-fx-padding: 5">
-                                        <Button text="Button 2"/>
-                                    </HBox>
-                                    <HBox style="-fx-padding: 5">
-                                        <Button text="Button 3"/>
-                                    </HBox>
-
                                 </HBox>
                                 <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
                                            VBox.vgrow="ALWAYS">

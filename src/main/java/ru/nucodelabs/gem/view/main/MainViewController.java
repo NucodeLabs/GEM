@@ -235,6 +235,7 @@ public class MainViewController extends Controller {
 
         try {
             Picket newPicket = savedStateSection.loadModelDataFromMODFile(picketIndex.get(), file);
+            picketObservableList.setAll(savedStateSection.getPickets());
             picket.set(newPicket);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
