@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.CategoryAxis?>
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      stylesheets="@../common.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController">
+
+    <HBox prefHeight="300" prefWidth="-Infinity" minWidth="-Infinity" minHeight="20">
+        <StackedBarChart fx:id="sectionBarChart" minHeight="20"
+                         minWidth="-Infinity" prefWidth="-Infinity"
+                         maxHeight="-Infinity" prefHeight="300">
+            <xAxis>
+                <CategoryAxis fx:id="sectionBarChartXAxis" label="%geoSectionX"
+                            side="TOP" autoRanging="false">
+                </CategoryAxis>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="sectionBarChartYAxis" forceZeroInRange="false"
+                            label="%geoSectionY" side="LEFT" tickUnit="10.0" autoRanging="false" upperBound="400">
+                </NumberAxis>
+            </yAxis>
+        </StackedBarChart>
+    </HBox>
+</VBox>
