@@ -27,7 +27,7 @@
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false" lowerBound="-1"
+                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false" lowerBound="0"
                         upperBound="4">
                 <tickLabelFormatter>
                     <PowerOf10Formatter/>
