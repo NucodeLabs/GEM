@@ -36,11 +36,15 @@ public class MainViewModule extends AbstractModule {
                 .build(SectionFactory.class));
         bind(Section.class).to(SectionImpl.class);
         bind(MainViewController.class).in(SINGLETON);
-        bind(new TypeLiteral<ObjectProperty<Picket>>() {})
-                .to(new TypeLiteral<SimpleObjectProperty<Picket>>() {})
+        bind(new TypeLiteral<ObjectProperty<Picket>>() {
+        })
+                .to(new TypeLiteral<SimpleObjectProperty<Picket>>() {
+                })
                 .in(SINGLETON);
-        bind(new TypeLiteral<ObservableObjectValue<Picket>>() {})
-                .to(new TypeLiteral<ObjectProperty<Picket>>() {});
+        bind(new TypeLiteral<ObservableObjectValue<Picket>>() {
+        })
+                .to(new TypeLiteral<ObjectProperty<Picket>>() {
+                });
     }
 
     @Provides
@@ -84,10 +88,13 @@ public class MainViewModule extends AbstractModule {
         return new SimpleIntegerProperty(0);
     }
 
-    @Provides
+    /*@Provides
     @Named("CrossSection")
     private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> provideCrossSectionDataProperty() {
+        ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty
+                = new SimpleObjectProperty<>(FXCollections.observableArrayList());
+        dataProperty.get().add(new XYChart.Series<>());
 
-        return new SimpleObjectProperty<>(FXCollections.observableArrayList());
-    }
+        return dataProperty;
+    }*/
 }
