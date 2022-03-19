@@ -38,6 +38,8 @@ public class MainViewController extends Controller {
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
 
+    private Section currentSection;
+
     @FXML
     private Stage root;
     @FXML

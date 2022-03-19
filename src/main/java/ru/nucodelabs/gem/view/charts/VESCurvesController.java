@@ -49,8 +49,7 @@ public class VESCurvesController extends Controller {
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     @Inject
-    public VESCurvesController(
-            ObjectProperty<Picket> picket) {
+    public VESCurvesController(ObjectProperty<Picket> picket) {
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
             if (isDragging) {
