@@ -55,13 +55,13 @@ public class MainViewController extends Controller {
     private Provider<SectionFactory> sectionFactoryProvider;
     @Inject
     @Named("EXP")
-    private Provider<FileChooser> expFileChooserProvider;
+    private FileChooser expFileChooser;
     @Inject
     @Named("JSON")
-    private Provider<FileChooser> jsonFileChooserProvider;
+    private FileChooser jsonFileChooser;
     @Inject
     @Named("MOD")
-    private Provider<FileChooser> modFileChooserProvider;
+    private FileChooser modFileChooser;
     @Inject
     @Named("Save")
     private Provider<Dialog<ButtonType>> saveDialogProvider;
@@ -162,7 +162,7 @@ public class MainViewController extends Controller {
 
     @FXML
     public void importEXP() {
-        List<File> files = expFileChooserProvider.get().showOpenMultipleDialog(getStage());
+        List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
         if (files != null && files.size() != 0) {
             for (var file : files) {
                 addEXP(file);
@@ -184,7 +184,7 @@ public class MainViewController extends Controller {
                 }
             }
         }
-        File file = jsonFileChooserProvider.get().showOpenDialog(getStage());
+        File file = jsonFileChooser.showOpenDialog(getStage());
         if (file != null) {
             try {
                 savedStateSection.loadFromJson(file);
@@ -199,7 +199,7 @@ public class MainViewController extends Controller {
 
     @FXML
     public void saveSection() {
-        File file = jsonFileChooserProvider.get().showSaveDialog(getStage());
+        File file = jsonFileChooser.showSaveDialog(getStage());
         if (file != null) {
             try {
                 Section newSectionState = sectionFactoryProvider.get().create(picketObservableList);
@@ -224,7 +224,7 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importMOD() {
-        File file = modFileChooserProvider.get().showOpenDialog(getStage());
+        File file = modFileChooser.showOpenDialog(getStage());
 
         if (file == null) {
             return;
