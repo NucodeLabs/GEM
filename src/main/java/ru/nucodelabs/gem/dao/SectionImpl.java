@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.dao;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
@@ -18,10 +20,15 @@ import java.util.List;
 
 public class SectionImpl implements Section {
 
-    private List<Picket> pickets;
+    private final List<Picket> pickets;
+
+    @AssistedInject
+    public SectionImpl(@Assisted List<Picket> pickets) {
+        this.pickets = pickets;
+    }
 
     public SectionImpl() {
-        pickets = new ArrayList<>();
+        this(new ArrayList<>());
     }
 
     @Override
@@ -137,12 +144,37 @@ public class SectionImpl implements Section {
     }
 
     @Override
+    public void setPicket(int picketNumber, Picket picket) {
+        pickets.set(picketNumber, picket);
+    }
+
+    @Override
     public void loadFromJson(File file) throws Exception {
-        this.pickets = new GemJson().readPicketList(file);
+        List<Picket> newPickets = new GemJson().readPicketList(file);
+        pickets.clear();
+        pickets.addAll(newPickets);
     }
 
     @Override
     public void saveToJson(File file) throws Exception {
         new GemJson().writeData(pickets, file);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Section) {
+            return getPickets().equals(((Section) obj).getPickets());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Section clone() {
+        try {
+            return (Section) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new SectionImpl(new ArrayList<>(getPickets()));
+        }
     }
 }

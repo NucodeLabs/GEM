@@ -139,4 +139,8 @@ public interface Section extends Model {
      * @return picket with loaded model data
      */
     Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception;
+
+    void setPicket(int picketNumber, Picket picket);
+
+    Section clone();
 }
