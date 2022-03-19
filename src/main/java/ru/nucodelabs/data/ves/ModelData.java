@@ -41,4 +41,17 @@ public record ModelData(
         }
         return res;
     }
+
+    @Override
+    public ModelData clone() {
+        try {
+            return (ModelData) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new ModelData(
+                    new ArrayList<>(resistance()),
+                    new ArrayList<>(polarization()),
+                    new ArrayList<>(power())
+            );
+        }
+    }
 }

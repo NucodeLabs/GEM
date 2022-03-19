@@ -7,10 +7,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
 import ru.nucodelabs.data.ves.ModelData;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
-import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 
 /**
@@ -23,7 +24,6 @@ public class ModelCurveDragger {
 
     private final Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue;
     private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
-    private ModelData modelData;
 
     // mapping: point on chart --> index of the value in data model arrays
     private Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
@@ -45,9 +45,10 @@ public class ModelCurveDragger {
      * @param chartData                 data property of line chart or bound
      * @param modelCurveIndex           index of series in data
      */
-    public ModelCurveDragger(Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue,
-                             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> chartData,
-                             int modelCurveIndex) {
+    public ModelCurveDragger(
+            Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue,
+            ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> chartData,
+            int modelCurveIndex) {
         this.coordinatesInSceneToValue = coordinatesInSceneToValue;
         this.vesCurvesData = chartData;
         MOD_CURVE_SERIES_INDEX = modelCurveIndex;
@@ -58,7 +59,7 @@ public class ModelCurveDragger {
      *
      * @param mouseEvent mouse pressed event
      */
-    public void lineToDragDetector(MouseEvent mouseEvent) {
+    public void detectPoints(MouseEvent mouseEvent) {
 
         Double mouseX = coordinatesToValues(mouseEvent).getXValue();
 
@@ -103,9 +104,7 @@ public class ModelCurveDragger {
     public void setStyle() {
         if (point1 != null && point2 != null) {
             String style = """
-                    -fx-pref-width: 10;
-                    -fx-pref-height: 10;
-                    -fx-background-radius: 50%;
+                    -fx-background-color: blue;
                     """;
             point1.getNode().lookup(".chart-line-symbol").setStyle(style);
             point2.getNode().lookup(".chart-line-symbol").setStyle(style);
@@ -116,8 +115,10 @@ public class ModelCurveDragger {
      * Drags the points by mouse and modifies ModelData values if called initModelData() previously
      *
      * @param mouseEvent mouse dragged event
+     * @param modelData  model data
      */
-    public void dragHandler(MouseEvent mouseEvent) {
+    public ModelData dragHandler(MouseEvent mouseEvent, ModelData modelData) {
+        mapModelData(modelData);
         var valuesForAxis = coordinatesToValues(mouseEvent);
         Double mouseX = valuesForAxis.getXValue();
         Double mouseY = valuesForAxis.getYValue();
@@ -151,20 +152,12 @@ public class ModelCurveDragger {
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
-                if (modelData != null) {
-                    int index = pointResistanceMap.get(point1);
-                    double newValue = pow(10, mouseY);
-                    modelData.resistance().set(index, newValue);
-                }
+                int index = pointResistanceMap.get(point1);
+                double newValue = pow(10, mouseY);
+                modelData.resistance().set(index, newValue);
             }
         }
-    }
-
-    /**
-     * Call this if model data array structure will change
-     */
-    private void updateMappings() {
-        mapModelData(modelData);
+        return modelData;
     }
 
     /**
@@ -172,19 +165,14 @@ public class ModelCurveDragger {
      *
      * @param modelData model data that match curve
      */
-    public void mapModelData(ModelData modelData) {
+    private void mapModelData(ModelData modelData) {
         String E_MSG = "ModelData array size: %d does not match mapping size: %d";
 
         pointResistanceMap = new HashMap<>();
-        this.modelData = modelData;
         var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
-        var resistance = modelData.resistance();
-        for (var point : points) {
-            for (int i = 0; i < resistance.size(); i++) {
-                if (point.getYValue() == log10(resistance.get(i))) {
-                    pointResistanceMap.put(point, i);
-                }
-            }
+        for (int i = 0, j = 0; i < points.size(); i += 2, j++) {
+            pointResistanceMap.put(points.get(i), j);
+            pointResistanceMap.put(points.get(i + 1), j);
         }
 
         if (pointResistanceMap.values().stream().distinct().count() != modelData.resistance().size()) {
@@ -197,21 +185,9 @@ public class ModelCurveDragger {
         }
 
         pointPowerMap = new HashMap<>();
-        var power = modelData.power();
-        double currentHeight = 0;
-        List<Double> height = new ArrayList<>();
-
-        for (Double p : power) {
-            height.add(currentHeight += p);
-        }
-        height.remove(height.size() - 1); // last in power is zero
-
-        for (var point : points) {
-            for (int i = 0; i < height.size(); i++) {
-                if (point.getXValue() == log10(height.get(i))) {
-                    pointPowerMap.put(point, i);
-                }
-            }
+        for (int i = 1, j = 0; i < points.size() - 1; i += 2, j++) {
+            pointPowerMap.put(points.get(i), j);
+            pointPowerMap.put(points.get(i + 1), j);
         }
 
         if (pointPowerMap.values().stream().distinct().count() != modelData.power().size() - 1) {
@@ -243,9 +219,7 @@ public class ModelCurveDragger {
     public void resetStyle() {
         if (point1 != null && point2 != null) {
             String style = """
-                     -fx-pref-width: 0;
-                     -fx-pref-height: 0;
-                     -fx-background-radius: 0;
+                     -fx-background-color: transparent;
                     """;
             point1.getNode().lookup(".chart-line-symbol").setStyle(style);
             point2.getNode().lookup(".chart-line-symbol").setStyle(style);

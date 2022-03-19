@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.view.tables;
 
-import io.reactivex.rxjava3.core.Observable;
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -15,24 +15,24 @@ import java.util.ResourceBundle;
 
 public class ExperimentalTableController extends Controller {
 
-    private Picket picket;
+
+    private final ObjectProperty<Picket> picket;
 
     @FXML
     private TableView<ExperimentalTableLine> table;
 
-    /**
-     * Отображает таблицу экспериментальных данных для конкретного пикета.
-     * Пикет не изменяет.
-     *
-     * @param picketObservable пикет
-     */
     @Inject
-    public ExperimentalTableController(Observable<Picket> picketObservable) {
-        picketObservable
-                .subscribe(picket1 -> {
-                    picket = picket1;
-                    update();
-                });
+    public ExperimentalTableController(ObjectProperty<Picket> picket) {
+
+        this.picket = picket;
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (oldValue == null) {
+                update();
+            } else if (oldValue.experimentalData() != null
+                    && !oldValue.experimentalData().equals(newValue.experimentalData())) {
+                update();
+            }
+        });
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ExperimentalTableController extends Controller {
     protected void update() {
         table.itemsProperty().setValue(
                 VESTablesConverters.toExperimentalTableData(
-                        picket.experimentalData()
+                        picket.get().experimentalData()
                 )
         );
     }

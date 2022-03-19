@@ -1,14 +1,13 @@
 package ru.nucodelabs.gem.view.charts;
 
-import io.reactivex.rxjava3.core.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
@@ -24,8 +23,8 @@ import static java.lang.Math.abs;
 
 public class MisfitStacksController extends Controller {
 
-    private Picket picket;
 
+    private final ObservableObjectValue<Picket> picketObservable;
     @FXML
     private LineChart<Double, Double> lineChart;
     @FXML
@@ -39,23 +38,15 @@ public class MisfitStacksController extends Controller {
      * Отображает отклонение модельных данных от экспериментальных для конкретного пикета.
      * Если меняются только модельные данные, обновляется.
      *
-     * @param picketObservable    пикет
-     * @param modelDataObservable модельные данные
+     * @param picketObservable пикет
      */
     @Inject
     public MisfitStacksController(
-            Observable<Picket> picketObservable,
-            Observable<ModelData> modelDataObservable) {
-        picketObservable
-                .subscribe(picket1 -> {
-                    picket = picket1;
-                    update();
-                });
-        modelDataObservable
-                .subscribe(modelData -> {
-                    picket = new Picket(picket.name(), picket.experimentalData(), modelData);
-                    update();
-                });
+            ObservableObjectValue<Picket> picketObservable) {
+        this.picketObservable = picketObservable;
+        picketObservable.addListener((observable, oldValue, newValue) -> {
+            update();
+        });
     }
 
     @Override
@@ -66,10 +57,10 @@ public class MisfitStacksController extends Controller {
     protected void update() {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
-        if (picket.modelData() != null) {
+        if (picketObservable.get().modelData() != null && picketObservable.get().experimentalData() != null) {
             try {
                 misfitStacksSeriesList = MisfitStacksSeriesConverters.toMisfitStacksSeriesList(
-                        picket.experimentalData(), picket.modelData()
+                        picketObservable.get().experimentalData(), picketObservable.get().modelData()
                 );
             } catch (UnsatisfiedLinkError e) {
                 new NoLibErrorAlert(e, getStage()).show();
