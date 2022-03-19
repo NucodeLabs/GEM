@@ -151,7 +151,6 @@ public class MainViewController extends Controller {
             if (answer.isPresent()) {
                 if (answer.get() == ButtonType.YES) {
                     saveSection();
-                    return;
                 } else if (answer.get() == ButtonType.CANCEL) {
                     return;
                 }
@@ -233,6 +232,26 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importMOD() {
+        if (picket.get().modelData() != null
+                && savedStateSection
+                .getPickets()
+                .get(picketIndex.get())
+                .modelData() != null
+                && !savedStateSection
+                .getPickets()
+                .get(picketIndex.get())
+                .modelData().equals(picket.get().modelData())) {
+            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
+            saveDialog.initOwner(getStage());
+            Optional<ButtonType> answer = saveDialog.showAndWait();
+            if (answer.isPresent()) {
+                if (answer.get() == ButtonType.YES) {
+                    saveSection();
+                } else if (answer.get() == ButtonType.CANCEL) {
+                    return;
+                }
+            }
+        }
         File file = modFileChooser.showOpenDialog(getStage());
 
         if (file != null) {
