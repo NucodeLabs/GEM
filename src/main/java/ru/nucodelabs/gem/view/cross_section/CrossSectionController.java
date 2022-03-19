@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 public class CrossSectionController extends Controller {
 
     private ResourceBundle uiProperties;
-    private ObjectProperty<Section> section;
+    private ObservableList<Picket> picketObservableList;
 
     @FXML
     public CategoryAxis sectionBarChartXAxis;
@@ -31,13 +31,13 @@ public class CrossSectionController extends Controller {
     @FXML
     StackedBarChart<String, Double> sectionBarChart;
 
-    @Inject
-    @Named("CrossSection")
+    /*@Inject
+    @Named("CrossSection")*/
     private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty;
 
     @Inject
-    public CrossSectionController(ObjectProperty<Section> section) {
-        this.section = section;
+    public CrossSectionController(ObservableList<Picket> picketObservableList) {
+        this.picketObservableList = picketObservableList;
         update();
     }
 
@@ -53,7 +53,7 @@ public class CrossSectionController extends Controller {
         int maxLayers = 0;
 
         //Помечаются валидные и null модели пикетов
-        for (Picket p : section.get().getPickets()) {
+        for (Picket p : picketObservableList) {
             if (p.modelData() == null) {
                 blanks.add(false);
             } else {
@@ -62,9 +62,10 @@ public class CrossSectionController extends Controller {
         }
 
         //Находится наибольшее число слоев среди всех пикетов разреза
-        for (int i = 0; i < section.get().getPicketsCount(); i++) {
-            if (blanks.get(i) && maxLayers < section.get().getModelData(i).getSize()) {
-                maxLayers = section.get().getModelData(i).getSize();
+        for (int i = 0; i < picketObservableList.size(); i++) {
+            int picketSize = picketObservableList.get(i).modelData().getSize();
+            if (blanks.get(i) && maxLayers < picketSize) {
+                maxLayers = picketSize;
             }
         }
 
@@ -75,7 +76,7 @@ public class CrossSectionController extends Controller {
         //Создаются Series из всех еще непроверенных нижних слоев пикетов.
         //Двигаясь снизу вверх получается несколько "слоев" слоев из которых можно будет потом сложить StackedBarChart.
         for (int i = 0; i < maxLayers; i++) {
-            XYChart.Series<String, Double> tempSeries = CrossSectionConverters.getLayerOfPowers(section.get().getPickets(), i);
+            XYChart.Series<String, Double> tempSeries = CrossSectionConverters.getLayerOfPowers(picketObservableList, i);
             tempSeries.setName(((Integer) i).toString());
 
             dataProperty.get().add(new XYChart.Series<>());
