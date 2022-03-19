@@ -195,6 +195,7 @@ public class MainViewController extends Controller {
             picketObservableList.setAll(savedStateSection.getPickets());
             picketIndex.set(0);
         }
+
     }
 
     @FXML
