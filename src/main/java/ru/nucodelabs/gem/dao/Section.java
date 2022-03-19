@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Data model which basically represents section, an ordered set of pickets
+ * DAO объект который, управляет данными разреза, по сути упорядоченного множества пикетов.
  */
 public interface Section extends Model {
 
@@ -115,13 +115,21 @@ public interface Section extends Model {
     String getName(int picketNumber);
 
     /**
-     * Loads experimental data from EXP file parameter and from STT file with same name to picket
+     * Loads experimental data from EXP file and from STT file with same name to picket
      *
      * @param picketNumber index of picket
      * @param file         EXP file
      * @return picket with loaded experimental data
      */
     Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception;
+
+    /**
+     * Loads experimental data from EXP file to new Picket and adds it to picket list
+     *
+     * @param file EXP File
+     * @return picket with experimental data
+     */
+    Picket loadExperimentalDataFromEXPFile(File file) throws Exception;
 
     /**
      * Loads model data from MOD file parameter to picket
@@ -131,4 +139,8 @@ public interface Section extends Model {
      * @return picket with loaded model data
      */
     Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception;
+
+    void setPicket(int picketNumber, Picket picket);
+
+    Section clone();
 }

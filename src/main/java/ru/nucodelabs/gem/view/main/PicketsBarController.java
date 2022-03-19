@@ -1,32 +1,47 @@
 package ru.nucodelabs.gem.view.main;
 
-import io.reactivex.rxjava3.subjects.Subject;
+import javafx.beans.property.IntegerProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.PicketSwitchEvent;
-import ru.nucodelabs.gem.core.events.SectionChangeEvent;
-import ru.nucodelabs.gem.core.events.ViewEvent;
-import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PicketsBarController extends AbstractSectionController {
+public class PicketsBarController extends Controller {
+
+    private final ObservableList<Picket> picketObservableList;
+    private final IntegerProperty picketIndex;
 
     @FXML
     public HBox container;
 
     @Inject
-    public PicketsBarController(Subject<ViewEvent> viewEventSubject, Section section) {
-        super(viewEventSubject, section);
+    public PicketsBarController(
+            ObservableList<Picket> picketObservableList,
+            IntegerProperty picketIndex) {
+
+        this.picketObservableList = picketObservableList;
+        this.picketIndex = picketIndex;
+        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
+            if (c.next()) {
+                if (c.getAddedSize() > 0 || c.getRemovedSize() > 0 || c.wasAdded()) {
+                    update();
+                }
+            }
+        });
+        picketIndex.addListener((observable, oldValue, newValue) -> update());
     }
 
     @Override
@@ -38,42 +53,32 @@ public class PicketsBarController extends AbstractSectionController {
         return (Stage) container.getScene().getWindow();
     }
 
-    @Override
     protected void update() {
         List<Button> buttons = new ArrayList<>();
 
-        for (int i = 0; i < section.getPicketsCount(); i++) {
+        for (int i = 0; i < picketObservableList.size(); i++) {
             final int picketNumber = i;
-            Button button = new Button(section.getName(i));
+            Button button = new Button(picketObservableList.get(picketNumber).name());
 
-            if (i == currentPicket) {
+            if (i == picketIndex.get()) {
                 button.setStyle(
                         "-fx-background-color: LightGray;");
             }
 
-            button.setOnAction(e -> {
-                viewEvents.onNext(new PicketSwitchEvent(picketNumber));
-            });
+            button.setOnAction(e -> picketIndex.set(picketNumber));
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
-            delete.setOnAction(e -> {
-                section.removePicket(picketNumber);
-                viewEvents.onNext(new SectionChangeEvent());
-            });
+            delete.setOnAction(e -> picketObservableList.remove(picketNumber));
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
-            moveLeft.setOnAction(e -> {
-                section.swapPickets(picketNumber, picketNumber - 1);
-                viewEvents.onNext(new SectionChangeEvent());
-            });
+            moveLeft.setOnAction(e ->
+                    Collections.swap(picketObservableList, picketNumber, picketNumber - 1));
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
-            moveRight.setOnAction(e -> {
-                section.swapPickets(picketNumber, picketNumber + 1);
-                viewEvents.onNext(new SectionChangeEvent());
-            });
+            moveRight.setOnAction(e ->
+                    Collections.swap(picketObservableList, picketNumber, picketNumber + 1));
 
-            if (section.getPicketsCount() == 1) {
+            if (picketObservableList.size() == 1) {
                 delete.setDisable(true);
                 moveLeft.setDisable(true);
                 moveRight.setDisable(true);
@@ -81,7 +86,7 @@ public class PicketsBarController extends AbstractSectionController {
             if (picketNumber == 0) {
                 moveLeft.setDisable(true);
             }
-            if (picketNumber == section.getPicketsCount() - 1) {
+            if (picketNumber == picketObservableList.size() - 1) {
                 moveRight.setDisable(true);
             }
 

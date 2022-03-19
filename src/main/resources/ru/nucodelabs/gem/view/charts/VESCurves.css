@@ -54,13 +54,15 @@
 
 #lineChart .chart-series-line.series4 {
     -fx-stroke: Blue;
+    -fx-stroke-width: 2;
 }
 
 #lineChart .chart-line-symbol.series4 {
     -fx-border-color: transparent;
-    -fx-background-color: Blue;
-    -fx-pref-width: 0;
-    -fx-pref-height: 0;
+    -fx-background-color: transparent;
+    -fx-pref-width: 6;
+    -fx-pref-height: 6;
+    -fx-background-radius: 50%;
 }
 
 #lineChart .chart-line-symbol {
