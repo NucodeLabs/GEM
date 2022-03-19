@@ -99,8 +99,8 @@ public class MainViewController extends Controller {
         });
         // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
         picket.addListener((observable, oldValue, newValue) -> {
-            if (savedStateSection.getPickets().stream().noneMatch(p -> p.equals(newValue))) {
-                picketObservableList.set(picketIndex.get(), newValue);
+            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))) {
+                picketObservableList.set(picketIndex.get(), picket.get());
             }
             update();
         });
@@ -232,26 +232,6 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importMOD() {
-        if (picket.get().modelData() != null
-                && savedStateSection
-                .getPickets()
-                .get(picketIndex.get())
-                .modelData() != null
-                && !savedStateSection
-                .getPickets()
-                .get(picketIndex.get())
-                .modelData().equals(picket.get().modelData())) {
-            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-            saveDialog.initOwner(getStage());
-            Optional<ButtonType> answer = saveDialog.showAndWait();
-            if (answer.isPresent()) {
-                if (answer.get() == ButtonType.YES) {
-                    saveSection();
-                } else if (answer.get() == ButtonType.CANCEL) {
-                    return;
-                }
-            }
-        }
         File file = modFileChooser.showOpenDialog(getStage());
 
         if (file != null) {
@@ -259,8 +239,11 @@ public class MainViewController extends Controller {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Picket newPicket = savedStateSection.loadModelDataFromMODFile(picketIndex.get(), file);
-                picketObservableList.setAll(savedStateSection.getPickets());
+                Picket newPicket =
+                        sectionFactoryProvider
+                                .get()
+                                .create(picketObservableList)
+                                .loadModelDataFromMODFile(picketIndex.get(), file);
                 picket.set(newPicket);
             } catch (Exception e) {
                 new IncorrectFileAlert(e, getStage()).show();
@@ -299,14 +282,15 @@ public class MainViewController extends Controller {
     }
 
     private void addEXP(File file) {
-        Picket loadedPicket;
         try {
-            loadedPicket = savedStateSection.loadExperimentalDataFromEXPFile(file);
+            sectionFactoryProvider
+                    .get()
+                    .create(picketObservableList)
+                    .loadExperimentalDataFromEXPFile(file);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        picketObservableList.add(loadedPicket);
         picketIndex.set(picketObservableList.size() - 1);
         compatibilityModeAlert();
     }
