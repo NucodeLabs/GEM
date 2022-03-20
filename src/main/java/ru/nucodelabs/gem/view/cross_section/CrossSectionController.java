@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.cross_section;
 
-import com.google.inject.name.Named;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
@@ -10,7 +10,6 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.dao.Section;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.convert.CrossSectionConverters;
 
@@ -22,7 +21,7 @@ import java.util.ResourceBundle;
 public class CrossSectionController extends Controller {
 
     private ResourceBundle uiProperties;
-    private ObservableList<Picket> picketObservableList;
+    private final ObservableList<Picket> picketObservableList;
 
     @FXML
     public CategoryAxis sectionBarChartXAxis;
@@ -31,14 +30,17 @@ public class CrossSectionController extends Controller {
     @FXML
     StackedBarChart<String, Double> sectionBarChart;
 
-    /*@Inject
-    @Named("CrossSection")*/
+    @Inject
     private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty;
 
     @Inject
     public CrossSectionController(ObservableList<Picket> picketObservableList) {
         this.picketObservableList = picketObservableList;
-        update();
+        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
+            if (c.next()) {
+                update();
+            }
+        });
     }
 
     @Override
