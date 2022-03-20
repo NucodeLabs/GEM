@@ -14,16 +14,16 @@
       fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController">
 
     <HBox prefHeight="300" prefWidth="-Infinity" minWidth="-Infinity" minHeight="20">
-        <StackedBarChart fx:id="sectionBarChart" minHeight="20"
+        <StackedBarChart fx:id="sectionStackedBarChart" minHeight="20"
                          minWidth="-Infinity" prefWidth="-Infinity"
                          maxHeight="-Infinity" prefHeight="300">
             <xAxis>
-                <CategoryAxis fx:id="sectionBarChartXAxis" label="%geoSectionX"
-                            side="TOP" autoRanging="false">
+                <CategoryAxis fx:id="sectionStackedBarChartXAxis" label="%geoSectionX"
+                              side="TOP" autoRanging="false">
                 </CategoryAxis>
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="sectionBarChartYAxis" forceZeroInRange="false"
+                <NumberAxis fx:id="sectionStackedBarChartYAxis" forceZeroInRange="false"
                             label="%geoSectionY" side="LEFT" tickUnit="10.0" autoRanging="false" upperBound="400">
                 </NumberAxis>
             </yAxis>

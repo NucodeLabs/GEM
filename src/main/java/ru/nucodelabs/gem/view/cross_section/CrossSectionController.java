@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.cross_section;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,8 +15,10 @@ import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.convert.CrossSectionConverters;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 public class CrossSectionController extends Controller {
@@ -24,14 +27,15 @@ public class CrossSectionController extends Controller {
     private final ObservableList<Picket> picketObservableList;
 
     @FXML
-    public CategoryAxis sectionBarChartXAxis;
+    public CategoryAxis sectionStackedBarChartXAxis;
     @FXML
-    public NumberAxis sectionBarChartYAxis;
+    public NumberAxis sectionStackedBarChartYAxis;
     @FXML
-    StackedBarChart<String, Double> sectionBarChart;
+    StackedBarChart<String, Number> sectionStackedBarChart;
 
     @Inject
-    private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty;
+    @Named("CrossSection")
+    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> dataProperty;
 
     @Inject
     public CrossSectionController(ObservableList<Picket> picketObservableList) {
@@ -46,13 +50,20 @@ public class CrossSectionController extends Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = resources;
-        sectionBarChart.dataProperty().bind(dataProperty);
+        sectionStackedBarChart.dataProperty().bind(dataProperty);
 
     }
 
     public void update() {
         ArrayList<Boolean> blanks = new ArrayList<>();
+        ArrayList<String> categories = new ArrayList<>();
         int maxLayers = 0;
+
+        for (Picket p : picketObservableList) {
+            categories.add(p.name());
+        }
+
+        ((CategoryAxis)sectionStackedBarChart.getXAxis()).setCategories(FXCollections.observableArrayList(categories));
 
         //Помечаются валидные и null модели пикетов
         for (Picket p : picketObservableList) {
@@ -65,9 +76,11 @@ public class CrossSectionController extends Controller {
 
         //Находится наибольшее число слоев среди всех пикетов разреза
         for (int i = 0; i < picketObservableList.size(); i++) {
-            int picketSize = picketObservableList.get(i).modelData().getSize();
-            if (blanks.get(i) && maxLayers < picketSize) {
-                maxLayers = picketSize;
+            if (blanks.get(i)) {
+                int picketSize = picketObservableList.get(i).modelData().getSize();
+                if (maxLayers < picketSize) {
+                    maxLayers = picketSize;
+                }
             }
         }
 
@@ -77,16 +90,23 @@ public class CrossSectionController extends Controller {
 
         //Создаются Series из всех еще непроверенных нижних слоев пикетов.
         //Двигаясь снизу вверх получается несколько "слоев" слоев из которых можно будет потом сложить StackedBarChart.
+        //Все null -> 10.0 (в целях тестирования)
+
+        dataProperty.get().clear();
         for (int i = 0; i < maxLayers; i++) {
-            XYChart.Series<String, Double> tempSeries = CrossSectionConverters.getLayerOfPowers(picketObservableList, i);
+            dataProperty.get().add(new XYChart.Series<>());
+        }
+
+        for (int i = 0; i < maxLayers; i++) {
+            XYChart.Series<String, Number> tempSeries = CrossSectionConverters.getLayerOfPowers(picketObservableList, i);
             tempSeries.setName(((Integer) i).toString());
 
-            dataProperty.get().add(new XYChart.Series<>());
             dataProperty.get().set(i, tempSeries);
         }
+
     }
 
     protected Stage getStage() {
-        return (Stage) sectionBarChart.getScene().getWindow();
+        return (Stage) sectionStackedBarChart.getScene().getWindow();
     }
 }

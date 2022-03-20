@@ -89,11 +89,9 @@ public class MainViewModule extends AbstractModule {
     }
 
     @Provides
-    private ObjectProperty<ObservableList<XYChart.Series<String, Double>>> provideCrossSectionDataProperty() {
-        ObjectProperty<ObservableList<XYChart.Series<String, Double>>> dataProperty
-                = new SimpleObjectProperty<>(FXCollections.observableArrayList());
-        dataProperty.get().add(new XYChart.Series<>());
+    @Named("CrossSection")
+    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> provideCrossSectionDataProperty() {
 
-        return dataProperty;
+        return new SimpleObjectProperty<>(FXCollections.observableArrayList());
     }
 }
