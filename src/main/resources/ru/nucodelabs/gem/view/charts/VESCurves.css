@@ -1,6 +1,6 @@
 #lineChart {
     -fx-padding: 0 0 10 25;
-    -fx-legend-visible: true;
+    -fx-legend-visible: false;
     -fx-legend-side: top;
 }
 
@@ -53,8 +53,8 @@
 }
 
 #lineChart .chart-series-line.series4 {
-    -fx-stroke: Blue;
-    -fx-stroke-width: 2;
+    -fx-stroke: rgba(0,0,255,0.5);
+    -fx-stroke-width: 3;
 }
 
 #lineChart .chart-line-symbol.series4 {
