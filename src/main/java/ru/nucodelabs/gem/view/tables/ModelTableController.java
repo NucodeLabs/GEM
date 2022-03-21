@@ -5,6 +5,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
@@ -34,9 +36,13 @@ public class ModelTableController extends Controller {
     @FXML
     public TextField indexTextField;
     @FXML
-    public Button delete;
+    public Button deleteBtn;
+    @FXML
+    public Button addBtn;
     @FXML
     private TableView<ModelTableLine> table;
+
+    private List<TextField> requiredForAdd;
 
     @Inject
     public ModelTableController(
@@ -55,6 +61,12 @@ public class ModelTableController extends Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        table.getSelectionModel().getSelectedItems()
+                .addListener((ListChangeListener<? super ModelTableLine>) c -> {
+                    if (c.next()) {
+                        deleteBtn.setDisable(c.getList().isEmpty());
+                    }
+                });
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
@@ -72,33 +84,28 @@ public class ModelTableController extends Controller {
             }
         });
 
-        polarizationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            polarizationTextField.getStyleClass().remove("wrong-input");
-            try {
-                Double.parseDouble(newValue);
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    polarizationTextField.getStyleClass().add("wrong-input");
-                }
+        requiredForAdd = List.of(powerTextField, resistanceTextField, polarizationTextField);
+        addInputCheckListener(polarizationTextField);
+        addInputCheckListener(resistanceTextField);
+        addInputCheckListener(powerTextField);
+    }
+
+    private void addInputCheckListener(TextField doubleTextField) {
+        doubleTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            doubleTextField.getStyleClass().remove("wrong-input");
+            if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
+                addBtn.setDisable(false);
             }
-        });
-        resistanceTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            resistanceTextField.getStyleClass().remove("wrong-input");
             try {
-                Double.parseDouble(newValue);
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    resistanceTextField.getStyleClass().add("wrong-input");
+                double value = Double.parseDouble(newValue);
+                if (value < 0) {
+                    doubleTextField.getStyleClass().add("wrong-input");
+                    addBtn.setDisable(true);
                 }
-            }
-        });
-        powerTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            powerTextField.getStyleClass().remove("wrong-input");
-            try {
-                Double.parseDouble(newValue);
             } catch (NumberFormatException e) {
                 if (!newValue.isBlank()) {
-                    powerTextField.getStyleClass().add("wrong-input");
+                    doubleTextField.getStyleClass().add("wrong-input");
+                    addBtn.setDisable(true);
                 }
             }
         });
@@ -230,9 +237,13 @@ public class ModelTableController extends Controller {
                 } catch (NumberFormatException e) {
                     return;
                 }
-                newResistance.add(index, newResistanceValue);
-                newPower.add(index, newPowerValue);
-                newPolarization.add(index, newPolarizationValue);
+                try {
+                    newResistance.add(index, newResistanceValue);
+                    newPower.add(index, newPowerValue);
+                    newPolarization.add(index, newPolarizationValue);
+                } catch (IndexOutOfBoundsException e) {
+                    new ExceptionAlert(e, getStage()).show();
+                }
             } else {
                 newResistance.add(newResistanceValue);
                 newPower.add(newPowerValue);
