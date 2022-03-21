@@ -1,10 +1,12 @@
 package ru.nucodelabs.data.ves;
 
+import jakarta.validation.constraints.Min;
+
 public record ModelTableLine(
-        int index,
-        Double resistance,
-        Double power,
-        Double polarization
+        @Min(0) int index,
+        @Min(0) Double resistance,
+        @Min(0) Double power,
+        @Min(0) Double polarization
 ) {
 
     public int getIndex() {
