@@ -11,7 +11,7 @@ public record Picket(
         // Наименование пикета
         @NotNull String name,
         // Экспериментальные(полевые) данные
-        @Valid @Nullable ExperimentalData experimentalData,
+        @Valid @NotNull ExperimentalData experimentalData,
         // Данные модели
         @Valid @Nullable ModelData modelData
 ) {

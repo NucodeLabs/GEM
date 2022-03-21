@@ -57,13 +57,13 @@ public class MainViewController extends Controller {
     private Provider<SectionFactory> sectionFactoryProvider;
     @Inject
     @Named("EXP")
-    private Provider<FileChooser> expFileChooserProvider;
+    private FileChooser expFileChooser;
     @Inject
     @Named("JSON")
-    private Provider<FileChooser> jsonFileChooserProvider;
+    private FileChooser jsonFileChooser;
     @Inject
     @Named("MOD")
-    private Provider<FileChooser> modFileChooserProvider;
+    private FileChooser modFileChooser;
     @Inject
     @Named("Save")
     private Provider<Dialog<ButtonType>> saveDialogProvider;
@@ -101,8 +101,8 @@ public class MainViewController extends Controller {
         });
         // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
         picket.addListener((observable, oldValue, newValue) -> {
-            if (savedStateSection.getPickets().stream().noneMatch(p -> p.equals(newValue))) {
-                picketObservableList.set(picketIndex.get(), newValue);
+            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))) {
+                picketObservableList.set(picketIndex.get(), picket.get());
             }
             update();
         });
@@ -153,7 +153,6 @@ public class MainViewController extends Controller {
             if (answer.isPresent()) {
                 if (answer.get() == ButtonType.YES) {
                     saveSection();
-                    return;
                 } else if (answer.get() == ButtonType.CANCEL) {
                     return;
                 }
@@ -164,8 +163,11 @@ public class MainViewController extends Controller {
 
     @FXML
     public void importEXP() {
-        List<File> files = expFileChooserProvider.get().showOpenMultipleDialog(getStage());
-        if (files != null && files.size() != 0) {
+        List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
+        if (files != null) {
+            if (files.get(files.size() - 1).getParentFile().isDirectory()) {
+                expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
+            }
             for (var file : files) {
                 addEXP(file);
             }
@@ -186,8 +188,11 @@ public class MainViewController extends Controller {
                 }
             }
         }
-        File file = jsonFileChooserProvider.get().showOpenDialog(getStage());
+        File file = jsonFileChooser.showOpenDialog(getStage());
         if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
             try {
                 savedStateSection.loadFromJson(file);
             } catch (Exception e) {
@@ -202,8 +207,11 @@ public class MainViewController extends Controller {
 
     @FXML
     public void saveSection() {
-        File file = jsonFileChooserProvider.get().showSaveDialog(getStage());
+        File file = jsonFileChooser.showSaveDialog(getStage());
         if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
             try {
                 Section newSectionState = sectionFactoryProvider.get().create(picketObservableList);
                 newSectionState.saveToJson(file);
@@ -227,18 +235,22 @@ public class MainViewController extends Controller {
      */
     @FXML
     public void importMOD() {
-        File file = modFileChooserProvider.get().showOpenDialog(getStage());
+        File file = modFileChooser.showOpenDialog(getStage());
 
-        if (file == null) {
-            return;
-        }
-
-        try {
-            Picket newPicket = savedStateSection.loadModelDataFromMODFile(picketIndex.get(), file);
-            picketObservableList.setAll(savedStateSection.getPickets());
-            picket.set(newPicket);
-        } catch (Exception e) {
-            new IncorrectFileAlert(e, getStage()).show();
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                modFileChooser.setInitialDirectory(file.getParentFile());
+            }
+            try {
+                Picket newPicket =
+                        sectionFactoryProvider
+                                .get()
+                                .create(picketObservableList)
+                                .loadModelDataFromMODFile(picketIndex.get(), file);
+                picket.set(newPicket);
+            } catch (Exception e) {
+                new IncorrectFileAlert(e, getStage()).show();
+            }
         }
     }
 
@@ -273,14 +285,15 @@ public class MainViewController extends Controller {
     }
 
     private void addEXP(File file) {
-        Picket loadedPicket;
         try {
-            loadedPicket = savedStateSection.loadExperimentalDataFromEXPFile(file);
+            sectionFactoryProvider
+                    .get()
+                    .create(picketObservableList)
+                    .loadExperimentalDataFromEXPFile(file);
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
             return;
         }
-        picketObservableList.add(loadedPicket);
         picketIndex.set(picketObservableList.size() - 1);
         compatibilityModeAlert();
     }
@@ -307,7 +320,7 @@ public class MainViewController extends Controller {
     }
 
     protected void update() {
-        if (savedStateSection.getPicketsCount() > 0) {
+        if (!picketObservableList.isEmpty()) {
             noFileOpened.set(false);
             noFileScreenController.hide();
         }

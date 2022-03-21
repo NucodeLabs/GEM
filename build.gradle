@@ -223,5 +223,6 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
         generateDeb = true
         generateRpm = true
         wrapJar = true
+        pngFile = file("src/main/resources/img/gem.png")
     }
 }
