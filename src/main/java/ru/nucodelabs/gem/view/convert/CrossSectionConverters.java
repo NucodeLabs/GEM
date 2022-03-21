@@ -12,25 +12,41 @@ public class CrossSectionConverters {
         XYChart.Series<String, Number> layerOfLayerPowers = new XYChart.Series<>();
         List<Double> powerList = new ArrayList<>();
 
-        for (Picket picket : pickets) {
-            if (picket.modelData() != null) {
-                 if (layerNum < picket.modelData().getSize()) {
-                     powerList.add(picket.modelData().power().get(layerNum));
-                 }
-            } else {
-                powerList.add(10.0);
+        if (pickets != null) {
+            for (Picket picket : pickets) {
+                if (picket.modelData() != null) {
+                    if (layerNum < picket.modelData().getSize()) {
+                        powerList.add(picket.modelData().power().get(layerNum));
+                    }
+                } else {
+                    powerList.add(10.0);
+                }
+            }
+
+            for (Double aDouble : powerList) {
+                String layerNumStr = ((Integer) layerNum).toString();
+                double layerPower = aDouble;
+
+                XYChart.Data<String, Number> pair = new XYChart.Data<>(layerNumStr, layerPower);
+
+                layerOfLayerPowers.getData().add(pair);
             }
         }
 
-        for (Double aDouble : powerList) {
-            String layerNumStr = ((Integer) layerNum).toString();
-            double layerPower = aDouble;
+        return layerOfLayerPowers;
+    }
 
-            XYChart.Data<String, Number> pair = new XYChart.Data<>(layerNumStr, layerPower);
+    public static XYChart.Series<String, Number> changeSeriesType(XYChart.Series<Double, Double> series) {
+        XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
 
-            layerOfLayerPowers.getData().add(pair);
+        if (series != null) {
+            for (XYChart.Data<Double, Double> data : series.getData()) {
+                String xValue = data.getXValue().toString();
+                Number yValue = data.getYValue();
+                barSeries.getData().add(new XYChart.Data<>(xValue, yValue));
+            }
         }
 
-        return layerOfLayerPowers;
+        return barSeries;
     }
 }
