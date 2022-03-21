@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -41,4 +41,21 @@
             </TableColumn>
         </columns>
     </TableView>
+    <HBox>
+        <VBox style="-fx-padding: 5">
+            <TextField fx:id="powerTextField" promptText="%modelPower"
+                       prefWidth="${powerCol.width}"/>
+        </VBox>
+        <VBox style="-fx-padding: 5">
+            <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
+                       prefWidth="${resistanceCol.width}"/>
+        </VBox>
+        <VBox style="-fx-padding: 5">
+            <TextField fx:id="polarizationTextField" promptText="%modelPolarization"
+                       prefWidth="${polarizationCol.width}"/>
+        </VBox>
+        <VBox style="-fx-padding: 5">
+            <Button text="Добавить слой" onAction="#addLayer" minWidth="150"/>
+        </VBox>
+    </HBox>
 </VBox>
