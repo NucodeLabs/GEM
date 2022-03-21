@@ -11,7 +11,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ModelTableController">
     <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">
-        <Button fx:id="delete" text="Удалить выбранное" onAction="#deleteSelected"/>
+        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true"/>
     </HBox>
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
@@ -63,7 +63,7 @@
                        prefWidth="${polarizationCol.width}"/>
         </VBox>
         <VBox style="-fx-padding: 5">
-            <Button text="Добавить слой" onAction="#addLayer" minWidth="150"/>
+            <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true"/>
         </VBox>
     </HBox>
 </VBox>

@@ -178,6 +178,6 @@
     -fx-border-radius: 5;
 }
 
-.text-field .wrong-input {
+.wrong-input {
     -fx-background-color: LightPink;
 }
