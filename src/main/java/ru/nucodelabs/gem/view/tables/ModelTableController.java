@@ -7,10 +7,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
@@ -22,10 +19,7 @@ import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModelTableController extends Controller {
@@ -37,6 +31,10 @@ public class ModelTableController extends Controller {
     public TextField resistanceTextField;
     @FXML
     public TextField polarizationTextField;
+    @FXML
+    public TextField indexTextField;
+    @FXML
+    public Button delete;
     @FXML
     private TableView<ModelTableLine> table;
 
@@ -56,11 +54,23 @@ public class ModelTableController extends Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         }
+
+        indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexTextField.getStyleClass().remove("wrong-input");
+            try {
+                Integer.parseInt(newValue);
+            } catch (NumberFormatException e) {
+                if (!newValue.isBlank()) {
+                    indexTextField.getStyleClass().add("wrong-input");
+                }
+            }
+        });
 
         polarizationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             polarizationTextField.getStyleClass().remove("wrong-input");
@@ -209,13 +219,26 @@ public class ModelTableController extends Controller {
             } catch (NumberFormatException e) {
                 return;
             }
-
             List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
-            newResistance.add(newResistanceValue);
             List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
-            newPower.add(newPowerValue);
             List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
-            newPolarization.add(newPolarizationValue);
+
+            if (!indexTextField.getText().isBlank()) {
+                int index;
+                try {
+                    index = Integer.parseInt(indexTextField.getText());
+                } catch (NumberFormatException e) {
+                    return;
+                }
+                newResistance.add(index, newResistanceValue);
+                newPower.add(index, newPowerValue);
+                newPolarization.add(index, newPolarizationValue);
+            } else {
+                newResistance.add(newResistanceValue);
+                newPower.add(newPowerValue);
+                newPolarization.add(newPolarizationValue);
+            }
+
             ModelData newModelData = new ModelData(
                     newResistance,
                     newPolarization,
@@ -229,5 +252,31 @@ public class ModelTableController extends Controller {
                 ));
             }
         }
+    }
+
+    @FXML
+    public void deleteSelected() {
+        List<ModelTableLine> selectedRows = table.getSelectionModel().getSelectedItems();
+        List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
+        List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
+        List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
+
+        List<Integer> indicesToRemove = selectedRows.stream()
+                .map(ModelTableLine::index)
+                .sorted(Collections.reverseOrder())
+                .toList();
+
+        indicesToRemove.forEach(i -> {
+            int index = i;
+            newResistance.remove(index);
+            newPolarization.remove(index);
+            newPower.remove(index);
+        });
+
+        picket.set(new Picket(
+                picket.get().name(),
+                picket.get().experimentalData(),
+                new ModelData(newResistance, newPolarization, newPower)
+        ));
     }
 }
