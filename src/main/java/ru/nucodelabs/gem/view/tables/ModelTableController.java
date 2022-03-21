@@ -10,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
+import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
@@ -22,9 +23,6 @@ import java.util.ResourceBundle;
 public class ModelTableController extends Controller {
 
     private final ObjectProperty<Picket> picket;
-    @Inject
-    @Named("VESCurves")
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
     @FXML
     private TableView<ModelTableLine> table;
@@ -98,10 +96,35 @@ public class ModelTableController extends Controller {
         // updates the column field on the ModelTableLine object to the committed value
         column.setOnEditCommit(event -> {
             final Double value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue();
+            ModelData modelData = picket.get().modelData();
             switch (characteristic) {
-                case 1 -> event.getTableView().getItems().get(event.getTablePosition().getRow()).setPower(value);
-                case 2 -> event.getTableView().getItems().get(event.getTablePosition().getRow()).setResistance(value);
-                case 3 -> event.getTableView().getItems().get(event.getTablePosition().getRow()).setPolarization(value);
+                case 1 -> {
+                    modelData.power().set(event.getTablePosition().getRow(), value);
+                    //event.getTableView().getItems().get(event.getTablePosition().getRow()).setPower(value);
+                    picket.set(new Picket(
+                            picket.get().name(),
+                            picket.get().experimentalData(),
+                            modelData
+                    ));
+                }
+                case 2 -> {
+                    modelData.resistance().set(event.getTablePosition().getRow(), value);
+                    //event.getTableView().getItems().get(event.getTablePosition().getRow()).setResistance(value);
+                    picket.set(new Picket(
+                            picket.get().name(),
+                            picket.get().experimentalData(),
+                            modelData
+                    ));
+                }
+                case 3 -> {
+                    modelData.polarization().set(event.getTablePosition().getRow(), value);
+                    //event.getTableView().getItems().get(event.getTablePosition().getRow()).setPolarization(value);
+                    picket.set(new Picket(
+                            picket.get().name(),
+                            picket.get().experimentalData(),
+                            modelData
+                    ));
+                }
             }
 
             table.refresh();
