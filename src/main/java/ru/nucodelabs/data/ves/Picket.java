@@ -1,11 +1,11 @@
 package ru.nucodelabs.data.ves;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
 import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 public record Picket(
         // Наименование пикета
