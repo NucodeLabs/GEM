@@ -14,7 +14,6 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class InverseSolver {
