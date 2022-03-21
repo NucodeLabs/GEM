@@ -10,7 +10,7 @@
       stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ModelTableController">
-    <TableView fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS" editable="true">
+    <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
             <Button text="%newModel"/>
         </placeholder>
@@ -22,19 +22,19 @@
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPower" sortable="false">
+                         text="%modelPower" sortable="false" onEditCommit="#onPowerEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="power"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelResistanceApparent" sortable="false">
+                         text="%modelResistanceApparent" sortable="false" onEditCommit="#onResistanceEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="resistance"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="polarizationCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPolarization" sortable="false">
+                         text="%modelPolarization" sortable="false" onEditCommit="#onPolarizationEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="polarization"/>
                 </cellValueFactory>

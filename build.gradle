@@ -85,7 +85,6 @@ javafx {
 }
 
 dependencies {
-    implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'org.hibernate.validator:hibernate-validator:7.0.3.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
