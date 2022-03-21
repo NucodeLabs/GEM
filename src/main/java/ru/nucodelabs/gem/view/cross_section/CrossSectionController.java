@@ -59,11 +59,11 @@ public class CrossSectionController extends Controller {
         ArrayList<String> categories = new ArrayList<>();
         int maxLayers = 0;
 
-        for (Picket p : picketObservableList) {
+        /*for (Picket p : picketObservableList) {
             categories.add(p.name());
         }
 
-        ((CategoryAxis)sectionStackedBarChart.getXAxis()).setCategories(FXCollections.observableArrayList(categories));
+        ((CategoryAxis)sectionStackedBarChart.getXAxis()).setCategories(FXCollections.observableArrayList(categories));*/
 
         //Помечаются валидные и null модели пикетов
         for (Picket p : picketObservableList) {
@@ -98,10 +98,8 @@ public class CrossSectionController extends Controller {
         }
 
         for (int i = 0; i < maxLayers; i++) {
-            XYChart.Series<String, Number> tempSeries = CrossSectionConverters.getLayerOfPowers(picketObservableList, i);
-            tempSeries.setName(((Integer) i).toString());
-
-            dataProperty.get().set(i, tempSeries);
+            dataProperty.get().set(i, CrossSectionConverters.getLayerOfPowers(picketObservableList, i));
+            dataProperty.get().get(i).setName(((Integer) i).toString());
         }
 
     }
