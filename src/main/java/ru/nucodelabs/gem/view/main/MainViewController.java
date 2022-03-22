@@ -183,13 +183,16 @@ public class MainViewController extends AbstractSectionController {
 
         MultivariateFunction multivariateFunction = new FunctionValue(
                 section.getPicket(currentPicket).experimentalData(),
-                new SquaresDiff());
+                new SquaresDiff()
+        );
 
         InverseSolver inverseSolver = new InverseSolver(
                 section.getPicket(currentPicket),
-                SIDE_LENGTH, RELATIVE_THRESHOLD,
+                SIDE_LENGTH,
+                RELATIVE_THRESHOLD,
                 ABSOLUTE_THRESHOLD,
-                multivariateFunction);
+                multivariateFunction
+        );
 
         try {
             section.setModelData(currentPicket,
