@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;

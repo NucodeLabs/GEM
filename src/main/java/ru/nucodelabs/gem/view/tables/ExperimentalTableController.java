@@ -1,27 +1,37 @@
 package ru.nucodelabs.gem.view.tables;
 
-import io.reactivex.rxjava3.subjects.Subject;
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalTableLine;
-import ru.nucodelabs.gem.core.events.ViewEvent;
-import ru.nucodelabs.gem.model.Section;
-import ru.nucodelabs.gem.view.AbstractSectionController;
+import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ExperimentalTableController extends AbstractSectionController {
+public class ExperimentalTableController extends Controller {
+
+
+    private final ObjectProperty<Picket> picket;
 
     @FXML
     private TableView<ExperimentalTableLine> table;
 
     @Inject
-    public ExperimentalTableController(Subject<ViewEvent> viewEventSubject, Section section) {
-        super(viewEventSubject, section);
+    public ExperimentalTableController(ObjectProperty<Picket> picket) {
+
+        this.picket = picket;
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (oldValue == null
+                    || oldValue.experimentalData() == null
+                    || !oldValue.experimentalData().equals(newValue.experimentalData())) {
+                update();
+            }
+        });
     }
 
     @Override
@@ -33,11 +43,10 @@ public class ExperimentalTableController extends AbstractSectionController {
         return (Stage) table.getScene().getWindow();
     }
 
-    @Override
     protected void update() {
         table.itemsProperty().setValue(
                 VESTablesConverters.toExperimentalTableData(
-                        section.getExperimentalData(currentPicket)
+                        picket.get().experimentalData()
                 )
         );
     }

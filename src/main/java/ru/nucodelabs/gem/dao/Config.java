@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
 /**
  * Data model which represents configuration/settings of program

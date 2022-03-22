@@ -85,13 +85,15 @@ javafx {
 }
 
 dependencies {
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.3.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
-    implementation "com.google.guava:guava:31.1-jre"
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
+    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
 }
 
 task forwardSolver(type: Exec) {
@@ -221,5 +223,6 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
         generateDeb = true
         generateRpm = true
         wrapJar = true
+        pngFile = file("src/main/resources/img/gem.png")
     }
 }

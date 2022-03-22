@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Data model which basically represents section, an ordered set of pickets
+ * DAO объект который, управляет данными разреза, по сути упорядоченного множества пикетов.
  */
 public interface Section extends Model {
 
@@ -25,8 +25,9 @@ public interface Section extends Model {
      *
      * @param picketNumber index of picket in list of pickets
      * @param modelData    model data to set
+     * @return new picket with model data
      */
-    void setModelData(int picketNumber, ModelData modelData);
+    Picket setModelData(int picketNumber, ModelData modelData);
 
     /**
      * Returns experimental data of picket
@@ -41,8 +42,9 @@ public interface Section extends Model {
      *
      * @param picketNumber     index of picket in list of pickets
      * @param experimentalData experimental data to set
+     * @return picket with experimental data
      */
-    void setExperimentalData(int picketNumber, ExperimentalData experimentalData);
+    Picket setExperimentalData(int picketNumber, ExperimentalData experimentalData);
 
     /**
      * Returns unmodifiable list of pickets
@@ -100,8 +102,9 @@ public interface Section extends Model {
      *
      * @param picketNumber index of picket
      * @param name         name to set
+     * @return picket with name
      */
-    void setName(int picketNumber, String name);
+    Picket setName(int picketNumber, String name);
 
     /**
      * Returns name of the picket
@@ -112,18 +115,32 @@ public interface Section extends Model {
     String getName(int picketNumber);
 
     /**
-     * Loads experimental data from EXP file parameter and from STT file with same name to picket
+     * Loads experimental data from EXP file and from STT file with same name to picket
      *
      * @param picketNumber index of picket
      * @param file         EXP file
+     * @return picket with loaded experimental data
      */
-    void loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception;
+    Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception;
+
+    /**
+     * Loads experimental data from EXP file to new Picket and adds it to picket list
+     *
+     * @param file EXP File
+     * @return picket with experimental data
+     */
+    Picket loadExperimentalDataFromEXPFile(File file) throws Exception;
 
     /**
      * Loads model data from MOD file parameter to picket
      *
      * @param picketNumber index of picket
      * @param file         MOD file
+     * @return picket with loaded model data
      */
-    void loadModelDataFromMODFile(int picketNumber, File file) throws Exception;
+    Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception;
+
+    void setPicket(int picketNumber, Picket picket);
+
+    Section clone();
 }
