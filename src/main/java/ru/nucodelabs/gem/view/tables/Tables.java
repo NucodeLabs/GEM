@@ -2,11 +2,11 @@ package ru.nucodelabs.gem.view.tables;
 
 import javafx.util.StringConverter;
 
-public class Tables {
+public final class Tables {
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
      */
-    public static StringConverter<Double> doubleStringConverter = new StringConverter<>() {
+    static StringConverter<Double> doubleStringConverter = new StringConverter<>() {
         @Override
         public String toString(Double object) {
             return object.toString();
