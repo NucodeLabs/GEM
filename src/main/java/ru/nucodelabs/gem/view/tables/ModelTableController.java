@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.tables;
 
+import com.google.inject.name.Named;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -41,6 +42,9 @@ public class ModelTableController extends Controller {
     public Button addBtn;
     @FXML
     private TableView<ModelTableLine> table;
+    @Inject
+    @Named("ImportMOD")
+    private Runnable importMOD;
 
     private List<TextField> requiredForAdd;
 
@@ -312,5 +316,9 @@ public class ModelTableController extends Controller {
                 picket.get().experimentalData(),
                 new ModelData(newResistance, newPolarization, newPower)
         ));
+    }
+
+    public void importModel() {
+        importMOD.run();
     }
 }

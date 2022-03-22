@@ -15,7 +15,7 @@
     </HBox>
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
-            <Button text="%newModel"/>
+            <Button text="%import" onAction="#importModel"/>
         </placeholder>
         <columns>
             <TableColumn fx:id="indexCol" maxWidth="25" prefWidth="25" sortable="false" text="N"
