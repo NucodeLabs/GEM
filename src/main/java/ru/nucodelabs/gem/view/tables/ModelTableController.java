@@ -75,7 +75,7 @@ public class ModelTableController extends Controller {
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
         indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
