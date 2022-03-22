@@ -145,17 +145,11 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 newPower
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
+        } else {
             table.refresh();
-            return;
         }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
     }
 
     @FXML
@@ -168,17 +162,12 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
+
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
+        } else {
             table.refresh();
-            return;
         }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
     }
 
     @FXML
@@ -191,33 +180,20 @@ public class ModelTableController extends Controller {
                 newPolarization,
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
+        } else {
             table.refresh();
-            return;
         }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
     }
 
-    private boolean invalidInputAlert(ModelData modelData) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<ModelData>> violations = validator.validate(modelData);
-        if (!violations.isEmpty()) {
-            String message = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining("\n"));
-            Alert alert = new Alert(Alert.AlertType.ERROR, message);
-            alert.initOwner(getStage());
-            alert.show();
-            return true;
-        } else {
-            return false;
-        }
+    private void showAlert(Set<ConstraintViolation<ModelData>> violations) {
+        String message = violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining("\n"));
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.initOwner(getStage());
+        alert.show();
     }
 
     @FXML
@@ -271,7 +247,12 @@ public class ModelTableController extends Controller {
                     newPolarization,
                     newPower
             );
-            if (!invalidInputAlert(newModelData)) {
+
+            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+            Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
+            if (!violations.isEmpty()) {
+                showAlert(violations);
+            } else {
                 picket.set(new Picket(
                         picket.get().name(),
                         picket.get().experimentalData(),
@@ -307,7 +288,25 @@ public class ModelTableController extends Controller {
         ));
     }
 
-    public void importModel() {
+    private void setIfValidElseAlert(ModelData newModelData) {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
+        if (!violations.isEmpty()) {
+            showAlert(violations);
+            table.refresh();
+        } else {
+            picket.set(
+                    new Picket(
+                            picket.get().name(),
+                            picket.get().experimentalData(),
+                            newModelData
+                    )
+            );
+        }
+    }
+
+    @FXML
+    private void importModel() {
         importMOD.run();
     }
 }
