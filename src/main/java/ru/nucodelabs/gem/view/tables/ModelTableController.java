@@ -84,6 +84,13 @@ public class ModelTableController extends Controller {
             if (!validateIndexInput(newValue)) {
                 indexTextField.getStyleClass().add("wrong-input");
                 addBtn.setDisable(true);
+            } else {
+                if (!requiredForAdd.stream()
+                        .allMatch(textField ->
+                                !textField.getText().isBlank()
+                                        && validateDataInput(textField.getText()))) {
+                    addBtn.setDisable(true);
+                }
             }
         });
 
