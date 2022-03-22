@@ -19,6 +19,7 @@ import javax.inject.Named;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CrossSectionController extends Controller {
@@ -55,9 +56,7 @@ public class CrossSectionController extends Controller {
     }
 
     public void update() {
-        ArrayList<Boolean> blanks = new ArrayList<>();
-        ArrayList<String> categories = new ArrayList<>();
-        int maxLayers = 0;
+
 
         /*for (Picket p : picketObservableList) {
             categories.add(p.name());
@@ -65,43 +64,44 @@ public class CrossSectionController extends Controller {
 
         ((CategoryAxis)sectionStackedBarChart.getXAxis()).setCategories(FXCollections.observableArrayList(categories));*/
 
-        //Помечаются валидные и null модели пикетов
-        for (Picket p : picketObservableList) {
-            if (p.modelData() == null) {
-                blanks.add(false);
-            } else {
-                blanks.add(true);
-            }
-        }
 
-        //Находится наибольшее число слоев среди всех пикетов разреза
-        for (int i = 0; i < picketObservableList.size(); i++) {
-            if (blanks.get(i)) {
-                int picketSize = picketObservableList.get(i).modelData().getSize();
-                if (maxLayers < picketSize) {
-                    maxLayers = picketSize;
-                }
-            }
-        }
-
-        if (maxLayers == 0) {
-            maxLayers = 1;
-        }
 
         //Создаются Series из всех еще непроверенных нижних слоев пикетов.
         //Двигаясь снизу вверх получается несколько "слоев" слоев из которых можно будет потом сложить StackedBarChart.
         //Все null -> 10.0 (в целях тестирования)
 
-        dataProperty.get().clear();
+        List<XYChart.Series<String, Number>> seriesList = makeSeriesList();
         for (int i = 0; i < maxLayers; i++) {
-            dataProperty.get().add(new XYChart.Series<>());
+            newList.add(CrossSectionConverters.getLayerOfPowers(picketObservableList, i));
+            newList.get(i).setName(((Integer) i).toString());
         }
 
-        for (int i = 0; i < maxLayers; i++) {
-            dataProperty.get().set(i, CrossSectionConverters.getLayerOfPowers(picketObservableList, i));
-            dataProperty.get().get(i).setName(((Integer) i).toString());
-        }
+        dataProperty.set(FXCollections.observableArrayList(newList));
+    }
 
+    private List<XYChart.Series<String, Number>> makeSeriesList() {
+        List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
+        int layerNum = 0;
+        for (Picket picket : picketObservableList) {
+            if (picket == null) {
+                seriesList.add(CrossSectionConverters.getLayerOfPowers(picketObservableList, layerNum++));
+            }
+        }
+        //Находится наибольшее число слоев среди всех пикетов разреза
+
+    }
+
+    private int findMaxLayers() {
+        int maxLayers = 1;
+        for (Picket picket : picketObservableList) {
+            if (picket != null) {
+                int picketSize = picket.modelData().getSize();
+                if (maxLayers < picketSize) {
+                    maxLayers = picketSize;
+                }
+            }
+        }
+        return maxLayers;
     }
 
     protected Stage getStage() {

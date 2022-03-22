@@ -35,18 +35,4 @@ public class CrossSectionConverters {
 
         return layerOfLayerPowers;
     }
-
-    public static XYChart.Series<String, Number> changeSeriesType(XYChart.Series<Double, Double> series) {
-        XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
-
-        if (series != null) {
-            for (XYChart.Data<Double, Double> data : series.getData()) {
-                String xValue = data.getXValue().toString();
-                Number yValue = data.getYValue();
-                barSeries.getData().add(new XYChart.Data<>(xValue, yValue));
-            }
-        }
-
-        return barSeries;
-    }
 }
