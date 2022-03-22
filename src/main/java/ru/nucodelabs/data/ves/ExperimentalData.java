@@ -4,31 +4,31 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
-import static ru.nucodelabs.data.ves.Sizes.isEqualSizes;
-import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public record ExperimentalData(
         // AB/2, м
-        List<Double> ab_2,
+        @NotNull List<@Positive Double> ab_2,
         // MN/2, м
-        List<Double> mn_2,
+        @NotNull List<@Positive Double> mn_2,
         // Ток, мА
-        List<Double> amperage,
+        @NotNull List<@Positive Double> amperage,
         // Напряжение, мВ
-        List<Double> voltage,
+        @NotNull List<@Positive Double> voltage,
         // Сопротивление кажущееся, Ом * м
-        List<Double> resistanceApparent,
+        @NotNull List<@Positive Double> resistanceApparent,
         // Погрешность, %
-        List<Double> errorResistanceApparent,
+        @NotNull List<@Positive Double> errorResistanceApparent,
         // Поляризация кажущаяся, %
-        List<Double> polarizationApparent,
+        @NotNull List<@Positive Double> polarizationApparent,
         // Погрешность, %
-        List<Double> errorPolarizationApparent
-) {
+        @NotNull List<@Positive Double> errorPolarizationApparent
+) implements Sizeable {
     public static ExperimentalData of(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
@@ -61,15 +61,5 @@ public record ExperimentalData(
             );
         }
         return res;
-    }
-
-    @JsonIgnore
-    public boolean isUnsafe() {
-        return !isEqualSizes(this, true);
-    }
-
-    @JsonIgnore
-    public Integer getSize() {
-        return minSize(this, true);
     }
 }

@@ -3,13 +3,17 @@ package ru.nucodelabs.data.ves;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import javax.annotation.Nullable;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public record Picket(
         // Наименование пикета
-        String name,
+        @NotNull String name,
         // Экспериментальные(полевые) данные
-        ExperimentalData experimentalData,
+        @Valid @NotNull ExperimentalData experimentalData,
         // Данные модели
-        ModelData modelData
+        @Valid @Nullable ModelData modelData
 ) {
     public static Picket of(STTFile sttFile, EXPFile expFile) {
         String fileName = expFile.getFile().getName();

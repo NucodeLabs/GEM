@@ -13,6 +13,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.VESCurvesController">
     <HBox maxWidth="Infinity">
+<!--        TODO .uclabel style class -->
         <Label fx:id="uclabel" text="%ves" VBox.vgrow="NEVER"/>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
@@ -26,7 +27,7 @@
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false" lowerBound="-1"
+                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false" lowerBound="0"
                         upperBound="4">
                 <tickLabelFormatter>
                     <PowerOf10Formatter/>

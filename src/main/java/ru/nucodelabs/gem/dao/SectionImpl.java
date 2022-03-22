@@ -1,5 +1,7 @@
-package ru.nucodelabs.gem.model;
+package ru.nucodelabs.gem.dao;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
@@ -10,6 +12,7 @@ import ru.nucodelabs.files.sonet.STTFile;
 import ru.nucodelabs.files.sonet.SonetImport;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +20,15 @@ import java.util.List;
 
 public class SectionImpl implements Section {
 
-    private List<Picket> pickets;
+    private final List<Picket> pickets;
+
+    @AssistedInject
+    public SectionImpl(@Assisted List<Picket> pickets) {
+        this.pickets = pickets;
+    }
 
     public SectionImpl() {
-        pickets = new ArrayList<>();
+        this(new ArrayList<>());
     }
 
     @Override
@@ -29,10 +37,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setModelData(int picketNumber, ModelData modelData) {
+    public Picket setModelData(int picketNumber, ModelData modelData) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(oldP.name(), oldP.experimentalData(), modelData);
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -41,10 +50,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setExperimentalData(int picketNumber, ExperimentalData experimentalData) {
+    public Picket setExperimentalData(int picketNumber, ExperimentalData experimentalData) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(oldP.name(), experimentalData, oldP.modelData());
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -83,10 +93,11 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void setName(int picketNumber, String name) {
+    public Picket setName(int picketNumber, String name) {
         Picket oldP = pickets.get(picketNumber);
         Picket newP = new Picket(name, oldP.experimentalData(), oldP.modelData());
         pickets.set(picketNumber, newP);
+        return newP;
     }
 
     @Override
@@ -95,36 +106,75 @@ public class SectionImpl implements Section {
     }
 
     @Override
-    public void loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
+    public Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
         EXPFile expFile = SonetImport.readEXP(file);
         Path expFilePath = file.toPath();
-        STTFile sttFile = SonetImport.readSTT(new File(
-                expFilePath.getParent().toString()
-                        + File.separator
-                        + expFile.getSTTFileName()));
+        STTFile sttFile = sttFileOf(expFilePath, expFile);
 
-        Picket newPicket = Picket.of(sttFile, expFile);
-        if (pickets.size() > picketNumber + 1) {
-            pickets.set(picketNumber, newPicket);
-        } else {
-            addPicket(newPicket);
-        }
+        Picket oldPicket = pickets.get(picketNumber);
+        Picket expPicket = Picket.of(sttFile, expFile);
+        Picket newPicket = new Picket(expPicket.name(), expPicket.experimentalData(), oldPicket.modelData());
+        pickets.set(picketNumber, newPicket);
+        return newPicket;
     }
 
     @Override
-    public void loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
+    public Picket loadExperimentalDataFromEXPFile(File file) throws Exception {
+        EXPFile expFile = SonetImport.readEXP(file);
+        Path expFilePath = file.toPath();
+        STTFile sttFile = sttFileOf(expFilePath, expFile);
+
+        Picket expPicket = Picket.of(sttFile, expFile);
+        pickets.add(expPicket);
+        return expPicket;
+    }
+
+    private STTFile sttFileOf(Path expFilePath, EXPFile expFile) throws FileNotFoundException {
+        return SonetImport.readSTT(new File(
+                expFilePath.getParent().toString()
+                        + File.separator
+                        + expFile.getSTTFileName()));
+    }
+
+    @Override
+    public Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
         MODFile modFile = SonetImport.readMOD(file);
         ModelData modelData = ModelData.of(modFile);
-        setModelData(picketNumber, modelData);
+        return setModelData(picketNumber, modelData);
+    }
+
+    @Override
+    public void setPicket(int picketNumber, Picket picket) {
+        pickets.set(picketNumber, picket);
     }
 
     @Override
     public void loadFromJson(File file) throws Exception {
-        this.pickets = new GemJson().readPicketList(file);
+        List<Picket> newPickets = new GemJson().readPicketList(file);
+        pickets.clear();
+        pickets.addAll(newPickets);
     }
 
     @Override
     public void saveToJson(File file) throws Exception {
         new GemJson().writeData(pickets, file);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Section) {
+            return getPickets().equals(((Section) obj).getPickets());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Section clone() {
+        try {
+            return (Section) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new SectionImpl(new ArrayList<>(getPickets()));
+        }
     }
 }

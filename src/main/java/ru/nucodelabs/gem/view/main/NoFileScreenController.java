@@ -1,11 +1,9 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
-import io.reactivex.rxjava3.subjects.Subject;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.core.events.ViewEvent;
 import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
@@ -18,13 +16,8 @@ public class NoFileScreenController extends Controller {
     @Named("ImportEXP")
     private Runnable importEXP;
     @Inject
-    @Named("OpenSection")
+    @Named("OpenJSON")
     private Runnable openSection;
-
-    @Inject
-    public NoFileScreenController(Subject<ViewEvent> viewEventSubject) {
-        viewEventSubject.subscribe(e -> this.hide());
-    }
 
     @FXML
     public VBox root;
@@ -48,7 +41,7 @@ public class NoFileScreenController extends Controller {
         return (Stage) root.getScene().getWindow();
     }
 
-    private void hide() {
+    public void hide() {
         root.setVisible(false);
     }
 }
