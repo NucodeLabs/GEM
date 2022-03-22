@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
-import javafx.util.converter.DoubleStringConverter;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.data.ves.Picket;
@@ -70,7 +70,22 @@ public class ModelTableController extends Controller {
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(
+                            new StringConverter<>() {
+                                @Override
+                                public String toString(Double object) {
+                                    return object.toString();
+                                }
+
+                                @Override
+                                public Double fromString(String string) {
+                                    try {
+                                        return Double.parseDouble(string);
+                                    } catch (NumberFormatException e) {
+                                        return Double.NaN;
+                                    }
+                                }
+                            }));
         }
 
         indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -141,7 +156,7 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 newPower
         );
-        if (invalidInputAlert(newModelData)) {
+        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
             table.refresh();
             return;
         }
@@ -164,7 +179,7 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData)) {
+        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
             table.refresh();
             return;
         }
@@ -187,7 +202,7 @@ public class ModelTableController extends Controller {
                 newPolarization,
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData)) {
+        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
             table.refresh();
             return;
         }
