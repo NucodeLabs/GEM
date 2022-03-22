@@ -92,6 +92,10 @@ public class VESSeriesConverters {
     }
 
     public static XYChart.Series<Double, Double> toModelCurveSeries(ModelData modelData) {
+        if (modelData.getSize() == 0) {
+            return new XYChart.Series<>();
+        }
+
         final double FIRST_X = 1e-2;
         final double LAST_X = 1e100;
 
