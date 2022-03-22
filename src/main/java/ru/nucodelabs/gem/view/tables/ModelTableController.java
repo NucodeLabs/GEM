@@ -12,12 +12,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelTableLine;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
@@ -74,32 +72,15 @@ public class ModelTableController extends Controller {
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(
-                            new StringConverter<>() {
-                                @Override
-                                public String toString(Double object) {
-                                    return object.toString();
-                                }
-
-                                @Override
-                                public Double fromString(String string) {
-                                    try {
-                                        return Double.parseDouble(string);
-                                    } catch (NumberFormatException e) {
-                                        return Double.NaN;
-                                    }
-                                }
-                            }));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter));
         }
 
         indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             indexTextField.getStyleClass().remove("wrong-input");
-            try {
-                Integer.parseInt(newValue);
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    indexTextField.getStyleClass().add("wrong-input");
-                }
+            addBtn.setDisable(false);
+            if (!validateIndexInput(newValue)) {
+                indexTextField.getStyleClass().add("wrong-input");
+                addBtn.setDisable(true);
             }
         });
 
@@ -112,25 +93,43 @@ public class ModelTableController extends Controller {
     private void addInputCheckListener(TextField doubleTextField) {
         doubleTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             doubleTextField.getStyleClass().remove("wrong-input");
-            if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
-                addBtn.setDisable(false);
-            }
-            if (newValue.isBlank()) {
+            addBtn.setDisable(false);
+            if (!validateDataInput(newValue)) {
+                doubleTextField.getStyleClass().add("wrong-input");
                 addBtn.setDisable(true);
-            }
-            try {
-                double value = Double.parseDouble(newValue);
-                if (value < 0) {
-                    doubleTextField.getStyleClass().add("wrong-input");
-                    addBtn.setDisable(true);
-                }
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    doubleTextField.getStyleClass().add("wrong-input");
+            } else {
+                if (!requiredForAdd.stream()
+                        .allMatch(textField ->
+                                !textField.getText().isBlank()
+                                        && validateDataInput(textField.getText()))) {
                     addBtn.setDisable(true);
                 }
             }
         });
+    }
+
+    private boolean validateIndexInput(String s) {
+        if (s.isBlank()) {
+            return true;
+        }
+        try {
+            int val = Integer.parseInt(s);
+            return val >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean validateDataInput(String s) {
+        if (s.isBlank()) {
+            return true;
+        }
+        try {
+            double val = Double.parseDouble(s);
+            return !(val < 0);
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
@@ -223,7 +222,9 @@ public class ModelTableController extends Controller {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<ModelData>> violations = validator.validate(modelData);
         if (!violations.isEmpty()) {
-            String message = violations.stream().map(v -> v.getPropertyPath() + " " + v.getMessage()).collect(Collectors.joining("\n"));
+            String message = violations.stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining("\n"));
             Alert alert = new Alert(Alert.AlertType.ERROR, message);
             alert.initOwner(getStage());
             alert.show();
@@ -269,7 +270,9 @@ public class ModelTableController extends Controller {
                     newPower.add(index, newPowerValue);
                     newPolarization.add(index, newPolarizationValue);
                 } catch (IndexOutOfBoundsException e) {
-                    new ExceptionAlert(e, getStage()).show();
+                    newResistance.add(newResistanceValue);
+                    newPower.add(newPowerValue);
+                    newPolarization.add(newPolarizationValue);
                 }
             } else {
                 newResistance.add(newResistanceValue);
