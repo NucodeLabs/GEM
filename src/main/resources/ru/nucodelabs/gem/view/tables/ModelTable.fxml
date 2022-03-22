@@ -52,15 +52,15 @@
         </VBox>
         <VBox style="-fx-padding: 5">
             <TextField fx:id="powerTextField" promptText="%modelPower"
-                       prefWidth="${powerCol.width}"/>
+                       maxWidth="Infinity"/>
         </VBox>
         <VBox style="-fx-padding: 5">
             <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
-                       prefWidth="${resistanceCol.width}"/>
+                       maxWidth="Infinity"/>
         </VBox>
         <VBox style="-fx-padding: 5">
             <TextField fx:id="polarizationTextField" promptText="%modelPolarization"
-                       prefWidth="${polarizationCol.width}"/>
+                       maxWidth="Infinity"/>
         </VBox>
         <VBox style="-fx-padding: 5">
             <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true"/>

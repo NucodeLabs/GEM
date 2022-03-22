@@ -96,6 +96,9 @@ public class ModelTableController extends Controller {
             if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
                 addBtn.setDisable(false);
             }
+            if (newValue.isBlank()) {
+                addBtn.setDisable(true);
+            }
             try {
                 double value = Double.parseDouble(newValue);
                 if (value < 0) {

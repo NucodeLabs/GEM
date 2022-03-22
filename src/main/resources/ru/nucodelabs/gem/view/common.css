@@ -84,6 +84,10 @@
     -fx-background-color: white;
 }
 
+.table-view {
+    -fx-font-size: 16;
+}
+
 .table-view:focused {
     -fx-border-color: none;
 }
@@ -146,7 +150,7 @@
     -fx-background-color: LightGray;
 }
 
-#uclabel {
+.uclabel {
     -fx-text-fill: Gray;
     -fx-font-size: 12;
     -fx-padding: 5;
