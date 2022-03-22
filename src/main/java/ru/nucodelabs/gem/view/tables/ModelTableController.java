@@ -216,19 +216,24 @@ public class ModelTableController extends Controller {
         if (!resistanceTextField.getText().isBlank()
                 && !powerTextField.getText().isBlank()
                 && !polarizationTextField.getText().isBlank()) {
-            double newResistanceValue;
-            double newPowerValue;
-            double newPolarizationValue;
-            try {
-                newResistanceValue = Double.parseDouble(resistanceTextField.getText());
-                newPowerValue = Double.parseDouble(powerTextField.getText());
-                newPolarizationValue = Double.parseDouble(polarizationTextField.getText());
-            } catch (NumberFormatException e) {
-                return;
+
+            double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
+            double newPowerValue = Double.parseDouble(powerTextField.getText());
+            double newPolarizationValue = Double.parseDouble(polarizationTextField.getText());
+
+            List<Double> newResistance;
+            List<Double> newPower;
+            List<Double> newPolarization;
+
+            if (picket.get().modelData() == null) {
+                newResistance = new ArrayList<>();
+                newPower = new ArrayList<>();
+                newPolarization = new ArrayList<>();
+            } else {
+                newResistance = new ArrayList<>(picket.get().modelData().resistance());
+                newPower = new ArrayList<>(picket.get().modelData().power());
+                newPolarization = new ArrayList<>(picket.get().modelData().polarization());
             }
-            List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
-            List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
-            List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
 
             if (!indexTextField.getText().isBlank()) {
                 int index;

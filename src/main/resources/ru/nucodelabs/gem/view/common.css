@@ -170,12 +170,12 @@
     -fx-background-radius: 5;
     -fx-background-color: WhiteSmoke;
     -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: WhiteSmoke;
 }
 
 .text-field:focused {
-    -fx-border-width: 1;
-    -fx-border-color: Gray;
-    -fx-border-radius: 5;
+    -fx-border-color: LightGray;
 }
 
 .wrong-input {
