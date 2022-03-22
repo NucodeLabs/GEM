@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
+import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
+
 public class ModelTableController extends Controller {
 
     private final ObjectProperty<Picket> picket;
@@ -106,30 +109,6 @@ public class ModelTableController extends Controller {
                 }
             }
         });
-    }
-
-    private boolean validateIndexInput(String s) {
-        if (s.isBlank()) {
-            return true;
-        }
-        try {
-            int val = Integer.parseInt(s);
-            return val >= 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private boolean validateDataInput(String s) {
-        if (s.isBlank()) {
-            return true;
-        }
-        try {
-            double val = Double.parseDouble(s);
-            return !(val < 0);
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     @Override
