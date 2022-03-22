@@ -6,21 +6,23 @@ public final class Tables {
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
      */
-    static StringConverter<Double> doubleStringConverter = new StringConverter<>() {
-        @Override
-        public String toString(Double object) {
-            return object.toString();
-        }
-
-        @Override
-        public Double fromString(String string) {
-            try {
-                return Double.parseDouble(string);
-            } catch (NumberFormatException e) {
-                return Double.NaN;
+    static StringConverter<Double> doubleStringConverter() {
+        return new StringConverter<>() {
+            @Override
+            public String toString(Double object) {
+                return object.toString();
             }
-        }
-    };
+
+            @Override
+            public Double fromString(String string) {
+                try {
+                    return Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    return Double.NaN;
+                }
+            }
+        };
+    }
 
     private Tables() {
     }
