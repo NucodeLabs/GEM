@@ -13,8 +13,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.VESCurvesController">
     <HBox maxWidth="Infinity">
-<!--        TODO .uclabel style class -->
-        <Label fx:id="uclabel" text="%ves" VBox.vgrow="NEVER"/>
+        <Label styleClass="uclabel" text="%ves" VBox.vgrow="NEVER"/>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>

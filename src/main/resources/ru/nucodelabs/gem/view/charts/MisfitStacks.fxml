@@ -14,7 +14,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.MisfitStacksController">
     <HBox maxWidth="Infinity">
-        <Label fx:id="uclabel" text="%misfit" VBox.vgrow="NEVER"/>
+        <Label styleClass="uclabel" text="%misfit" VBox.vgrow="NEVER"/>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" title="\%"
                titleSide="LEFT" minHeight="0" minWidth="0" animated="false">
