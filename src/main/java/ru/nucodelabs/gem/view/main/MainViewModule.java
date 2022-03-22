@@ -60,6 +60,12 @@ public class MainViewModule extends AbstractModule {
     }
 
     @Provides
+    @Named("ImportMOD")
+    private Runnable provideImportMOD(MainViewController controller) {
+        return controller::importMOD;
+    }
+
+    @Provides
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> provideChartDataProperty() {
         return new SimpleObjectProperty<>(
                 FXCollections.observableArrayList(new ArrayList<>()));

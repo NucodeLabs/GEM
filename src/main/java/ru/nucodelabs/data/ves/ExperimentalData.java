@@ -1,8 +1,8 @@
 package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
@@ -13,21 +13,21 @@ import static java.util.Objects.requireNonNullElse;
 
 public record ExperimentalData(
         // AB/2, м
-        @NotNull List<@Positive Double> ab_2,
+        @NotNull List<@Min(0) Double> ab_2,
         // MN/2, м
-        @NotNull List<@Positive Double> mn_2,
+        @NotNull List<@Min(0) Double> mn_2,
         // Ток, мА
-        @NotNull List<@Positive Double> amperage,
+        @NotNull List<@Min(0) Double> amperage,
         // Напряжение, мВ
-        @NotNull List<@Positive Double> voltage,
+        @NotNull List<@Min(0) Double> voltage,
         // Сопротивление кажущееся, Ом * м
-        @NotNull List<@Positive Double> resistanceApparent,
+        @NotNull List<@Min(0) Double> resistanceApparent,
         // Погрешность, %
-        @NotNull List<@Positive Double> errorResistanceApparent,
+        @NotNull List<@Min(0) Double> errorResistanceApparent,
         // Поляризация кажущаяся, %
-        @NotNull List<@Positive Double> polarizationApparent,
+        @NotNull List<@Min(0) Double> polarizationApparent,
         // Погрешность, %
-        @NotNull List<@Positive Double> errorPolarizationApparent
+        @NotNull List<@Min(0) Double> errorPolarizationApparent
 ) implements Sizeable {
     public static ExperimentalData of(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
