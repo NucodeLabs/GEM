@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.tables;
 
 import javafx.util.StringConverter;
 
-public final class Tables {
+final class Tables {
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
      */
