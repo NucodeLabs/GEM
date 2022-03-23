@@ -10,7 +10,7 @@ import java.util.List;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 
-public final class TheoreticalCurvePointsFactory implements PointsFactory {
+final class TheoreticalCurvePointsFactory implements PointsFactory {
     private final ExperimentalData experimentalData;
     private final ModelData modelData;
 
@@ -25,7 +25,7 @@ public final class TheoreticalCurvePointsFactory implements PointsFactory {
             return new ArrayList<>();
         }
 
-        ForwardSolver forwardSolver = ForwardSolver.createSonetForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
 
         List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve());
 
@@ -48,7 +48,7 @@ public final class TheoreticalCurvePointsFactory implements PointsFactory {
             return new ArrayList<>();
         }
 
-        ForwardSolver forwardSolver = ForwardSolver.createSonetForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
 
         List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve());
 

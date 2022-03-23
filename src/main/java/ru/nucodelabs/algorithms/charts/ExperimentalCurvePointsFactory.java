@@ -8,7 +8,7 @@ import java.util.List;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 
-public final class ExperimentalCurvePointsFactory implements PointsFactory {
+final class ExperimentalCurvePointsFactory implements PointsFactory {
 
     private final ExperimentalData experimentalData;
 

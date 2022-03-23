@@ -7,7 +7,7 @@ import java.util.List;
 
 import static java.lang.Math.log10;
 
-public final class ModelCurvePointsFactory implements PointsFactory {
+final class ModelCurvePointsFactory implements PointsFactory {
 
     private final ModelData modelData;
     private double FIRST_X = 1e-2;

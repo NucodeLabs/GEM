@@ -31,7 +31,7 @@ public class FunctionValue implements MultivariateFunction {
         }
         currentModelPower.add(0.0);
 
-        List<Double> solvedResistance = ForwardSolver.createSonetForwardSolver(
+        List<Double> solvedResistance = ForwardSolver.createDefaultForwardSolver(
                 experimentalData,
                 new ModelData(currentModelResistance, new ArrayList<>(), currentModelPower)
         ).solve();
