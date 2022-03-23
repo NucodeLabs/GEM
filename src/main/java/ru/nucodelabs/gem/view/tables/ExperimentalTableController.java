@@ -1,13 +1,13 @@
 package ru.nucodelabs.gem.view.tables;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -27,7 +27,6 @@ public class ExperimentalTableController extends Controller {
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
             if (oldValue == null
-                    || oldValue.experimentalData() == null
                     || !oldValue.experimentalData().equals(newValue.experimentalData())) {
                 update();
             }
@@ -44,10 +43,6 @@ public class ExperimentalTableController extends Controller {
     }
 
     protected void update() {
-        table.itemsProperty().setValue(
-                VESTablesConverters.toExperimentalTableData(
-                        picket.get().experimentalData()
-                )
-        );
+        table.itemsProperty().setValue(FXCollections.observableList(picket.get().experimentalData().getRows()));
     }
 }
