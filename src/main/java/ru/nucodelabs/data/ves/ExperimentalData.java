@@ -7,6 +7,7 @@ import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
@@ -39,6 +40,19 @@ public record ExperimentalData(
                 expFile.getErrorResistanceApparent(),
                 expFile.getPolarizationApparent(),
                 expFile.getErrorPolarizationApparent()
+        );
+    }
+
+    public static ExperimentalData empty() {
+        return new ExperimentalData(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
         );
     }
 

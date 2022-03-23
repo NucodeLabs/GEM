@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.MODFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
@@ -23,6 +24,14 @@ public record ModelData(
                 modFile.getResistance(),
                 modFile.getPolarization(),
                 modFile.getPower()
+        );
+    }
+
+    public static ModelData empty() {
+        return new ModelData(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
         );
     }
 
