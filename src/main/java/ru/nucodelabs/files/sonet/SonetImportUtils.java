@@ -1,16 +1,15 @@
 package ru.nucodelabs.files.sonet;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class SonetImport {
-    private SonetImport() {
+final class SonetImportUtils {
+    private SonetImportUtils() {
     } // чтобы нельзя было создать экземпляр класса Sonet
 
-    public static STTFile readSTT(File file) throws FileNotFoundException {
+    static STTFile readSTT(File file) throws Exception {
         STTFile res = new STTFile();
         Scanner sc = new Scanner(file).useLocale(Locale.US);
 
@@ -26,7 +25,7 @@ public class SonetImport {
         return res;
     }
 
-    public static EXPFile readEXP(File file) throws FileNotFoundException {
+    static EXPFile readEXP(File file) throws Exception {
         EXPFile res = new EXPFile();
         Scanner sc = new Scanner(file, "Cp866").useLocale(Locale.US);
         res.setSTTFileName(sc.nextLine());
@@ -56,7 +55,7 @@ public class SonetImport {
         return res;
     }
 
-    public static MODFile readMOD(File file) throws FileNotFoundException {
+    static MODFile readMOD(File file) throws Exception {
         MODFile res = new MODFile();
         Scanner sc = new Scanner(file).useLocale(Locale.US);
 

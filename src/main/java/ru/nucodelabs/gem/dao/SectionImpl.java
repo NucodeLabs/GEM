@@ -6,13 +6,9 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.gem.GemJson;
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.MODFile;
-import ru.nucodelabs.files.sonet.STTFile;
-import ru.nucodelabs.files.sonet.SonetImport;
+import ru.nucodelabs.files.sonet.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,7 +103,7 @@ public class SectionImpl implements Section {
 
     @Override
     public Picket loadExperimentalDataFromEXPFile(int picketNumber, File file) throws Exception {
-        EXPFile expFile = SonetImport.readEXP(file);
+        EXPFile expFile = new EXPFileParser(file).parse();
         Path expFilePath = file.toPath();
         STTFile sttFile = sttFileOf(expFilePath, expFile);
 
@@ -120,7 +116,7 @@ public class SectionImpl implements Section {
 
     @Override
     public Picket loadExperimentalDataFromEXPFile(File file) throws Exception {
-        EXPFile expFile = SonetImport.readEXP(file);
+        EXPFile expFile = new EXPFileParser(file).parse();
         Path expFilePath = file.toPath();
         STTFile sttFile = sttFileOf(expFilePath, expFile);
 
@@ -129,18 +125,19 @@ public class SectionImpl implements Section {
         return expPicket;
     }
 
-    private STTFile sttFileOf(Path expFilePath, EXPFile expFile) throws FileNotFoundException {
-        return SonetImport.readSTT(new File(
-                expFilePath.getParent().toString()
-                        + File.separator
-                        + expFile.getSTTFileName()));
-    }
-
     @Override
     public Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
-        MODFile modFile = SonetImport.readMOD(file);
+        MODFile modFile = new MODFileParser(file).parse();
         ModelData modelData = ModelData.from(modFile);
         return setModelData(picketNumber, modelData);
+    }
+
+    private STTFile sttFileOf(Path expFilePath, EXPFile expFile) throws Exception {
+        return new STTFileParser(new File(
+                expFilePath.getParent().toString()
+                        + File.separator
+                        + expFile.getSTTFileName()))
+                .parse();
     }
 
     @Override
