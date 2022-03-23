@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
-    public static List<XYChart.Series<String, Number>> getLayerOfPowers(List<Picket> pickets) {
+    public static List<XYChart.Series<String, Number>> getLayersOfPowers(List<Picket> pickets) {
         int maxLayer = getMaxLayerCount(pickets);
         List<XYChart.Series<String, Number>> powerLayers = new ArrayList<>(maxLayer);
 
@@ -18,20 +18,24 @@ public class CrossSectionConverters {
         }
 
         for (int i = 0; i < maxLayer; i++) {
-            List<XYChart.Data<String, Number>> powerList = new ArrayList<>();
             for (Picket picket : pickets) {
                 if (picket.modelData() != null) {
-                    powerList.add(new XYChart.Data<>(
-                            ((Integer) i).toString(),
-                            picket.modelData().power().get(i)));
+                    if (i < picket.modelData().getLines().size()) {
+                        powerLayers.get(i).getData().add(new XYChart.Data<>(
+                                ((Integer) i).toString(),
+                                picket.modelData().power().get(i)));
+                    } else {
+                        powerLayers.get(i).getData().add(new XYChart.Data<>(
+                                ((Integer) i).toString(),
+                                0.0));
+                    }
                 } else {
-                    powerList.add(new XYChart.Data<>(
+                    powerLayers.get(i).getData().add(new XYChart.Data<>(
                             ((Integer) i).toString(),
                             0.0));
                 }
 
             }
-            powerLayers.get(i).setData(FXCollections.observableArrayList(powerList));
         }
 
         return powerLayers;
