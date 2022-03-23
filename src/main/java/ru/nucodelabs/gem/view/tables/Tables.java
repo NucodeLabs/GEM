@@ -3,25 +3,28 @@ package ru.nucodelabs.gem.view.tables;
 import javafx.util.StringConverter;
 
 final class Tables {
+
+    private final static StringConverter<Double> CONVERTER = new StringConverter<>() {
+        @Override
+        public String toString(Double object) {
+            return object.toString();
+        }
+
+        @Override
+        public Double fromString(String string) {
+            try {
+                return Double.parseDouble(string);
+            } catch (NumberFormatException e) {
+                return Double.NaN;
+            }
+        }
+    };
+
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
      */
     static StringConverter<Double> doubleStringConverter() {
-        return new StringConverter<>() {
-            @Override
-            public String toString(Double object) {
-                return object.toString();
-            }
-
-            @Override
-            public Double fromString(String string) {
-                try {
-                    return Double.parseDouble(string);
-                } catch (NumberFormatException e) {
-                    return Double.NaN;
-                }
-            }
-        };
+        return CONVERTER;
     }
 
     private Tables() {
