@@ -112,7 +112,7 @@ public class ModelCurveDragger {
     }
 
     /**
-     * Drags the points by mouse and modifies ModelData values if called initModelData() previously
+     * Drags the points by mouse and modifies ModelData values and returns same instance
      *
      * @param mouseEvent mouse dragged event
      * @param modelData  model data
@@ -161,7 +161,7 @@ public class ModelCurveDragger {
     }
 
     /**
-     * Initializes ModelData that will be modified by dragging points
+     * Maps ModelData that will be modified by dragging points
      *
      * @param modelData model data that match curve
      */
