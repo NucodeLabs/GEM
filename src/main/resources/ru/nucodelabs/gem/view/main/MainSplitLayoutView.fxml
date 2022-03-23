@@ -79,6 +79,17 @@
                                     <HBox style="-fx-padding: 5">
                                         <Button text="%inverse" onAction="#inverseSolve"/>
                                     </HBox>
+                                    <HBox style="
+                                        -fx-padding: 5;
+                                        -fx-border-color: red;
+                                        -fx-border-width: 1;
+                                        -fx-border-style: dotted"
+                                          alignment="CENTER_RIGHT">
+                                        <Label text="FOR DEBUG" style="-fx-text-fill: Red"/>
+                                        <TextField fx:id="sideLength" promptText="SIDE_LENGTH"/>
+                                        <TextField fx:id="relThreshold" promptText="RELATIVE_THRESHOLD"/>
+                                        <TextField fx:id="absThreshold" promptText="ABSOLUTE_THRESHOLD"/>
+                                    </HBox>
                                 </HBox>
                                 <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
                                            VBox.vgrow="ALWAYS">
