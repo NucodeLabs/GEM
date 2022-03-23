@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.MODFile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,7 @@ public record ModelData(
         @NotNull List<@Min(0) Double> polarization,
         // Мощность, м
         @NotNull List<@Min(0) Double> power
-) implements Sizeable {
+) implements Sizeable, Serializable {
     public static ModelData from(MODFile modFile) {
         return new ModelData(
                 modFile.getResistance(),

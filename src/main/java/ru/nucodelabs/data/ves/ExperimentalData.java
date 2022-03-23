@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,7 @@ public record ExperimentalData(
         @NotNull List<@Min(0) Double> polarizationApparent,
         // Погрешность, %
         @NotNull List<@Min(0) Double> errorPolarizationApparent
-) implements Sizeable {
+) implements Sizeable, Serializable {
     public static ExperimentalData from(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
