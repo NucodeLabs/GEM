@@ -2,8 +2,8 @@ package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import static ru.nucodelabs.data.ves.SizesReflectionUtil.isEqualSizes;
-import static ru.nucodelabs.data.ves.SizesReflectionUtil.minSize;
+import static ru.nucodelabs.data.ves.SizesReflectionUtils.isEqualSizes;
+import static ru.nucodelabs.data.ves.SizesReflectionUtils.minSize;
 
 interface Sizeable {
     @JsonIgnore

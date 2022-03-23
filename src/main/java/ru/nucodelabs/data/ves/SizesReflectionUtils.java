@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class SizesReflectionUtil {
-    private SizesReflectionUtil() {
+class SizesReflectionUtils {
+    private SizesReflectionUtils() {
     }
 
     private static List<Integer> sizesList(Object data, boolean nonEmptyOnly) {
