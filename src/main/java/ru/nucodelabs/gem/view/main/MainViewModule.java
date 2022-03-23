@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -15,13 +14,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.dao.Section;
-import ru.nucodelabs.gem.dao.SectionFactory;
-import ru.nucodelabs.gem.dao.SectionImpl;
+import ru.nucodelabs.files.gem.FileManager;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.google.inject.Scopes.SINGLETON;
 import static ru.nucodelabs.gem.view.charts.VESCurvesController.MOD_CURVE_SERIES_CNT;
@@ -35,11 +34,8 @@ public class MainViewModule extends AbstractModule {
     protected void configure() {
         install(new FileChoosersModule());
         install(new DialogsModule());
-        install(new FactoryModuleBuilder()
-                .implement(Section.class, SectionImpl.class)
-                .build(SectionFactory.class));
-        bind(Section.class).to(SectionImpl.class);
         bind(MainViewController.class).in(SINGLETON);
+        bind(FileManager.class).toProvider(FileManager::createDefaultFileManager);
         bind(new TypeLiteral<ObjectProperty<Picket>>() {})
                 .to(new TypeLiteral<SimpleObjectProperty<Picket>>() {})
                 .in(SINGLETON);
@@ -92,5 +88,12 @@ public class MainViewModule extends AbstractModule {
     @Singleton
     private IntegerProperty provideIntProperty() {
         return new SimpleIntegerProperty(0);
+    }
+
+    @Provides
+    @Singleton
+    @Named("SavedState")
+    private List<Picket> provideSavedState() {
+        return Collections.emptyList();
     }
 }

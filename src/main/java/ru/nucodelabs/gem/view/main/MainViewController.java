@@ -14,9 +14,8 @@ import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.files.gem.FileManager;
 import ru.nucodelabs.gem.core.utils.OSDetect;
-import ru.nucodelabs.gem.dao.Section;
-import ru.nucodelabs.gem.dao.SectionFactory;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
 import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
@@ -50,7 +49,9 @@ public class MainViewController extends Controller {
     @FXML
     public TextField absThreshold;
     // ++++++++++++++++++++++++++++++++++++++++
-
+    @Inject
+    FileManager fileManager;
+    private List<Picket> savedStateSection;
     @FXML
     private Stage root;
     @FXML
@@ -63,9 +64,6 @@ public class MainViewController extends Controller {
     @Inject
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
-    private Section savedStateSection;
-    @Inject
-    private Provider<SectionFactory> sectionFactoryProvider;
     @Inject
     @Named("EXP")
     private FileChooser expFileChooser;
@@ -84,7 +82,7 @@ public class MainViewController extends Controller {
             ObjectProperty<Picket> picket,
             IntegerProperty picketIndex,
             ObservableList<Picket> picketObservableList,
-            Section savedStateSection) {
+            @Named("SavedState") List<Picket> savedStateSection) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
@@ -147,7 +145,7 @@ public class MainViewController extends Controller {
     }
 
     private boolean isModified() {
-        return !savedStateSection.getPickets().equals(picketObservableList);
+        return !savedStateSection.equals(picketObservableList);
     }
 
     @Override
@@ -205,12 +203,12 @@ public class MainViewController extends Controller {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                savedStateSection.loadFromJson(file);
+                picketObservableList.setAll(fileManager.loadSectionFromJsonFile(file));
+                savedStateSection = List.copyOf(picketObservableList);
             } catch (Exception e) {
                 new IncorrectFileAlert(e, getStage()).show();
                 return;
             }
-            picketObservableList.setAll(savedStateSection.getPickets());
             picketIndex.set(0);
         }
     }
@@ -223,9 +221,8 @@ public class MainViewController extends Controller {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Section newSectionState = sectionFactoryProvider.get().create(picketObservableList);
-                newSectionState.saveToJson(file);
-                savedStateSection = newSectionState.clone();
+                fileManager.saveSectionToJsonFile(file, picketObservableList);
+                savedStateSection = List.copyOf(picketObservableList);
             } catch (Exception e) {
                 new IncorrectFileAlert(e, getStage()).show();
             }
@@ -252,11 +249,7 @@ public class MainViewController extends Controller {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Picket newPicket =
-                        sectionFactoryProvider
-                                .get()
-                                .create(picketObservableList)
-                                .loadModelDataFromMODFile(picketIndex.get(), file);
+                Picket newPicket = fileManager.loadModelDataFromMODFile(file, picket.get());
                 picket.set(newPicket);
             } catch (Exception e) {
                 new IncorrectFileAlert(e, getStage()).show();
@@ -340,10 +333,7 @@ public class MainViewController extends Controller {
 
     private void addEXP(File file) {
         try {
-            sectionFactoryProvider
-                    .get()
-                    .create(picketObservableList)
-                    .loadExperimentalDataFromEXPFile(file);
+            picketObservableList.add(fileManager.loadPicketFromEXPFile(file));
         } catch (Exception e) {
             new IncorrectFileAlert(e, getStage()).show();
             return;
