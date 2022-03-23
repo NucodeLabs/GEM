@@ -45,7 +45,7 @@ public record ExperimentalData(
     @JsonIgnore
     public List<ExperimentalTableLine> getLines() {
         List<ExperimentalTableLine> res = new ArrayList<>();
-        for (int i = 0; i < getSize(); i++) {
+        for (int i = 0; i < size(); i++) {
             res.add(
                     new ExperimentalTableLine(
                             i,

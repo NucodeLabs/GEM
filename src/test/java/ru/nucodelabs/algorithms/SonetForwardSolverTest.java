@@ -2,13 +2,14 @@ package ru.nucodelabs.algorithms;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nucodelabs.algorithms.forward_solver.SonetForwardSolver;
 
 import java.util.ArrayList;
 import java.util.stream.DoubleStream;
 
 import static java.lang.Math.pow;
 
-public class ForwardSolverTest {
+public class SonetForwardSolverTest {
 
     @Test
     void testJNI() {
@@ -38,7 +39,7 @@ public class ForwardSolverTest {
         Th[Nlay - 1] = 1.e+10;
 
         /* Apparent resistivity*/
-        ArrayList<Double> RoK = new ArrayList<>(ForwardSolver.ves(
+        ArrayList<Double> RoK = new ArrayList<>(SonetForwardSolver.solve(
                 DoubleStream.of(Ro).boxed().toList(),
                 DoubleStream.of(Th).boxed().toList(),
                 DoubleStream.of(Raz).boxed().toList()));

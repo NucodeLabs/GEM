@@ -7,7 +7,7 @@ import static ru.nucodelabs.data.ves.Sizes.minSize;
 
 public interface Sizeable {
     @JsonIgnore
-    default int getSize() {
+    default int size() {
         return minSize(this, true);
     }
 
