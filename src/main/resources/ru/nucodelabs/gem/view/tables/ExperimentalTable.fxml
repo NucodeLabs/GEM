@@ -12,7 +12,7 @@
       fx:controller="ru.nucodelabs.gem.view.tables.ExperimentalTableController">
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn maxWidth="25" prefWidth="25" sortable="false" text="N" styleClass="centered-column"
+            <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="N" styleClass="centered-column"
                          resizable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="index"/>
