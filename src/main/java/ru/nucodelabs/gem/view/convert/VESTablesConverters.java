@@ -3,26 +3,26 @@ package ru.nucodelabs.gem.view.convert;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ExperimentalTableLine;
+import ru.nucodelabs.data.ves.ExperimentalDataRow;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.ModelTableLine;
+import ru.nucodelabs.data.ves.ModelDataRow;
 
 public class VESTablesConverters {
 
     private VESTablesConverters() {
     }
 
-    public static ObservableList<ExperimentalTableLine> toExperimentalTableData(final ExperimentalData experimentalData) {
+    public static ObservableList<ExperimentalDataRow> toExperimentalTableData(final ExperimentalData experimentalData) {
         if (experimentalData != null) {
-            return FXCollections.observableList(experimentalData.getLines());
+            return FXCollections.observableList(experimentalData.getRows());
         } else {
             return FXCollections.emptyObservableList();
         }
     }
 
-    public static ObservableList<ModelTableLine> toModelTableData(final ModelData modelData) {
+    public static ObservableList<ModelDataRow> toModelTableData(final ModelData modelData) {
         if (modelData != null) {
-            return FXCollections.observableList(modelData.getLines());
+            return FXCollections.observableList(modelData.getRows());
         } else {
             return FXCollections.emptyObservableList();
         }

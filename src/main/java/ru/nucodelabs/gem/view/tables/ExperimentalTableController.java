@@ -4,7 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.ExperimentalTableLine;
+import ru.nucodelabs.data.ves.ExperimentalDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
@@ -19,7 +19,7 @@ public class ExperimentalTableController extends Controller {
     private final ObjectProperty<Picket> picket;
 
     @FXML
-    private TableView<ExperimentalTableLine> table;
+    private TableView<ExperimentalDataRow> table;
 
     @Inject
     public ExperimentalTableController(ObjectProperty<Picket> picket) {

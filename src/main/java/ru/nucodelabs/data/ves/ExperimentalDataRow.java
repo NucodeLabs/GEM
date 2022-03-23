@@ -2,7 +2,7 @@ package ru.nucodelabs.data.ves;
 
 import jakarta.validation.constraints.Min;
 
-public record ExperimentalTableLine(
+public record ExperimentalDataRow(
         @Min(0) int index,
         @Min(0) double resistanceApparent,
         @Min(0) double ab_2,

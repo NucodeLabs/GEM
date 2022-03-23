@@ -13,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.ModelTableLine;
+import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.convert.VESTablesConverters;
@@ -42,7 +42,7 @@ public class ModelTableController extends Controller {
     @FXML
     public Button addBtn;
     @FXML
-    private TableView<ModelTableLine> table;
+    private TableView<ModelDataRow> table;
     @Inject
     @Named("ImportMOD")
     private Runnable importMOD;
@@ -67,14 +67,14 @@ public class ModelTableController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ModelTableLine>) c -> {
+                .addListener((ListChangeListener<? super ModelDataRow>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
                     }
                 });
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
-            ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
+            ((TableColumn<ModelDataRow, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
@@ -124,19 +124,19 @@ public class ModelTableController extends Controller {
     }
 
     protected void update() {
-        ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
+        ObservableList<ModelDataRow> modelDataRows = FXCollections.emptyObservableList();
 
         if (picket.get().modelData() != null) {
-            modelTableLines = VESTablesConverters.toModelTableData(
+            modelDataRows = VESTablesConverters.toModelTableData(
                     picket.get().modelData()
             );
         }
 
-        table.itemsProperty().setValue(modelTableLines);
+        table.itemsProperty().setValue(modelDataRows);
     }
 
     @FXML
-    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         newPower.set(index, event.getNewValue());
@@ -153,7 +153,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         newResistance.set(index, event.getNewValue());
@@ -171,7 +171,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().resistance());
         newPolarization.set(index, event.getNewValue());
@@ -264,13 +264,13 @@ public class ModelTableController extends Controller {
 
     @FXML
     public void deleteSelected() {
-        List<ModelTableLine> selectedRows = table.getSelectionModel().getSelectedItems();
+        List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
 
         List<Integer> indicesToRemove = selectedRows.stream()
-                .map(ModelTableLine::index)
+                .map(ModelDataRow::index)
                 .sorted(Collections.reverseOrder())
                 .toList();
 

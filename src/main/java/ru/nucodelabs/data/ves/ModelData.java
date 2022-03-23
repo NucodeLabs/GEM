@@ -18,7 +18,7 @@ public record ModelData(
         // Мощность, м
         @NotNull List<@Min(0) Double> power
 ) implements Sizeable {
-    public static ModelData of(MODFile modFile) {
+    public static ModelData from(MODFile modFile) {
         return new ModelData(
                 modFile.getResistance(),
                 modFile.getPolarization(),
@@ -27,11 +27,11 @@ public record ModelData(
     }
 
     @JsonIgnore
-    public List<ModelTableLine> getLines() {
-        List<ModelTableLine> res = new ArrayList<>();
+    public List<ModelDataRow> getRows() {
+        List<ModelDataRow> res = new ArrayList<>();
         for (int i = 0; i < size(); i++) {
             res.add(
-                    new ModelTableLine(
+                    new ModelDataRow(
                             i,
                             requireNonNullElse(resistance().get(i), 0d),
                             requireNonNullElse(power().get(i), 0d),

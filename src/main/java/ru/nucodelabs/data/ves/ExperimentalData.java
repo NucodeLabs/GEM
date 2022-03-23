@@ -29,7 +29,7 @@ public record ExperimentalData(
         // Погрешность, %
         @NotNull List<@Min(0) Double> errorPolarizationApparent
 ) implements Sizeable {
-    public static ExperimentalData of(STTFile sttFile, EXPFile expFile) {
+    public static ExperimentalData from(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
                 sttFile.getMN_2(),
@@ -43,11 +43,11 @@ public record ExperimentalData(
     }
 
     @JsonIgnore
-    public List<ExperimentalTableLine> getLines() {
-        List<ExperimentalTableLine> res = new ArrayList<>();
+    public List<ExperimentalDataRow> getRows() {
+        List<ExperimentalDataRow> res = new ArrayList<>();
         for (int i = 0; i < size(); i++) {
             res.add(
-                    new ExperimentalTableLine(
+                    new ExperimentalDataRow(
                             i,
                             requireNonNullElse(resistanceApparent().get(i), 0d),
                             requireNonNullElse(ab_2().get(i), 0d),
