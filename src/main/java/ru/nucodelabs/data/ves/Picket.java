@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import java.io.Serializable;
+
 public record Picket(
         // Наименование пикета
         @NotNull String name,
@@ -12,7 +14,7 @@ public record Picket(
         @Valid @NotNull ExperimentalData experimentalData,
         // Данные модели
         @Valid @NotNull ModelData modelData
-) {
+) implements Serializable {
     public static Picket from(STTFile sttFile, EXPFile expFile) {
         String fileName = expFile.getFile().getName();
         String newName;
