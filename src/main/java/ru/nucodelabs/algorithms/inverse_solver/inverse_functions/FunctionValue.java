@@ -1,17 +1,19 @@
 package ru.nucodelabs.algorithms.inverse_solver.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import ru.nucodelabs.algorithms.ForwardSolver;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
+import ru.nucodelabs.data.ves.ModelData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class FunctionValue implements MultivariateFunction {
     private final ExperimentalData experimentalData;
-    private final InverseFunction inverseFunction;
+    private final BiFunction<List<Double>, List<Double>, Double> inverseFunction;
 
-    public FunctionValue(ExperimentalData experimentalData, InverseFunction inverseFunction) {
+    public FunctionValue(ExperimentalData experimentalData, BiFunction<List<Double>, List<Double>, Double> inverseFunction) {
         this.experimentalData = experimentalData;
         this.inverseFunction = inverseFunction;
     }
@@ -29,11 +31,13 @@ public class FunctionValue implements MultivariateFunction {
         }
         currentModelPower.add(0.0);
 
-        List<Double> experimentalAB_2 = experimentalData.ab_2();
-        List<Double> solvedResistance = ForwardSolver.ves(currentModelResistance, currentModelPower, experimentalAB_2);
+        List<Double> solvedResistance = ForwardSolver.createSonetForwardSolver(
+                experimentalData,
+                new ModelData(currentModelResistance, new ArrayList<>(), currentModelPower)
+        ).solve();
 
         List<Double> experimentalResistance = experimentalData.resistanceApparent();
 
-        return inverseFunction.getValue(solvedResistance, experimentalResistance);
+        return inverseFunction.apply(solvedResistance, experimentalResistance);
     }
 }
