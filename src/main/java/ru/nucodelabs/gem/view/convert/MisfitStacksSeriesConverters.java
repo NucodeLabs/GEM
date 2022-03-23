@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.view.convert;
 
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.algorithms.ForwardSolver;
 import ru.nucodelabs.algorithms.MisfitFunctions;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 
@@ -17,7 +17,7 @@ public class MisfitStacksSeriesConverters {
     }
 
     public static List<XYChart.Series<Double, Double>> toMisfitStacksSeriesList(final ExperimentalData experimentalData, final ModelData modelData) {
-        if (modelData.getSize() == 0 || experimentalData.getSize() == 0) {
+        if (modelData.size() == 0 || experimentalData.size() == 0) {
             return new ArrayList<>();
         }
         final List<Double> resistance = modelData.resistance();
@@ -25,13 +25,11 @@ public class MisfitStacksSeriesConverters {
         final List<Double> ab_2 = experimentalData.ab_2();
         final List<Double> resistanceApparent = experimentalData.resistanceApparent();
         final List<Double> errorResistanceApparent = experimentalData.errorResistanceApparent();
-        final int size = experimentalData.getSize();
+        final int size = experimentalData.size();
 
-        ArrayList<Double> solvedResistance = new ArrayList<>(ForwardSolver.ves(
-                resistance,
-                power,
-                ab_2
-        ));
+        ForwardSolver forwardSolver = ForwardSolver.createSonetForwardSolver(experimentalData, modelData);
+
+        List<Double> solvedResistance = forwardSolver.solve();
 
         List<XYChart.Series<Double, Double>> res = new ArrayList<>();
 

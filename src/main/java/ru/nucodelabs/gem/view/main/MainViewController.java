@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.core.utils.OSDetect;
@@ -269,16 +268,16 @@ public class MainViewController extends Controller {
 
     @FXML
     public void inverseSolve() {
-        try {
-            Picket solvedPicket = new Picket(
-                    picket.get().name(),
-                    picket.get().experimentalData(),
-                    InverseSolver.getOptimizedPicket(picket.get())
-            );
-            picket.set(solvedPicket);
-        } catch (Exception e) {
-            new UnsafeDataAlert(picket.get().name(), getStage()).show();
-        }
+//        try {
+//            Picket solvedPicket = new Picket(
+//                    picket.get().name(),
+//                    picket.get().experimentalData(),
+//                    InverseSolver.getOptimizedPicket(picket.get())
+//            );
+//            picket.set(solvedPicket);
+//        } catch (Exception e) {
+//            new UnsafeDataAlert(picket.get().name(), getStage()).show();
+//        }
     }
 
     private void addEXP(File file) {

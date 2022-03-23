@@ -29,7 +29,7 @@ public record ModelData(
     @JsonIgnore
     public List<ModelTableLine> getLines() {
         List<ModelTableLine> res = new ArrayList<>();
-        for (int i = 0; i < getSize(); i++) {
+        for (int i = 0; i < size(); i++) {
             res.add(
                     new ModelTableLine(
                             i,

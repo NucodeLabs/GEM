@@ -18,6 +18,8 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.dao.Section;
 import ru.nucodelabs.gem.dao.SectionFactory;
 import ru.nucodelabs.gem.dao.SectionImpl;
+import ru.nucodelabs.gem.view.DialogsModule;
+import ru.nucodelabs.gem.view.FileChoosersModule;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,8 @@ import static ru.nucodelabs.gem.view.charts.VESCurvesController.MOD_CURVE_SERIES
 public class MainViewModule extends AbstractModule {
     @Override
     protected void configure() {
+        install(new FileChoosersModule());
+        install(new DialogsModule());
         install(new FactoryModuleBuilder()
                 .implement(Section.class, SectionImpl.class)
                 .build(SectionFactory.class));
