@@ -1,6 +1,13 @@
 package ru.nucodelabs.algorithms.charts;
 
 class MisfitFunctions {
+    static {
+        System.loadLibrary("misfit");
+    }
+
+    private MisfitFunctions() {
+    }
+
     static native double calculateRelativeDeviation(
             double experimentalResistance,
             double theoreticalResistance
@@ -18,8 +25,4 @@ class MisfitFunctions {
             double voltage,
             double amperage
     );
-
-    static {
-        System.loadLibrary("misfit");
-    }
 }

@@ -60,7 +60,7 @@ public class MisfitStacksController extends Controller {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         try {
-            List<Double> values = new MisfitValuesFactory().apply(picket.get().experimentalData(), picket.get().modelData());
+            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().experimentalData(), picket.get().modelData());
             List<Point> expPoints = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData()).log10Points();
             misfitStacksSeriesList = FXCollections.observableList(new ArrayList<>());
 
