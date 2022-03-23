@@ -16,7 +16,6 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.convert.VESTablesConverters;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -56,7 +55,6 @@ public class ModelTableController extends Controller {
 
         picket.addListener((observable, oldValue, newValue) -> {
             if (oldValue == null
-                    || oldValue.modelData() == null
                     || !oldValue.modelData().equals(newValue.modelData())) {
                 update();
             }
@@ -124,14 +122,7 @@ public class ModelTableController extends Controller {
     }
 
     protected void update() {
-        ObservableList<ModelDataRow> modelDataRows = FXCollections.emptyObservableList();
-
-        if (picket.get().modelData() != null) {
-            modelDataRows = VESTablesConverters.toModelTableData(
-                    picket.get().modelData()
-            );
-        }
-
+        ObservableList<ModelDataRow> modelDataRows = FXCollections.observableList(picket.get().modelData().getRows());
         table.itemsProperty().setValue(modelDataRows);
     }
 

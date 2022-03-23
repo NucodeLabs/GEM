@@ -94,18 +94,16 @@ public class VESCurvesController extends Controller {
     private void updateTheoreticalCurve() {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
-        if (picket.get().modelData() != null && picket.get().experimentalData() != null) {
-            try {
-                PointsFactory pointsFactory = PointsFactory.theoreticalCurvePointsFactory(
-                        picket.get().experimentalData(), picket.get().modelData());
-                theorCurveSeries.getData().addAll(
-                        pointsFactory.log10Points().stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
-                                .toList()
-                );
-            } catch (UnsatisfiedLinkError e) {
-                new NoLibErrorAlert(e, getStage());
-            }
+        try {
+            PointsFactory pointsFactory = PointsFactory.theoreticalCurvePointsFactory(
+                    picket.get().experimentalData(), picket.get().modelData());
+            theorCurveSeries.getData().addAll(
+                    pointsFactory.log10Points().stream()
+                            .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                            .toList()
+            );
+        } catch (UnsatisfiedLinkError e) {
+            new NoLibErrorAlert(e, getStage());
         }
 
         theorCurveSeries.setName(uiProperties.getString("theorCurve"));
@@ -115,14 +113,12 @@ public class VESCurvesController extends Controller {
     private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        if (picket.get().modelData() != null) {
-            PointsFactory pointsFactory = PointsFactory.modelCurvePointsFactory(picket.get().modelData());
-            modelCurveSeries.getData().addAll(
-                    pointsFactory.log10Points().stream()
-                            .map(point -> new XYChart.Data<>(point.x(), point.y()))
-                            .toList()
-            );
-        }
+        PointsFactory pointsFactory = PointsFactory.modelCurvePointsFactory(picket.get().modelData());
+        modelCurveSeries.getData().addAll(
+                pointsFactory.log10Points().stream()
+                        .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                        .toList()
+        );
 
         modelCurveSeries.setName(uiProperties.getString("modCurve"));
         dataProperty.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
@@ -155,43 +151,41 @@ public class VESCurvesController extends Controller {
     }
 
     private void updateExpCurves() {
-        if (picket.get().experimentalData() != null) {
-            PointsFactory pointsFactory = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData());
-            XYChart.Series<Double, Double> expCurveSeries = new XYChart.Series<>(
-                    FXCollections.observableList(
-                            pointsFactory.log10Points().stream()
-                                    .map(point -> new XYChart.Data<>(point.x(), point.y()))
-                                    .toList()
-                    )
-            );
-            expCurveSeries.setName(uiProperties.getString("expCurve"));
+        PointsFactory pointsFactory = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData());
+        XYChart.Series<Double, Double> expCurveSeries = new XYChart.Series<>(
+                FXCollections.observableList(
+                        pointsFactory.log10Points().stream()
+                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .toList()
+                )
+        );
+        expCurveSeries.setName(uiProperties.getString("expCurve"));
 
-            pointsFactory = PointsFactory.experimentalCurveUpperBoundErrorPointsFactory(picket.get().experimentalData());
-            XYChart.Series<Double, Double> errUpperExp = new XYChart.Series<>(
-                    FXCollections.observableList(
-                            pointsFactory.log10Points().stream()
-                                    .map(point -> new XYChart.Data<>(point.x(), point.y()))
-                                    .toList()
-                    )
-            );
-            errUpperExp.setName(uiProperties.getString("expCurveUpper"));
+        pointsFactory = PointsFactory.experimentalCurveUpperBoundErrorPointsFactory(picket.get().experimentalData());
+        XYChart.Series<Double, Double> errUpperExp = new XYChart.Series<>(
+                FXCollections.observableList(
+                        pointsFactory.log10Points().stream()
+                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .toList()
+                )
+        );
+        errUpperExp.setName(uiProperties.getString("expCurveUpper"));
 
-            pointsFactory = PointsFactory.experimentalCurveLowerBoundErrorPointsFactory(picket.get().experimentalData());
-            XYChart.Series<Double, Double> errLowerExp = new XYChart.Series<>(
-                    FXCollections.observableList(
-                            pointsFactory.log10Points().stream()
-                                    .map(point -> new XYChart.Data<>(point.x(), point.y()))
-                                    .toList()
-                    )
-            );
-            errLowerExp.setName(uiProperties.getString("expCurveLower"));
-            dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
-            dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
-            dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-            if (picket.get().experimentalData() == null) {
-                dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
-                dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
-            }
+        pointsFactory = PointsFactory.experimentalCurveLowerBoundErrorPointsFactory(picket.get().experimentalData());
+        XYChart.Series<Double, Double> errLowerExp = new XYChart.Series<>(
+                FXCollections.observableList(
+                        pointsFactory.log10Points().stream()
+                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .toList()
+                )
+        );
+        errLowerExp.setName(uiProperties.getString("expCurveLower"));
+        dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
+        dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
+        dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
+        if (picket.get().experimentalData() == null) {
+            dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
+            dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
         }
     }
 }
