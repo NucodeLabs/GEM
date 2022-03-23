@@ -67,6 +67,9 @@ public class VESSeriesConverters {
     }
 
     public static XYChart.Series<Double, Double> toTheoreticalCurveSeries(final ExperimentalData experimentalData, final ModelData modelData) {
+        if (modelData.getSize() == 0 || experimentalData.getSize() == 0) {
+            return new XYChart.Series<>();
+        }
         XYChart.Series<Double, Double> theoreticalCurveSeries = new XYChart.Series<>();
         final List<Double> ab_2 = experimentalData.ab_2();
         final List<Double> resistance = modelData.resistance();
@@ -92,6 +95,10 @@ public class VESSeriesConverters {
     }
 
     public static XYChart.Series<Double, Double> toModelCurveSeries(ModelData modelData) {
+        if (modelData.getSize() == 0) {
+            return new XYChart.Series<>();
+        }
+
         final double FIRST_X = 1e-2;
         final double LAST_X = 1e100;
 
