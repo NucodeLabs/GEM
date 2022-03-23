@@ -1,10 +1,10 @@
 package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.MODFile;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +12,11 @@ import static java.util.Objects.requireNonNullElse;
 
 public record ModelData(
         // Сопротивление, Ом * м
-        @NotNull List<@Positive Double> resistance,
+        @NotNull List<@Min(0) Double> resistance,
         // Поляризация, %
-        @NotNull List<@Positive Double> polarization,
+        @NotNull List<@Min(0) Double> polarization,
         // Мощность, м
-        @NotNull List<@Positive Double> power
+        @NotNull List<@Min(0) Double> power
 ) implements Sizeable {
     public static ModelData of(MODFile modFile) {
         return new ModelData(
