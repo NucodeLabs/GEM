@@ -27,7 +27,17 @@ public interface PointsFactory {
         return new ModelCurvePointsFactory(modelData);
     }
 
+    /**
+     * Возвращает новые точки для графика
+     *
+     * @return новые точки
+     */
     List<Point> points();
 
+    /**
+     * Возвращает новые точки для графика с прологарифмированными с основанием 10 значениями
+     *
+     * @return новые точки
+     */
     List<Point> log10Points();
 }

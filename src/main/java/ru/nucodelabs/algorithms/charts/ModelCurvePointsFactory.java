@@ -9,12 +9,15 @@ import static java.lang.Math.log10;
 
 final class ModelCurvePointsFactory implements PointsFactory {
 
+    private static final double FIRST_X_DEFAULT = 1e-2;
+    private static final double LAST_X_DEFAULT = 1e100;
+
     private final ModelData modelData;
-    private double FIRST_X = 1e-2;
-    private double LAST_X = 1e100;
+    private final double FIRST_X;
+    private final double LAST_X;
 
     ModelCurvePointsFactory(ModelData modelData) {
-        this.modelData = modelData;
+        this(modelData, FIRST_X_DEFAULT, LAST_X_DEFAULT);
     }
 
     ModelCurvePointsFactory(ModelData modelData, double firstX, double lastX) {
