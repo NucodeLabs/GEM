@@ -20,6 +20,12 @@ public record ModelData(
         // Мощность, м
         @NotNull List<@Min(0) Double> power
 ) implements Sizeable, Serializable {
+    private static final ModelData EMPTY = new ModelData(
+            Collections.emptyList(),
+            Collections.emptyList(),
+            Collections.emptyList()
+    );
+
     public static ModelData from(MODFile modFile) {
         return new ModelData(
                 modFile.getResistance(),
@@ -29,11 +35,7 @@ public record ModelData(
     }
 
     public static ModelData empty() {
-        return new ModelData(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList()
-        );
+        return EMPTY;
     }
 
     @JsonIgnore

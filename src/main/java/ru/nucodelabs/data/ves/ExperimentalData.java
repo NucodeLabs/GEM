@@ -31,6 +31,18 @@ public record ExperimentalData(
         // Погрешность, %
         @NotNull List<@Min(0) Double> errorPolarizationApparent
 ) implements Sizeable, Serializable {
+    private static final ExperimentalData EMPTY =
+            new ExperimentalData(
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList()
+            );
+
     public static ExperimentalData from(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
@@ -45,16 +57,7 @@ public record ExperimentalData(
     }
 
     public static ExperimentalData empty() {
-        return new ExperimentalData(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList()
-        );
+        return EMPTY;
     }
 
     @JsonIgnore
