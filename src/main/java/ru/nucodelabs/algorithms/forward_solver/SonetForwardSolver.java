@@ -6,7 +6,7 @@ import ru.nucodelabs.data.ves.ModelData;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SonetForwardSolver implements ForwardSolver {
+final class SonetForwardSolver implements ForwardSolver {
 
     static {
         System.loadLibrary("forwardsolver");
@@ -15,7 +15,7 @@ public final class SonetForwardSolver implements ForwardSolver {
     private final ExperimentalData experimentalData;
     private final ModelData modelData;
 
-    public SonetForwardSolver(ExperimentalData experimentalData, ModelData modelData) {
+    SonetForwardSolver(ExperimentalData experimentalData, ModelData modelData) {
         this.experimentalData = experimentalData;
         this.modelData = modelData;
     }
