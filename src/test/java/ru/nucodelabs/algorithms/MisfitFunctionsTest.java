@@ -1,6 +1,7 @@
 package ru.nucodelabs.algorithms;
 
 import org.junit.jupiter.api.Test;
+import ru.nucodelabs.algorithms.charts.MisfitFunctions;
 
 public class MisfitFunctionsTest {
     @Test
