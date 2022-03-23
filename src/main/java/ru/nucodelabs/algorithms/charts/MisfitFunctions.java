@@ -1,18 +1,18 @@
-package ru.nucodelabs.algorithms;
+package ru.nucodelabs.algorithms.charts;
 
-public class MisfitFunctions {
-    public static native double calculateRelativeDeviation(
+class MisfitFunctions {
+    static native double calculateRelativeDeviation(
             double experimentalResistance,
             double theoreticalResistance
     );
 
-    public static native double calculateRelativeDeviationWithError(
+    static native double calculateRelativeDeviationWithError(
             double experimentalResistance,
             double experimentalErrorResistance,
             double theoreticalResistance
     );
 
-    public static native double calculateResistanceApparent(
+    static native double calculateResistanceApparent(
             double AB_2,
             double MN_2,
             double voltage,

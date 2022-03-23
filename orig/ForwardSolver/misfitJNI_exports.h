@@ -1,14 +1,14 @@
 #pragma once
 #include <jni.h>
 
-extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateRelativeDeviation(
+extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateRelativeDeviation(
     JNIEnv *env,
     jobject obj,
     jdouble resistanceExperimental, 
     jdouble resistanceTheoretical
 );
 
-extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateRelativeDeviationWithError(
+extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateRelativeDeviationWithError(
     JNIEnv *env,
     jobject obj,
     jdouble resistanceExperimental, 
@@ -16,7 +16,7 @@ extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctio
     jdouble resistanceTheoretical
 );
 
-extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateResistanceApparent(
+extern "C" JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateResistanceApparent(
     JNIEnv *env,
     jobject obj,
     jdouble AB_2,
