@@ -112,7 +112,7 @@ public class SectionImpl implements Section {
         STTFile sttFile = sttFileOf(expFilePath, expFile);
 
         Picket oldPicket = pickets.get(picketNumber);
-        Picket expPicket = Picket.of(sttFile, expFile);
+        Picket expPicket = Picket.from(sttFile, expFile);
         Picket newPicket = new Picket(expPicket.name(), expPicket.experimentalData(), oldPicket.modelData());
         pickets.set(picketNumber, newPicket);
         return newPicket;
@@ -124,7 +124,7 @@ public class SectionImpl implements Section {
         Path expFilePath = file.toPath();
         STTFile sttFile = sttFileOf(expFilePath, expFile);
 
-        Picket expPicket = Picket.of(sttFile, expFile);
+        Picket expPicket = Picket.from(sttFile, expFile);
         pickets.add(expPicket);
         return expPicket;
     }
@@ -139,7 +139,7 @@ public class SectionImpl implements Section {
     @Override
     public Picket loadModelDataFromMODFile(int picketNumber, File file) throws Exception {
         MODFile modFile = SonetImport.readMOD(file);
-        ModelData modelData = ModelData.of(modFile);
+        ModelData modelData = ModelData.from(modFile);
         return setModelData(picketNumber, modelData);
     }
 

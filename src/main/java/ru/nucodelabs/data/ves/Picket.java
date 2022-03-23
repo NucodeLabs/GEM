@@ -15,7 +15,7 @@ public record Picket(
         // Данные модели
         @Valid @Nullable ModelData modelData
 ) {
-    public static Picket of(STTFile sttFile, EXPFile expFile) {
+    public static Picket from(STTFile sttFile, EXPFile expFile) {
         String fileName = expFile.getFile().getName();
         String newName;
         if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
@@ -23,7 +23,7 @@ public record Picket(
         } else {
             newName = fileName;
         }
-        ExperimentalData newExperimentalData = ExperimentalData.of(sttFile, expFile);
+        ExperimentalData newExperimentalData = ExperimentalData.from(sttFile, expFile);
         return new Picket(newName, newExperimentalData, null);
     }
 }

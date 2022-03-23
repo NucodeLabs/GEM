@@ -28,12 +28,12 @@ public class ShiraPicket {
         File file_exp = new File("data/SHIRA.EXP");
         EXPFile expFile = SonetImport.readEXP(file_exp);
 
-        ExperimentalData experimentalData = ExperimentalData.of(sttFile, expFile);
+        ExperimentalData experimentalData = ExperimentalData.from(sttFile, expFile);
 
         File file = new File("data/SHIRA_M2.mod");
         MODFile modFile = SonetImport.readMOD(file);
 
-        ModelData modelData = ModelData.of(modFile);
+        ModelData modelData = ModelData.from(modFile);
 
         return new Picket("testPicket", experimentalData, modelData);
     }
