@@ -8,9 +8,21 @@ import java.util.List;
 public interface ForwardSolver {
 
     /**
+     * Returns default ForwardSolver implementation
+     *
+     * @param experimentalData experimental data of picket
+     * @param modelData        model data of picket
+     * @return new instance
+     */
+    static ForwardSolver createDefaultForwardSolver(ExperimentalData experimentalData, ModelData modelData) {
+        return createSonetForwardSolver(experimentalData, modelData);
+    }
+
+    /**
      * Returns Sonet implementation of ForwardSolver
      *
-     * @param picket picket to take data from
+     * @param experimentalData experimental data of picket
+     * @param modelData        model data of picket
      * @return new instance
      */
     static ForwardSolver createSonetForwardSolver(ExperimentalData experimentalData, ModelData modelData) {

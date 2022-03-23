@@ -27,7 +27,7 @@ public class MisfitStacksSeriesConverters {
         final List<Double> errorResistanceApparent = experimentalData.errorResistanceApparent();
         final int size = experimentalData.size();
 
-        ForwardSolver forwardSolver = ForwardSolver.createSonetForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
 
         List<Double> solvedResistance = forwardSolver.solve();
 
