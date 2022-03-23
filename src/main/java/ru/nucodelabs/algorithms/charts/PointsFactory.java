@@ -40,4 +40,14 @@ public interface PointsFactory {
      * @return новые точки
      */
     List<Point> log10Points();
+
+    /**
+     * Возвращает новые точки для графика с прологарифмированными с основанием {@code a} значениями
+     *
+     * @param logBase основание логарифма
+     * @return новые точки
+     */
+    default List<Point> logPoints(int logBase) {
+        throw new UnsupportedOperationException();
+    }
 }
