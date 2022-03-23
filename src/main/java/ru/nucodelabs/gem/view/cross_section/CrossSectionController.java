@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,14 +28,13 @@ public class CrossSectionController extends Controller {
     private final ObservableList<Picket> picketObservableList;
 
     @FXML
+    StackedBarChart<String, Number> sectionStackedBarChart;
+    @FXML
     public CategoryAxis sectionStackedBarChartXAxis;
     @FXML
     public NumberAxis sectionStackedBarChartYAxis;
-    @FXML
-    StackedBarChart<String, Number> sectionStackedBarChart;
 
     @Inject
-    @Named("CrossSection")
     private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> dataProperty;
 
     @Inject
@@ -57,11 +55,17 @@ public class CrossSectionController extends Controller {
     }
 
     public void update() {
-        List<XYChart.Series<String, Number>> seriesList = CrossSectionConverters.getLayerOfPowers(picketObservableList);
+        List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
         sectionStackedBarChartXAxis.setCategories(FXCollections.observableArrayList(CrossSectionConverters.makeCategories(picketObservableList)));
-        sectionStackedBarChart.dataProperty().setValue(FXCollections.observableArrayList(seriesList));
-        System.out.println(sectionStackedBarChartXAxis.getCategories().toString());
 
+        if (picketObservableList != null) {
+            seriesList = CrossSectionConverters.getLayersOfPowers(picketObservableList);
+        }
+        dataProperty.get().clear();
+        dataProperty.get().addAll(seriesList);
+
+        //System.out.println(sectionStackedBarChartXAxis.getCategories().toString());
+        //System.out.println(sectionStackedBarChart.dataProperty().toString());
     }
 
     protected Stage getStage() {
