@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
 import ru.nucodelabs.algorithms.charts.Point;
@@ -17,7 +18,9 @@ import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
+import java.math.RoundingMode;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,6 +31,8 @@ public class MisfitStacksController extends Controller {
 
 
     private final ObservableObjectValue<Picket> picket;
+    @FXML
+    public Label text;
     @FXML
     private LineChart<Double, Double> lineChart;
     @FXML
@@ -80,6 +85,14 @@ public class MisfitStacksController extends Controller {
                     }
                 }
             }
+
+            double avg = values.stream()
+                    .mapToDouble(Math::abs)
+                    .average()
+                    .orElse(0);
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+            text.setText("avg = " + decimalFormat.format(avg) + " %");
         } catch (UnsatisfiedLinkError e) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, getStage()).show();
         } catch (IllegalStateException e) {
