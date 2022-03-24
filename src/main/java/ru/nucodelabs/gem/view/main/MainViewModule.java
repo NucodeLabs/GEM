@@ -14,7 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.gem.FileManager;
+import ru.nucodelabs.gem.app.io.FileManager;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 

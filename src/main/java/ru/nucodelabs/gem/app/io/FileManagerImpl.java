@@ -1,4 +1,4 @@
-package ru.nucodelabs.files.gem;
+package ru.nucodelabs.gem.app.io;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
