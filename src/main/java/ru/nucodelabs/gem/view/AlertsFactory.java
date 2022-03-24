@@ -1,10 +1,13 @@
 package ru.nucodelabs.gem.view;
 
+import jakarta.validation.ConstraintViolation;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AlertsFactory {
     private final ResourceBundle uiProperties;
@@ -44,6 +47,15 @@ public class AlertsFactory {
         alert.setTitle(uiProperties.getString("compatibilityMode"));
         alert.setHeaderText(picketName + " - " + uiProperties.getString("EXPSTTMismatch"));
         alert.setContentText(uiProperties.getString("minimalDataWillBeDisplayed"));
+        alert.initOwner(owner);
+        return alert;
+    }
+
+    public <T> Alert violationsAlert(Set<ConstraintViolation<T>> violations, Stage owner) {
+        String message = violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining("\n"));
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
         alert.initOwner(owner);
         return alert;
     }

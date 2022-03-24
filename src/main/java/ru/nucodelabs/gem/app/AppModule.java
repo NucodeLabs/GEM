@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.main.MainViewController;
@@ -37,8 +39,13 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named("MainView")
-    public Stage create(Injector injector, @Named("MainView") FXMLLoader loader) throws IOException {
+    private Stage create(Injector injector, @Named("MainView") FXMLLoader loader) throws IOException {
         loader.setControllerFactory(injector.createChildInjector(new MainViewModule())::getInstance);
         return loader.load();
+    }
+
+    @Provides
+    private Validator provideValidator() {
+        return Validation.buildDefaultValidatorFactory().getValidator();
     }
 }

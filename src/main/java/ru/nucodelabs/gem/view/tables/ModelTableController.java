@@ -15,12 +15,12 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
 import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
@@ -45,6 +45,10 @@ public class ModelTableController extends Controller {
     @Inject
     @Named("ImportMOD")
     private Runnable importMOD;
+    @Inject
+    private AlertsFactory alertsFactory;
+    @Inject
+    private Validator validator;
 
     private List<TextField> requiredForAdd;
 
@@ -179,15 +183,6 @@ public class ModelTableController extends Controller {
         }
     }
 
-    private void showAlert(Set<ConstraintViolation<ModelData>> violations) {
-        String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("\n"));
-        Alert alert = new Alert(Alert.AlertType.ERROR, message);
-        alert.initOwner(getStage());
-        alert.show();
-    }
-
     @FXML
     public void addLayer() {
         if (!resistanceTextField.getText().isBlank()
@@ -243,7 +238,7 @@ public class ModelTableController extends Controller {
             Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
             Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
             if (!violations.isEmpty()) {
-                showAlert(violations);
+                alertsFactory.violationsAlert(violations, getStage()).show();
             } else {
                 picket.set(new Picket(
                         picket.get().name(),
@@ -281,10 +276,9 @@ public class ModelTableController extends Controller {
     }
 
     private void setIfValidElseAlert(ModelData newModelData) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
         if (!violations.isEmpty()) {
-            showAlert(violations);
+            alertsFactory.violationsAlert(violations, getStage());
             table.refresh();
         } else {
             picket.set(
