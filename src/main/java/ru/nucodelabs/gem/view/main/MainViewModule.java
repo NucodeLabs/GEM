@@ -2,16 +2,11 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.SharedObservablesModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
-
-import java.util.Collections;
-import java.util.List;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -45,12 +40,5 @@ public class MainViewModule extends AbstractModule {
     @Named("ImportMOD")
     private Runnable provideImportMOD(MainViewController controller) {
         return controller::importMOD;
-    }
-
-    @Provides
-    @Singleton
-    @Named("SavedState")
-    private List<Picket> provideSavedState() {
-        return Collections.emptyList();
     }
 }
