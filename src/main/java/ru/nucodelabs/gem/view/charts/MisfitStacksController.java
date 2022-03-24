@@ -13,9 +13,8 @@ import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
 import ru.nucodelabs.algorithms.charts.Point;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
-import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -35,6 +34,8 @@ public class MisfitStacksController extends Controller {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
+    @Inject
+    private AlertsFactory alertsFactory;
     @Inject
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
@@ -80,9 +81,9 @@ public class MisfitStacksController extends Controller {
                 }
             }
         } catch (UnsatisfiedLinkError e) {
-            new NoLibErrorAlert(e, getStage()).show();
+            alertsFactory.unsatisfiedLinkErrorAlert(e, getStage()).show();
         } catch (IllegalStateException e) {
-            new ExceptionAlert(e, getStage()).show();
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
 
         dataProperty.get().clear();
