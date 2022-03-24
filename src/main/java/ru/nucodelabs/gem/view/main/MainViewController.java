@@ -17,6 +17,7 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.FileManager;
+import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
@@ -25,10 +26,12 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 
 public class MainViewController extends Controller {
@@ -83,27 +86,35 @@ public class MainViewController extends Controller {
 
     @Inject
     public MainViewController(
+            // Текущий отображаемый пикет
             ObjectProperty<Picket> picket,
+            // Индекс текущего пикета
             IntegerProperty picketIndex,
+            // Список текущий пикетов
             ObservableList<Picket> picketObservableList,
+            // Сохраненное на диске состояние (можно заинжектить допустим авто-сохранение)
             @Named("SavedState") List<Picket> savedStateSection) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
         this.savedStateSection = savedStateSection;
         picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
+            if (c.getList().isEmpty()) {
+                update();
+                return;
+            }
             if (c.next()) {
                 // если был удален последний пикет в то время когда он отображался
                 if (c.wasRemoved()
                         && c.getFrom() == c.getTo()
                         && c.getTo() == picketIndex.get()
-                        && picketIndex.get() >= picketObservableList.size()) {
-                    picketIndex.set(picketObservableList.size() - 1);
+                        && picketIndex.get() >= c.getList().size()) {
+                    picketIndex.set(max(0, c.getList().size() - 1));
                 }
                 // если после изменения списка индекс не поменялся, но отображается не соответсвующий списку пикет
                 if (picket.get() == null
-                        || !picket.get().equals(picketObservableList.get(picketIndex.get()))) {
-                    picket.set(picketObservableList.get(picketIndex.get()));
+                        || !picket.get().equals(c.getList().get(picketIndex.get()))) {
+                    picket.set(c.getList().get(picketIndex.get()));
                 }
             }
         });
@@ -115,7 +126,7 @@ public class MainViewController extends Controller {
         // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
         picket.addListener((observable, oldValue, newValue) -> {
             if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))) {
-                picketObservableList.set(picketIndex.get(), picket.get());
+                picketObservableList.set(picketIndex.get(), newValue);
             }
             update();
         });
@@ -126,11 +137,13 @@ public class MainViewController extends Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
+        noFileScreenController.visibleProperty().bind(noFileOpened);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+            FXUtils.addCloseShortcutMacOS(getStage().getScene().getRoot());
         }
 
         getStage().setOnCloseRequest(e -> {
@@ -173,7 +186,8 @@ public class MainViewController extends Controller {
                 }
             }
         }
-        getStage().close();
+        picketObservableList.clear();
+        savedStateSection = Collections.emptyList();
     }
 
     @FXML
@@ -276,6 +290,42 @@ public class MainViewController extends Controller {
                 picket.set(newPicket);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    @FXML
+    public void importJsonPicket() {
+        File file = jsonFileChooser.showOpenDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                Picket loadedPicket = fileManager.loadPicketFromJsonFile(file);
+                picketObservableList.add(loadedPicket);
+                picketIndex.set(picketObservableList.size() - 1);
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    @FXML
+    public void exportJsonPicket() {
+        File file = jsonFileChooser.showSaveDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                fileManager.savePicketToJsonFile(file, picket.get());
+            } catch (Exception e) {
+                alertsFactory.simpleExceptionAlert(e, getStage());
             }
         }
     }
@@ -392,12 +442,11 @@ public class MainViewController extends Controller {
     }
 
     protected void update() {
+        noFileOpened.set(picketObservableList.isEmpty());
         if (!picketObservableList.isEmpty()) {
-            noFileOpened.set(false);
-            noFileScreenController.hide();
+            updateVESText();
+            updateVESNumber();
         }
-        updateVESText();
-        updateVESNumber();
     }
 
     public String getVesTitle() {

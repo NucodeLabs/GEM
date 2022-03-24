@@ -18,6 +18,10 @@ public interface FileManager {
 
     void saveSectionToJsonFile(File jsonFile, List<Picket> section) throws Exception;
 
+    Picket loadPicketFromJsonFile(File jsonFile) throws Exception;
+
+    void savePicketToJsonFile(File jsonFile, Picket picket) throws Exception;
+
     default Picket loadPicketFromEXPFile(File expFile) throws Exception {
         EXPFile expFile1 = new EXPFileParser(expFile).parse();
         Path expFilePath = expFile.toPath();
