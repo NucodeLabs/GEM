@@ -10,7 +10,7 @@ import java.util.List;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 
-class MisfitValuesFactoryNative implements MisfitValuesFactory {
+final class MisfitValuesFactoryNative implements MisfitValuesFactory {
     @Override
     public List<Double> apply(ExperimentalData experimentalData, ModelData modelData) {
         if (experimentalData.size() == 0 || modelData.size() == 0) {

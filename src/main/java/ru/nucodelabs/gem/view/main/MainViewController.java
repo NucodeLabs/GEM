@@ -16,10 +16,8 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.gem.FileManager;
 import ru.nucodelabs.gem.core.utils.OSDetect;
+import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
-import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
-import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -76,6 +74,8 @@ public class MainViewController extends Controller {
     @Inject
     @Named("Save")
     private Provider<Dialog<ButtonType>> saveDialogProvider;
+    @Inject
+    private AlertsFactory alertsFactory;
 
     @Inject
     public MainViewController(
@@ -206,7 +206,7 @@ public class MainViewController extends Controller {
                 picketObservableList.setAll(fileManager.loadSectionFromJsonFile(file));
                 savedStateSection = List.copyOf(picketObservableList);
             } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
                 return;
             }
             picketIndex.set(0);
@@ -224,7 +224,7 @@ public class MainViewController extends Controller {
                 fileManager.saveSectionToJsonFile(file, picketObservableList);
                 savedStateSection = List.copyOf(picketObservableList);
             } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
         }
     }
@@ -252,7 +252,7 @@ public class MainViewController extends Controller {
                 Picket newPicket = fileManager.loadModelDataFromMODFile(file, picket.get());
                 picket.set(newPicket);
             } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
         }
     }
@@ -286,7 +286,7 @@ public class MainViewController extends Controller {
             try {
                 SIDE_LENGTH = Double.parseDouble(sideLength.getText());
             } catch (NumberFormatException e) {
-                new ExceptionAlert(e).show();
+                alertsFactory.simpleExceptionAlert(e).show();
             }
         }
 
@@ -294,7 +294,7 @@ public class MainViewController extends Controller {
             try {
                 RELATIVE_THRESHOLD = Double.parseDouble(relThreshold.getText());
             } catch (NumberFormatException e) {
-                new ExceptionAlert(e).show();
+                alertsFactory.simpleExceptionAlert(e).show();
             }
         }
 
@@ -302,7 +302,7 @@ public class MainViewController extends Controller {
             try {
                 ABSOLUTE_THRESHOLD = Double.parseDouble(absThreshold.getText());
             } catch (NumberFormatException e) {
-                new ExceptionAlert(e).show();
+                alertsFactory.simpleExceptionAlert(e).show();
             }
         }
 
@@ -327,7 +327,7 @@ public class MainViewController extends Controller {
             );
             picket.set(newPicket);
         } catch (Exception e) {
-            new UnsafeDataAlert(picket.get().name(), getStage()).show();
+            alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
         }
     }
 
@@ -335,7 +335,7 @@ public class MainViewController extends Controller {
         try {
             picketObservableList.add(fileManager.loadPicketFromEXPFile(file));
         } catch (Exception e) {
-            new IncorrectFileAlert(e, getStage()).show();
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
             return;
         }
         picketIndex.set(picketObservableList.size() - 1);
@@ -359,7 +359,7 @@ public class MainViewController extends Controller {
     private void compatibilityModeAlert() {
         ExperimentalData experimentalData = picket.get().experimentalData();
         if (experimentalData != null && experimentalData.isUnsafe()) {
-            new UnsafeDataAlert(picket.get().name(), getStage()).show();
+            alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
         }
     }
 

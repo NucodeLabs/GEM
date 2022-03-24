@@ -15,9 +15,9 @@ import java.util.ResourceBundle;
 /**
  * Static methods for initializing user controls and view
  */
-public class Initializers {
+public class FXUtils {
 
-    private Initializers() {
+    private FXUtils() {
     }
 
     /**

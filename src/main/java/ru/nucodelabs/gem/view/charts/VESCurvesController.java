@@ -12,9 +12,9 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
 import ru.nucodelabs.gem.view.ModelCurveDragger;
-import ru.nucodelabs.gem.view.alerts.NoLibErrorAlert;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -48,6 +48,8 @@ public class VESCurvesController extends Controller {
     @Inject
     @Named("VESCurves")
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
+    @Inject
+    private AlertsFactory alertsFactory;
 
     @Inject
     public VESCurvesController(
@@ -103,7 +105,7 @@ public class VESCurvesController extends Controller {
                             .toList()
             );
         } catch (UnsatisfiedLinkError e) {
-            new NoLibErrorAlert(e, getStage());
+            alertsFactory.unsatisfiedLinkErrorAlert(e, getStage());
         }
 
         theorCurveSeries.setName(uiProperties.getString("theorCurve"));
