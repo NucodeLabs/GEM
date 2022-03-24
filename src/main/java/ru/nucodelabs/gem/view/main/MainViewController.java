@@ -119,6 +119,8 @@ public class MainViewController extends Controller {
             }
             update();
         });
+
+        picketObservableList.setAll(List.copyOf(savedStateSection));
     }
 
     @Override
