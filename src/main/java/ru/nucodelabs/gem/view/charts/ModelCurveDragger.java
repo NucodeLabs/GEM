@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.view.charts;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;

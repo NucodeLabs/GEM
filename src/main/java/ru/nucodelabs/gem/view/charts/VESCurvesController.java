@@ -14,7 +14,6 @@ import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.ModelCurveDragger;
 
 import javax.inject.Inject;
 import java.net.URL;
