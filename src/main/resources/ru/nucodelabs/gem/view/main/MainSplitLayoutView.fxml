@@ -30,7 +30,7 @@
                             <Menu text="%picket">
                                 <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
                                 <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
-                                <MenuItem text="%picket" onAction="#importJsonPicket"/>
+                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
                             </Menu>
                         </Menu>
                         <Menu text="%save">

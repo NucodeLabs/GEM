@@ -57,7 +57,9 @@ public class VESCurvesController extends Controller {
             if (isDragging) {
                 updateTheoreticalCurve();
             } else {
-                update();
+                if (newValue != null) {
+                    update();
+                }
             }
         });
     }
