@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.core.utils;
+package ru.nucodelabs.gem.utils;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

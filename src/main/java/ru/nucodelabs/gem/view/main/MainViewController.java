@@ -15,7 +15,7 @@ import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.gem.FileManager;
-import ru.nucodelabs.gem.core.utils.OSDetect;
+import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.Controller;
 

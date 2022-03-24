@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.core;
+package ru.nucodelabs.gem.app;
 
 import javafx.application.Application;
 
