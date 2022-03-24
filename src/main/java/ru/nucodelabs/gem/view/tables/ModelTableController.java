@@ -53,14 +53,17 @@ public class ModelTableController extends Controller {
     private List<TextField> requiredForAdd;
 
     @Inject
-    public ModelTableController(
-            ObjectProperty<Picket> picket) {
+    public ModelTableController(ObjectProperty<Picket> picket) {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {
-            if (oldValue == null
-                    || !oldValue.modelData().equals(newValue.modelData())) {
-                update();
+            if (newValue != null) {
+                if (oldValue != null
+                        && !oldValue.modelData().equals(newValue.modelData())) {
+                    update();
+                } else if (oldValue == null) {
+                    update();
+                }
             }
         });
     }

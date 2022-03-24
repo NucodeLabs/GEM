@@ -16,7 +16,7 @@ import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.io.FileManager;
+import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -43,6 +42,7 @@ public class MainViewController extends Controller {
     private final ObjectProperty<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
+    private final StorageManager storageManager;
 
     // ++++++++++++++ FOR DEBUG ++++++++++++++
     @FXML
@@ -52,9 +52,6 @@ public class MainViewController extends Controller {
     @FXML
     public TextField absThreshold;
     // ++++++++++++++++++++++++++++++++++++++++
-    @Inject
-    FileManager fileManager;
-    private List<Picket> savedStateSection;
     @FXML
     private Stage root;
     @FXML
@@ -93,17 +90,19 @@ public class MainViewController extends Controller {
             // Список текущий пикетов
             ObservableList<Picket> picketObservableList,
             // Сохраненное на диске состояние (можно заинжектить допустим авто-сохранение)
-            @Named("SavedState") List<Picket> savedStateSection) {
+            StorageManager storageManager) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
-        this.savedStateSection = savedStateSection;
+        this.storageManager = storageManager;
         picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
-            if (c.getList().isEmpty()) {
-                update();
-                return;
-            }
             if (c.next()) {
+                // если список опустошили
+                if (c.getList().isEmpty()) {
+                    update();
+                    picket.set(null);
+                    return;
+                }
                 // если был удален последний пикет в то время когда он отображался
                 if (c.wasRemoved()
                         && c.getFrom() == c.getTo()
@@ -125,13 +124,14 @@ public class MainViewController extends Controller {
         });
         // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
         picket.addListener((observable, oldValue, newValue) -> {
-            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))) {
+            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))
+                    && !picketObservableList.isEmpty()) {
                 picketObservableList.set(picketIndex.get(), newValue);
             }
             update();
         });
 
-        picketObservableList.setAll(List.copyOf(savedStateSection));
+        picketObservableList.setAll(List.copyOf(storageManager.getSavedState().pickets()));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class MainViewController extends Controller {
         }
 
         getStage().setOnCloseRequest(e -> {
-            if (isModified()) {
+            if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
                 Dialog<ButtonType> saveDialog = saveDialogProvider.get();
                 saveDialog.initOwner(getStage());
                 Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -163,10 +163,6 @@ public class MainViewController extends Controller {
         });
     }
 
-    private boolean isModified() {
-        return !savedStateSection.equals(picketObservableList);
-    }
-
     @Override
     protected Stage getStage() {
         return root;
@@ -174,7 +170,7 @@ public class MainViewController extends Controller {
 
     @FXML
     public void closeFile() {
-        if (isModified()) {
+        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -187,7 +183,7 @@ public class MainViewController extends Controller {
             }
         }
         picketObservableList.clear();
-        savedStateSection = Collections.emptyList();
+        storageManager.clearSavedState();
     }
 
     @FXML
@@ -205,7 +201,7 @@ public class MainViewController extends Controller {
 
     @FXML
     public void openSection() {
-        if (isModified()) {
+        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -224,7 +220,7 @@ public class MainViewController extends Controller {
             }
 
             try {
-                List<Picket> loadedPickets = fileManager.loadSectionFromJsonFile(file);
+                List<Picket> loadedPickets = storageManager.loadSectionFromJsonFile(file);
                 var violations =
                         validator.validate(new Section(loadedPickets));
 
@@ -234,7 +230,6 @@ public class MainViewController extends Controller {
                 }
 
                 picketObservableList.setAll(loadedPickets);
-                savedStateSection = List.copyOf(loadedPickets);
                 picketIndex.set(0);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
@@ -250,8 +245,7 @@ public class MainViewController extends Controller {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                fileManager.saveSectionToJsonFile(file, picketObservableList);
-                savedStateSection = List.copyOf(picketObservableList);
+                storageManager.saveSectionToJsonFile(file, picketObservableList);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
@@ -278,7 +272,7 @@ public class MainViewController extends Controller {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Picket newPicket = fileManager.loadModelDataFromMODFile(file, picket.get());
+                Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
                 var violations = validator.validate(newPicket);
 
@@ -304,7 +298,7 @@ public class MainViewController extends Controller {
             }
 
             try {
-                Picket loadedPicket = fileManager.loadPicketFromJsonFile(file);
+                Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
                 picketObservableList.add(loadedPicket);
                 picketIndex.set(picketObservableList.size() - 1);
             } catch (Exception e) {
@@ -323,7 +317,7 @@ public class MainViewController extends Controller {
             }
 
             try {
-                fileManager.savePicketToJsonFile(file, picket.get());
+                storageManager.savePicketToJsonFile(file, picket.get());
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage());
             }
@@ -406,7 +400,7 @@ public class MainViewController extends Controller {
 
     private void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = fileManager.loadPicketFromEXPFile(file);
+            Picket picketFromEXPFile = storageManager.loadPicketFromEXPFile(file);
             var violations = validator.validate(picket);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();

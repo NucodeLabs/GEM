@@ -9,6 +9,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.app.io.FileManager;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
@@ -46,8 +47,13 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
     private Validator provideValidator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
+    }
+
+    @Provides
+    @Singleton
+    private FileManager provideFileManager() {
+        return FileManager.createDefaultFileManager();
     }
 }

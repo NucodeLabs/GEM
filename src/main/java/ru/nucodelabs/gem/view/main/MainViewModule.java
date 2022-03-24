@@ -5,7 +5,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.io.FileManager;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.SharedObservablesModule;
@@ -28,7 +27,6 @@ public class MainViewModule extends AbstractModule {
         install(new SharedObservablesModule());
         install(new ChartsModule());
         bind(MainViewController.class).in(SINGLETON);
-        bind(FileManager.class).toProvider(FileManager::createDefaultFileManager);
     }
 
     @Provides

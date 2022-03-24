@@ -54,7 +54,11 @@ public class MisfitStacksController extends Controller {
     public MisfitStacksController(
             ObservableObjectValue<Picket> picket) {
         this.picket = picket;
-        picket.addListener((observable, oldValue, newValue) -> update());
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                update();
+            }
+        });
     }
 
     @Override
