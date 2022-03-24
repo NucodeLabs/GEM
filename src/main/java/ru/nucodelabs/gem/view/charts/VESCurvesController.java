@@ -51,8 +51,7 @@ public class VESCurvesController extends Controller {
     private AlertsFactory alertsFactory;
 
     @Inject
-    public VESCurvesController(
-            ObjectProperty<Picket> picket) {
+    public VESCurvesController(ObjectProperty<Picket> picket) {
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
             if (isDragging) {

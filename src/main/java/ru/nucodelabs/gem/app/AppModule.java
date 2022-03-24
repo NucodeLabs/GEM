@@ -27,6 +27,7 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named("CSS")
+    @Singleton
     private String provideStylesheet() {
         return "ru/nucodelabs/gem/view/common.css";
     }
@@ -45,6 +46,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     private Validator provideValidator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
