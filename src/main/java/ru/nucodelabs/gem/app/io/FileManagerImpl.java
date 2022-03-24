@@ -32,4 +32,14 @@ class FileManagerImpl implements FileManager {
         objectMapper.writeValue(fileWriter, section);
         fileWriter.close();
     }
+
+    @Override
+    public Picket loadPicketFromJsonFile(File jsonFile) throws Exception {
+        return objectMapper.readValue(jsonFile, Picket.class);
+    }
+
+    @Override
+    public void savePicketToJsonFile(File jsonFile, Picket picket) throws Exception {
+        objectMapper.writeValue(jsonFile, picket);
+    }
 }

@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
+import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,7 +21,7 @@ public class NoFileScreenController extends Controller {
     private Runnable openSection;
 
     @FXML
-    public VBox root;
+    private VBox root;
 
     @FXML
     private void importEXP() {
@@ -37,11 +38,11 @@ public class NoFileScreenController extends Controller {
     }
 
     @Override
-    protected Stage getStage() {
+    public Stage getStage() {
         return (Stage) root.getScene().getWindow();
     }
 
-    public void hide() {
-        root.setVisible(false);
+    public BooleanProperty visibleProperty() {
+        return root.visibleProperty();
     }
 }
