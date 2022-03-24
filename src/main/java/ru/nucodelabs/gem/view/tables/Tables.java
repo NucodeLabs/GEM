@@ -2,12 +2,16 @@ package ru.nucodelabs.gem.view.tables;
 
 import javafx.util.StringConverter;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 final class Tables {
 
+    private final static DecimalFormat DECIMAL_FORMAT;
     private final static StringConverter<Double> CONVERTER = new StringConverter<>() {
         @Override
         public String toString(Double object) {
-            return object.toString();
+            return decimalFormat().format(object);
         }
 
         @Override
@@ -20,12 +24,23 @@ final class Tables {
         }
     };
 
+    static {
+        DECIMAL_FORMAT = new DecimalFormat("#.##");
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+    }
+
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
+     * Rounds to 2 decimal places
      */
     static StringConverter<Double> doubleStringConverter() {
         return CONVERTER;
     }
+
+    static DecimalFormat decimalFormat() {
+        return DECIMAL_FORMAT;
+    }
+
 
     private Tables() {
     }
