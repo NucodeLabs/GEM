@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
+import jakarta.validation.Validator;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.files.gem.FileManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -76,6 +78,8 @@ public class MainViewController extends Controller {
     private Provider<Dialog<ButtonType>> saveDialogProvider;
     @Inject
     private AlertsFactory alertsFactory;
+    @Inject
+    Validator validator;
 
     @Inject
     public MainViewController(
@@ -202,14 +206,23 @@ public class MainViewController extends Controller {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
+
             try {
-                picketObservableList.setAll(fileManager.loadSectionFromJsonFile(file));
-                savedStateSection = List.copyOf(picketObservableList);
+                List<Picket> loadedPickets = fileManager.loadSectionFromJsonFile(file);
+                var violations =
+                        validator.validate(new Section(loadedPickets));
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage()).show();
+                    return;
+                }
+
+                picketObservableList.setAll(loadedPickets);
+                savedStateSection = List.copyOf(loadedPickets);
+                picketIndex.set(0);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
-                return;
             }
-            picketIndex.set(0);
         }
     }
 
@@ -250,6 +263,14 @@ public class MainViewController extends Controller {
             }
             try {
                 Picket newPicket = fileManager.loadModelDataFromMODFile(file, picket.get());
+
+                var violations = validator.validate(newPicket);
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage());
+                    return;
+                }
+
                 picket.set(newPicket);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
@@ -333,13 +354,18 @@ public class MainViewController extends Controller {
 
     private void addEXP(File file) {
         try {
-            picketObservableList.add(fileManager.loadPicketFromEXPFile(file));
+            Picket picketFromEXPFile = fileManager.loadPicketFromEXPFile(file);
+            var violations = validator.validate(picket);
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage()).show();
+                return;
+            }
+            picketObservableList.add(picketFromEXPFile);
+            picketIndex.set(picketObservableList.size() - 1);
+            compatibilityModeAlert();
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
-            return;
         }
-        picketIndex.set(picketObservableList.size() - 1);
-        compatibilityModeAlert();
     }
 
     /**
