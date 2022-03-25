@@ -8,6 +8,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -44,7 +46,7 @@ public class ModelTableController extends Controller {
     private TableView<ModelDataRow> table;
     @Inject
     @Named("ImportMOD")
-    private Runnable importMOD;
+    private EventHandler<Event> importMOD;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -281,7 +283,7 @@ public class ModelTableController extends Controller {
     private void setIfValidElseAlert(ModelData newModelData) {
         Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
         if (!violations.isEmpty()) {
-            alertsFactory.violationsAlert(violations, getStage());
+            alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
             picket.set(
@@ -295,7 +297,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void importModel() {
-        importMOD.run();
+    private void importModel(Event event) {
+        importMOD.handle(event);
     }
 }
