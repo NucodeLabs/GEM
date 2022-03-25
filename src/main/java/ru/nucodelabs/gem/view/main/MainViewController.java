@@ -131,7 +131,7 @@ public class MainViewController extends Controller {
             update();
         });
 
-        picketObservableList.setAll(List.copyOf(storageManager.getSavedState().pickets()));
+        picketObservableList.setAll(storageManager.getSavedState().pickets());
     }
 
     @Override
