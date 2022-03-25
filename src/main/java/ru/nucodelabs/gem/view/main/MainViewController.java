@@ -300,7 +300,7 @@ public class MainViewController extends Controller {
             try {
                 storageManager.savePicketToJsonFile(file, picket.get());
             } catch (Exception e) {
-                alertsFactory.simpleExceptionAlert(e, getStage());
+                alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
         }
     }
