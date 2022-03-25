@@ -8,6 +8,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Загружает файлы и хранит копию сохраненного на диске состояния разреза
+ */
 public class StorageManager implements FileManager {
 
     private final FileManager fileManagerDelegate;

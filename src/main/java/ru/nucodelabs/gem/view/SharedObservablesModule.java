@@ -18,24 +18,36 @@ import java.util.ArrayList;
  * Используются для коммуникации между контроллерами
  */
 public class SharedObservablesModule extends AbstractModule {
+    /**
+     * Observable список отображаемых пикетов - разрез
+     */
     @Provides
     @Singleton
     private ObservableList<Picket> providePickets() {
         return FXCollections.observableList(new ArrayList<>());
     }
 
+    /**
+     * Индекс текущего отображаемого пикета для контроллеров, которые с ним взаимодействуют
+     */
     @Provides
     @Singleton
-    private IntegerProperty provideIntProperty() {
+    private IntegerProperty providePicketIndexProperty() {
         return new SimpleIntegerProperty(0);
     }
 
+    /**
+     * Текущий отображаемый пикет для контроллеров, которые отображают один пикет
+     */
     @Provides
     @Singleton
     private ObjectProperty<Picket> providePicketProperty() {
         return new SimpleObjectProperty<>();
     }
 
+    /**
+     * Текущий отображаемый пикет для контроллеров которые его не модифицируют (урезанный интерфейс)
+     */
     @Provides
     private ObservableObjectValue<Picket> providePicketObservable(ObjectProperty<Picket> picketObjectProperty) {
         return picketObjectProperty;
