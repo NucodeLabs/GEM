@@ -6,7 +6,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -61,7 +62,8 @@ public class FXUtils {
                     e -> {
                         KeyCodeCombination closeShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
                         if (closeShortcut.match(e)) {
-                            ((Stage) root.getScene().getWindow()).close();
+                            Window window = root.getScene().getWindow();
+                            window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
                         }
                     }
             );
