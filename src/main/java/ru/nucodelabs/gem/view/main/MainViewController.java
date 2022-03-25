@@ -5,6 +5,7 @@ import jakarta.validation.Validator;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -142,21 +143,7 @@ public class MainViewController extends Controller {
             FXUtils.addCloseShortcutMacOS(getStage().getScene().getRoot());
         }
 
-        getStage().setOnCloseRequest(e -> {
-            if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
-                Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-                saveDialog.initOwner(getStage());
-                Optional<ButtonType> answer = saveDialog.showAndWait();
-                if (answer.isPresent()) {
-                    if (answer.get() == ButtonType.YES) {
-                        saveSection();
-                        e.consume();
-                    } else if (answer.get() == ButtonType.CANCEL) {
-                        e.consume();
-                    }
-                }
-            }
-        });
+        getStage().setOnCloseRequest(this::askToSave);
     }
 
     @Override
@@ -165,18 +152,9 @@ public class MainViewController extends Controller {
     }
 
     @FXML
-    public void closeFile() {
-        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
-            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-            saveDialog.initOwner(getStage());
-            Optional<ButtonType> answer = saveDialog.showAndWait();
-            if (answer.isPresent()) {
-                if (answer.get() == ButtonType.YES) {
-                    saveSection();
-                } else if (answer.get() == ButtonType.CANCEL) {
-                    return;
-                }
-            }
+    public void closeFile(Event event) {
+        if (askToSave(event).isConsumed()) {
+            return;
         }
         picketObservableList.clear();
         storageManager.clearSavedState();
@@ -196,18 +174,9 @@ public class MainViewController extends Controller {
     }
 
     @FXML
-    public void openSection() {
-        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
-            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-            saveDialog.initOwner(getStage());
-            Optional<ButtonType> answer = saveDialog.showAndWait();
-            if (answer.isPresent()) {
-                if (answer.get() == ButtonType.YES) {
-                    saveSection();
-                } else if (answer.get() == ButtonType.CANCEL) {
-                    return;
-                }
-            }
+    public void openSection(Event event) {
+        if (askToSave(event).isConsumed()) {
+            return;
         }
         File file = jsonFileChooser.showOpenDialog(getStage());
         if (file != null) {
@@ -231,6 +200,22 @@ public class MainViewController extends Controller {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
         }
+    }
+
+    private Event askToSave(Event event) {
+        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
+            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
+            saveDialog.initOwner(getStage());
+            Optional<ButtonType> answer = saveDialog.showAndWait();
+            if (answer.isPresent()) {
+                if (answer.get() == ButtonType.YES) {
+                    saveSection();
+                } else if (answer.get() == ButtonType.CANCEL) {
+                    event.consume();
+                }
+            }
+        }
+        return event;
     }
 
     @FXML

@@ -3,6 +3,8 @@ package ru.nucodelabs.gem.view.main;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.SharedObservablesModule;
@@ -26,13 +28,13 @@ public class MainViewModule extends AbstractModule {
 
     @Provides
     @Named("ImportEXP")
-    private Runnable provideImportEXP(MainViewController controller) {
-        return controller::importEXP;
+    private EventHandler<Event> provideImportEXP(MainViewController controller) {
+        return event -> controller.importEXP();
     }
 
     @Provides
     @Named("OpenJSON")
-    private Runnable provideOpenSection(MainViewController controller) {
+    private EventHandler<Event> provideOpenSection(MainViewController controller) {
         return controller::openSection;
     }
 
