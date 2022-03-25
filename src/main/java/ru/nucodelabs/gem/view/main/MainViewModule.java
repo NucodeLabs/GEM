@@ -40,7 +40,7 @@ public class MainViewModule extends AbstractModule {
 
     @Provides
     @Named("ImportMOD")
-    private Runnable provideImportMOD(MainViewController controller) {
-        return controller::importMOD;
+    private EventHandler<Event> provideImportMOD(MainViewController controller) {
+        return event -> controller.importMOD();
     }
 }
