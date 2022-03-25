@@ -83,13 +83,9 @@ public class MainViewController extends Controller {
 
     @Inject
     public MainViewController(
-            // Текущий отображаемый пикет
             ObjectProperty<Picket> picket,
-            // Индекс текущего пикета
             IntegerProperty picketIndex,
-            // Список текущий пикетов
             ObservableList<Picket> picketObservableList,
-            // Сохраненное на диске состояние (можно заинжектить допустим авто-сохранение)
             StorageManager storageManager) {
         this.picket = picket;
         this.picketIndex = picketIndex;
