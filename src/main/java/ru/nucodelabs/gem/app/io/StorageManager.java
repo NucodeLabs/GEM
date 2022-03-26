@@ -23,15 +23,15 @@ public class StorageManager implements FileManager {
     }
 
     @Override
-    public List<Picket> loadSectionFromJsonFile(File jsonFile) throws Exception {
-        List<Picket> loaded = fileManagerDelegate.loadSectionFromJsonFile(jsonFile);
-        savedState = new Section(List.copyOf(loaded));
+    public Section loadSectionFromJsonFile(File jsonFile) throws Exception {
+        Section loaded = fileManagerDelegate.loadSectionFromJsonFile(jsonFile);
+        savedState = new Section(List.copyOf(loaded.pickets()));
         return loaded;
     }
 
     @Override
-    public void saveSectionToJsonFile(File jsonFile, List<Picket> section) throws Exception {
-        savedState = new Section(List.copyOf(section));
+    public void saveSectionToJsonFile(File jsonFile, Section section) throws Exception {
+        savedState = new Section(List.copyOf(section.pickets()));
         fileManagerDelegate.saveSectionToJsonFile(jsonFile, section);
     }
 

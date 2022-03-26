@@ -185,16 +185,16 @@ public class MainViewController extends Controller {
             }
 
             try {
-                List<Picket> loadedPickets = storageManager.loadSectionFromJsonFile(file);
+                Section loadedSection = storageManager.loadSectionFromJsonFile(file);
                 var violations =
-                        validator.validate(new Section(loadedPickets));
+                        validator.validate(loadedSection);
 
                 if (!violations.isEmpty()) {
                     alertsFactory.violationsAlert(violations, getStage()).show();
                     return;
                 }
 
-                picketObservableList.setAll(loadedPickets);
+                picketObservableList.setAll(loadedSection.pickets());
                 picketIndex.set(0);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
@@ -226,7 +226,7 @@ public class MainViewController extends Controller {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                storageManager.saveSectionToJsonFile(file, picketObservableList);
+                storageManager.saveSectionToJsonFile(file, new Section(picketObservableList));
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
