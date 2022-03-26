@@ -2,11 +2,11 @@ package ru.nucodelabs.gem.app.io;
 
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.files.sonet.*;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.List;
 
 public interface FileManager {
 
@@ -14,9 +14,9 @@ public interface FileManager {
         return new FileManagerImpl();
     }
 
-    List<Picket> loadSectionFromJsonFile(File jsonFile) throws Exception;
+    Section loadSectionFromJsonFile(File jsonFile) throws Exception;
 
-    void saveSectionToJsonFile(File jsonFile, List<Picket> section) throws Exception;
+    void saveSectionToJsonFile(File jsonFile, Section section) throws Exception;
 
     Picket loadPicketFromJsonFile(File jsonFile) throws Exception;
 
