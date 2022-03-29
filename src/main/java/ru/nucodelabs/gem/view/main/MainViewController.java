@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -34,7 +35,7 @@ import static java.util.Objects.requireNonNull;
 public class MainViewController extends Controller {
 
     private final StringProperty vesTitle = new SimpleStringProperty("");
-    private final StringProperty vesNumber = new SimpleStringProperty("0/0");
+    private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
     private final ObjectProperty<Picket> picket;
@@ -83,9 +84,9 @@ public class MainViewController extends Controller {
         this.storageManager = storageManager;
         picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
             if (c.next()) {
+                noFileOpened.set(c.getList().isEmpty());
                 // если список опустошили
                 if (c.getList().isEmpty()) {
-                    update();
                     picket.set(null);
                     return;
                 }
@@ -106,7 +107,6 @@ public class MainViewController extends Controller {
         // если индекс поменялся, поменять пикет на тот, что в списке по индексу
         picketIndex.addListener((observable, oldValue, newValue) -> {
             picket.set(picketObservableList.get(newValue.intValue()));
-            update();
         });
         // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
         picket.addListener((observable, oldValue, newValue) -> {
@@ -114,7 +114,6 @@ public class MainViewController extends Controller {
                     && !picketObservableList.isEmpty()) {
                 picketObservableList.set(picketIndex.get(), newValue);
             }
-            update();
         });
 
         picketObservableList.setAll(storageManager.getSavedState().pickets());
@@ -124,6 +123,28 @@ public class MainViewController extends Controller {
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
         noFileScreenController.visibleProperty().bind(noFileOpened);
+
+        vesNumber.bind(new StringBinding() {
+            {
+                super.bind(picketIndex, picketObservableList);
+            }
+
+            @Override
+            protected String computeValue() {
+                return (picketIndex.get() + 1) + "/" + picketObservableList.size();
+            }
+        });
+
+        vesTitle.bind(new StringBinding() {
+            {
+                super.bind(picket);
+            }
+
+            @Override
+            protected String computeValue() {
+                return picket.get() != null ? picket.get().name() : "-";
+            }
+        });
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
@@ -343,31 +364,12 @@ public class MainViewController extends Controller {
     }
 
     /**
-     * Adds files names to vesText
-     */
-    private void updateVESText() {
-        vesTitle.set(picketObservableList.get(picketIndex.get()).name());
-    }
-
-    private void updateVESNumber() {
-        vesNumber.set(picketIndex.get() + 1 + "/" + picketObservableList.size());
-    }
-
-    /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
         ExperimentalData experimentalData = picket.get().experimentalData();
         if (experimentalData != null && experimentalData.isUnsafe()) {
             alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
-        }
-    }
-
-    protected void update() {
-        noFileOpened.set(picketObservableList.isEmpty());
-        if (!picketObservableList.isEmpty()) {
-            updateVESText();
-            updateVESNumber();
         }
     }
 
