@@ -44,15 +44,8 @@ public class MisfitStacksController extends Controller {
     @Inject
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
 
-    /**
-     * Отображает отклонение модельных данных от экспериментальных для конкретного пикета.
-     * Если меняются только модельные данные, обновляется.
-     *
-     * @param picket пикет
-     */
     @Inject
-    public MisfitStacksController(
-            ObservableObjectValue<Picket> picket) {
+    public MisfitStacksController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {

@@ -80,7 +80,7 @@ public class MainViewController extends Controller {
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
-    Validator validator;
+    private Validator validator;
 
     @Inject
     public MainViewController(
