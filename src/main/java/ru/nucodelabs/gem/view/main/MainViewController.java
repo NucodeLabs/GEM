@@ -10,10 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
-import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -45,14 +42,6 @@ public class MainViewController extends Controller {
     private final ObservableList<Picket> picketObservableList;
     private final StorageManager storageManager;
 
-    // ++++++++++++++ FOR DEBUG ++++++++++++++
-    @FXML
-    public TextField sideLength;
-    @FXML
-    public TextField relThreshold;
-    @FXML
-    public TextField absThreshold;
-    // ++++++++++++++++++++++++++++++++++++++++
     @FXML
     private Stage root;
     @FXML
@@ -323,55 +312,13 @@ public class MainViewController extends Controller {
 
     @FXML
     public void inverseSolve() {
-        //Размер симплекса (по каждому измерению)
-        double SIDE_LENGTH = 0.1;
-
-        //Какие-то константы для SimplexOptimize
-        double RELATIVE_THRESHOLD = 1e-10;
-        double ABSOLUTE_THRESHOLD = 1e-30;
-
-        if (!sideLength.getText().isBlank()) {
-            try {
-                SIDE_LENGTH = Double.parseDouble(sideLength.getText());
-            } catch (NumberFormatException e) {
-                alertsFactory.simpleExceptionAlert(e).show();
-            }
-        }
-
-        if (!relThreshold.getText().isBlank()) {
-            try {
-                RELATIVE_THRESHOLD = Double.parseDouble(relThreshold.getText());
-            } catch (NumberFormatException e) {
-                alertsFactory.simpleExceptionAlert(e).show();
-            }
-        }
-
-        if (!absThreshold.getText().isBlank()) {
-            try {
-                ABSOLUTE_THRESHOLD = Double.parseDouble(absThreshold.getText());
-            } catch (NumberFormatException e) {
-                alertsFactory.simpleExceptionAlert(e).show();
-            }
-        }
-
-        MultivariateFunction multivariateFunction = new FunctionValue(
-                picket.get().experimentalData(),
-                new SquaresDiff()
-        );
-
-        InverseSolver inverseSolver = new InverseSolver(
-                picket.get(),
-                SIDE_LENGTH,
-                RELATIVE_THRESHOLD,
-                ABSOLUTE_THRESHOLD,
-                multivariateFunction
-        );
+        InverseSolver inverseSolver = new InverseSolver(picket.get());
 
         try {
             Picket newPicket = new Picket(
                     picket.get().name(),
                     picket.get().experimentalData(),
-                    inverseSolver.getOptimizedPicket()
+                    inverseSolver.getOptimizedModelData()
             );
             picket.set(newPicket);
         } catch (Exception e) {
