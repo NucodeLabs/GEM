@@ -23,6 +23,6 @@ public class InverseSolverTest {
                 picket.experimentalData(),
                 new SquaresDiff());
         InverseSolver inverseSolver = new InverseSolver(picket, SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, multivariateFunction);
-        ModelData modelData = inverseSolver.getOptimizedPicket();
+        ModelData modelData = inverseSolver.getOptimizedModelData();
     }
 }

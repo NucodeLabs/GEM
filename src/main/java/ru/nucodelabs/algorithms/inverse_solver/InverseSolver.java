@@ -8,6 +8,8 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
+import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
+import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 
@@ -15,11 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InverseSolver {
+
+    //Размер симплекса (по каждому измерению)
+    private static final double SIDE_LENGTH_DEFAULT = 0.1;
+
+    //Какие-то константы для SimplexOptimize
+    private static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
+    private static final double ABSOLUTE_THRESHOLD_DEFAULT = 1e-30;
+
     private final Picket picket;
     private final double sideLength;
     private final double relativeThreshold;
     private final double absoluteThreshold;
     private final MultivariateFunction multivariateFunction;
+
+    public InverseSolver(Picket picket) {
+        this(
+                picket,
+                SIDE_LENGTH_DEFAULT,
+                RELATIVE_THRESHOLD_DEFAULT,
+                ABSOLUTE_THRESHOLD_DEFAULT,
+                new FunctionValue(
+                        picket.experimentalData(),
+                        new SquaresDiff())
+        );
+    }
 
     public InverseSolver(
             Picket picket,
@@ -34,7 +56,7 @@ public class InverseSolver {
         this.multivariateFunction = multivariateFunction;
     }
 
-    public ModelData getOptimizedPicket() {
+    public ModelData getOptimizedModelData() {
         final int MAX_EVAL = 10000;
 
         ModelData modelData = picket.modelData();
