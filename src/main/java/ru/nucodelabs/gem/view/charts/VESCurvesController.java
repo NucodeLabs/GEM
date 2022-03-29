@@ -88,6 +88,8 @@ public class VESCurvesController extends Controller {
     }
 
     protected void update() {
+        lineChart.setAnimated(false);
+        lineChartYAxis.setAutoRanging(true);
         updateExpCurves();
         updateTheoreticalCurve();
         updateModelCurve();
@@ -129,27 +131,29 @@ public class VESCurvesController extends Controller {
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
-        if (picket.get().modelData() != null) {
-            modelCurveSeries.getNode().setCursor(Cursor.HAND);
-            modelCurveSeries.getNode().setOnMousePressed(e -> {
-                isDragging = true;
-                modelCurveDragger.detectPoints(e);
-                modelCurveDragger.setStyle();
-            });
-            modelCurveSeries.getNode().setOnMouseDragged(e -> {
-                isDragging = true;
-                picket.set(
-                        new Picket(
-                                picket.get().name(),
-                                picket.get().experimentalData(),
-                                modelCurveDragger.dragHandler(e, picket.get().modelData().clone()))
-                );
-            });
-            modelCurveSeries.getNode().setOnMouseReleased(e -> {
-                modelCurveDragger.resetStyle();
-                isDragging = false;
-            });
-        }
+        modelCurveSeries.getNode().setCursor(Cursor.HAND);
+        modelCurveSeries.getNode().setOnMousePressed(e -> {
+            isDragging = true;
+            lineChart.setAnimated(false);
+            lineChartYAxis.setAutoRanging(false);
+            modelCurveDragger.detectPoints(e);
+            modelCurveDragger.setStyle();
+        });
+        modelCurveSeries.getNode().setOnMouseDragged(e -> {
+            isDragging = true;
+            picket.set(
+                    new Picket(
+                            picket.get().name(),
+                            picket.get().experimentalData(),
+                            modelCurveDragger.dragHandler(e, picket.get().modelData().clone()))
+            );
+        });
+        modelCurveSeries.getNode().setOnMouseReleased(e -> {
+            modelCurveDragger.resetStyle();
+            isDragging = false;
+            lineChart.setAnimated(true);
+            lineChartYAxis.setAutoRanging(true);
+        });
     }
 
     private void updateExpCurves() {
@@ -185,9 +189,5 @@ public class VESCurvesController extends Controller {
         dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
-        if (picket.get().experimentalData() == null) {
-            dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, new XYChart.Series<>());
-            dataProperty.get().set(MOD_CURVE_SERIES_INDEX, new XYChart.Series<>());
-        }
     }
 }
