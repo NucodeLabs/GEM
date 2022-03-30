@@ -2,9 +2,9 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -12,14 +12,13 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -29,10 +28,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller {
+public class MainViewController extends AbstractController {
 
     private final StringProperty vesTitle = new SimpleStringProperty("");
     private final StringProperty vesNumber = new SimpleStringProperty();
@@ -82,47 +80,6 @@ public class MainViewController extends Controller {
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
         this.storageManager = storageManager;
-        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
-            if (c.next()) {
-                noFileOpened.set(c.getList().isEmpty());
-                // если список опустошили
-                if (c.getList().isEmpty()) {
-                    picket.set(null);
-                    return;
-                }
-                // если был удален последний пикет в то время когда он отображался
-                if (c.wasRemoved()
-                        && c.getFrom() == c.getTo()
-                        && c.getTo() == picketIndex.get()
-                        && picketIndex.get() >= c.getList().size()) {
-                    picketIndex.set(max(0, c.getList().size() - 1));
-                }
-                // если после изменения списка индекс не поменялся, но отображается не соответсвующий списку пикет
-                if (picket.get() == null
-                        || !picket.get().equals(c.getList().get(picketIndex.get()))) {
-                    picket.set(c.getList().get(picketIndex.get()));
-                }
-            }
-        });
-        // если индекс поменялся, поменять пикет на тот, что в списке по индексу
-        picketIndex.addListener((observable, oldValue, newValue) -> {
-            picket.set(picketObservableList.get(newValue.intValue()));
-        });
-        // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
-        picket.addListener((observable, oldValue, newValue) -> {
-            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))
-                    && !picketObservableList.isEmpty()) {
-                picketObservableList.set(picketIndex.get(), newValue);
-            }
-        });
-
-        picketObservableList.setAll(storageManager.getSavedState().pickets());
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        uiProperties = requireNonNull(resources);
-        noFileScreenController.visibleProperty().bind(noFileOpened);
 
         vesNumber.bind(new StringBinding() {
             {
@@ -145,6 +102,25 @@ public class MainViewController extends Controller {
                 return picket.get() != null ? picket.get().name() : "-";
             }
         });
+
+        noFileOpened.bind(new BooleanBinding() {
+            {
+                super.bind(picketObservableList);
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return picketObservableList.isEmpty();
+            }
+        });
+
+        picketObservableList.setAll(storageManager.getSavedState().pickets());
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        uiProperties = requireNonNull(resources);
+        noFileScreenController.visibleProperty().bind(noFileOpened);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
@@ -367,8 +343,7 @@ public class MainViewController extends Controller {
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = picket.get().experimentalData();
-        if (experimentalData != null && experimentalData.isUnsafe()) {
+        if (picket.get() != null && picket.get().experimentalData().isUnsafe()) {
             alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
         }
     }

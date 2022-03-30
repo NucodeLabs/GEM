@@ -12,14 +12,14 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VESCurvesController extends Controller {
+public class VESCurvesController extends AbstractController {
     /**
      * Constants
      */
@@ -53,7 +53,7 @@ public class VESCurvesController extends Controller {
     @Inject
     public VESCurvesController(ObjectProperty<Picket> picket) {
         this.picket = picket;
-        picket.addListener((observable, oldValue, newValue) -> {
+        this.picket.addListener((observable, oldValue, newValue) -> {
             if (isDragging) {
                 updateTheoreticalCurve();
             } else {

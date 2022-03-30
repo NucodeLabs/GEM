@@ -6,6 +6,6 @@ import javafx.stage.Stage;
 /**
  * Контроллер, который не только инициализируется FXML-загрузчиком, но и знает как добыть свою сцену
  */
-public abstract class Controller implements Initializable {
+public abstract class AbstractController implements Initializable {
     protected abstract Stage getStage();
 }

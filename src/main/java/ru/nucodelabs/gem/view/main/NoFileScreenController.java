@@ -7,13 +7,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NoFileScreenController extends Controller {
+public class NoFileScreenController extends AbstractController {
 
     @Inject
     @Named("ImportEXP")

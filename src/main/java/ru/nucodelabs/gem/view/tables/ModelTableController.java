@@ -17,8 +17,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -27,7 +27,7 @@ import java.util.*;
 import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
 import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
-public class ModelTableController extends Controller {
+public class ModelTableController extends AbstractController {
 
     private final ObjectProperty<Picket> picket;
     @FXML

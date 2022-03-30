@@ -10,7 +10,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PicketsBarController extends Controller {
+public class PicketsBarController extends AbstractController {
 
     private final ObservableList<Picket> picketObservableList;
     private final IntegerProperty picketIndex;

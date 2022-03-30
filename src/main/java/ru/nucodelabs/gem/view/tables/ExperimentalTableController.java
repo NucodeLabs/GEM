@@ -7,13 +7,13 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalDataRow;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ExperimentalTableController extends Controller {
+public class ExperimentalTableController extends AbstractController {
 
 
     private final ObjectProperty<Picket> picket;
