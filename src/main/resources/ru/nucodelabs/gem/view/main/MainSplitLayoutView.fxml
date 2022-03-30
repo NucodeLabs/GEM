@@ -25,17 +25,19 @@
                         <MenuItem text="%newWindow" onAction="#newWindow"/>
                         <Menu text="%open">
                             <MenuItem text="%section" fx:id="menuFileOpenSection" onAction="#openSection"/>
-                            <MenuItem text="%picket"/>
                         </Menu>
                         <Menu text="%import">
                             <Menu text="%picket">
                                 <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
                                 <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
+                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
                             </Menu>
                         </Menu>
                         <Menu text="%save">
                             <MenuItem text="%section" onAction="#saveSection" disable="${controller.noFileOpened}"/>
-                            <MenuItem text="%picket"/>
+                        </Menu>
+                        <Menu text="%export">
+                            <MenuItem text="%picket" onAction="#exportJsonPicket"/>
                         </Menu>
                         <MenuItem text="%close" onAction="#closeFile"/>
                     </Menu>

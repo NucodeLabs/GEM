@@ -1,7 +1,7 @@
 #include <MisfitFunctions.h>
 #include <misfitJNI_exports.h>
 
-JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateRelativeDeviation(
+JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateRelativeDeviation(
     JNIEnv *env,
     jobject obj,
     jdouble resistanceExperimental, 
@@ -14,7 +14,7 @@ JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculat
     );
 }
 
-JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateRelativeDeviationWithError(
+JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateRelativeDeviationWithError(
     JNIEnv *env,
     jobject obj,
     jdouble resistanceExperimental, 
@@ -29,7 +29,7 @@ JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculat
     );
 }
 
-JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_MisfitFunctions_calculateResistanceApparent(
+JNIEXPORT jdouble JNICALL Java_ru_nucodelabs_algorithms_charts_MisfitFunctions_calculateResistanceApparent(
     JNIEnv *env,
     jobject obj,
     jdouble AB_2,

@@ -1,22 +1,24 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
+import jakarta.validation.Validator;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.inverseSolver.InverseSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
+import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.core.utils.OSDetect;
-import ru.nucodelabs.gem.dao.Section;
-import ru.nucodelabs.gem.dao.SectionFactory;
-import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.alerts.IncorrectFileAlert;
-import ru.nucodelabs.gem.view.alerts.UnsafeDataAlert;
+import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.io.StorageManager;
+import ru.nucodelabs.gem.utils.FXUtils;
+import ru.nucodelabs.gem.utils.OSDetect;
+import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -28,15 +30,16 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class MainViewController extends Controller {
+public class MainViewController extends AbstractController {
 
     private final StringProperty vesTitle = new SimpleStringProperty("");
-    private final StringProperty vesNumber = new SimpleStringProperty("0/0");
+    private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
     private final ObjectProperty<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
+    private final StorageManager storageManager;
 
     @FXML
     private Stage root;
@@ -50,9 +53,6 @@ public class MainViewController extends Controller {
     @Inject
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
-    private Section savedStateSection;
-    @Inject
-    private Provider<SectionFactory> sectionFactoryProvider;
     @Inject
     @Named("EXP")
     private FileChooser expFileChooser;
@@ -65,76 +65,75 @@ public class MainViewController extends Controller {
     @Inject
     @Named("Save")
     private Provider<Dialog<ButtonType>> saveDialogProvider;
+    @Inject
+    private AlertsFactory alertsFactory;
+    @Inject
+    private Validator validator;
 
     @Inject
     public MainViewController(
             ObjectProperty<Picket> picket,
             IntegerProperty picketIndex,
             ObservableList<Picket> picketObservableList,
-            Section savedStateSection) {
+            StorageManager storageManager) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
-        this.savedStateSection = savedStateSection;
-        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
-            if (c.next()) {
-                // если был удален последний пикет в то время когда он отображался
-                if (c.wasRemoved()
-                        && c.getFrom() == c.getTo()
-                        && c.getTo() == picketIndex.get()
-                        && picketIndex.get() >= picketObservableList.size()) {
-                    picketIndex.set(picketObservableList.size() - 1);
-                }
-                // если после изменения списка индекс не поменялся, но отображается не соответсвующий списку пикет
-                if (picket.get() == null
-                        || !picket.get().equals(picketObservableList.get(picketIndex.get()))) {
-                    picket.set(picketObservableList.get(picketIndex.get()));
-                }
+        this.storageManager = storageManager;
+
+        bindToData(picket, picketIndex, picketObservableList);
+
+        picketObservableList.setAll(storageManager.getSavedState().pickets());
+    }
+
+    private void bindToData(ObjectProperty<Picket> picket, IntegerProperty picketIndex, ObservableList<Picket> picketObservableList) {
+        vesNumber.bind(new StringBinding() {
+            {
+                super.bind(picketIndex, picketObservableList);
+            }
+
+            @Override
+            protected String computeValue() {
+                return (picketIndex.get() + 1) + "/" + picketObservableList.size();
             }
         });
-        // если индекс поменялся, поменять пикет на тот, что в списке по индексу
-        picketIndex.addListener((observable, oldValue, newValue) -> {
-            picket.set(picketObservableList.get(newValue.intValue()));
-            update();
-        });
-        // если пикет изменился, но не переключился, а поменял значения, то заносим его в список
-        picket.addListener((observable, oldValue, newValue) -> {
-            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))) {
-                picketObservableList.set(picketIndex.get(), picket.get());
+
+        vesTitle.bind(new StringBinding() {
+            {
+                super.bind(picket);
             }
-            update();
+
+            @Override
+            protected String computeValue() {
+                return picket.get() != null ? picket.get().name() : "-";
+            }
+        });
+
+        noFileOpened.bind(new BooleanBinding() {
+            {
+                super.bind(picketObservableList);
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return picketObservableList.isEmpty();
+            }
         });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         uiProperties = requireNonNull(resources);
+        noFileScreenController.visibleProperty().bind(noFileOpened);
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+            FXUtils.addCloseShortcutMacOS(getStage().getScene().getRoot());
         }
 
-        getStage().setOnCloseRequest(e -> {
-            if (isModified()) {
-                Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-                saveDialog.initOwner(getStage());
-                Optional<ButtonType> answer = saveDialog.showAndWait();
-                if (answer.isPresent()) {
-                    if (answer.get() == ButtonType.YES) {
-                        saveSection();
-                        e.consume();
-                    } else if (answer.get() == ButtonType.CANCEL) {
-                        e.consume();
-                    }
-                }
-            }
-        });
-    }
-
-    private boolean isModified() {
-        return !savedStateSection.getPickets().equals(picketObservableList);
+        getStage().setOnCloseRequest(this::askToSave);
     }
 
     @Override
@@ -143,20 +142,12 @@ public class MainViewController extends Controller {
     }
 
     @FXML
-    public void closeFile() {
-        if (isModified()) {
-            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
-            saveDialog.initOwner(getStage());
-            Optional<ButtonType> answer = saveDialog.showAndWait();
-            if (answer.isPresent()) {
-                if (answer.get() == ButtonType.YES) {
-                    saveSection();
-                } else if (answer.get() == ButtonType.CANCEL) {
-                    return;
-                }
-            }
+    public void closeFile(Event event) {
+        if (askToSave(event).isConsumed()) {
+            return;
         }
-        getStage().close();
+        picketObservableList.clear();
+        storageManager.clearSavedState();
     }
 
     @FXML
@@ -173,8 +164,36 @@ public class MainViewController extends Controller {
     }
 
     @FXML
-    public void openSection() {
-        if (isModified()) {
+    public void openSection(Event event) {
+        if (askToSave(event).isConsumed()) {
+            return;
+        }
+        File file = jsonFileChooser.showOpenDialog(getStage());
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                Section loadedSection = storageManager.loadSectionFromJsonFile(file);
+                var violations =
+                        validator.validate(loadedSection);
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage()).show();
+                    return;
+                }
+
+                picketObservableList.setAll(loadedSection.pickets());
+                picketIndex.set(0);
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    private Event askToSave(Event event) {
+        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -182,24 +201,11 @@ public class MainViewController extends Controller {
                 if (answer.get() == ButtonType.YES) {
                     saveSection();
                 } else if (answer.get() == ButtonType.CANCEL) {
-                    return;
+                    event.consume();
                 }
             }
         }
-        File file = jsonFileChooser.showOpenDialog(getStage());
-        if (file != null) {
-            if (file.getParentFile().isDirectory()) {
-                jsonFileChooser.setInitialDirectory(file.getParentFile());
-            }
-            try {
-                savedStateSection.loadFromJson(file);
-            } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
-                return;
-            }
-            picketObservableList.setAll(savedStateSection.getPickets());
-            picketIndex.set(0);
-        }
+        return event;
     }
 
     @FXML
@@ -210,11 +216,9 @@ public class MainViewController extends Controller {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Section newSectionState = sectionFactoryProvider.get().create(picketObservableList);
-                newSectionState.saveToJson(file);
-                savedStateSection = newSectionState.clone();
+                storageManager.saveSectionToJsonFile(file, new Section(picketObservableList));
             } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
             }
         }
     }
@@ -239,14 +243,54 @@ public class MainViewController extends Controller {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Picket newPicket =
-                        sectionFactoryProvider
-                                .get()
-                                .create(picketObservableList)
-                                .loadModelDataFromMODFile(picketIndex.get(), file);
+                Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
+
+                var violations = validator.validate(newPicket);
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage());
+                    return;
+                }
+
                 picket.set(newPicket);
             } catch (Exception e) {
-                new IncorrectFileAlert(e, getStage()).show();
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    @FXML
+    public void importJsonPicket() {
+        File file = jsonFileChooser.showOpenDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
+                picketObservableList.add(loadedPicket);
+                picketIndex.set(picketObservableList.size() - 1);
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    @FXML
+    public void exportJsonPicket() {
+        File file = jsonFileChooser.showSaveDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                storageManager.savePicketToJsonFile(file, picket.get());
+            } catch (Exception e) {
+                alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
         }
     }
@@ -269,60 +313,43 @@ public class MainViewController extends Controller {
 
     @FXML
     public void inverseSolve() {
+        InverseSolver inverseSolver = new InverseSolver(picket.get());
+
         try {
-            Picket solvedPicket = new Picket(
+            Picket newPicket = new Picket(
                     picket.get().name(),
                     picket.get().experimentalData(),
-                    InverseSolver.getOptimizedPicket(picket.get())
+                    inverseSolver.getOptimizedModelData()
             );
-            picket.set(solvedPicket);
+            picket.set(newPicket);
         } catch (Exception e) {
-            new UnsafeDataAlert(picket.get().name(), getStage()).show();
+            alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
         }
     }
 
     private void addEXP(File file) {
         try {
-            sectionFactoryProvider
-                    .get()
-                    .create(picketObservableList)
-                    .loadExperimentalDataFromEXPFile(file);
+            Picket picketFromEXPFile = storageManager.loadPicketFromEXPFile(file);
+            var violations = validator.validate(picket);
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage()).show();
+                return;
+            }
+            picketObservableList.add(picketFromEXPFile);
+            picketIndex.set(picketObservableList.size() - 1);
+            compatibilityModeAlert();
         } catch (Exception e) {
-            new IncorrectFileAlert(e, getStage()).show();
-            return;
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
-        picketIndex.set(picketObservableList.size() - 1);
-        compatibilityModeAlert();
-    }
-
-    /**
-     * Adds files names to vesText
-     */
-    private void updateVESText() {
-        vesTitle.set(picketObservableList.get(picketIndex.get()).name());
-    }
-
-    private void updateVESNumber() {
-        vesNumber.set(picketIndex.get() + 1 + "/" + picketObservableList.size());
     }
 
     /**
      * Warns about compatibility mode if data is unsafe
      */
     private void compatibilityModeAlert() {
-        ExperimentalData experimentalData = picket.get().experimentalData();
-        if (experimentalData != null && experimentalData.isUnsafe()) {
-            new UnsafeDataAlert(picket.get().name(), getStage()).show();
+        if (picket.get() != null && picket.get().experimentalData().isUnsafe()) {
+            alertsFactory.unsafeDataAlert(picket.get().name(), getStage()).show();
         }
-    }
-
-    protected void update() {
-        if (!picketObservableList.isEmpty()) {
-            noFileOpened.set(false);
-            noFileScreenController.hide();
-        }
-        updateVESText();
-        updateVESNumber();
     }
 
     public String getVesTitle() {

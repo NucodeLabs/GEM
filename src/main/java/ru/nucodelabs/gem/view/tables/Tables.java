@@ -2,27 +2,45 @@ package ru.nucodelabs.gem.view.tables;
 
 import javafx.util.StringConverter;
 
-public final class Tables {
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+final class Tables {
+
+    private final static DecimalFormat DECIMAL_FORMAT;
+    private final static StringConverter<Double> CONVERTER = new StringConverter<>() {
+        @Override
+        public String toString(Double object) {
+            return decimalFormat().format(object);
+        }
+
+        @Override
+        public Double fromString(String string) {
+            try {
+                return Double.parseDouble(string);
+            } catch (NumberFormatException e) {
+                return Double.NaN;
+            }
+        }
+    };
+
+    static {
+        DECIMAL_FORMAT = new DecimalFormat("#.##");
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+    }
+
     /**
      * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
+     * Rounds to 2 decimal places
      */
     static StringConverter<Double> doubleStringConverter() {
-        return new StringConverter<>() {
-            @Override
-            public String toString(Double object) {
-                return object.toString();
-            }
-
-            @Override
-            public Double fromString(String string) {
-                try {
-                    return Double.parseDouble(string);
-                } catch (NumberFormatException e) {
-                    return Double.NaN;
-                }
-            }
-        };
+        return CONVERTER;
     }
+
+    static DecimalFormat decimalFormat() {
+        return DECIMAL_FORMAT;
+    }
+
 
     private Tables() {
     }

@@ -8,25 +8,26 @@ import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.ModelTableLine;
+import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.convert.VESTablesConverters;
+import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
 import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
-public class ModelTableController extends Controller {
+public class ModelTableController extends AbstractController {
 
     private final ObjectProperty<Picket> picket;
     @FXML
@@ -42,39 +43,46 @@ public class ModelTableController extends Controller {
     @FXML
     public Button addBtn;
     @FXML
-    private TableView<ModelTableLine> table;
+    private TableView<ModelDataRow> table;
     @Inject
     @Named("ImportMOD")
-    private Runnable importMOD;
+    private EventHandler<Event> importMOD;
+    @Inject
+    private AlertsFactory alertsFactory;
+    @Inject
+    private Validator validator;
 
     private List<TextField> requiredForAdd;
 
     @Inject
-    public ModelTableController(
-            ObjectProperty<Picket> picket) {
+    public ModelTableController(ObjectProperty<Picket> picket) {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {
-            if (oldValue == null
-                    || oldValue.modelData() == null
-                    || !oldValue.modelData().equals(newValue.modelData())) {
-                update();
+            if (newValue != null) {
+                if (oldValue != null
+                        && !oldValue.modelData().equals(newValue.modelData())) {
+                    update();
+                } else if (oldValue == null) {
+                    update();
+                }
             }
         });
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ModelTableLine>) c -> {
+                .addListener((ListChangeListener<? super ModelDataRow>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
                     }
                 });
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
-            ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
+            ((TableColumn<ModelDataRow, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
@@ -124,19 +132,12 @@ public class ModelTableController extends Controller {
     }
 
     protected void update() {
-        ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
-
-        if (picket.get().modelData() != null) {
-            modelTableLines = VESTablesConverters.toModelTableData(
-                    picket.get().modelData()
-            );
-        }
-
-        table.itemsProperty().setValue(modelTableLines);
+        ObservableList<ModelDataRow> modelDataRows = FXCollections.observableList(picket.get().modelData().getRows());
+        table.itemsProperty().setValue(modelDataRows);
     }
 
     @FXML
-    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         newPower.set(index, event.getNewValue());
@@ -153,7 +154,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         newResistance.set(index, event.getNewValue());
@@ -171,7 +172,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().resistance());
         newPolarization.set(index, event.getNewValue());
@@ -185,15 +186,6 @@ public class ModelTableController extends Controller {
         } else {
             table.refresh();
         }
-    }
-
-    private void showAlert(Set<ConstraintViolation<ModelData>> violations) {
-        String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("\n"));
-        Alert alert = new Alert(Alert.AlertType.ERROR, message);
-        alert.initOwner(getStage());
-        alert.show();
     }
 
     @FXML
@@ -251,7 +243,7 @@ public class ModelTableController extends Controller {
             Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
             Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
             if (!violations.isEmpty()) {
-                showAlert(violations);
+                alertsFactory.violationsAlert(violations, getStage()).show();
             } else {
                 picket.set(new Picket(
                         picket.get().name(),
@@ -264,13 +256,13 @@ public class ModelTableController extends Controller {
 
     @FXML
     public void deleteSelected() {
-        List<ModelTableLine> selectedRows = table.getSelectionModel().getSelectedItems();
+        List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
 
         List<Integer> indicesToRemove = selectedRows.stream()
-                .map(ModelTableLine::index)
+                .map(ModelDataRow::index)
                 .sorted(Collections.reverseOrder())
                 .toList();
 
@@ -289,10 +281,9 @@ public class ModelTableController extends Controller {
     }
 
     private void setIfValidElseAlert(ModelData newModelData) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
         if (!violations.isEmpty()) {
-            showAlert(violations);
+            alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
             picket.set(
@@ -306,7 +297,7 @@ public class ModelTableController extends Controller {
     }
 
     @FXML
-    private void importModel() {
-        importMOD.run();
+    private void importModel(Event event) {
+        importMOD.handle(event);
     }
 }

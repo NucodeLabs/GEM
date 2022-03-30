@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
-import javax.annotation.Nullable;
+import java.io.Serializable;
 
 public record Picket(
         // Наименование пикета
@@ -13,9 +13,9 @@ public record Picket(
         // Экспериментальные(полевые) данные
         @Valid @NotNull ExperimentalData experimentalData,
         // Данные модели
-        @Valid @Nullable ModelData modelData
-) {
-    public static Picket of(STTFile sttFile, EXPFile expFile) {
+        @Valid @NotNull ModelData modelData
+) implements Serializable {
+    public static Picket from(STTFile sttFile, EXPFile expFile) {
         String fileName = expFile.getFile().getName();
         String newName;
         if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
@@ -23,7 +23,7 @@ public record Picket(
         } else {
             newName = fileName;
         }
-        ExperimentalData newExperimentalData = ExperimentalData.of(sttFile, expFile);
-        return new Picket(newName, newExperimentalData, null);
+        ExperimentalData newExperimentalData = ExperimentalData.from(sttFile, expFile);
+        return new Picket(newName, newExperimentalData, ModelData.empty());
     }
 }
