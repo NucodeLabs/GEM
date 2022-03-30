@@ -2,12 +2,12 @@ package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import static ru.nucodelabs.data.ves.Sizes.isEqualSizes;
-import static ru.nucodelabs.data.ves.Sizes.minSize;
+import static ru.nucodelabs.data.ves.SizesReflectionUtils.isEqualSizes;
+import static ru.nucodelabs.data.ves.SizesReflectionUtils.minSize;
 
-public interface Sizeable {
+interface Sizeable {
     @JsonIgnore
-    default int getSize() {
+    default int size() {
         return minSize(this, true);
     }
 
