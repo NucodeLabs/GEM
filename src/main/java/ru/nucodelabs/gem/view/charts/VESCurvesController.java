@@ -20,6 +20,7 @@ import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -57,6 +58,8 @@ public class VESCurvesController extends AbstractController {
     private AppService appService;
     @Inject
     private ModelCurveDraggedCommand.Factory commandFactory;
+    @Inject
+    private ObservableList<Picket> picketObservableList;
 
     @Inject
     public VESCurvesController(ObjectProperty<Picket> picket) {
@@ -139,10 +142,10 @@ public class VESCurvesController extends AbstractController {
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
-        AtomicReference<Picket> beforeDragState = new AtomicReference<>();
+        AtomicReference<List<Picket>> beforeDragState = new AtomicReference<>();
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> {
-            beforeDragState.set(picket.get());
+            beforeDragState.set(List.copyOf(picketObservableList));
             isDragging = true;
             lineChart.setAnimated(false);
             lineChartYAxis.setAutoRanging(false);

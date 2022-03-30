@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.command.AddPicketCommand;
 import ru.nucodelabs.gem.app.command.Command;
 import ru.nucodelabs.gem.app.command.CommandService;
 import ru.nucodelabs.gem.app.command.PicketModificationCommand;
@@ -40,6 +41,8 @@ public class AppService {
     private CommandService commandService;
     @Inject
     private PicketModificationCommand.Factory picketModificationCommandFactory;
+    @Inject
+    private AddPicketCommand.Factory addPicketCommandFactory;
     private Stage stage;
 
     @Inject
@@ -151,7 +154,7 @@ public class AppService {
                 alertsFactory.violationsAlert(violations, stage).show();
                 return;
             }
-            picketObservableList.add(picketFromEXPFile);
+            execute(addPicketCommandFactory.create(picketFromEXPFile));
             picketIndex.set(picketObservableList.size() - 1);
             compatibilityModeAlert();
         } catch (Exception e) {
@@ -185,7 +188,7 @@ public class AppService {
 
             try {
                 Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
-                picketObservableList.add(loadedPicket);
+                execute(addPicketCommandFactory.create(loadedPicket));
                 picketIndex.set(picketObservableList.size() - 1);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
