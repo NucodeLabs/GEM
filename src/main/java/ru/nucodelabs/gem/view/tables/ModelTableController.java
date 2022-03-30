@@ -1,15 +1,12 @@
 package ru.nucodelabs.gem.view.tables;
 
-import com.google.inject.name.Named;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -17,6 +14,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.command.PicketModificationCommand;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
@@ -45,12 +44,13 @@ public class ModelTableController extends AbstractController {
     @FXML
     private TableView<ModelDataRow> table;
     @Inject
-    @Named("ImportMOD")
-    private EventHandler<Event> importMOD;
+    private AppService appService;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
     private Validator validator;
+    @Inject
+    private PicketModificationCommand.Factory commandFactory;
 
     private List<TextField> requiredForAdd;
 
@@ -240,17 +240,7 @@ public class ModelTableController extends AbstractController {
                     newPower
             );
 
-            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-            Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
-            if (!violations.isEmpty()) {
-                alertsFactory.violationsAlert(violations, getStage()).show();
-            } else {
-                picket.set(new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                ));
-            }
+            setIfValidElseAlert(newModelData);
         }
     }
 
@@ -273,11 +263,7 @@ public class ModelTableController extends AbstractController {
             newPower.remove(index);
         });
 
-        picket.set(new Picket(
-                picket.get().name(),
-                picket.get().experimentalData(),
-                new ModelData(newResistance, newPolarization, newPower)
-        ));
+        setIfValidElseAlert(new ModelData(newResistance, newPolarization, newPower));
     }
 
     private void setIfValidElseAlert(ModelData newModelData) {
@@ -286,11 +272,13 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            picket.set(
-                    new Picket(
-                            picket.get().name(),
-                            picket.get().experimentalData(),
-                            newModelData
+            appService.execute(
+                    commandFactory.create(
+                            new Picket(
+                                    picket.get().name(),
+                                    picket.get().experimentalData(),
+                                    newModelData
+                            )
                     )
             );
         }
@@ -298,6 +286,6 @@ public class ModelTableController extends AbstractController {
 
     @FXML
     private void importModel(Event event) {
-        importMOD.handle(event);
+        appService.importMOD();
     }
 }
