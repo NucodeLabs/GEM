@@ -14,8 +14,8 @@ import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
 import ru.nucodelabs.algorithms.charts.Point;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.Controller;
 
 import javax.inject.Inject;
 import java.math.RoundingMode;
@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MisfitStacksController extends Controller {
+public class MisfitStacksController extends AbstractController {
 
 
     private final ObservableObjectValue<Picket> picket;

@@ -7,8 +7,10 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.FileChoosersModule;
-import ru.nucodelabs.gem.view.SharedObservablesModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
+import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
+import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -21,9 +23,12 @@ public class MainViewModule extends AbstractModule {
     protected void configure() {
         install(new FileChoosersModule());
         install(new DialogsModule());
-        install(new SharedObservablesModule());
+        install(new ObservableDataModule());
         install(new ChartsModule());
         bind(MainViewController.class).in(SINGLETON);
+        bind(VESCurvesController.class).in(SINGLETON);
+        bind(ModelTableController.class).in(SINGLETON);
+        bind(ExperimentalTableController.class).in(SINGLETON);
     }
 
     @Provides
