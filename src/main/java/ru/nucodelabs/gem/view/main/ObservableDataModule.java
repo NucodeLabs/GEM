@@ -58,10 +58,10 @@ public class ObservableDataModule extends AbstractModule {
                 if (picketObservableList.isEmpty()) {
                     return null;
                 } else {
-                    if (picketIndex.getValue() >= picketObservableList.size()) {
-                        picketIndex.setValue(picketObservableList.size() - 1);
+                    if (picketIndex.get() >= picketObservableList.size()) {
+                        picketIndex.set(picketObservableList.size() - 1);
                     }
-                    return picketObservableList.get(picketIndex.getValue());
+                    return picketObservableList.get(picketIndex.get());
                 }
             }
         });
