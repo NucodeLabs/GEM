@@ -81,6 +81,12 @@ public class MainViewController extends AbstractController {
         this.picketObservableList = picketObservableList;
         this.storageManager = storageManager;
 
+        bindToData(picket, picketIndex, picketObservableList);
+
+        picketObservableList.setAll(storageManager.getSavedState().pickets());
+    }
+
+    private void bindToData(ObjectProperty<Picket> picket, IntegerProperty picketIndex, ObservableList<Picket> picketObservableList) {
         vesNumber.bind(new StringBinding() {
             {
                 super.bind(picketIndex, picketObservableList);
@@ -113,8 +119,6 @@ public class MainViewController extends AbstractController {
                 return picketObservableList.isEmpty();
             }
         });
-
-        picketObservableList.setAll(storageManager.getSavedState().pickets());
     }
 
     @Override
