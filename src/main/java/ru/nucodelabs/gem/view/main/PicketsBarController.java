@@ -10,12 +10,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.command.RemovePicketCommand;
+import ru.nucodelabs.gem.app.command.SwapPicketsCommand;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -26,6 +28,13 @@ public class PicketsBarController extends AbstractController {
 
     @FXML
     public HBox container;
+
+    @Inject
+    private AppService appService;
+    @Inject
+    private RemovePicketCommand.Factory removeCommandFactory;
+    @Inject
+    private SwapPicketsCommand.Factory swapCommandFactory;
 
     @Inject
     public PicketsBarController(
@@ -68,15 +77,13 @@ public class PicketsBarController extends AbstractController {
             button.setOnAction(e -> picketIndex.set(picketNumber));
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
-            delete.setOnAction(e -> picketObservableList.remove(picketNumber));
+            delete.setOnAction(e -> appService.execute(removeCommandFactory.create(picketNumber)));
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
-            moveLeft.setOnAction(e ->
-                    Collections.swap(picketObservableList, picketNumber, picketNumber - 1));
+            moveLeft.setOnAction(e -> appService.execute(swapCommandFactory.create(picketNumber, picketNumber - 1)));
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
-            moveRight.setOnAction(e ->
-                    Collections.swap(picketObservableList, picketNumber, picketNumber + 1));
+            moveRight.setOnAction(e -> appService.execute(swapCommandFactory.create(picketNumber, picketNumber + 1)));
 
             if (picketObservableList.size() == 1) {
                 delete.setDisable(true);
