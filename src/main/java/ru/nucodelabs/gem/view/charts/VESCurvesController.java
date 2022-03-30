@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
 import com.google.inject.name.Named;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,12 +13,15 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.command.ModelCurveDraggedCommand;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class VESCurvesController extends AbstractController {
     /**
@@ -49,6 +53,10 @@ public class VESCurvesController extends AbstractController {
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
     @Inject
     private AlertsFactory alertsFactory;
+    @Inject
+    private AppService appService;
+    @Inject
+    private ModelCurveDraggedCommand.Factory commandFactory;
 
     @Inject
     public VESCurvesController(ObjectProperty<Picket> picket) {
@@ -131,8 +139,10 @@ public class VESCurvesController extends AbstractController {
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
+        AtomicReference<Picket> beforeDragState = new AtomicReference<>();
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> {
+            beforeDragState.set(picket.get());
             isDragging = true;
             lineChart.setAnimated(false);
             lineChartYAxis.setAutoRanging(false);
@@ -149,6 +159,7 @@ public class VESCurvesController extends AbstractController {
             );
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
+            appService.execute(commandFactory.create(beforeDragState.get(), picket.get().modelData()));
             modelCurveDragger.resetStyle();
             isDragging = false;
             lineChart.setAnimated(true);
@@ -189,5 +200,9 @@ public class VESCurvesController extends AbstractController {
         dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
         dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
         dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
+    }
+
+    public BooleanProperty legendVisibleProperty() {
+        return lineChart.legendVisibleProperty();
     }
 }

@@ -1,12 +1,11 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.inject.name.Named;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.app.AppService;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -15,24 +14,24 @@ import java.util.ResourceBundle;
 
 public class NoFileScreenController extends AbstractController {
 
+    private final AppService appService;
+
     @Inject
-    @Named("ImportEXP")
-    private EventHandler<Event> importEXP;
-    @Inject
-    @Named("OpenJSON")
-    private EventHandler<Event> openSection;
+    public NoFileScreenController(AppService appService) {
+        this.appService = appService;
+    }
 
     @FXML
     private VBox root;
 
     @FXML
     private void importEXP(Event event) {
-        importEXP.handle(event);
+        appService.importEXP();
     }
 
     @FXML
     private void openSection(Event event) {
-        openSection.handle(event);
+        appService.openSection(event);
     }
 
     @Override
