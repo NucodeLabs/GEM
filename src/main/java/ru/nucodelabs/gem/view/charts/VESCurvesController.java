@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.annotation.State;
 import ru.nucodelabs.gem.app.command.ModelCurveDraggedCommand;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -59,6 +60,7 @@ public class VESCurvesController extends AbstractController {
     @Inject
     private ModelCurveDraggedCommand.Factory commandFactory;
     @Inject
+    @State
     private ObservableList<Picket> picketObservableList;
 
     @Inject

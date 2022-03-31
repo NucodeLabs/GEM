@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.annotation.State;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -62,7 +63,7 @@ public class MainViewController extends AbstractController {
     public MainViewController(
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex,
-            ObservableList<Picket> picketObservableList,
+            @State ObservableList<Picket> picketObservableList,
             AppService appService) {
         this.picket = picket;
         this.picketIndex = picketIndex;

@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.app.command;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.annotation.State;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class PicketModificationCommand extends AbstractCommand {
     @AssistedInject
     public PicketModificationCommand(
             int picketIndex,
-            List<Picket> state,
+            @State List<Picket> state,
             @Assisted Picket newPicketValue) {
         super(state);
         this.picketIndex = picketIndex;
