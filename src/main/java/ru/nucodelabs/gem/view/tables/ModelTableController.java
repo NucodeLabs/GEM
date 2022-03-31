@@ -17,7 +17,7 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.command.PicketModificationCommand;
+import ru.nucodelabs.gem.app.command.PicketModificationOperation;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
@@ -52,7 +52,7 @@ public class ModelTableController extends AbstractController {
     @Inject
     private Validator validator;
     @Inject
-    private PicketModificationCommand.Factory commandFactory;
+    private PicketModificationOperation.Factory operationFactory;
 
     private List<TextField> requiredForAdd;
 
@@ -288,7 +288,7 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            appService.execute(commandFactory.create(newModelData));
+            appService.execute(operationFactory.create(newModelData));
         }
     }
 

@@ -7,8 +7,11 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Объект, над которым осуществляются операции
+ */
 @Qualifier
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
-public @interface State {
+public @interface Subject {
 }

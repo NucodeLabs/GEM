@@ -15,11 +15,11 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.annotation.State;
-import ru.nucodelabs.gem.app.command.AddPicketCommand;
-import ru.nucodelabs.gem.app.command.Command;
-import ru.nucodelabs.gem.app.command.CommandExecutor;
-import ru.nucodelabs.gem.app.command.PicketModificationCommand;
+import ru.nucodelabs.gem.app.annotation.Subject;
+import ru.nucodelabs.gem.app.command.AddPicketOperation;
+import ru.nucodelabs.gem.app.command.Operation;
+import ru.nucodelabs.gem.app.command.OperationExecutor;
+import ru.nucodelabs.gem.app.command.PicketModificationOperation;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
@@ -31,7 +31,7 @@ import java.util.Optional;
 public class AppService {
 
     private final StorageManager storageManager;
-    private final CommandExecutor commandExecutor;
+    private final OperationExecutor operationExecutor;
     private final Validator validator;
     private final FileChooser jsonFileChooser;
     private final FileChooser expFileChooser;
@@ -45,24 +45,24 @@ public class AppService {
     private Stage stage;
 
     @Inject
-    private PicketModificationCommand.Factory picketModificationCommandFactory;
+    private PicketModificationOperation.Factory picketModificationOperationFactory;
     @Inject
-    private AddPicketCommand.Factory addPicketCommandFactory;
+    private AddPicketOperation.Factory addPicketOperationFactory;
 
     @Inject
     public AppService(
             StorageManager storageManager,
-            CommandExecutor commandExecutor, Validator validator,
+            OperationExecutor operationExecutor, Validator validator,
             @Named("JSON") FileChooser jsonFileChooser,
             @Named("EXP") FileChooser expFileChooser,
             @Named("MOD") FileChooser modFileChooser,
             AlertsFactory alertsFactory,
             @Named("Save") Provider<Dialog<ButtonType>> saveDialogProvider,
-            @State ObservableList<Picket> picketObservableList,
+            @Subject ObservableList<Picket> picketObservableList,
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex) {
         this.storageManager = storageManager;
-        this.commandExecutor = commandExecutor;
+        this.operationExecutor = operationExecutor;
         this.jsonFileChooser = jsonFileChooser;
         this.validator = validator;
         this.expFileChooser = expFileChooser;
@@ -115,7 +115,7 @@ public class AppService {
 
                 picketObservableList.setAll(loadedSection.pickets());
                 picketIndex.set(0);
-                commandExecutor.clearHistory();
+                operationExecutor.clearHistory();
                 setWindowFileTitle(file);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
@@ -195,7 +195,7 @@ public class AppService {
                 alertsFactory.violationsAlert(violations, stage).show();
                 return;
             }
-            execute(addPicketCommandFactory.create(picketFromEXPFile));
+            execute(addPicketOperationFactory.create(picketFromEXPFile));
             picketIndex.set(picketObservableList.size() - 1);
             compatibilityModeAlert();
         } catch (Exception e) {
@@ -229,7 +229,7 @@ public class AppService {
 
             try {
                 Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
-                execute(addPicketCommandFactory.create(loadedPicket));
+                execute(addPicketOperationFactory.create(loadedPicket));
                 picketIndex.set(picketObservableList.size() - 1);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
@@ -254,7 +254,7 @@ public class AppService {
                     return;
                 }
 
-                execute(picketModificationCommandFactory.create(newPicket));
+                execute(picketModificationOperationFactory.create(newPicket));
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
@@ -265,7 +265,7 @@ public class AppService {
         InverseSolver inverseSolver = new InverseSolver(picket.get());
 
         try {
-            execute(picketModificationCommandFactory.create(inverseSolver.getOptimizedModelData()));
+            execute(picketModificationOperationFactory.create(inverseSolver.getOptimizedModelData()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, stage).show();
         }
@@ -286,15 +286,15 @@ public class AppService {
         resetWindowTitle();
     }
 
-    public void execute(Command command) {
-        commandExecutor.execute(command);
+    public void execute(Operation operation) {
+        operationExecutor.execute(operation);
     }
 
     public void undo() {
-        commandExecutor.undo();
+        operationExecutor.undo();
     }
 
     public void redo() {
-        commandExecutor.redo();
+        operationExecutor.redo();
     }
 }

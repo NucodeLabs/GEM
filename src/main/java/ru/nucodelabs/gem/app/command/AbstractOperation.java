@@ -4,12 +4,12 @@ import ru.nucodelabs.data.ves.Picket;
 
 import java.util.List;
 
-public abstract class AbstractCommand implements Command {
+public abstract class AbstractOperation implements Operation {
 
     protected final List<Picket> state;
     private final List<Picket> backup;
 
-    public AbstractCommand(List<Picket> state) {
+    public AbstractOperation(List<Picket> state) {
         this.state = state;
         backup = List.copyOf(state);
     }

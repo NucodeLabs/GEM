@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.app.command;
 
-public interface Command {
+public interface Operation {
     void undo();
 
     boolean execute();

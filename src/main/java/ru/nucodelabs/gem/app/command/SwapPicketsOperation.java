@@ -3,19 +3,19 @@ package ru.nucodelabs.gem.app.command;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.Collections;
 import java.util.List;
 
-public class SwapPicketsCommand extends AbstractCommand {
+public class SwapPicketsOperation extends AbstractOperation {
 
     private final int index1;
     private final int index2;
 
     @AssistedInject
-    public SwapPicketsCommand(
-            @State List<Picket> state,
+    public SwapPicketsOperation(
+            @Subject List<Picket> state,
             @Assisted("1") int index1,
             @Assisted("2") int index2) {
         super(state);
@@ -30,6 +30,6 @@ public class SwapPicketsCommand extends AbstractCommand {
     }
 
     public interface Factory {
-        SwapPicketsCommand create(@Assisted("1") int index1, @Assisted("2") int index2);
+        SwapPicketsOperation create(@Assisted("1") int index1, @Assisted("2") int index2);
     }
 }

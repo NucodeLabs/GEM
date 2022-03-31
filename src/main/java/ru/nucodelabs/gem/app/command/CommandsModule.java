@@ -6,7 +6,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.List;
 
@@ -14,15 +14,15 @@ public class CommandsModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new FactoryModuleBuilder()
-                .build(ModelCurveDraggedCommand.Factory.class));
+                .build(ModelCurveDraggedOperation.Factory.class));
         install(new FactoryModuleBuilder()
-                .build(PicketModificationCommand.Factory.class));
+                .build(PicketModificationOperation.Factory.class));
         install(new FactoryModuleBuilder()
-                .build(RemovePicketCommand.Factory.class));
+                .build(RemovePicketOperation.Factory.class));
         install(new FactoryModuleBuilder()
-                .build(SwapPicketsCommand.Factory.class));
+                .build(SwapPicketsOperation.Factory.class));
         install(new FactoryModuleBuilder()
-                .build(AddPicketCommand.Factory.class));
+                .build(AddPicketOperation.Factory.class));
     }
 
     @Provides
@@ -31,8 +31,8 @@ public class CommandsModule extends AbstractModule {
     }
 
     @Provides
-    @State
-    private List<Picket> currentState(@State ObservableList<Picket> picketObservableList) {
+    @Subject
+    private List<Picket> currentState(@Subject ObservableList<Picket> picketObservableList) {
         return picketObservableList;
     }
 }
