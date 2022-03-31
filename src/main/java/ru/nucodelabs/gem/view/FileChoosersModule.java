@@ -26,7 +26,7 @@ public class FileChoosersModule extends AbstractModule {
     private FileChooser provideJSONFileChooser(ResourceBundle ui) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JSON - " + ui.getString("section"), "*.json")
+                new FileChooser.ExtensionFilter("JSON - " + ui.getString("section"), "*.json, *.JSON")
         );
         return chooser;
     }
