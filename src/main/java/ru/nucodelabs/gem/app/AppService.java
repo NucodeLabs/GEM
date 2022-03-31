@@ -265,12 +265,7 @@ public class AppService {
         InverseSolver inverseSolver = new InverseSolver(picket.get());
 
         try {
-            Picket newPicket = new Picket(
-                    picket.get().name(),
-                    picket.get().experimentalData(),
-                    inverseSolver.getOptimizedModelData()
-            );
-            execute(picketModificationCommandFactory.create(newPicket));
+            execute(picketModificationCommandFactory.create(inverseSolver.getOptimizedModelData()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, stage).show();
         }
