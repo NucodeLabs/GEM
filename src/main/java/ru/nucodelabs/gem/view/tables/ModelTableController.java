@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.tables;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -28,7 +28,7 @@ import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
 public class ModelTableController extends AbstractController {
 
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
     @FXML
     public TextField powerTextField;
     @FXML
@@ -55,7 +55,7 @@ public class ModelTableController extends AbstractController {
     private List<TextField> requiredForAdd;
 
     @Inject
-    public ModelTableController(ObjectProperty<Picket> picket) {
+    public ModelTableController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {

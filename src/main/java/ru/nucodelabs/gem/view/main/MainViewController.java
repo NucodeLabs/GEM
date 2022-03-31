@@ -4,6 +4,7 @@ import com.google.inject.name.Named;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ public class MainViewController extends AbstractController {
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
     private final AppService appService;
@@ -59,7 +60,7 @@ public class MainViewController extends AbstractController {
 
     @Inject
     public MainViewController(
-            ObjectProperty<Picket> picket,
+            ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex,
             ObservableList<Picket> picketObservableList,
             AppService appService) {
