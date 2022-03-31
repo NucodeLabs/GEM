@@ -28,6 +28,7 @@ import java.util.Optional;
 public class AppService {
 
     private final StorageManager storageManager;
+    private final CommandExecutor commandExecutor;
     private final Validator validator;
     private final FileChooser jsonFileChooser;
     private final FileChooser expFileChooser;
@@ -37,18 +38,18 @@ public class AppService {
     private final ObservableList<Picket> picketObservableList;
     private final ObjectProperty<Picket> picket;
     private final IntegerProperty picketIndex;
-    @Inject
-    private CommandExecutor commandExecutor;
+
+    private Stage stage;
+
     @Inject
     private PicketModificationCommand.Factory picketModificationCommandFactory;
     @Inject
     private AddPicketCommand.Factory addPicketCommandFactory;
-    private Stage stage;
 
     @Inject
     public AppService(
             StorageManager storageManager,
-            Validator validator,
+            CommandExecutor commandExecutor, Validator validator,
             @Named("JSON") FileChooser jsonFileChooser,
             @Named("EXP") FileChooser expFileChooser,
             @Named("MOD") FileChooser modFileChooser,
@@ -58,6 +59,7 @@ public class AppService {
             ObjectProperty<Picket> picket,
             IntegerProperty picketIndex) {
         this.storageManager = storageManager;
+        this.commandExecutor = commandExecutor;
         this.jsonFileChooser = jsonFileChooser;
         this.validator = validator;
         this.expFileChooser = expFileChooser;

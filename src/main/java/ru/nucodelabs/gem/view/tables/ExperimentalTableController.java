@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.view.tables;
 
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
@@ -16,13 +16,13 @@ import java.util.ResourceBundle;
 public class ExperimentalTableController extends AbstractController {
 
 
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
 
     @FXML
     private TableView<ExperimentalDataRow> table;
 
     @Inject
-    public ExperimentalTableController(ObjectProperty<Picket> picket) {
+    public ExperimentalTableController(ObservableObjectValue<Picket> picket) {
 
         this.picket = picket;
         picket.addListener((observable, oldValue, newValue) -> {
