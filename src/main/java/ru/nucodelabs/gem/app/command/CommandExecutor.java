@@ -56,4 +56,8 @@ public class CommandExecutor {
         virtualSize = Math.min(history.size(), virtualSize + 1);
         return history.get(virtualSize - 1);
     }
+
+    public void clearHistory() {
+        history.clear();
+    }
 }
