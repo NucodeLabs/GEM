@@ -10,6 +10,7 @@ import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.app.io.FileManager;
+import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
@@ -20,6 +21,12 @@ import java.util.ResourceBundle;
  * Зависимости приложения, которое, по сути, создает MainView
  */
 public class AppModule extends AbstractModule {
+
+    @Override
+    protected void configure() {
+        install(new FileChoosersModule());
+    }
+
     @Provides
     @Singleton
     private ResourceBundle provideUIProperties() {

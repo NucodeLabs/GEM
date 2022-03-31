@@ -5,9 +5,8 @@ import com.google.inject.Provides;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.app.AppService;
 import ru.nucodelabs.gem.app.io.StorageManager;
-import ru.nucodelabs.gem.app.operation.CommandsModule;
+import ru.nucodelabs.gem.app.operation.OperationsModule;
 import ru.nucodelabs.gem.view.DialogsModule;
-import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
@@ -22,11 +21,10 @@ import static com.google.inject.Scopes.SINGLETON;
 public class MainViewModule extends AbstractModule {
     @Override
     protected void configure() {
-        install(new FileChoosersModule());
         install(new DialogsModule());
         install(new ObservableDataModule());
         install(new ChartsModule());
-        install(new CommandsModule());
+        install(new OperationsModule());
         bind(MainViewController.class).in(SINGLETON);
         bind(VESCurvesController.class).in(SINGLETON);
         bind(ModelTableController.class).in(SINGLETON);
