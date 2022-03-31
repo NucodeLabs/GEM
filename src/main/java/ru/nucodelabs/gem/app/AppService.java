@@ -99,6 +99,7 @@ public class AppService {
 
                 picketObservableList.setAll(loadedSection.pickets());
                 picketIndex.set(0);
+                commandExecutor.clearHistory();
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
