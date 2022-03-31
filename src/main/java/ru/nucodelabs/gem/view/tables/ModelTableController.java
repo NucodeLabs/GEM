@@ -288,15 +288,7 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            appService.execute(
-                    commandFactory.create(
-                            new Picket(
-                                    picket.get().name(),
-                                    picket.get().experimentalData(),
-                                    newModelData
-                            )
-                    )
-            );
+            appService.execute(commandFactory.create(newModelData));
         }
     }
 
