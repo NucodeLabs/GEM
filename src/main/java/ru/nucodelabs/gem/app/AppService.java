@@ -16,11 +16,11 @@ import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.annotation.Subject;
-import ru.nucodelabs.gem.app.command.AddPicketOperation;
-import ru.nucodelabs.gem.app.command.Operation;
-import ru.nucodelabs.gem.app.command.OperationExecutor;
-import ru.nucodelabs.gem.app.command.PicketModificationOperation;
 import ru.nucodelabs.gem.app.io.StorageManager;
+import ru.nucodelabs.gem.app.operation.AddPicketOperation;
+import ru.nucodelabs.gem.app.operation.Operation;
+import ru.nucodelabs.gem.app.operation.OperationExecutor;
+import ru.nucodelabs.gem.app.operation.PicketModificationOperation;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;

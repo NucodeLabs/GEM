@@ -15,7 +15,7 @@ import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
 import ru.nucodelabs.gem.app.annotation.Subject;
-import ru.nucodelabs.gem.app.command.ModelCurveDraggedOperation;
+import ru.nucodelabs.gem.app.operation.ModelCurveDraggedOperation;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 

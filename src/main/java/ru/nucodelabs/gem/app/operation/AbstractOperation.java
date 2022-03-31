@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.command;
+package ru.nucodelabs.gem.app.operation;
 
 import ru.nucodelabs.data.ves.Picket;
 

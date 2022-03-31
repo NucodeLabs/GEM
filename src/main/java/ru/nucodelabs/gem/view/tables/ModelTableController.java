@@ -17,7 +17,7 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.command.PicketModificationOperation;
+import ru.nucodelabs.gem.app.operation.PicketModificationOperation;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
