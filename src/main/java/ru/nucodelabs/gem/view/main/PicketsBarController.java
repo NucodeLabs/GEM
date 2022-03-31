@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
+import ru.nucodelabs.gem.app.annotation.State;
 import ru.nucodelabs.gem.app.command.RemovePicketCommand;
 import ru.nucodelabs.gem.app.command.SwapPicketsCommand;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -38,7 +39,7 @@ public class PicketsBarController extends AbstractController {
 
     @Inject
     public PicketsBarController(
-            ObservableList<Picket> picketObservableList,
+            @State ObservableList<Picket> picketObservableList,
             IntegerProperty picketIndex) {
 
         this.picketObservableList = picketObservableList;

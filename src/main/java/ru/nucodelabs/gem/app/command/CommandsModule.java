@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.annotation.State;
 
 import java.util.List;
 
@@ -30,7 +31,8 @@ public class CommandsModule extends AbstractModule {
     }
 
     @Provides
-    private List<Picket> currentState(ObservableList<Picket> picketObservableList) {
+    @State
+    private List<Picket> currentState(@State ObservableList<Picket> picketObservableList) {
         return picketObservableList;
     }
 }

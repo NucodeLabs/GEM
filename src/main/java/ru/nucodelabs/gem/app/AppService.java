@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.annotation.State;
 import ru.nucodelabs.gem.app.command.AddPicketCommand;
 import ru.nucodelabs.gem.app.command.Command;
 import ru.nucodelabs.gem.app.command.CommandExecutor;
@@ -56,7 +57,7 @@ public class AppService {
             @Named("MOD") FileChooser modFileChooser,
             AlertsFactory alertsFactory,
             @Named("Save") Provider<Dialog<ButtonType>> saveDialogProvider,
-            ObservableList<Picket> picketObservableList,
+            @State ObservableList<Picket> picketObservableList,
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex) {
         this.storageManager = storageManager;
