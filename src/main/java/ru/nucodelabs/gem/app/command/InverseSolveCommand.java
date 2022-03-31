@@ -17,10 +17,10 @@ public class InverseSolveCommand extends AbstractCommand {
     @Inject
     public InverseSolveCommand(
             int picketIndex,
-            List<Picket> currentState,
+            List<Picket> state,
             AlertsFactory alertsFactory,
             Stage stage) {
-        super(currentState);
+        super(state);
         this.picketIndex = picketIndex;
         this.alertsFactory = alertsFactory;
         this.stage = stage;
@@ -28,7 +28,7 @@ public class InverseSolveCommand extends AbstractCommand {
 
     @Override
     public boolean execute() {
-        Picket picket = currentState.get(picketIndex);
+        Picket picket = state.get(picketIndex);
         InverseSolver inverseSolver = new InverseSolver(picket);
 
         try {
@@ -37,7 +37,7 @@ public class InverseSolveCommand extends AbstractCommand {
                     picket.experimentalData(),
                     inverseSolver.getOptimizedModelData()
             );
-            currentState.set(picketIndex, newPicket);
+            state.set(picketIndex, newPicket);
         } catch (Exception e) {
             alertsFactory.unsafeDataAlert(picket.name(), stage).show();
             return false;

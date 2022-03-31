@@ -12,15 +12,15 @@ public class RemovePicketCommand extends AbstractCommand {
 
     @AssistedInject
     public RemovePicketCommand(
-            List<Picket> currentState,
+            List<Picket> state,
             @Assisted int picketIndex) {
-        super(currentState);
+        super(state);
         this.picketIndex = picketIndex;
     }
 
     @Override
     public boolean execute() {
-        currentState.remove(picketIndex);
+        state.remove(picketIndex);
         return true;
     }
 

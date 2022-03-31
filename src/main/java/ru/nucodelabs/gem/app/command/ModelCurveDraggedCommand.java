@@ -17,11 +17,11 @@ public class ModelCurveDraggedCommand implements Command {
     @AssistedInject
     public ModelCurveDraggedCommand(
             int picketIndex,
-            List<Picket> currentState,
+            List<Picket> state,
             @Assisted List<Picket> beforeDragState,
             @Assisted ModelData modelData) {
         this.picketIndex = picketIndex;
-        this.currentState = currentState;
+        this.currentState = state;
         this.beforeDragState = List.copyOf(beforeDragState);
         this.modelData = modelData;
     }
