@@ -3,9 +3,12 @@ package ru.nucodelabs.gem.app;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.ButtonType;
@@ -43,6 +46,7 @@ public class AppService {
     private final IntegerProperty picketIndex;
 
     private Stage stage;
+    private final StringProperty windowTitle = new SimpleStringProperty("GEM");
 
     @Inject
     private PicketModificationOperation.Factory picketModificationOperationFactory;
@@ -78,19 +82,22 @@ public class AppService {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
-            if (c.next()) {
+        StringProperty dirtyAsterisk = new SimpleStringProperty("");
+        dirtyAsterisk.bind(new StringBinding() {
+            {
+                super.bind(picketObservableList);
+            }
+
+            @Override
+            protected String computeValue() {
                 if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
-                    stage.setTitle(stage.getTitle().indexOf("*") == 0 ?
-                            stage.getTitle() :
-                            "*" + stage.getTitle());
+                    return "*";
                 } else {
-                    stage.setTitle(stage.getTitle().indexOf("*") == 0 ?
-                            stage.getTitle().substring(1) :
-                            stage.getTitle());
+                    return "";
                 }
             }
         });
+        stage.titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
     }
 
     public void openSection(Event event) {
@@ -124,11 +131,11 @@ public class AppService {
     }
 
     private void setWindowFileTitle(File file) {
-        stage.setTitle(file.getName());
+        windowTitle.set(file.getName());
     }
 
     private void resetWindowTitle() {
-        stage.setTitle("GEM");
+        windowTitle.set("GEM");
     }
 
     public Event askToSave(Event event) {
