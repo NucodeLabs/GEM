@@ -10,6 +10,8 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
@@ -106,6 +108,20 @@ public class ModelTableController extends AbstractController {
         addInputCheckListener(polarizationTextField);
         addInputCheckListener(resistanceTextField);
         addInputCheckListener(powerTextField);
+
+        addEnterKeyHandler(indexTextField);
+        addEnterKeyHandler(polarizationTextField);
+        addEnterKeyHandler(resistanceTextField);
+        addEnterKeyHandler(powerTextField);
+    }
+
+    private void addEnterKeyHandler(TextField textField) {
+        textField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER
+                    && !addBtn.isDisabled()) {
+                addBtn.fire();
+            }
+        });
     }
 
     private void addInputCheckListener(TextField doubleTextField) {

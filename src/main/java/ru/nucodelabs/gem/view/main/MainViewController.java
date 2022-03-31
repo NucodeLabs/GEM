@@ -9,6 +9,9 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
@@ -110,6 +113,10 @@ public class MainViewController extends AbstractController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         getStage().setOnCloseRequest(appService::askToSave);
+        getStage().getScene().getAccelerators().put(
+                new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
+                this::redo
+        );
 
         appService.setStage(getStage());
         uiProperties = requireNonNull(resources);
