@@ -108,6 +108,8 @@ public class MainViewController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        getStage().setOnCloseRequest(appService::askToSave);
+
         appService.setStage(getStage());
         uiProperties = requireNonNull(resources);
         noFileScreenController.visibleProperty().bind(noFileOpened);
