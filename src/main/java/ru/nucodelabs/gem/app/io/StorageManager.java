@@ -15,6 +15,7 @@ public class StorageManager implements FileManager {
 
     private final FileManager fileManagerDelegate;
     private Section savedState;
+    private File savedStateFile;
 
     @Inject
     public StorageManager(FileManager fileManagerDelegate) {
@@ -26,12 +27,14 @@ public class StorageManager implements FileManager {
     public Section loadSectionFromJsonFile(File jsonFile) throws Exception {
         Section loaded = fileManagerDelegate.loadSectionFromJsonFile(jsonFile);
         savedState = new Section(List.copyOf(loaded.pickets()));
+        savedStateFile = jsonFile;
         return loaded;
     }
 
     @Override
     public void saveSectionToJsonFile(File jsonFile, Section section) throws Exception {
         savedState = new Section(List.copyOf(section.pickets()));
+        savedStateFile = jsonFile;
         fileManagerDelegate.saveSectionToJsonFile(jsonFile, section);
     }
 
@@ -70,5 +73,9 @@ public class StorageManager implements FileManager {
 
     public void clearSavedState() {
         savedState = new Section(Collections.emptyList());
+    }
+
+    public File getSavedStateFile() {
+        return savedStateFile;
     }
 }

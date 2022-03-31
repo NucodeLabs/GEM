@@ -59,5 +59,6 @@ public class CommandExecutor {
 
     public void clearHistory() {
         history.clear();
+        virtualSize = 0;
     }
 }
