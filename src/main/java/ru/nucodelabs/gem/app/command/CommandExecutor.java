@@ -1,15 +1,11 @@
 package ru.nucodelabs.gem.app.command;
 
-import com.google.inject.Injector;
-
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandExecutor {
 
-    @Inject
-    private Injector injector;
     private List<Command> history = new ArrayList<>();
     private int virtualSize = 0;
 
@@ -18,7 +14,6 @@ public class CommandExecutor {
     }
 
     public void execute(Command command) {
-        injector.injectMembers(command);
         if (command.execute()) {
             push(command);
         }
