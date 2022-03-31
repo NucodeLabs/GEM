@@ -6,18 +6,18 @@ import java.util.List;
 
 public abstract class AbstractCommand implements Command {
 
-    protected final List<Picket> currentState;
+    protected final List<Picket> state;
     private final List<Picket> backup;
 
-    public AbstractCommand(List<Picket> currentState) {
-        this.currentState = currentState;
-        backup = List.copyOf(currentState);
+    public AbstractCommand(List<Picket> state) {
+        this.state = state;
+        backup = List.copyOf(state);
     }
 
     @Override
     public void undo() {
-        currentState.clear();
-        currentState.addAll(backup);
+        state.clear();
+        state.addAll(backup);
     }
 
     @Override

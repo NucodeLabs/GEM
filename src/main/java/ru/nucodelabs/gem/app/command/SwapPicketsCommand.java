@@ -14,17 +14,17 @@ public class SwapPicketsCommand extends AbstractCommand {
 
     @AssistedInject
     public SwapPicketsCommand(
-            List<Picket> currentState,
+            List<Picket> state,
             @Assisted("1") int index1,
             @Assisted("2") int index2) {
-        super(currentState);
+        super(state);
         this.index1 = index1;
         this.index2 = index2;
     }
 
     @Override
     public boolean execute() {
-        Collections.swap(currentState, index1, index2);
+        Collections.swap(state, index1, index2);
         return true;
     }
 

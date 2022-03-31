@@ -12,15 +12,15 @@ public class AddPicketCommand extends AbstractCommand {
 
     @AssistedInject
     public AddPicketCommand(
-            List<Picket> currentState,
+            List<Picket> state,
             @Assisted Picket newPicket) {
-        super(currentState);
+        super(state);
         this.newPicket = newPicket;
     }
 
     @Override
     public boolean execute() {
-        currentState.add(newPicket);
+        state.add(newPicket);
         return true;
     }
 

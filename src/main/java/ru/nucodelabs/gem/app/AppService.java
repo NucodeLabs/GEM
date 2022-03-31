@@ -4,7 +4,7 @@ import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.ButtonType;
@@ -36,7 +36,7 @@ public class AppService {
     private final AlertsFactory alertsFactory;
     private final Provider<Dialog<ButtonType>> saveDialogProvider;
     private final ObservableList<Picket> picketObservableList;
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
 
     private Stage stage;
@@ -56,7 +56,7 @@ public class AppService {
             AlertsFactory alertsFactory,
             @Named("Save") Provider<Dialog<ButtonType>> saveDialogProvider,
             ObservableList<Picket> picketObservableList,
-            ObjectProperty<Picket> picket,
+            ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex) {
         this.storageManager = storageManager;
         this.commandExecutor = commandExecutor;
