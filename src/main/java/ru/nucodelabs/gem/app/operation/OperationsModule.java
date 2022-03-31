@@ -10,7 +10,7 @@ import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.List;
 
-public class CommandsModule extends AbstractModule {
+public class OperationsModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new FactoryModuleBuilder()
