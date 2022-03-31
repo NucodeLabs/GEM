@@ -12,7 +12,7 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ public class ObservableDataModule extends AbstractModule {
      */
     @Provides
     @Singleton
-    @State
+    @Subject
     private ObservableList<Picket> providePicketsObservableList() {
         return FXCollections.observableList(new ArrayList<>());
     }
@@ -47,7 +47,7 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableObjectValue<Picket> provideBoundCurrentPicket(
             IntegerProperty picketIndex,
-            @State ObservableList<Picket> picketObservableList) {
+            @Subject ObservableList<Picket> picketObservableList) {
 
         ObjectProperty<Picket> picket = new SimpleObjectProperty<>();
         picket.bind(new ObjectBinding<>() {
@@ -84,7 +84,7 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObjectProperty<Picket> provideWriteableCurrentPicket(
             ObservableObjectValue<Picket> boundPicket,
-            @State ObservableList<Picket> picketObservableList,
+            @Subject ObservableList<Picket> picketObservableList,
             IntegerProperty picketIndex) {
         ObjectProperty<Picket> unboundPicket = new SimpleObjectProperty<>();
 

@@ -5,19 +5,19 @@ import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.List;
 
-public class PicketModificationCommand extends AbstractCommand {
+public class PicketModificationOperation extends AbstractOperation {
 
     private final int picketIndex;
     private final Picket newPicketValue;
 
     @AssistedInject
-    public PicketModificationCommand(
+    public PicketModificationOperation(
             int picketIndex,
-            @State List<Picket> state,
+            @Subject List<Picket> state,
             @Assisted Picket newPicketValue) {
         super(state);
         this.picketIndex = picketIndex;
@@ -25,9 +25,9 @@ public class PicketModificationCommand extends AbstractCommand {
     }
 
     @AssistedInject
-    public PicketModificationCommand(
+    public PicketModificationOperation(
             int picketIndex,
-            @State List<Picket> state,
+            @Subject List<Picket> state,
             @Assisted ModelData newModelDataValue) {
         this(picketIndex, state,
                 new Picket(
@@ -38,9 +38,9 @@ public class PicketModificationCommand extends AbstractCommand {
     }
 
     @AssistedInject
-    public PicketModificationCommand(
+    public PicketModificationOperation(
             int picketIndex,
-            @State List<Picket> state,
+            @Subject List<Picket> state,
             @Assisted ExperimentalData newExperimentalDataValue) {
         this(picketIndex, state,
                 new Picket(
@@ -51,9 +51,9 @@ public class PicketModificationCommand extends AbstractCommand {
     }
 
     @AssistedInject
-    public PicketModificationCommand(
+    public PicketModificationOperation(
             int picketIndex,
-            @State List<Picket> state,
+            @Subject List<Picket> state,
             @Assisted String newName) {
         this(picketIndex, state,
                 new Picket(
@@ -70,12 +70,12 @@ public class PicketModificationCommand extends AbstractCommand {
     }
 
     public interface Factory {
-        PicketModificationCommand create(Picket newPicketValue);
+        PicketModificationOperation create(Picket newPicketValue);
 
-        PicketModificationCommand create(String newName);
+        PicketModificationOperation create(String newName);
 
-        PicketModificationCommand create(ModelData newModelDataValue);
+        PicketModificationOperation create(ModelData newModelDataValue);
 
-        PicketModificationCommand create(ExperimentalData newExperimentalDataValue);
+        PicketModificationOperation create(ExperimentalData newExperimentalDataValue);
     }
 }

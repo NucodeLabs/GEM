@@ -4,11 +4,11 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.List;
 
-public class ModelCurveDraggedCommand implements Command {
+public class ModelCurveDraggedOperation implements Operation {
 
     private final int picketIndex;
     private final List<Picket> currentState;
@@ -16,9 +16,9 @@ public class ModelCurveDraggedCommand implements Command {
     private final ModelData modelData;
 
     @AssistedInject
-    public ModelCurveDraggedCommand(
+    public ModelCurveDraggedOperation(
             int picketIndex,
-            @State List<Picket> state,
+            @Subject List<Picket> state,
             @Assisted List<Picket> beforeDragState,
             @Assisted ModelData modelData) {
         this.picketIndex = picketIndex;
@@ -48,6 +48,6 @@ public class ModelCurveDraggedCommand implements Command {
     }
 
     public interface Factory {
-        ModelCurveDraggedCommand create(List<Picket> beforeDragState, ModelData afterDragModelData);
+        ModelCurveDraggedOperation create(List<Picket> beforeDragState, ModelData afterDragModelData);
     }
 }

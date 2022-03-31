@@ -4,44 +4,44 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandExecutor {
+public class OperationExecutor {
 
-    private List<Command> history = new ArrayList<>();
+    private List<Operation> history = new ArrayList<>();
     private int virtualSize = 0;
 
     @Inject
-    public CommandExecutor() {
+    public OperationExecutor() {
     }
 
-    public void execute(Command command) {
-        if (command.execute()) {
-            push(command);
+    public void execute(Operation operation) {
+        if (operation.execute()) {
+            push(operation);
         }
     }
 
     public void redo() {
-        Command command = getRedo();
-        if (command != null) {
-            command.execute();
+        Operation operation = getRedo();
+        if (operation != null) {
+            operation.execute();
         }
     }
 
-    private void push(Command command) {
+    private void push(Operation operation) {
         if (virtualSize != history.size() && virtualSize > 0) {
             history = history.subList(0, virtualSize - 1);
         }
-        history.add(command);
+        history.add(operation);
         virtualSize = history.size();
     }
 
     public void undo() {
-        Command command = getUndo();
-        if (command != null) {
-            command.undo();
+        Operation operation = getUndo();
+        if (operation != null) {
+            operation.undo();
         }
     }
 
-    private Command getUndo() {
+    private Operation getUndo() {
         if (virtualSize == 0) {
             return null;
         }
@@ -49,7 +49,7 @@ public class CommandExecutor {
         return history.get(virtualSize);
     }
 
-    private Command getRedo() {
+    private Operation getRedo() {
         if (virtualSize == history.size()) {
             return null;
         }

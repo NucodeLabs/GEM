@@ -3,17 +3,17 @@ package ru.nucodelabs.gem.app.command;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.State;
+import ru.nucodelabs.gem.app.annotation.Subject;
 
 import java.util.List;
 
-public class RemovePicketCommand extends AbstractCommand {
+public class RemovePicketOperation extends AbstractOperation {
 
     private final int picketIndex;
 
     @AssistedInject
-    public RemovePicketCommand(
-            @State List<Picket> state,
+    public RemovePicketOperation(
+            @Subject List<Picket> state,
             @Assisted int picketIndex) {
         super(state);
         this.picketIndex = picketIndex;
@@ -26,6 +26,6 @@ public class RemovePicketCommand extends AbstractCommand {
     }
 
     public interface Factory {
-        RemovePicketCommand create(int picketIndex);
+        RemovePicketOperation create(int picketIndex);
     }
 }

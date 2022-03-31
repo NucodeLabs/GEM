@@ -14,8 +14,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.annotation.State;
-import ru.nucodelabs.gem.app.command.ModelCurveDraggedCommand;
+import ru.nucodelabs.gem.app.annotation.Subject;
+import ru.nucodelabs.gem.app.command.ModelCurveDraggedOperation;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
@@ -58,9 +58,9 @@ public class VESCurvesController extends AbstractController {
     @Inject
     private AppService appService;
     @Inject
-    private ModelCurveDraggedCommand.Factory commandFactory;
+    private ModelCurveDraggedOperation.Factory operationFactory;
     @Inject
-    @State
+    @Subject
     private ObservableList<Picket> picketObservableList;
 
     @Inject
@@ -164,7 +164,7 @@ public class VESCurvesController extends AbstractController {
             );
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
-            appService.execute(commandFactory.create(beforeDragState.get(), picket.get().modelData()));
+            appService.execute(operationFactory.create(beforeDragState.get(), picket.get().modelData()));
             modelCurveDragger.resetStyle();
             isDragging = false;
             lineChart.setAnimated(true);
