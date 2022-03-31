@@ -15,7 +15,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.command.InverseSolveCommand;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -49,8 +48,6 @@ public class MainViewController extends AbstractController {
     private Menu menuView;
     @FXML
     private NoFileScreenController noFileScreenController;
-    @Inject
-    Provider<InverseSolveCommand> inverseSolveCommandProvider;
     private ResourceBundle uiProperties;
     @Inject
     @Named("MainView")
@@ -200,7 +197,7 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void inverseSolve() {
-        appService.execute(inverseSolveCommandProvider.get());
+        appService.inverseSolve();
     }
 
     public String getVesTitle() {

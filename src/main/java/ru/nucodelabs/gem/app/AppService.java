@@ -11,6 +11,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.command.AddPicketCommand;
@@ -219,6 +220,21 @@ public class AppService {
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
+        }
+    }
+
+    public void inverseSolve() {
+        InverseSolver inverseSolver = new InverseSolver(picket.get());
+
+        try {
+            Picket newPicket = new Picket(
+                    picket.get().name(),
+                    picket.get().experimentalData(),
+                    inverseSolver.getOptimizedModelData()
+            );
+            execute(picketModificationCommandFactory.create(newPicket));
+        } catch (Exception e) {
+            alertsFactory.simpleExceptionAlert(e, stage).show();
         }
     }
 
