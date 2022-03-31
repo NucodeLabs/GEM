@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
 import ru.nucodelabs.gem.app.annotation.Subject;
-import ru.nucodelabs.gem.app.command.RemovePicketOperation;
-import ru.nucodelabs.gem.app.command.SwapPicketsOperation;
+import ru.nucodelabs.gem.app.operation.RemovePicketOperation;
+import ru.nucodelabs.gem.app.operation.SwapPicketsOperation;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;

@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.command;
+package ru.nucodelabs.gem.app.operation;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
