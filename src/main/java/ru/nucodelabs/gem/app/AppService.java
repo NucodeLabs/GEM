@@ -15,7 +15,7 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.command.AddPicketCommand;
 import ru.nucodelabs.gem.app.command.Command;
-import ru.nucodelabs.gem.app.command.CommandService;
+import ru.nucodelabs.gem.app.command.CommandExecutor;
 import ru.nucodelabs.gem.app.command.PicketModificationCommand;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -38,7 +38,7 @@ public class AppService {
     private final ObjectProperty<Picket> picket;
     private final IntegerProperty picketIndex;
     @Inject
-    private CommandService commandService;
+    private CommandExecutor commandExecutor;
     @Inject
     private PicketModificationCommand.Factory picketModificationCommandFactory;
     @Inject
@@ -73,7 +73,6 @@ public class AppService {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        this.stage.setOnCloseRequest(this::askToSave);
     }
 
     public void openSection(Event event) {
@@ -104,7 +103,7 @@ public class AppService {
         }
     }
 
-    private Event askToSave(Event event) {
+    public Event askToSave(Event event) {
         if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(stage);
@@ -235,14 +234,14 @@ public class AppService {
     }
 
     public void execute(Command command) {
-        commandService.execute(command);
+        commandExecutor.execute(command);
     }
 
     public void undo() {
-        commandService.undo();
+        commandExecutor.undo();
     }
 
     public void redo() {
-        commandService.redo();
+        commandExecutor.redo();
     }
 }

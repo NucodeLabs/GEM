@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandService {
+public class CommandExecutor {
 
     @Inject
     private Injector injector;
@@ -14,7 +14,7 @@ public class CommandService {
     private int virtualSize = 0;
 
     @Inject
-    public CommandService() {
+    public CommandExecutor() {
     }
 
     public void execute(Command command) {

@@ -30,7 +30,7 @@ public class CommandsModule extends AbstractModule {
     }
 
     @Provides
-    private List<Picket> currenState(ObservableList<Picket> picketObservableList) {
+    private List<Picket> currentState(ObservableList<Picket> picketObservableList) {
         return picketObservableList;
     }
 }
