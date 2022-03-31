@@ -22,11 +22,9 @@
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
-                        <MenuItem text="%newWindow" onAction="#newWindow"/>
-                        <Menu text="%open">
-                            <MenuItem text="%section" fx:id="menuFileOpenSection" onAction="#openSection"
-                                      accelerator="Shortcut+O"/>
-                        </Menu>
+                        <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
+                        <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openSection"
+                                  accelerator="Shortcut+O"/>
                         <Menu text="%import">
                             <Menu text="%picket">
                                 <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
@@ -34,14 +32,14 @@
                                 <MenuItem text="JSON" onAction="#importJsonPicket"/>
                             </Menu>
                         </Menu>
-                        <Menu text="%save">
-                            <MenuItem text="%section" onAction="#saveSection" disable="${controller.noFileOpened}"
-                                      accelerator="Shortcut+S"/>
-                        </Menu>
+                        <MenuItem text="%saveSection" onAction="#saveSection" disable="${controller.noFileOpened}"
+                                  accelerator="Shortcut+S"/>
+                        <MenuItem text="%saveSectionAs" onAction="#saveSectionAs" disable="${controller.noFileOpened}"
+                                  accelerator="Shift+Shortcut+S"/>
                         <Menu text="%export">
                             <MenuItem text="%picket" onAction="#exportJsonPicket"/>
                         </Menu>
-                        <MenuItem text="%close" onAction="#closeFile"/>
+                        <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"/>
                     </Menu>
                     <Menu text="%edit">
                         <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>

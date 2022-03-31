@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.AppService;
 import ru.nucodelabs.gem.app.annotation.State;
-import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
@@ -125,7 +124,6 @@ public class MainViewController extends AbstractController {
             CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
-            FXUtils.addCloseShortcutMacOS(getStage().getScene().getRoot());
         }
     }
 
@@ -152,6 +150,11 @@ public class MainViewController extends AbstractController {
     @FXML
     public void saveSection() {
         appService.saveSection();
+    }
+
+    @FXML
+    public void saveSectionAs() {
+        appService.saveSectionAs();
     }
 
     /**

@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.ButtonType;
@@ -77,6 +78,19 @@ public class AppService {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
+            if (c.next()) {
+                if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
+                    stage.setTitle(stage.getTitle().indexOf("*") == 0 ?
+                            stage.getTitle() :
+                            "*" + stage.getTitle());
+                } else {
+                    stage.setTitle(stage.getTitle().indexOf("*") == 0 ?
+                            stage.getTitle().substring(1) :
+                            stage.getTitle());
+                }
+            }
+        });
     }
 
     public void openSection(Event event) {
@@ -102,10 +116,19 @@ public class AppService {
                 picketObservableList.setAll(loadedSection.pickets());
                 picketIndex.set(0);
                 commandExecutor.clearHistory();
+                setWindowFileTitle(file);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
         }
+    }
+
+    private void setWindowFileTitle(File file) {
+        stage.setTitle(file.getName());
+    }
+
+    private void resetWindowTitle() {
+        stage.setTitle("GEM");
     }
 
     public Event askToSave(Event event) {
@@ -125,13 +148,27 @@ public class AppService {
     }
 
     public void saveSection() {
-        File file = jsonFileChooser.showSaveDialog(stage);
+        File file;
+        if (storageManager.getSavedStateFile() == null) {
+            file = jsonFileChooser.showSaveDialog(stage);
+        } else {
+            file = storageManager.getSavedStateFile();
+        }
+        saveSection(file);
+    }
+
+    public void saveSectionAs() {
+        saveSection(jsonFileChooser.showSaveDialog(stage));
+    }
+
+    private void saveSection(File file) {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
                 storageManager.saveSectionToJsonFile(file, new Section(picketObservableList));
+                setWindowFileTitle(file);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
@@ -251,6 +288,7 @@ public class AppService {
         }
         picketObservableList.clear();
         storageManager.clearSavedState();
+        resetWindowTitle();
     }
 
     public void execute(Command command) {

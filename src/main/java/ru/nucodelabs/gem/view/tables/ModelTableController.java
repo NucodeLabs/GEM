@@ -116,7 +116,7 @@ public class ModelTableController extends AbstractController {
     }
 
     private void addEnterKeyHandler(TextField textField) {
-        textField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.ENTER
                     && !addBtn.isDisabled()) {
                 addBtn.fire();
