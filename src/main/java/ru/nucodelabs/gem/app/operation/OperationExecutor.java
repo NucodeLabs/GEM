@@ -36,7 +36,7 @@ public class OperationExecutor {
     }
 
     public void undo() {
-        getUndo().ifPresent(Operation::undo);
+        getUndo().ifPresent(Operation::restoreSubjectFromSnapshot);
     }
 
     private Optional<Operation> getUndo() {

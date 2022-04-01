@@ -11,32 +11,32 @@ import java.util.List;
 public class ModelCurveDraggedOperation implements Operation {
 
     private final int picketIndex;
-    private final List<Picket> currentState;
-    private final List<Picket> beforeDragState;
+    private final List<Picket> subject;
+    private final List<Picket> beforeDragSnapshot;
     private final ModelData modelData;
 
     @AssistedInject
     public ModelCurveDraggedOperation(
             int picketIndex,
-            @Subject List<Picket> state,
-            @Assisted List<Picket> beforeDragState,
+            @Subject List<Picket> subject,
+            @Assisted List<Picket> beforeDragSnapshot,
             @Assisted ModelData modelData) {
         this.picketIndex = picketIndex;
-        this.currentState = state;
-        this.beforeDragState = List.copyOf(beforeDragState);
+        this.subject = subject;
+        this.beforeDragSnapshot = List.copyOf(beforeDragSnapshot);
         this.modelData = modelData;
     }
 
     @Override
-    public void undo() {
-        currentState.clear();
-        currentState.addAll(beforeDragState);
+    public void restoreSubjectFromSnapshot() {
+        subject.clear();
+        subject.addAll(beforeDragSnapshot);
     }
 
     @Override
     public boolean execute() {
-        Picket picket = currentState.get(picketIndex);
-        currentState.set(picketIndex,
+        Picket picket = subject.get(picketIndex);
+        subject.set(picketIndex,
                 new Picket(
                         picket.name(),
                         picket.experimentalData(),

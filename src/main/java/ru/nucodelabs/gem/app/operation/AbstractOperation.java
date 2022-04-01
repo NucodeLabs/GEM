@@ -6,18 +6,18 @@ import java.util.List;
 
 public abstract class AbstractOperation implements Operation {
 
-    protected final List<Picket> state;
-    private final List<Picket> backup;
+    protected final List<Picket> subject;
+    private final List<Picket> snapshot;
 
-    public AbstractOperation(List<Picket> state) {
-        this.state = state;
-        backup = List.copyOf(state);
+    public AbstractOperation(List<Picket> subject) {
+        this.subject = subject;
+        snapshot = List.copyOf(subject);
     }
 
     @Override
-    public void undo() {
-        state.clear();
-        state.addAll(backup);
+    public void restoreSubjectFromSnapshot() {
+        subject.clear();
+        subject.addAll(snapshot);
     }
 
     @Override
