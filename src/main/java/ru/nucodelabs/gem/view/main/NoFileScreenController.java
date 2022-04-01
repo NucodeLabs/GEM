@@ -5,7 +5,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.app.MainViewHelper;
+import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -14,11 +14,11 @@ import java.util.ResourceBundle;
 
 public class NoFileScreenController extends AbstractController {
 
-    private final MainViewHelper mainViewHelper;
+    private final AppManager appManager;
 
     @Inject
-    public NoFileScreenController(MainViewHelper mainViewHelper) {
-        this.mainViewHelper = mainViewHelper;
+    public NoFileScreenController(AppManager appManager) {
+        this.appManager = appManager;
     }
 
     @FXML
@@ -26,12 +26,12 @@ public class NoFileScreenController extends AbstractController {
 
     @FXML
     private void importEXP(Event event) {
-        mainViewHelper.importEXP();
+        appManager.importEXP();
     }
 
     @FXML
     private void openSection(Event event) {
-        mainViewHelper.openSection(event);
+        appManager.openSection(event);
     }
 
     @Override
