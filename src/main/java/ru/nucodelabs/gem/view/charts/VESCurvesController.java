@@ -2,7 +2,9 @@ package ru.nucodelabs.gem.view.charts;
 
 import com.google.inject.name.Named;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,17 +15,14 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.PointsFactory;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.annotation.Subject;
-import ru.nucodelabs.gem.app.operation.ModelCurveDraggedOperation;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class VESCurvesController extends AbstractController {
     /**
@@ -38,7 +37,7 @@ public class VESCurvesController extends AbstractController {
     public static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
     public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
 
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
 
     private ResourceBundle uiProperties;
     private ModelCurveDragger modelCurveDragger;
@@ -56,15 +55,14 @@ public class VESCurvesController extends AbstractController {
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
-    private AppService appService;
+    private SectionManager sectionManager;
     @Inject
-    private ModelCurveDraggedOperation.Factory operationFactory;
+    private HistoryManager historyManager;
     @Inject
-    @Subject
-    private ObservableList<Picket> picketObservableList;
+    private IntegerProperty picketIndex;
 
     @Inject
-    public VESCurvesController(ObjectProperty<Picket> picket) {
+    public VESCurvesController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
         this.picket.addListener((observable, oldValue, newValue) -> {
             if (isDragging) {
@@ -144,10 +142,8 @@ public class VESCurvesController extends AbstractController {
     }
 
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
-        AtomicReference<List<Picket>> beforeDragState = new AtomicReference<>();
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> {
-            beforeDragState.set(List.copyOf(picketObservableList));
             isDragging = true;
             lineChart.setAnimated(false);
             lineChartYAxis.setAutoRanging(false);
@@ -156,15 +152,10 @@ public class VESCurvesController extends AbstractController {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             isDragging = true;
-            picket.set(
-                    new Picket(
-                            picket.get().name(),
-                            picket.get().experimentalData(),
-                            modelCurveDragger.dragHandler(e, picket.get().modelData().clone()))
-            );
+            sectionManager.updateModelData(picketIndex.get(), modelCurveDragger.dragHandler(e, picket.get().modelData()));
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
-            appService.execute(operationFactory.create(beforeDragState.get(), picket.get().modelData()));
+            historyManager.snapshot();
             modelCurveDragger.resetStyle();
             isDragging = false;
             lineChart.setAnimated(true);

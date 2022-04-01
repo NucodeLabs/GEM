@@ -12,7 +12,7 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.annotation.Subject;
+import ru.nucodelabs.gem.app.SectionManager;
 
 import java.util.ArrayList;
 
@@ -25,9 +25,10 @@ public class ObservableDataModule extends AbstractModule {
      */
     @Provides
     @Singleton
-    @Subject
-    private ObservableList<Picket> providePicketsObservableList() {
-        return FXCollections.observableList(new ArrayList<>());
+    private ObservableList<Picket> providePicketsObservableList(SectionManager sectionManager) {
+        ObservableList<Picket> pickets = FXCollections.observableList(new ArrayList<>());
+        sectionManager.subscribe(evt -> pickets.setAll(sectionManager.getSnapshot().pickets()));
+        return pickets;
     }
 
     /**
@@ -47,7 +48,7 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableObjectValue<Picket> provideBoundCurrentPicket(
             IntegerProperty picketIndex,
-            @Subject ObservableList<Picket> picketObservableList) {
+            ObservableList<Picket> picketObservableList) {
 
         ObjectProperty<Picket> picket = new SimpleObjectProperty<>();
         picket.bind(new ObjectBinding<>() {
@@ -70,33 +71,5 @@ public class ObservableDataModule extends AbstractModule {
 
 
         return picket;
-    }
-
-    /**
-     * Текущий отображаемый пикет, но который можно модифицировать. При это модификации попадут сразу в
-     * picketObservableList и привязанный к нему пикет обновится.
-     *
-     * @param boundPicket          привязанный пикет
-     * @param picketObservableList список пикетов
-     * @param picketIndex          индекс пикета
-     */
-    @Provides
-    @Singleton
-    private ObjectProperty<Picket> provideWriteableCurrentPicket(
-            ObservableObjectValue<Picket> boundPicket,
-            @Subject ObservableList<Picket> picketObservableList,
-            IntegerProperty picketIndex) {
-        ObjectProperty<Picket> unboundPicket = new SimpleObjectProperty<>();
-
-        boundPicket.addListener((observable, oldValue, newValue) -> unboundPicket.set(newValue));
-
-        unboundPicket.addListener((observable, oldValue, newValue) -> {
-            if (picketObservableList.stream().noneMatch(p -> p.equals(newValue))
-                    && !picketObservableList.isEmpty()) {
-                picketObservableList.set(picketIndex.get(), newValue);
-            }
-        });
-
-        return unboundPicket;
     }
 }

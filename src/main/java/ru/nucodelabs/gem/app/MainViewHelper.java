@@ -4,12 +4,9 @@ import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -18,83 +15,63 @@ import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.annotation.Subject;
 import ru.nucodelabs.gem.app.io.StorageManager;
-import ru.nucodelabs.gem.app.operation.AddPicketOperation;
-import ru.nucodelabs.gem.app.operation.Operation;
-import ru.nucodelabs.gem.app.operation.OperationExecutor;
-import ru.nucodelabs.gem.app.operation.PicketModificationOperation;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class AppService {
+public class MainViewHelper {
 
     private final StorageManager storageManager;
-    private final OperationExecutor operationExecutor;
+    private final HistoryManager historyManager;
+    private final SectionManager sectionManager;
     private final Validator validator;
     private final FileChooser jsonFileChooser;
     private final FileChooser expFileChooser;
     private final FileChooser modFileChooser;
     private final AlertsFactory alertsFactory;
     private final Provider<Dialog<ButtonType>> saveDialogProvider;
-    private final ObservableList<Picket> picketObservableList;
-    private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
 
     private Stage stage;
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
+    private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @Inject
-    private PicketModificationOperation.Factory picketModificationOperationFactory;
-    @Inject
-    private AddPicketOperation.Factory addPicketOperationFactory;
-
-    @Inject
-    public AppService(
+    public MainViewHelper(
             StorageManager storageManager,
-            OperationExecutor operationExecutor, Validator validator,
+            HistoryManager historyManager,
+            SectionManager sectionManager,
+            Validator validator,
             @Named("JSON") FileChooser jsonFileChooser,
             @Named("EXP") FileChooser expFileChooser,
             @Named("MOD") FileChooser modFileChooser,
             AlertsFactory alertsFactory,
             @Named("Save") Provider<Dialog<ButtonType>> saveDialogProvider,
-            @Subject ObservableList<Picket> picketObservableList,
-            ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex) {
         this.storageManager = storageManager;
-        this.operationExecutor = operationExecutor;
+        this.historyManager = historyManager;
+        this.sectionManager = sectionManager;
         this.jsonFileChooser = jsonFileChooser;
         this.validator = validator;
         this.expFileChooser = expFileChooser;
         this.modFileChooser = modFileChooser;
         this.alertsFactory = alertsFactory;
         this.saveDialogProvider = saveDialogProvider;
-        this.picketObservableList = picketObservableList;
-        this.picket = picket;
         this.picketIndex = picketIndex;
-
-        this.picketObservableList.setAll(storageManager.getSavedState().pickets());
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        StringProperty dirtyAsterisk = new SimpleStringProperty("");
-        dirtyAsterisk.bind(new StringBinding() {
-            {
-                super.bind(picketObservableList);
-            }
-
-            @Override
-            protected String computeValue() {
-                if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
-                    return "*";
-                } else {
-                    return "";
-                }
+        sectionManager.subscribe(evt -> {
+            if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+                dirtyAsterisk.set("*");
+            } else {
+                dirtyAsterisk.set("");
             }
         });
         stage.titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
@@ -120,9 +97,10 @@ public class AppService {
                     return;
                 }
 
-                picketObservableList.setAll(loadedSection.pickets());
+                sectionManager.setSection(loadedSection);
                 picketIndex.set(0);
-                operationExecutor.clearHistory();
+                historyManager.clear();
+                historyManager.snapshot();
                 setWindowFileTitle(file);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
@@ -139,7 +117,7 @@ public class AppService {
     }
 
     public Event askToSave(Event event) {
-        if (!storageManager.compareWithSavedState(new Section(picketObservableList))) {
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(stage);
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -174,8 +152,9 @@ public class AppService {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                storageManager.saveSectionToJsonFile(file, new Section(picketObservableList));
+                storageManager.saveSectionToJsonFile(file, sectionManager.getSnapshot());
                 setWindowFileTitle(file);
+                dirtyAsterisk.set("");
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
@@ -197,13 +176,13 @@ public class AppService {
     private void addEXP(File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadPicketFromEXPFile(file);
-            var violations = validator.validate(picket);
+            var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, stage).show();
                 return;
             }
-            execute(addPicketOperationFactory.create(picketFromEXPFile));
-            picketIndex.set(picketObservableList.size() - 1);
+            historyManager.performThenSnapshot(() -> sectionManager.add(picketFromEXPFile));
+            picketIndex.set(sectionManager.size() - 1);
             compatibilityModeAlert();
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, stage).show();
@@ -219,7 +198,7 @@ public class AppService {
             }
 
             try {
-                storageManager.savePicketToJsonFile(file, picket.get());
+                storageManager.savePicketToJsonFile(file, sectionManager.get(picketIndex.get()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, stage).show();
             }
@@ -236,8 +215,8 @@ public class AppService {
 
             try {
                 Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
-                execute(addPicketOperationFactory.create(loadedPicket));
-                picketIndex.set(picketObservableList.size() - 1);
+                historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
+                picketIndex.set(sectionManager.size() - 1);
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
@@ -252,7 +231,7 @@ public class AppService {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
+                Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
 
                 var violations = validator.validate(newPicket);
 
@@ -261,7 +240,7 @@ public class AppService {
                     return;
                 }
 
-                execute(picketModificationOperationFactory.create(newPicket));
+                historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
@@ -269,18 +248,19 @@ public class AppService {
     }
 
     public void inverseSolve() {
-        InverseSolver inverseSolver = new InverseSolver(picket.get());
+        InverseSolver inverseSolver = new InverseSolver(sectionManager.get(picketIndex.get()));
 
         try {
-            execute(picketModificationOperationFactory.create(inverseSolver.getOptimizedModelData()));
+            historyManager.performThenSnapshot(() -> sectionManager.updateModelData(picketIndex.get(), inverseSolver.getOptimizedModelData()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, stage).show();
         }
     }
 
     private void compatibilityModeAlert() {
-        if (picket.get() != null && picket.get().experimentalData().isUnsafe()) {
-            alertsFactory.unsafeDataAlert(picket.get().name(), stage).show();
+        if (sectionManager.get(picketIndex.get()) != null
+                && sectionManager.get(picketIndex.get()).experimentalData().isUnsafe()) {
+            alertsFactory.unsafeDataAlert(sectionManager.get(picketIndex.get()).name(), stage).show();
         }
     }
 
@@ -288,21 +268,9 @@ public class AppService {
         if (askToSave(event).isConsumed()) {
             return;
         }
-        picketObservableList.clear();
+        sectionManager.setSection(new Section(Collections.emptyList()));
         storageManager.clearSavedState();
-        operationExecutor.clearHistory();
+        historyManager.clear();
         resetWindowTitle();
-    }
-
-    public void execute(Operation operation) {
-        operationExecutor.execute(operation);
-    }
-
-    public void undo() {
-        operationExecutor.undo();
-    }
-
-    public void redo() {
-        operationExecutor.redo();
     }
 }

@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.app.io;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.Collections;
@@ -75,6 +76,7 @@ public class StorageManager implements FileManager {
         savedState = new Section(Collections.emptyList());
     }
 
+    @Nullable
     public File getSavedStateFile() {
         return savedStateFile;
     }
