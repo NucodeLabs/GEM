@@ -3,11 +3,15 @@ package ru.nucodelabs.gem.app.operation;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class OperationExecutor {
 
     private List<Operation> history = new ArrayList<>();
-    private int virtualSize = 0;
+    private int positionInHistory = 0;
 
     @Inject
     public OperationExecutor() {
@@ -20,45 +24,39 @@ public class OperationExecutor {
     }
 
     public void redo() {
-        Operation operation = getRedo();
-        if (operation != null) {
-            operation.execute();
-        }
+        getRedo().ifPresent(Operation::execute);
     }
 
     private void push(Operation operation) {
-        if (virtualSize != history.size() && virtualSize > 0) {
-            history = history.subList(0, virtualSize - 1);
+        if (positionInHistory < history.size()) {
+            history = history.subList(0, max(0, positionInHistory));
         }
         history.add(operation);
-        virtualSize = history.size();
+        positionInHistory = history.size();
     }
 
     public void undo() {
-        Operation operation = getUndo();
-        if (operation != null) {
-            operation.undo();
-        }
+        getUndo().ifPresent(Operation::undo);
     }
 
-    private Operation getUndo() {
-        if (virtualSize == 0) {
-            return null;
+    private Optional<Operation> getUndo() {
+        if (positionInHistory == 0) {
+            return Optional.empty();
         }
-        virtualSize = Math.max(0, virtualSize - 1);
-        return history.get(virtualSize);
+        positionInHistory = max(0, positionInHistory - 1);
+        return Optional.of(history.get(positionInHistory));
     }
 
-    private Operation getRedo() {
-        if (virtualSize == history.size()) {
-            return null;
+    private Optional<Operation> getRedo() {
+        if (positionInHistory == history.size()) {
+            return Optional.empty();
         }
-        virtualSize = Math.min(history.size(), virtualSize + 1);
-        return history.get(virtualSize - 1);
+        positionInHistory = min(history.size(), positionInHistory + 1);
+        return Optional.of(history.get(positionInHistory - 1));
     }
 
     public void clearHistory() {
         history.clear();
-        virtualSize = 0;
+        positionInHistory = 0;
     }
 }
