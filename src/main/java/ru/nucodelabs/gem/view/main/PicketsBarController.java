@@ -10,10 +10,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.annotation.Subject;
-import ru.nucodelabs.gem.app.operation.RemovePicketOperation;
-import ru.nucodelabs.gem.app.operation.SwapPicketsOperation;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -31,15 +29,13 @@ public class PicketsBarController extends AbstractController {
     public HBox container;
 
     @Inject
-    private AppService appService;
+    private SectionManager sectionManager;
     @Inject
-    private RemovePicketOperation.Factory removeOperationFactory;
-    @Inject
-    private SwapPicketsOperation.Factory swapOperationFactory;
+    private HistoryManager historyManager;
 
     @Inject
     public PicketsBarController(
-            @Subject ObservableList<Picket> picketObservableList,
+            ObservableList<Picket> picketObservableList,
             IntegerProperty picketIndex) {
 
         this.picketObservableList = picketObservableList;
@@ -78,13 +74,13 @@ public class PicketsBarController extends AbstractController {
             button.setOnAction(e -> picketIndex.set(picketNumber));
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
-            delete.setOnAction(e -> appService.execute(removeOperationFactory.create(picketNumber)));
+            delete.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.remove(picketNumber)));
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
-            moveLeft.setOnAction(e -> appService.execute(swapOperationFactory.create(picketNumber, picketNumber - 1)));
+            moveLeft.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber + 1)));
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
-            moveRight.setOnAction(e -> appService.execute(swapOperationFactory.create(picketNumber, picketNumber + 1)));
+            moveRight.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber - 1)));
 
             if (picketObservableList.size() == 1) {
                 delete.setDisable(true);

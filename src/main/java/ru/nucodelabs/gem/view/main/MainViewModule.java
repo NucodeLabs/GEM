@@ -2,15 +2,19 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import javafx.stage.Stage;
-import ru.nucodelabs.gem.app.AppService;
+import com.google.inject.name.Named;
+import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.MainViewHelper;
+import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
-import ru.nucodelabs.gem.app.operation.OperationsModule;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
+
+import java.util.Collections;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -24,17 +28,19 @@ public class MainViewModule extends AbstractModule {
         install(new DialogsModule());
         install(new ObservableDataModule());
         install(new ChartsModule());
-        install(new OperationsModule());
         bind(MainViewController.class).in(SINGLETON);
         bind(VESCurvesController.class).in(SINGLETON);
         bind(ModelTableController.class).in(SINGLETON);
         bind(ExperimentalTableController.class).in(SINGLETON);
         bind(StorageManager.class).in(SINGLETON);
-        bind(AppService.class).in(SINGLETON);
+        bind(MainViewHelper.class).in(SINGLETON);
+        bind(SectionManager.class).in(SINGLETON);
+        bind(HistoryManager.class).in(SINGLETON);
     }
 
     @Provides
-    private Stage provideStage(MainViewController controller) {
-        return controller.getStage();
+    @Named("Initial")
+    private Section provideInitialSection() {
+        return new Section(Collections.emptyList());
     }
 }

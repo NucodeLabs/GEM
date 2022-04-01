@@ -14,8 +14,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.annotation.Subject;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.MainViewHelper;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
@@ -24,8 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static java.util.Objects.requireNonNull;
 
 public class MainViewController extends AbstractController {
 
@@ -36,7 +34,7 @@ public class MainViewController extends AbstractController {
     private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
-    private final AppService appService;
+    private final MainViewHelper mainViewHelper;
 
     @FXML
     public CheckMenuItem menuViewVESCurvesLegend;
@@ -48,13 +46,14 @@ public class MainViewController extends AbstractController {
     private Menu menuView;
     @FXML
     private NoFileScreenController noFileScreenController;
-    private ResourceBundle uiProperties;
     @Inject
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
     @Inject
     @Named("Save")
     private Provider<Dialog<ButtonType>> saveDialogProvider;
+    @Inject
+    private HistoryManager historyManager;
     @FXML
     private VESCurvesController vesCurvesController;
 
@@ -62,12 +61,12 @@ public class MainViewController extends AbstractController {
     public MainViewController(
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex,
-            @Subject ObservableList<Picket> picketObservableList,
-            AppService appService) {
+            ObservableList<Picket> picketObservableList,
+            MainViewHelper mainViewHelper) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
-        this.appService = appService;
+        this.mainViewHelper = mainViewHelper;
 
         bind();
     }
@@ -109,19 +108,18 @@ public class MainViewController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        getStage().setOnCloseRequest(appService::askToSave);
+        getStage().setOnCloseRequest(mainViewHelper::askToSave);
         getStage().getScene().getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                 this::redo
         );
 
-        appService.setStage(getStage());
-        uiProperties = requireNonNull(resources);
+        mainViewHelper.setStage(getStage());
         noFileScreenController.visibleProperty().bind(noFileOpened);
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
         if (OSDetect.isMacOS()) {
-            CheckMenuItem useSystemMenu = new CheckMenuItem(uiProperties.getString("useSystemMenu"));
+            CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
@@ -134,27 +132,27 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void closeFile(Event event) {
-        appService.closeFile(event);
+        mainViewHelper.closeFile(event);
     }
 
     @FXML
     public void importEXP() {
-        appService.importEXP();
+        mainViewHelper.importEXP();
     }
 
     @FXML
     public void openSection(Event event) {
-        appService.openSection(event);
+        mainViewHelper.openSection(event);
     }
 
     @FXML
     public void saveSection() {
-        appService.saveSection();
+        mainViewHelper.saveSection();
     }
 
     @FXML
     public void saveSectionAs() {
-        appService.saveSectionAs();
+        mainViewHelper.saveSectionAs();
     }
 
     /**
@@ -170,17 +168,17 @@ public class MainViewController extends AbstractController {
      */
     @FXML
     public void importMOD() {
-        appService.importMOD();
+        mainViewHelper.importMOD();
     }
 
     @FXML
     public void importJsonPicket() {
-        appService.importJsonPicket();
+        mainViewHelper.importJsonPicket();
     }
 
     @FXML
     public void exportJsonPicket() {
-        appService.exportJsonPicket();
+        mainViewHelper.exportJsonPicket();
     }
 
     @FXML
@@ -201,7 +199,7 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void inverseSolve() {
-        appService.inverseSolve();
+        mainViewHelper.inverseSolve();
     }
 
     public String getVesTitle() {
@@ -229,10 +227,10 @@ public class MainViewController extends AbstractController {
     }
 
     public void undo() {
-        appService.undo();
+        historyManager.undo();
     }
 
     public void redo() {
-        appService.redo();
+        historyManager.redo();
     }
 }

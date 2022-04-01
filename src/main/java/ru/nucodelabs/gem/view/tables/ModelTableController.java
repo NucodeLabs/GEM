@@ -2,11 +2,11 @@ package ru.nucodelabs.gem.view.tables;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -16,8 +16,9 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppService;
-import ru.nucodelabs.gem.app.operation.PicketModificationOperation;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.MainViewHelper;
+import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
@@ -46,14 +47,17 @@ public class ModelTableController extends AbstractController {
     @FXML
     private TableView<ModelDataRow> table;
     @Inject
-    private AppService appService;
+    private MainViewHelper mainViewHelper;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
     private Validator validator;
     @Inject
-    private PicketModificationOperation.Factory operationFactory;
-
+    private SectionManager sectionManager;
+    @Inject
+    private HistoryManager historyManager;
+    @Inject
+    private IntegerProperty picketIndex;
     private List<TextField> requiredForAdd;
 
     @Inject
@@ -288,12 +292,13 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            appService.execute(operationFactory.create(newModelData));
+            historyManager.performThenSnapshot(
+                    () -> sectionManager.updateModelData(picketIndex.get(), newModelData));
         }
     }
 
     @FXML
-    private void importModel(Event event) {
-        appService.importMOD();
+    private void importModel() {
+        mainViewHelper.importMOD();
     }
 }
