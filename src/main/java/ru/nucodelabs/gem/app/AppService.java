@@ -290,6 +290,7 @@ public class AppService {
         }
         picketObservableList.clear();
         storageManager.clearSavedState();
+        operationExecutor.clearHistory();
         resetWindowTitle();
     }
 

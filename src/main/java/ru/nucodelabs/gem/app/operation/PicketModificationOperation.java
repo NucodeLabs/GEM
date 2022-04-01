@@ -17,9 +17,9 @@ public class PicketModificationOperation extends AbstractOperation {
     @AssistedInject
     public PicketModificationOperation(
             int picketIndex,
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted Picket newPicketValue) {
-        super(state);
+        super(subject);
         this.picketIndex = picketIndex;
         this.newPicketValue = newPicketValue;
     }
@@ -27,12 +27,12 @@ public class PicketModificationOperation extends AbstractOperation {
     @AssistedInject
     public PicketModificationOperation(
             int picketIndex,
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted ModelData newModelDataValue) {
-        this(picketIndex, state,
+        this(picketIndex, subject,
                 new Picket(
-                        state.get(picketIndex).name(),
-                        state.get(picketIndex).experimentalData(),
+                        subject.get(picketIndex).name(),
+                        subject.get(picketIndex).experimentalData(),
                         newModelDataValue
                 ));
     }
@@ -40,32 +40,32 @@ public class PicketModificationOperation extends AbstractOperation {
     @AssistedInject
     public PicketModificationOperation(
             int picketIndex,
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted ExperimentalData newExperimentalDataValue) {
-        this(picketIndex, state,
+        this(picketIndex, subject,
                 new Picket(
-                        state.get(picketIndex).name(),
+                        subject.get(picketIndex).name(),
                         newExperimentalDataValue,
-                        state.get(picketIndex).modelData()
+                        subject.get(picketIndex).modelData()
                 ));
     }
 
     @AssistedInject
     public PicketModificationOperation(
             int picketIndex,
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted String newName) {
-        this(picketIndex, state,
+        this(picketIndex, subject,
                 new Picket(
                         newName,
-                        state.get(picketIndex).experimentalData(),
-                        state.get(picketIndex).modelData()
+                        subject.get(picketIndex).experimentalData(),
+                        subject.get(picketIndex).modelData()
                 ));
     }
 
     @Override
     public boolean execute() {
-        state.set(picketIndex, newPicketValue);
+        subject.set(picketIndex, newPicketValue);
         return true;
     }
 

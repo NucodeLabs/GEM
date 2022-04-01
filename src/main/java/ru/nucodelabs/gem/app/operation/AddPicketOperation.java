@@ -13,15 +13,15 @@ public class AddPicketOperation extends AbstractOperation {
 
     @AssistedInject
     public AddPicketOperation(
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted Picket newPicket) {
-        super(state);
+        super(subject);
         this.newPicket = newPicket;
     }
 
     @Override
     public boolean execute() {
-        state.add(newPicket);
+        subject.add(newPicket);
         return true;
     }
 

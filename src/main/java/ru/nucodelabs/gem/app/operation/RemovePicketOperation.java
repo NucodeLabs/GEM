@@ -13,15 +13,15 @@ public class RemovePicketOperation extends AbstractOperation {
 
     @AssistedInject
     public RemovePicketOperation(
-            @Subject List<Picket> state,
+            @Subject List<Picket> subject,
             @Assisted int picketIndex) {
-        super(state);
+        super(subject);
         this.picketIndex = picketIndex;
     }
 
     @Override
     public boolean execute() {
-        state.remove(picketIndex);
+        subject.remove(picketIndex);
         return true;
     }
 
