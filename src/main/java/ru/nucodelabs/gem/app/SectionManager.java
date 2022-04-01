@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.app;
 
 import com.google.inject.name.Named;
+import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
@@ -85,6 +86,11 @@ public class SectionManager {
 
     public int size() {
         return section.pickets().size();
+    }
+
+    public void inverseSolve(int index) {
+        InverseSolver inverseSolver = new InverseSolver(get(index));
+        updateModelData(index, inverseSolver.getOptimizedModelData());
     }
 
     public void subscribe(PropertyChangeListener changeListener) {

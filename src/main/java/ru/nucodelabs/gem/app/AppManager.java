@@ -12,7 +12,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
@@ -24,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class MainViewHelper {
+public class AppManager {
 
     private final StorageManager storageManager;
     private final HistoryManager historyManager;
@@ -36,13 +35,13 @@ public class MainViewHelper {
     private final AlertsFactory alertsFactory;
     private final Provider<Dialog<ButtonType>> saveDialogProvider;
     private final IntegerProperty picketIndex;
-
-    private Stage stage;
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
+    private Stage stage;
+
     @Inject
-    public MainViewHelper(
+    public AppManager(
             StorageManager storageManager,
             HistoryManager historyManager,
             SectionManager sectionManager,
@@ -65,7 +64,7 @@ public class MainViewHelper {
         this.picketIndex = picketIndex;
     }
 
-    public void setStage(Stage stage) {
+    public void init(Stage stage) {
         this.stage = stage;
         sectionManager.subscribe(evt -> {
             if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
@@ -244,16 +243,6 @@ public class MainViewHelper {
             } catch (Exception e) {
                 alertsFactory.incorrectFileAlert(e, stage).show();
             }
-        }
-    }
-
-    public void inverseSolve() {
-        InverseSolver inverseSolver = new InverseSolver(sectionManager.get(picketIndex.get()));
-
-        try {
-            historyManager.performThenSnapshot(() -> sectionManager.updateModelData(picketIndex.get(), inverseSolver.getOptimizedModelData()));
-        } catch (Exception e) {
-            alertsFactory.simpleExceptionAlert(e, stage).show();
         }
     }
 

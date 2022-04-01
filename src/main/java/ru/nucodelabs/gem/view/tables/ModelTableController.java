@@ -16,8 +16,8 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.app.HistoryManager;
-import ru.nucodelabs.gem.app.MainViewHelper;
 import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -47,7 +47,7 @@ public class ModelTableController extends AbstractController {
     @FXML
     private TableView<ModelDataRow> table;
     @Inject
-    private MainViewHelper mainViewHelper;
+    private AppManager appManager;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -299,6 +299,6 @@ public class ModelTableController extends AbstractController {
 
     @FXML
     private void importModel() {
-        mainViewHelper.importMOD();
+        appManager.importMOD();
     }
 }

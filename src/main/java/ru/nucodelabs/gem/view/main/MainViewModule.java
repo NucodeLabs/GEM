@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.app.HistoryManager;
-import ru.nucodelabs.gem.app.MainViewHelper;
 import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.view.DialogsModule;
@@ -33,7 +33,7 @@ public class MainViewModule extends AbstractModule {
         bind(ModelTableController.class).in(SINGLETON);
         bind(ExperimentalTableController.class).in(SINGLETON);
         bind(StorageManager.class).in(SINGLETON);
-        bind(MainViewHelper.class).in(SINGLETON);
+        bind(AppManager.class).in(SINGLETON);
         bind(SectionManager.class).in(SINGLETON);
         bind(HistoryManager.class).in(SINGLETON);
     }

@@ -14,8 +14,9 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.app.HistoryManager;
-import ru.nucodelabs.gem.app.MainViewHelper;
+import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
@@ -31,10 +32,10 @@ public class MainViewController extends AbstractController {
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
+    private final AppManager appManager;
     private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
-    private final MainViewHelper mainViewHelper;
 
     @FXML
     public CheckMenuItem menuViewVESCurvesLegend;
@@ -46,6 +47,9 @@ public class MainViewController extends AbstractController {
     private Menu menuView;
     @FXML
     private NoFileScreenController noFileScreenController;
+    @FXML
+    private VESCurvesController vesCurvesController;
+
     @Inject
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
@@ -54,19 +58,19 @@ public class MainViewController extends AbstractController {
     private Provider<Dialog<ButtonType>> saveDialogProvider;
     @Inject
     private HistoryManager historyManager;
-    @FXML
-    private VESCurvesController vesCurvesController;
+    @Inject
+    private SectionManager sectionManager;
 
     @Inject
     public MainViewController(
+            AppManager appManager,
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex,
-            ObservableList<Picket> picketObservableList,
-            MainViewHelper mainViewHelper) {
+            ObservableList<Picket> picketObservableList) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
-        this.mainViewHelper = mainViewHelper;
+        this.appManager = appManager;
 
         bind();
     }
@@ -108,13 +112,14 @@ public class MainViewController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        getStage().setOnCloseRequest(mainViewHelper::askToSave);
+        appManager.init(getStage());
+
+        getStage().setOnCloseRequest(appManager::askToSave);
         getStage().getScene().getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                 this::redo
         );
 
-        mainViewHelper.setStage(getStage());
         noFileScreenController.visibleProperty().bind(noFileOpened);
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
@@ -132,27 +137,27 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void closeFile(Event event) {
-        mainViewHelper.closeFile(event);
+        appManager.closeFile(event);
     }
 
     @FXML
     public void importEXP() {
-        mainViewHelper.importEXP();
+        appManager.importEXP();
     }
 
     @FXML
     public void openSection(Event event) {
-        mainViewHelper.openSection(event);
+        appManager.openSection(event);
     }
 
     @FXML
     public void saveSection() {
-        mainViewHelper.saveSection();
+        appManager.saveSection();
     }
 
     @FXML
     public void saveSectionAs() {
-        mainViewHelper.saveSectionAs();
+        appManager.saveSectionAs();
     }
 
     /**
@@ -168,17 +173,17 @@ public class MainViewController extends AbstractController {
      */
     @FXML
     public void importMOD() {
-        mainViewHelper.importMOD();
+        appManager.importMOD();
     }
 
     @FXML
     public void importJsonPicket() {
-        mainViewHelper.importJsonPicket();
+        appManager.importJsonPicket();
     }
 
     @FXML
     public void exportJsonPicket() {
-        mainViewHelper.exportJsonPicket();
+        appManager.exportJsonPicket();
     }
 
     @FXML
@@ -199,7 +204,7 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void inverseSolve() {
-        mainViewHelper.inverseSolve();
+        historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
     }
 
     public String getVesTitle() {
