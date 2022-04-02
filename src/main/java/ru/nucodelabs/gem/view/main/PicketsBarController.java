@@ -26,7 +26,7 @@ public class PicketsBarController extends AbstractController {
     private final IntegerProperty picketIndex;
 
     @FXML
-    public HBox container;
+    private HBox container;
 
     @Inject
     private SectionManager sectionManager;

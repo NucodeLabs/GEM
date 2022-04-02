@@ -16,13 +16,14 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
+import ru.nucodelabs.gem.view.main.MainViewController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.*;
 
@@ -34,22 +35,22 @@ public class ModelTableController extends AbstractController {
     private final ObservableObjectValue<Picket> picket;
 
     @FXML
-    public TextField powerTextField;
+    private TextField powerTextField;
     @FXML
-    public TextField resistanceTextField;
+    private TextField resistanceTextField;
     @FXML
-    public TextField polarizationTextField;
+    private TextField polarizationTextField;
     @FXML
-    public TextField indexTextField;
+    private TextField indexTextField;
     @FXML
-    public Button deleteBtn;
+    private Button deleteBtn;
     @FXML
-    public Button addBtn;
+    private Button addBtn;
     @FXML
     private TableView<ModelDataRow> table;
 
     @Inject
-    private AppManager appManager;
+    private Provider<MainViewController> mainViewControllerProvider;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -211,7 +212,7 @@ public class ModelTableController extends AbstractController {
     }
 
     @FXML
-    public void addLayer() {
+    private void addLayer() {
         if (!resistanceTextField.getText().isBlank()
                 && !powerTextField.getText().isBlank()
                 && !polarizationTextField.getText().isBlank()) {
@@ -267,7 +268,7 @@ public class ModelTableController extends AbstractController {
     }
 
     @FXML
-    public void deleteSelected() {
+    private void deleteSelected() {
         List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
@@ -301,6 +302,6 @@ public class ModelTableController extends AbstractController {
 
     @FXML
     private void importModel() {
-        appManager.importMOD();
+        mainViewControllerProvider.get().importMOD();
     }
 }

@@ -5,20 +5,20 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.app.AppManager;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class NoFileScreenController extends AbstractController {
 
-    private final AppManager appManager;
+    private final Provider<MainViewController> mainViewControllerProvider;
 
     @Inject
-    public NoFileScreenController(AppManager appManager) {
-        this.appManager = appManager;
+    public NoFileScreenController(Provider<MainViewController> mainViewControllerProvider) {
+        this.mainViewControllerProvider = mainViewControllerProvider;
     }
 
     @FXML
@@ -26,12 +26,12 @@ public class NoFileScreenController extends AbstractController {
 
     @FXML
     private void importEXP(Event event) {
-        appManager.importEXP();
+        mainViewControllerProvider.get().importEXP();
     }
 
     @FXML
     private void openSection(Event event) {
-        appManager.openSection(event);
+        mainViewControllerProvider.get().openSection(event);
     }
 
     @Override

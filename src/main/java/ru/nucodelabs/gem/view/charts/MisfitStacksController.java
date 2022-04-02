@@ -32,7 +32,7 @@ public class MisfitStacksController extends AbstractController {
     private final ObservableObjectValue<Picket> picket;
 
     @FXML
-    public Label text;
+    private Label text;
     @FXML
     private LineChart<Double, Double> lineChart;
     @FXML
