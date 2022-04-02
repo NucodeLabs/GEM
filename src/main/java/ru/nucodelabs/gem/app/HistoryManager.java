@@ -61,5 +61,6 @@ public class HistoryManager {
 
     public void clear() {
         history.clear();
+        position = 0;
     }
 }
