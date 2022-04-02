@@ -17,7 +17,7 @@ import ru.nucodelabs.gem.app.SectionManager;
 import java.util.ArrayList;
 
 /**
- * Используются для коммуникации между контроллерами
+ * Используются для коммуникации между контроллерами и удобного отслеживания изменений в данных.
  */
 public class ObservableDataModule extends AbstractModule {
     /**
