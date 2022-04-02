@@ -13,7 +13,7 @@ import ru.nucodelabs.gem.view.charts.VESCurvesController;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 
-import java.util.Collections;
+import java.util.ArrayList;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -39,6 +39,6 @@ public class MainViewModule extends AbstractModule {
     @Provides
     @Named("Initial")
     private Section provideInitialSection() {
-        return new Section(Collections.emptyList());
+        return new Section(new ArrayList<>());
     }
 }

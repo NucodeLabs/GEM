@@ -86,7 +86,6 @@ public class MainViewController extends AbstractController {
     @Inject
     private Validator validator;
 
-
     @Inject
     public MainViewController(
             ObservableObjectValue<Picket> picket,
