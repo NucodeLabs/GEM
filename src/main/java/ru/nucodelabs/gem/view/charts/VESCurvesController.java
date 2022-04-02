@@ -49,6 +49,7 @@ public class VESCurvesController extends AbstractController {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
+
     @Inject
     @Named("VESCurves")
     private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;

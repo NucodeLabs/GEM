@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 
 public class ExperimentalTableController extends AbstractController {
 
-
     private final ObservableObjectValue<Picket> picket;
 
     @FXML

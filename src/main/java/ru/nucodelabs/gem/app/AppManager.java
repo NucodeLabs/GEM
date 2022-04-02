@@ -64,7 +64,7 @@ public class AppManager {
         this.picketIndex = picketIndex;
     }
 
-    public void init(Stage stage) {
+    public void initStage(Stage stage) {
         this.stage = stage;
         sectionManager.subscribe(evt -> {
             if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {

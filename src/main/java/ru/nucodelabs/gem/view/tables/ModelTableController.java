@@ -32,6 +32,7 @@ import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 public class ModelTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
+
     @FXML
     public TextField powerTextField;
     @FXML
@@ -46,6 +47,7 @@ public class ModelTableController extends AbstractController {
     public Button addBtn;
     @FXML
     private TableView<ModelDataRow> table;
+
     @Inject
     private AppManager appManager;
     @Inject

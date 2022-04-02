@@ -8,7 +8,9 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -19,6 +21,7 @@ import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 
 import javax.inject.Inject;
@@ -54,12 +57,11 @@ public class MainViewController extends AbstractController {
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
     @Inject
-    @Named("Save")
-    private Provider<Dialog<ButtonType>> saveDialogProvider;
-    @Inject
     private HistoryManager historyManager;
     @Inject
     private SectionManager sectionManager;
+    @Inject
+    private AlertsFactory alertsFactory;
 
     @Inject
     public MainViewController(
@@ -112,13 +114,12 @@ public class MainViewController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        appManager.init(getStage());
+        appManager.initStage(getStage());
 
         getStage().setOnCloseRequest(appManager::askToSave);
         getStage().getScene().getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
-                this::redo
-        );
+                this::redo);
 
         noFileScreenController.visibleProperty().bind(noFileOpened);
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
@@ -204,7 +205,11 @@ public class MainViewController extends AbstractController {
 
     @FXML
     public void inverseSolve() {
-        historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
+        try {
+            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
+        } catch (Exception e) {
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+        }
     }
 
     public String getVesTitle() {

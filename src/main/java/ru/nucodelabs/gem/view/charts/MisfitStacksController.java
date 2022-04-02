@@ -29,8 +29,8 @@ import static java.lang.Math.abs;
 
 public class MisfitStacksController extends AbstractController {
 
-
     private final ObservableObjectValue<Picket> picket;
+
     @FXML
     public Label text;
     @FXML
@@ -39,6 +39,7 @@ public class MisfitStacksController extends AbstractController {
     private NumberAxis lineChartXAxis;
     @FXML
     private NumberAxis lineChartYAxis;
+
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
