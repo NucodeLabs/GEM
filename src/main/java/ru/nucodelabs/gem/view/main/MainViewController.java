@@ -1,6 +1,8 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
+import jakarta.validation.Validator;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
@@ -8,17 +10,17 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.AppManager;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.SectionManager;
+import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -26,7 +28,11 @@ import ru.nucodelabs.gem.view.charts.VESCurvesController;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.io.File;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MainViewController extends AbstractController {
@@ -35,13 +41,16 @@ public class MainViewController extends AbstractController {
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
-    private final AppManager appManager;
+    private final StringProperty windowTitle = new SimpleStringProperty("GEM");
+    private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
+
     private final ObservableObjectValue<Picket> picket;
     private final IntegerProperty picketIndex;
     private final ObservableList<Picket> picketObservableList;
+    private final SectionManager sectionManager;
 
     @FXML
-    public CheckMenuItem menuViewVESCurvesLegend;
+    private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
     private Stage root;
     @FXML
@@ -59,22 +68,35 @@ public class MainViewController extends AbstractController {
     @Inject
     private HistoryManager historyManager;
     @Inject
-    private SectionManager sectionManager;
-    @Inject
     private AlertsFactory alertsFactory;
+    @Inject
+    @Named("EXP")
+    private FileChooser expFileChooser;
+    @Inject
+    @Named("MOD")
+    private FileChooser modFileChooser;
+    @Inject
+    @Named("JSON")
+    private FileChooser jsonFileChooser;
+    @Inject
+    private StorageManager storageManager;
+    @Inject
+    @Named("Save")
+    private Provider<Dialog<ButtonType>> saveDialogProvider;
+    @Inject
+    private Validator validator;
+
 
     @Inject
     public MainViewController(
-            AppManager appManager,
             ObservableObjectValue<Picket> picket,
             IntegerProperty picketIndex,
-            ObservableList<Picket> picketObservableList) {
+            ObservableList<Picket> picketObservableList,
+            SectionManager sectionManager) {
         this.picket = picket;
         this.picketIndex = picketIndex;
         this.picketObservableList = picketObservableList;
-        this.appManager = appManager;
-
-        bind();
+        this.sectionManager = sectionManager;
     }
 
     private void bind() {
@@ -110,13 +132,21 @@ public class MainViewController extends AbstractController {
                 return picketObservableList.isEmpty();
             }
         });
+
+        sectionManager.subscribe(evt -> {
+            if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+                dirtyAsterisk.set("*");
+            } else {
+                dirtyAsterisk.set("");
+            }
+        });
+
+        getStage().titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        appManager.initStage(getStage());
-
-        getStage().setOnCloseRequest(appManager::askToSave);
+        getStage().setOnCloseRequest(this::askToSave);
         getStage().getScene().getAccelerators().put(
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                 this::redo);
@@ -129,6 +159,8 @@ public class MainViewController extends AbstractController {
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
         }
+
+        bind();
     }
 
     @Override
@@ -137,35 +169,115 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
-    public void closeFile(Event event) {
-        appManager.closeFile(event);
+    private void closeFile(Event event) {
+        if (askToSave(event).isConsumed()) {
+            return;
+        }
+        storageManager.clearSavedState();
+        sectionManager.setSection(new Section(Collections.emptyList()));
+        historyManager.clear();
+        resetWindowTitle();
+    }
+
+    private Event askToSave(Event event) {
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+            Dialog<ButtonType> saveDialog = saveDialogProvider.get();
+            saveDialog.initOwner(getStage());
+            Optional<ButtonType> answer = saveDialog.showAndWait();
+            if (answer.isPresent()) {
+                if (answer.get() == ButtonType.YES) {
+                    saveSection();
+                } else if (answer.get() == ButtonType.CANCEL) {
+                    event.consume();
+                }
+            }
+        }
+        return event;
     }
 
     @FXML
     public void importEXP() {
-        appManager.importEXP();
+        List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
+        if (files != null) {
+            if (files.get(files.size() - 1).getParentFile().isDirectory()) {
+                expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
+            }
+            for (var file : files) {
+                addEXP(file);
+            }
+        }
     }
+
+    private void addEXP(File file) {
+        try {
+            Picket picketFromEXPFile = storageManager.loadPicketFromEXPFile(file);
+            var violations = validator.validate(picketFromEXPFile);
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage()).show();
+                return;
+            }
+            historyManager.performThenSnapshot(() -> sectionManager.add(picketFromEXPFile));
+            picketIndex.set(sectionManager.size() - 1);
+            compatibilityModeAlert();
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
+        }
+    }
+
 
     @FXML
     public void openSection(Event event) {
-        appManager.openSection(event);
+        if (askToSave(event).isConsumed()) {
+            return;
+        }
+        File file = jsonFileChooser.showOpenDialog(getStage());
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                Section loadedSection = storageManager.loadSectionFromJsonFile(file);
+                var violations =
+                        validator.validate(loadedSection);
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage()).show();
+                    return;
+                }
+
+                sectionManager.setSection(loadedSection);
+                picketIndex.set(0);
+                historyManager.clear();
+                historyManager.snapshot();
+                setWindowFileTitle(file);
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
     }
 
     @FXML
-    public void saveSection() {
-        appManager.saveSection();
+    private void saveSection() {
+        File file;
+        if (storageManager.getSavedStateFile() == null) {
+            file = jsonFileChooser.showSaveDialog(getStage());
+        } else {
+            file = storageManager.getSavedStateFile();
+        }
+        saveSection(file);
     }
 
     @FXML
-    public void saveSectionAs() {
-        appManager.saveSectionAs();
+    private void saveSectionAs() {
+        saveSection(jsonFileChooser.showSaveDialog(getStage()));
     }
 
     /**
      * Opens new window
      */
     @FXML
-    public void newWindow() {
+    private void newWindow() {
         mainViewProvider.get().show();
     }
 
@@ -174,21 +286,67 @@ public class MainViewController extends AbstractController {
      */
     @FXML
     public void importMOD() {
-        appManager.importMOD();
+        File file = modFileChooser.showOpenDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                modFileChooser.setInitialDirectory(file.getParentFile());
+            }
+            try {
+                Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+
+                var violations = validator.validate(newPicket);
+
+                if (!violations.isEmpty()) {
+                    alertsFactory.violationsAlert(violations, getStage());
+                    return;
+                }
+
+                historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
     }
 
     @FXML
-    public void importJsonPicket() {
-        appManager.importJsonPicket();
+    private void importJsonPicket() {
+        File file = jsonFileChooser.showOpenDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
+                historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
+                picketIndex.set(sectionManager.size() - 1);
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
     }
 
     @FXML
-    public void exportJsonPicket() {
-        appManager.exportJsonPicket();
+    private void exportJsonPicket() {
+        File file = jsonFileChooser.showSaveDialog(getStage());
+
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+
+            try {
+                storageManager.savePicketToJsonFile(file, sectionManager.get(picketIndex.get()));
+            } catch (Exception e) {
+                alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            }
+        }
     }
 
     @FXML
-    public void switchToNextPicket() {
+    private void switchToNextPicket() {
         if (picketIndex.get() + 1 <= picketObservableList.size() - 1
                 && !picketObservableList.isEmpty()) {
             picketIndex.set(picketIndex.get() + 1);
@@ -196,7 +354,7 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
-    public void switchToPrevPicket() {
+    private void switchToPrevPicket() {
         if (picketIndex.get() >= 1
                 && !picketObservableList.isEmpty()) {
             picketIndex.set(picketIndex.get() - 1);
@@ -204,12 +362,42 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
-    public void inverseSolve() {
+    private void inverseSolve() {
         try {
             historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
+    }
+
+    private void compatibilityModeAlert() {
+        if (sectionManager.get(picketIndex.get()) != null
+                && sectionManager.get(picketIndex.get()).experimentalData().isUnsafe()) {
+            alertsFactory.unsafeDataAlert(sectionManager.get(picketIndex.get()).name(), getStage()).show();
+        }
+    }
+
+    private void saveSection(File file) {
+        if (file != null) {
+            if (file.getParentFile().isDirectory()) {
+                jsonFileChooser.setInitialDirectory(file.getParentFile());
+            }
+            try {
+                storageManager.saveSectionToJsonFile(file, sectionManager.getSnapshot());
+                setWindowFileTitle(file);
+                dirtyAsterisk.set("");
+            } catch (Exception e) {
+                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            }
+        }
+    }
+
+    private void setWindowFileTitle(File file) {
+        windowTitle.set(file.getName());
+    }
+
+    private void resetWindowTitle() {
+        windowTitle.set("GEM");
     }
 
     public String getVesTitle() {

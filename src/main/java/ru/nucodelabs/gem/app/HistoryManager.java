@@ -52,7 +52,7 @@ public class HistoryManager {
     }
 
     private Optional<Section> getRedo() {
-        if (position == history.size() - 1) {
+        if (position == history.size() - 1 || history.isEmpty()) {
             return Optional.empty();
         }
         position = min(history.size() - 1, position + 1);
