@@ -44,7 +44,7 @@ public class HistoryManager {
     }
 
     private Optional<Section> getUndo() {
-        if (position == 0) {
+        if (position == 0 || history.isEmpty()) {
             return Optional.empty();
         }
         position = max(0, position - 1);
