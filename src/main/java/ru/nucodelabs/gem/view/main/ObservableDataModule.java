@@ -12,7 +12,9 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.SectionManager;
+import ru.nucodelabs.gem.view.AbstractSectionObserver;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,15 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableList<Picket> providePicketsObservableList(SectionManager sectionManager) {
         ObservableList<Picket> pickets = FXCollections.observableList(new ArrayList<>());
-        sectionManager.subscribe(evt -> pickets.setAll(sectionManager.getSnapshot().pickets()));
+        sectionManager.subscribe(new AbstractSectionObserver() {
+            @Override
+            public void onNext(Section item) {
+                if (!item.pickets().equals(pickets)) {
+                    pickets.setAll(item.pickets());
+                }
+                subscription.request(1);
+            }
+        });
         return pickets;
     }
 

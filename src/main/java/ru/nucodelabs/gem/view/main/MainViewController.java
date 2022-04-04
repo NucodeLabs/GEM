@@ -23,6 +23,7 @@ import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.AbstractSectionObserver;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 
@@ -132,11 +133,15 @@ public class MainViewController extends AbstractController {
             }
         });
 
-        sectionManager.subscribe(evt -> {
-            if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
-                dirtyAsterisk.set("*");
-            } else {
-                dirtyAsterisk.set("");
+        sectionManager.subscribe(new AbstractSectionObserver() {
+            @Override
+            public void onNext(Section item) {
+                if (!storageManager.compareWithSavedState(item)) {
+                    dirtyAsterisk.set("*");
+                } else {
+                    dirtyAsterisk.set("");
+                }
+                subscription.request(1);
             }
         });
 
