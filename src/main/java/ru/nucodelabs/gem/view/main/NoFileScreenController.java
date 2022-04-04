@@ -14,18 +14,14 @@ import java.util.ResourceBundle;
 
 public class NoFileScreenController extends AbstractController {
 
-    private final Provider<MainViewController> mainViewControllerProvider;
-
     @Inject
-    public NoFileScreenController(Provider<MainViewController> mainViewControllerProvider) {
-        this.mainViewControllerProvider = mainViewControllerProvider;
-    }
+    private Provider<MainViewController> mainViewControllerProvider;
 
     @FXML
     private VBox root;
 
     @FXML
-    private void importEXP(Event event) {
+    private void importEXP() {
         mainViewControllerProvider.get().importEXP();
     }
 

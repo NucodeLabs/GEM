@@ -45,10 +45,14 @@ public class MainViewController extends AbstractController {
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
-    private final ObservableObjectValue<Picket> picket;
-    private final IntegerProperty picketIndex;
-    private final ObservableList<Picket> picketObservableList;
-    private final SectionManager sectionManager;
+    @Inject
+    private ObservableObjectValue<Picket> picket;
+    @Inject
+    private IntegerProperty picketIndex;
+    @Inject
+    private ObservableList<Picket> picketObservableList;
+    @Inject
+    private SectionManager sectionManager;
 
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
@@ -87,16 +91,23 @@ public class MainViewController extends AbstractController {
     @Inject
     private Validator validator;
 
-    @Inject
-    public MainViewController(
-            ObservableObjectValue<Picket> picket,
-            IntegerProperty picketIndex,
-            ObservableList<Picket> picketObservableList,
-            SectionManager sectionManager) {
-        this.picket = picket;
-        this.picketIndex = picketIndex;
-        this.picketObservableList = picketObservableList;
-        this.sectionManager = sectionManager;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        getStage().setOnCloseRequest(this::askToSave);
+        getStage().getScene().getAccelerators().put(
+                new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
+                this::redo);
+
+        noFileScreenController.visibleProperty().bind(noFileOpened);
+        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
+
+        if (OSDetect.isMacOS()) {
+            CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
+            menuView.getItems().add(0, useSystemMenu);
+            useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+        }
+
+        bind();
     }
 
     private void bind() {
@@ -145,25 +156,6 @@ public class MainViewController extends AbstractController {
         });
 
         getStage().titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        getStage().setOnCloseRequest(this::askToSave);
-        getStage().getScene().getAccelerators().put(
-                new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
-                this::redo);
-
-        noFileScreenController.visibleProperty().bind(noFileOpened);
-        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
-
-        if (OSDetect.isMacOS()) {
-            CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
-            menuView.getItems().add(0, useSystemMenu);
-            useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
-        }
-
-        bind();
     }
 
     @Override
