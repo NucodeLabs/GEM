@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.app.model;
 
 import ru.nucodelabs.data.ves.Section;
 
