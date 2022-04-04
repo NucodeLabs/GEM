@@ -1,26 +1,29 @@
 package ru.nucodelabs.gem.view.tables;
 
-import com.google.inject.name.Named;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
+import ru.nucodelabs.gem.view.main.MainViewController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.*;
 
@@ -29,33 +32,39 @@ import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
 public class ModelTableController extends AbstractController {
 
-    private final ObjectProperty<Picket> picket;
+    private final ObservableObjectValue<Picket> picket;
+
     @FXML
-    public TextField powerTextField;
+    private TextField powerTextField;
     @FXML
-    public TextField resistanceTextField;
+    private TextField resistanceTextField;
     @FXML
-    public TextField polarizationTextField;
+    private TextField polarizationTextField;
     @FXML
-    public TextField indexTextField;
+    private TextField indexTextField;
     @FXML
-    public Button deleteBtn;
+    private Button deleteBtn;
     @FXML
-    public Button addBtn;
+    private Button addBtn;
     @FXML
     private TableView<ModelDataRow> table;
+
     @Inject
-    @Named("ImportMOD")
-    private EventHandler<Event> importMOD;
+    private Provider<MainViewController> mainViewControllerProvider;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
     private Validator validator;
-
+    @Inject
+    private SectionManager sectionManager;
+    @Inject
+    private HistoryManager historyManager;
+    @Inject
+    private IntegerProperty picketIndex;
     private List<TextField> requiredForAdd;
 
     @Inject
-    public ModelTableController(ObjectProperty<Picket> picket) {
+    public ModelTableController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {
@@ -106,6 +115,20 @@ public class ModelTableController extends AbstractController {
         addInputCheckListener(polarizationTextField);
         addInputCheckListener(resistanceTextField);
         addInputCheckListener(powerTextField);
+
+        addEnterKeyHandler(indexTextField);
+        addEnterKeyHandler(polarizationTextField);
+        addEnterKeyHandler(resistanceTextField);
+        addEnterKeyHandler(powerTextField);
+    }
+
+    private void addEnterKeyHandler(TextField textField) {
+        textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == KeyCode.ENTER
+                    && !addBtn.isDisabled()) {
+                addBtn.fire();
+            }
+        });
     }
 
     private void addInputCheckListener(TextField doubleTextField) {
@@ -189,7 +212,7 @@ public class ModelTableController extends AbstractController {
     }
 
     @FXML
-    public void addLayer() {
+    private void addLayer() {
         if (!resistanceTextField.getText().isBlank()
                 && !powerTextField.getText().isBlank()
                 && !polarizationTextField.getText().isBlank()) {
@@ -240,22 +263,12 @@ public class ModelTableController extends AbstractController {
                     newPower
             );
 
-            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-            Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
-            if (!violations.isEmpty()) {
-                alertsFactory.violationsAlert(violations, getStage()).show();
-            } else {
-                picket.set(new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                ));
-            }
+            setIfValidElseAlert(newModelData);
         }
     }
 
     @FXML
-    public void deleteSelected() {
+    private void deleteSelected() {
         List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
@@ -273,11 +286,7 @@ public class ModelTableController extends AbstractController {
             newPower.remove(index);
         });
 
-        picket.set(new Picket(
-                picket.get().name(),
-                picket.get().experimentalData(),
-                new ModelData(newResistance, newPolarization, newPower)
-        ));
+        setIfValidElseAlert(new ModelData(newResistance, newPolarization, newPower));
     }
 
     private void setIfValidElseAlert(ModelData newModelData) {
@@ -286,18 +295,13 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            picket.set(
-                    new Picket(
-                            picket.get().name(),
-                            picket.get().experimentalData(),
-                            newModelData
-                    )
-            );
+            historyManager.performThenSnapshot(
+                    () -> sectionManager.updateModelData(picketIndex.get(), newModelData));
         }
     }
 
     @FXML
-    private void importModel(Event event) {
-        importMOD.handle(event);
+    private void importModel() {
+        mainViewControllerProvider.get().importMOD();
     }
 }

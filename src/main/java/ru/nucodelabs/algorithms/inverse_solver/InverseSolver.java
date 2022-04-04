@@ -57,7 +57,7 @@ public class InverseSolver {
     }
 
     public ModelData getOptimizedModelData() {
-        final int MAX_EVAL = 10000;
+        final int MAX_EVAL = 1000000;
 
         ModelData modelData = picket.modelData();
 

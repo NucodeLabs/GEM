@@ -118,6 +118,7 @@ public class ModelCurveDragger {
      * @param modelData  model data
      */
     public ModelData dragHandler(MouseEvent mouseEvent, ModelData modelData) {
+        modelData = modelData.clone();
         mapModelData(modelData);
         var valuesForAxis = coordinatesToValues(mouseEvent);
         Double mouseX = valuesForAxis.getXValue();
