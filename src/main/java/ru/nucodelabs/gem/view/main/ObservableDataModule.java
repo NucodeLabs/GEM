@@ -13,8 +13,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.SectionManager;
-import ru.nucodelabs.gem.view.AbstractSectionObserver;
+import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
+import ru.nucodelabs.gem.app.model.SectionManager;
 
 import java.util.ArrayList;
 

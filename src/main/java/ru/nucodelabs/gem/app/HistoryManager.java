@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.app;
 
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.model.SectionManager;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

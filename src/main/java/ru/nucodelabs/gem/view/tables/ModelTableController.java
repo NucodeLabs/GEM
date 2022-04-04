@@ -17,7 +17,7 @@ import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.HistoryManager;
-import ru.nucodelabs.gem.app.SectionManager;
+import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;

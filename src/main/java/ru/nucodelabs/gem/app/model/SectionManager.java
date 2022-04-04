@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app;
+package ru.nucodelabs.gem.app.model;
 
 import com.google.inject.name.Named;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;

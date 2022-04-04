@@ -19,11 +19,11 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.HistoryManager;
-import ru.nucodelabs.gem.app.SectionManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
+import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
+import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.AbstractSectionObserver;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
 
