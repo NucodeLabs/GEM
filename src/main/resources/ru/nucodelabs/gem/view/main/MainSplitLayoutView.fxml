@@ -59,7 +59,7 @@
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
                             <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
                                 <Placeholder text="%pseudoSection"/>
-                                <Placeholder text="%geoSection"/>
+                                <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
                             </SplitPane>
 
                             <VBox maxWidth="Infinity"
