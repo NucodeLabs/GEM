@@ -12,56 +12,33 @@ import java.util.List;
 /**
  * Загружает файлы и хранит копию сохраненного на диске состояния разреза
  */
-public class StorageManager implements FileManager {
+public class StorageManager implements JsonFileManager, SonetImportManager {
 
-    private final FileManager fileManagerDelegate;
+    private final JsonFileManager jsonFileManagerDelegate;
+    private final SonetImportManager sonetImportManagerDelegate;
     private Section savedState;
     private File savedStateFile;
 
     @Inject
-    public StorageManager(FileManager fileManagerDelegate) {
-        this.fileManagerDelegate = fileManagerDelegate;
+    public StorageManager(JsonFileManager jsonFileManagerDelegate, SonetImportManager sonetImportManagerDelegate) {
+        this.jsonFileManagerDelegate = jsonFileManagerDelegate;
+        this.sonetImportManagerDelegate = sonetImportManagerDelegate;
         savedState = new Section(Collections.emptyList());
     }
 
     @Override
-    public Section loadSectionFromJsonFile(File jsonFile) throws Exception {
-        Section loaded = fileManagerDelegate.loadSectionFromJsonFile(jsonFile);
-        savedState = new Section(List.copyOf(loaded.pickets()));
-        savedStateFile = jsonFile;
-        return loaded;
-    }
-
-    @Override
-    public void saveSectionToJsonFile(File jsonFile, Section section) throws Exception {
-        savedState = new Section(List.copyOf(section.pickets()));
-        savedStateFile = jsonFile;
-        fileManagerDelegate.saveSectionToJsonFile(jsonFile, section);
-    }
-
-    @Override
-    public Picket loadPicketFromJsonFile(File jsonFile) throws Exception {
-        return fileManagerDelegate.loadPicketFromJsonFile(jsonFile);
-    }
-
-    @Override
-    public void savePicketToJsonFile(File jsonFile, Picket picket) throws Exception {
-        fileManagerDelegate.savePicketToJsonFile(jsonFile, picket);
-    }
-
-    @Override
-    public Picket loadPicketFromEXPFile(File expFile) throws Exception {
-        return fileManagerDelegate.loadPicketFromEXPFile(expFile);
+    public Picket loadNameAndExperimentalDataFromEXPFile(File expFile) throws Exception {
+        return sonetImportManagerDelegate.loadNameAndExperimentalDataFromEXPFile(expFile);
     }
 
     @Override
     public Picket loadExperimentalDataFromEXPFile(File expFile, Picket picket) throws Exception {
-        return fileManagerDelegate.loadExperimentalDataFromEXPFile(expFile, picket);
+        return sonetImportManagerDelegate.loadExperimentalDataFromEXPFile(expFile, picket);
     }
 
     @Override
     public Picket loadModelDataFromMODFile(File modFile, Picket picket) throws Exception {
-        return fileManagerDelegate.loadModelDataFromMODFile(modFile, picket);
+        return sonetImportManagerDelegate.loadModelDataFromMODFile(modFile, picket);
     }
 
     public Section getSavedState() {
@@ -79,5 +56,24 @@ public class StorageManager implements FileManager {
     @Nullable
     public File getSavedStateFile() {
         return savedStateFile;
+    }
+
+    @Override
+    public <T> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
+        T loaded = jsonFileManagerDelegate.loadFromJson(jsonFile, type);
+        if (loaded instanceof Section) {
+            savedState = new Section(List.copyOf(((Section) loaded).pickets()));
+            savedStateFile = jsonFile;
+        }
+        return loaded;
+    }
+
+    @Override
+    public <T> void saveToJson(File jsonFile, T object) throws Exception {
+        jsonFileManagerDelegate.saveToJson(jsonFile, object);
+        if (object instanceof Section) {
+            savedState = new Section(List.copyOf(((Section) object).pickets()));
+            savedStateFile = jsonFile;
+        }
     }
 }

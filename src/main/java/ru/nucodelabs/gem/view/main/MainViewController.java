@@ -205,7 +205,7 @@ public class MainViewController extends AbstractController {
 
     private void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadPicketFromEXPFile(file);
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file);
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -232,7 +232,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                Section loadedSection = storageManager.loadSectionFromJsonFile(file);
+                Section loadedSection = storageManager.loadFromJson(file, Section.class);
                 var violations =
                         validator.validate(loadedSection);
 
@@ -314,7 +314,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                Picket loadedPicket = storageManager.loadPicketFromJsonFile(file);
+                Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
                 historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
                 picketIndex.set(sectionManager.size() - 1);
             } catch (Exception e) {
@@ -333,7 +333,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                storageManager.savePicketToJsonFile(file, sectionManager.get(picketIndex.get()));
+                storageManager.saveToJson(file, sectionManager.get(picketIndex.get()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
@@ -378,7 +378,7 @@ public class MainViewController extends AbstractController {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
             try {
-                storageManager.saveSectionToJsonFile(file, sectionManager.getSnapshot());
+                storageManager.saveToJson(file, sectionManager.getSnapshot());
                 setWindowFileTitle(file);
                 dirtyAsterisk.set("");
             } catch (Exception e) {
