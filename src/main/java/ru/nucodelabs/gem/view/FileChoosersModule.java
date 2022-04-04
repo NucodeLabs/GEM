@@ -6,14 +6,16 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.stage.FileChooser;
 
+import java.util.ResourceBundle;
+
 public class FileChoosersModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("EXP")
-    private FileChooser provideEXPFileChooser() {
+    private FileChooser provideEXPFileChooser(ResourceBundle ui) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("EXP - Полевые данные", "*.EXP", "*.exp")
+                new FileChooser.ExtensionFilter("EXP - " + ui.getString("expData"), "*.EXP", "*.exp")
         );
         return chooser;
     }
@@ -21,10 +23,10 @@ public class FileChoosersModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("JSON")
-    private FileChooser provideJSONFileChooser() {
+    private FileChooser provideJSONFileChooser(ResourceBundle ui) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JSON", "*.json")
+                new FileChooser.ExtensionFilter("JSON - " + ui.getString("section"), "*.json, *.JSON")
         );
         return chooser;
     }
@@ -32,10 +34,10 @@ public class FileChoosersModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("MOD")
-    private FileChooser provideMODFileChooser() {
+    private FileChooser provideMODFileChooser(ResourceBundle ui) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("MOD - Данные модели", "*.MOD", "*.mod")
+                new FileChooser.ExtensionFilter("MOD - " + ui.getString("modData"), "*.MOD", "*.mod")
         );
         return chooser;
     }
