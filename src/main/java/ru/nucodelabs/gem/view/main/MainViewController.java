@@ -141,7 +141,6 @@ public class MainViewController extends AbstractController {
                 } else {
                     dirtyAsterisk.set("");
                 }
-                subscription.request(1);
             }
         });
 

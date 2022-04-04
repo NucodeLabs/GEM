@@ -35,7 +35,6 @@ public class ObservableDataModule extends AbstractModule {
                 if (!item.pickets().equals(pickets)) {
                     pickets.setAll(item.pickets());
                 }
-                subscription.request(1);
             }
         });
         return pickets;

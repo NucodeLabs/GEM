@@ -11,7 +11,7 @@ public abstract class AbstractSectionObserver implements Flow.Subscriber<Section
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
-        subscription.request(1);
+        subscription.request(Long.MAX_VALUE);
     }
 
     @Override
