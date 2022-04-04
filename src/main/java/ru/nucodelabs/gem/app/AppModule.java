@@ -9,7 +9,8 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.app.io.FileManager;
+import ru.nucodelabs.gem.app.io.JsonFileManager;
+import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
@@ -60,7 +61,13 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private FileManager provideFileManager() {
-        return FileManager.createDefaultFileManager();
+    private JsonFileManager provideJsonFileManager() {
+        return JsonFileManager.createDefaultFileManager();
+    }
+
+    @Provides
+    @Singleton
+    private SonetImportManager provideSonetImportManager() {
+        return SonetImportManager.create();
     }
 }
