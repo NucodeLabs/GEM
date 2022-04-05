@@ -45,15 +45,6 @@ public class MainViewController extends AbstractController {
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
-    @Inject
-    private ObservableObjectValue<Picket> picket;
-    @Inject
-    private IntegerProperty picketIndex;
-    @Inject
-    private ObservableList<Picket> picketObservableList;
-    @Inject
-    private SectionManager sectionManager;
-
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -67,6 +58,14 @@ public class MainViewController extends AbstractController {
     @FXML
     private VESCurvesController vesCurvesController;
 
+    @Inject
+    private ObservableObjectValue<Picket> picket;
+    @Inject
+    private IntegerProperty picketIndex;
+    @Inject
+    private ObservableList<Picket> picketObservableList;
+    @Inject
+    private SectionManager sectionManager;
     @Inject
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
@@ -387,6 +386,17 @@ public class MainViewController extends AbstractController {
         }
     }
 
+
+    @FXML
+    private void undo() {
+        historyManager.undo();
+    }
+
+    @FXML
+    private void redo() {
+        historyManager.redo();
+    }
+
     private void setWindowFileTitle(File file) {
         windowTitle.set(file.getName());
     }
@@ -417,13 +427,5 @@ public class MainViewController extends AbstractController {
 
     public StringProperty vesNumberProperty() {
         return vesNumber;
-    }
-
-    public void undo() {
-        historyManager.undo();
-    }
-
-    public void redo() {
-        historyManager.redo();
     }
 }
