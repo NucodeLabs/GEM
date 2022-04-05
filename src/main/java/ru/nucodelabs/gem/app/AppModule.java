@@ -62,7 +62,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     private JsonFileManager provideJsonFileManager() {
-        return JsonFileManager.createDefaultFileManager();
+        return JsonFileManager.createDefault();
     }
 
     @Provides
