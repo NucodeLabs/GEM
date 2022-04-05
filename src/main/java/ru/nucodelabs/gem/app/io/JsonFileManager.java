@@ -4,7 +4,7 @@ import java.io.File;
 
 public interface JsonFileManager {
 
-    static JsonFileManager createDefaultFileManager() {
+    static JsonFileManager createDefault() {
         return new JsonFileManagerImpl();
     }
 
