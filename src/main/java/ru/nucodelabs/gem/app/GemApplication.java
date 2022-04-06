@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.app;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
@@ -24,10 +25,15 @@ import java.util.logging.Logger;
 public class GemApplication extends Application {
 
     private final Injector injector = Guice.createInjector(new AppModule());
-    private final Logger logger = injector.getInstance(Logger.class);
+
+    @Inject
+    private Logger logger;
+    @Inject
+    private JsonFileManager jsonFileManager;
 
     @Override
     public void start(Stage stage) {
+        injector.injectMembers(this);
 
         List<String> params = new ArrayList<>(getParameters().getRaw());
         params.addAll(StartGemApplication.macOSHandledFiles);
@@ -42,43 +48,50 @@ public class GemApplication extends Application {
 
     private void processParams(List<String> params) {
         logger.log(Level.INFO, "Parameters are " + params);
-        FXMLLoader fxmlLoader = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
+
         List<File> expFiles = new ArrayList<>();
 
-        MainViewController controller = fxmlLoader.getController();
         for (var param : params) {
             if (param.endsWith(".EXP") || param.endsWith(".exp")) {
-                logger.log(Level.INFO, "Add EXP, file: " + param);
+                logger.log(Level.INFO, "Import EXP, file: " + param);
                 expFiles.add(new File(param));
             } else if (param.endsWith("json") || param.endsWith(".JSON")) {
-                FXMLLoader fxmlLoader1 = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
-                try {
-                    ((Stage) fxmlLoader1.load()).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                MainViewController controller1 = fxmlLoader1.getController();
-                JsonFileManager jsonFileManager = injector.getInstance(JsonFileManager.class);
-                File jsonFile = new File(param);
-                try {
-                    jsonFileManager.loadFromJson(jsonFile, Section.class);
-                    logger.log(Level.INFO, "Open JSON Section, file: " + param);
-                    controller1.openJsonSection(jsonFile);
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, e.getMessage());
-                    logger.log(Level.INFO, "Import JSON Picket, file: " + param);
-                    controller1.importJsonPicket(jsonFile);
-                }
+                loadMainViewWithJSONFile(new File(param));
             }
         }
 
         if (!expFiles.isEmpty()) {
-            expFiles.forEach(controller::addEXP);
-            try {
-                ((Stage) fxmlLoader.load()).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            loadMainViewWithEXPFiles(expFiles);
         }
+    }
+
+    private void loadMainViewWithJSONFile(File jsonFile) {
+        FXMLLoader fxmlLoader = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
+        try {
+            ((Stage) fxmlLoader.load()).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MainViewController controller = fxmlLoader.getController();
+        try {
+            jsonFileManager.loadFromJson(jsonFile, Section.class);
+            logger.log(Level.INFO, "Open JSON Section, file: " + jsonFile.getAbsolutePath());
+            controller.openJsonSection(jsonFile);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage());
+            logger.log(Level.INFO, "Import JSON Picket, file: " + jsonFile.getAbsolutePath());
+            controller.importJsonPicket(jsonFile);
+        }
+    }
+
+    private void loadMainViewWithEXPFiles(List<File> expFiles) {
+        FXMLLoader fxmlLoader = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
+        try {
+            ((Stage) fxmlLoader.load()).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MainViewController controller = fxmlLoader.getController();
+        expFiles.forEach(controller::addEXP);
     }
 }
