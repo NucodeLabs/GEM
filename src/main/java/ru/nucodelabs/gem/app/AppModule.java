@@ -16,6 +16,7 @@ import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
@@ -43,14 +44,21 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named("MainView")
-    private FXMLLoader provideFXMLLoader(ResourceBundle uiProperties) {
-        return new FXMLLoader(MainViewController.class.getResource("MainSplitLayoutView.fxml"), uiProperties);
+    private URL provideMainViewFXML() {
+        return MainViewController.class.getResource("MainSplitLayoutView.fxml");
     }
 
     @Provides
     @Named("MainView")
-    private Stage create(Injector injector, @Named("MainView") FXMLLoader loader) throws IOException {
-        loader.setControllerFactory(injector.createChildInjector(new MainViewModule())::getInstance);
+    private FXMLLoader provideFXMLLoader(ResourceBundle uiProperties, Injector injector, @Named("MainView") URL url) {
+        FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
+        fxmlLoader.setControllerFactory(injector.createChildInjector(new MainViewModule())::getInstance);
+        return fxmlLoader;
+    }
+
+    @Provides
+    @Named("MainView")
+    private Stage create(@Named("MainView") FXMLLoader loader) throws IOException {
         return loader.load();
     }
 
