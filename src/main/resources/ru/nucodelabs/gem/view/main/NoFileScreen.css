@@ -2,6 +2,6 @@
     -fx-background-color: White;
 }
 
-#textContainer {
+.textContainer {
     -fx-padding: 20px;
 }

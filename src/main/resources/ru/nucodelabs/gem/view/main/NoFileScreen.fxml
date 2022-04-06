@@ -8,7 +8,8 @@
       xmlns:fx="http://javafx.com/fxml"
       prefHeight="400.0" prefWidth="600.0"
       stylesheets="@../common.css, @NoFileScreen.css" style="-fx-background-color: white"
-      fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController">
+      fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController"
+      onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
 
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
@@ -18,12 +19,15 @@
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
             <Label VBox.vgrow="ALWAYS"
                    style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
-            <HBox fx:id="textContainer">
+            <HBox styleClass="textContainer">
                 <Label text="%noFileText"/>
             </HBox>
             <Button text="%openSection" defaultButton="true" onAction="#openSection"/>
             <HBox maxHeight="10" prefHeight="10"/>
             <Button text="%openEXPFile" onAction="#importEXP"/>
+            <HBox styleClass="textContainer" alignment="BASELINE_CENTER">
+                <Label text="%drag"/>
+            </HBox>
         </VBox>
     </HBox>
 

@@ -8,8 +8,6 @@ import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
@@ -28,8 +26,6 @@ public class GemApplication extends Application {
 
     @Inject
     private Logger logger;
-    @Inject
-    private JsonFileManager jsonFileManager;
 
     @Override
     public void start(Stage stage) {
@@ -73,15 +69,8 @@ public class GemApplication extends Application {
             e.printStackTrace();
         }
         MainViewController controller = fxmlLoader.getController();
-        try {
-            jsonFileManager.loadFromJson(jsonFile, Section.class);
-            logger.log(Level.INFO, "Open JSON Section, file: " + jsonFile.getAbsolutePath());
-            controller.openJsonSection(jsonFile);
-        } catch (Exception e) {
-            logger.log(Level.WARNING, e.getMessage());
-            logger.log(Level.INFO, "Import JSON Picket, file: " + jsonFile.getAbsolutePath());
-            controller.importJsonPicket(jsonFile);
-        }
+        logger.log(Level.INFO, "Open JSON Section, file: " + jsonFile.getAbsolutePath());
+        controller.openJsonSection(jsonFile);
     }
 
     private void loadMainViewWithEXPFiles(List<File> expFiles) {
