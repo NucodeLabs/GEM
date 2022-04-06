@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.main;
 import com.google.inject.name.Named;
 import com.sun.glass.ui.Application;
 import jakarta.validation.Validator;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
 
@@ -91,6 +93,8 @@ public class MainViewController extends AbstractController {
     private Provider<Dialog<ButtonType>> saveDialogProvider;
     @Inject
     private Validator validator;
+    @Inject
+    private Preferences preferences;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -107,6 +111,22 @@ public class MainViewController extends AbstractController {
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
 
+            final String prefKey = "USE_SYSTEM_MENU";
+            final boolean defVal = true;
+            useSystemMenu.setSelected(preferences.getBoolean(prefKey, defVal));
+            useSystemMenu
+                    .selectedProperty()
+                    .addListener((observable, oldValue, newValue) -> preferences.putBoolean(prefKey, newValue));
+            preferences
+                    .addPreferenceChangeListener(
+                            evt -> Platform.runLater(() -> {
+                                if (evt.getKey().equals(prefKey)) {
+                                    useSystemMenu.setSelected(Boolean.parseBoolean(evt.getNewValue()));
+                                }
+                            })
+                    );
+
+
             Application macSpecificApp = Application.GetApplication();
             macSpecificApp.setEventHandler(new Application.EventHandler() {
                 @Override
@@ -117,6 +137,28 @@ public class MainViewController extends AbstractController {
         }
 
         bind();
+        config();
+    }
+
+    private void config() {
+        getStage().setWidth(preferences.getDouble("WINDOW_WIDTH", 1280));
+        getStage().setHeight(preferences.getDouble("WINDOW_HEIGHT", 720));
+        getStage().setX(preferences.getDouble("WINDOW_X", 100));
+        getStage().setY(preferences.getDouble("WINDOW_Y", 100));
+
+        getStage().xProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_X", newValue.doubleValue()));
+        getStage().yProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_Y", newValue.doubleValue()));
+
+        getStage().widthProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_WIDTH", newValue.doubleValue()));
+        getStage().heightProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_HEIGHT", newValue.doubleValue()));
+
+        menuViewVESCurvesLegend.setSelected(preferences.getBoolean("VES_CURVES_LEGEND_VISIBLE", false));
+        menuViewVESCurvesLegend.selectedProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putBoolean("VES_CURVES_LEGEND_VISIBLE", newValue));
     }
 
     private void bind() {
@@ -205,6 +247,7 @@ public class MainViewController extends AbstractController {
         if (files != null) {
             if (files.get(files.size() - 1).getParentFile().isDirectory()) {
                 expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
+                preferences.put("EXP_FC_INIT_DIR", files.get(files.size() - 1).getParentFile().getAbsolutePath());
             }
             for (var file : files) {
                 addEXP(file);
@@ -238,6 +281,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
             openJsonSection(file);
         }
@@ -298,6 +342,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 modFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("MOD_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
             importMOD(file);
         }
@@ -327,6 +372,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
 
             importJsonPicket(file);
@@ -350,6 +396,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
 
             try {
@@ -396,6 +443,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
             try {
                 storageManager.saveToJson(file, sectionManager.getSnapshot());
