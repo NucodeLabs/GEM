@@ -178,7 +178,7 @@ tasks.withType(JavaExec) {
 }
 
 javapackager {
-    mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
+    mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
     bundleJre = true
     organizationName = "NucodeLabs"
     name = "GEM"
