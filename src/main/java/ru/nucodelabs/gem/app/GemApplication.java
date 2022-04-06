@@ -65,7 +65,7 @@ public class GemApplication extends Application {
                     logger.log(Level.INFO, "Open JSON Section, file: " + param);
                     controller1.openJsonSection(jsonFile);
                 } catch (Exception e) {
-                    logger.log(Level.INFO, e.getMessage());
+                    logger.log(Level.WARNING, e.getMessage());
                     logger.log(Level.INFO, "Import JSON Picket, file: " + param);
                     controller1.importJsonPicket(jsonFile);
                 }
