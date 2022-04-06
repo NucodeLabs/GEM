@@ -10,12 +10,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -25,7 +26,12 @@ public class PicketsBarController extends AbstractController {
     private final IntegerProperty picketIndex;
 
     @FXML
-    public HBox container;
+    private HBox container;
+
+    @Inject
+    private SectionManager sectionManager;
+    @Inject
+    private HistoryManager historyManager;
 
     @Inject
     public PicketsBarController(
@@ -68,15 +74,13 @@ public class PicketsBarController extends AbstractController {
             button.setOnAction(e -> picketIndex.set(picketNumber));
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
-            delete.setOnAction(e -> picketObservableList.remove(picketNumber));
+            delete.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.remove(picketNumber)));
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
-            moveLeft.setOnAction(e ->
-                    Collections.swap(picketObservableList, picketNumber, picketNumber - 1));
+            moveLeft.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber - 1)));
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
-            moveRight.setOnAction(e ->
-                    Collections.swap(picketObservableList, picketNumber, picketNumber + 1));
+            moveRight.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber + 1)));
 
             if (picketObservableList.size() == 1) {
                 delete.setDisable(true);

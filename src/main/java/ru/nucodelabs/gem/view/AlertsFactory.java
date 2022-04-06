@@ -23,6 +23,7 @@ public class AlertsFactory {
 
     public Alert simpleExceptionAlert(Exception e, Stage owner) {
         Alert alert = simpleExceptionAlert(e);
+        alert.setTitle(uiProperties.getString("error"));
         alert.initOwner(owner);
         return alert;
     }

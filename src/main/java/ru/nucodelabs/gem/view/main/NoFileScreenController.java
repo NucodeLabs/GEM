@@ -1,38 +1,33 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.inject.name.Named;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class NoFileScreenController extends AbstractController {
 
     @Inject
-    @Named("ImportEXP")
-    private EventHandler<Event> importEXP;
-    @Inject
-    @Named("OpenJSON")
-    private EventHandler<Event> openSection;
+    private Provider<MainViewController> mainViewControllerProvider;
 
     @FXML
     private VBox root;
 
     @FXML
-    private void importEXP(Event event) {
-        importEXP.handle(event);
+    private void importEXP() {
+        mainViewControllerProvider.get().importEXP();
     }
 
     @FXML
     private void openSection(Event event) {
-        openSection.handle(event);
+        mainViewControllerProvider.get().openSection(event);
     }
 
     @Override
