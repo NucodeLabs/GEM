@@ -8,6 +8,7 @@ import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
@@ -22,17 +23,36 @@ import java.util.logging.Logger;
  */
 public class GemApplication extends Application {
 
+    private final List<String> macOSHandledFiles = new ArrayList<>();
+
     private final Injector injector = Guice.createInjector(new AppModule());
 
     @Inject
     private Logger logger;
 
+    {
+        if (OSDetect.isMacOS()) {
+            com.sun.glass.ui.Application macOSSpecificApp = com.sun.glass.ui.Application.GetApplication();
+            macOSSpecificApp.setEventHandler(new com.sun.glass.ui.Application.EventHandler() {
+                @Override
+                public void handleOpenFilesAction(com.sun.glass.ui.Application app, long time, String[] files) {
+                    macOSHandledFiles.addAll(List.of(files));
+                }
+            });
+        }
+    }
+
     @Override
-    public void start(Stage stage) {
+    public void init() throws Exception {
         injector.injectMembers(this);
+        logger.log(Level.INFO, "Injected");
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
 
         List<String> params = new ArrayList<>(getParameters().getRaw());
-        params.addAll(StartGemApplication.macOSHandledFiles);
+        params.addAll(macOSHandledFiles);
 
         if (!params.isEmpty()) {
             processParams(params);
@@ -40,6 +60,11 @@ public class GemApplication extends Application {
             logger.log(Level.INFO, "Starting MainView without parameters");
             injector.getInstance(Key.get(Stage.class, Names.named("MainView"))).show();
         }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        logger.log(Level.INFO, "Exiting");
     }
 
     private void processParams(List<String> params) {

@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
+import com.sun.glass.ui.Application;
 import jakarta.validation.Validator;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -16,6 +17,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.HistoryManager;
@@ -104,6 +106,14 @@ public class MainViewController extends AbstractController {
             CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+
+            Application macSpecificApp = Application.GetApplication();
+            macSpecificApp.setEventHandler(new Application.EventHandler() {
+                @Override
+                public void handleQuitAction(Application app, long time) {
+                    getStage().fireEvent(new WindowEvent(getStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
+                }
+            });
         }
 
         bind();
