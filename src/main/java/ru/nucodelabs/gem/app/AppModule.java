@@ -18,6 +18,7 @@ import ru.nucodelabs.gem.view.main.MainViewModule;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 /**
  * Зависимости приложения, которое, по сути, создает MainView
@@ -77,5 +78,10 @@ public class AppModule extends AbstractModule {
     @Singleton
     private SonetImportManager provideSonetImportManager() {
         return SonetImportManager.create();
+    }
+
+    @Provides
+    private Preferences preferences() {
+        return Preferences.userNodeForPackage(GemApplication.class);
     }
 }

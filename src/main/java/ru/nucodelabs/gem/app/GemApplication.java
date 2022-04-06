@@ -50,7 +50,6 @@ public class GemApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
         List<String> params = new ArrayList<>(getParameters().getRaw());
         params.addAll(macOSHandledFiles);
 
