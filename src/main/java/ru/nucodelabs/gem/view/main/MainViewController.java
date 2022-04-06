@@ -289,20 +289,24 @@ public class MainViewController extends AbstractController {
             if (file.getParentFile().isDirectory()) {
                 modFileChooser.setInitialDirectory(file.getParentFile());
             }
-            try {
-                Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+            importMOD(file);
+        }
+    }
 
-                var violations = validator.validate(newPicket);
+    public void importMOD(File file) {
+        try {
+            Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
 
-                if (!violations.isEmpty()) {
-                    alertsFactory.violationsAlert(violations, getStage());
-                    return;
-                }
+            var violations = validator.validate(newPicket);
 
-                historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage());
+                return;
             }
+
+            historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 

@@ -10,8 +10,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.ModelDataRow;
@@ -24,6 +27,7 @@ import ru.nucodelabs.gem.view.main.MainViewController;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -34,6 +38,8 @@ public class ModelTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
 
+    @FXML
+    private VBox dragDropPlaceholder;
     @FXML
     private TextField powerTextField;
     @FXML
@@ -304,4 +310,32 @@ public class ModelTableController extends AbstractController {
     private void importModel() {
         mainViewControllerProvider.get().importMOD();
     }
+
+    @FXML
+    private void dragOverHandle(DragEvent dragEvent) {
+        if (dragEvent.getDragboard().hasFiles()) {
+            List<File> files = dragEvent.getDragboard().getFiles();
+            for (var file : files) {
+                if (file.getName().endsWith(".MOD") || file.getName().endsWith(".mod")) {
+                    dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+            }
+        }
+        dragEvent.consume();
+    }
+
+    @FXML
+    private void dragDropHandle(DragEvent dragEvent) {
+        if (dragEvent.getDragboard().hasFiles()) {
+            List<File> files = dragEvent.getDragboard().getFiles();
+            dragEvent.setDropCompleted(true);
+            dragEvent.consume();
+            for (var file : files) {
+                if (file.getName().endsWith(".MOD") || file.getName().endsWith(".mod")) {
+                    mainViewControllerProvider.get().importMOD(file);
+                }
+            }
+        }
+    }
+
 }
