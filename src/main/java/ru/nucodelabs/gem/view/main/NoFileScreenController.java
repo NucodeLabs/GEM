@@ -27,7 +27,7 @@ public class NoFileScreenController extends AbstractController {
 
     @FXML
     private void openSection(Event event) {
-        mainViewControllerProvider.get().openSection(event);
+        mainViewControllerProvider.get().openJsonSection(event);
     }
 
     @Override

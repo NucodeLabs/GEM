@@ -202,7 +202,7 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    private void addEXP(File file) {
+    public void addEXP(File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file);
             var violations = validator.validate(picketFromEXPFile);
@@ -220,7 +220,7 @@ public class MainViewController extends AbstractController {
 
 
     @FXML
-    public void openSection(Event event) {
+    public void openJsonSection(Event event) {
         if (askToSave(event).isConsumed()) {
             return;
         }
@@ -229,25 +229,28 @@ public class MainViewController extends AbstractController {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
+            openJsonSection(file);
+        }
+    }
 
-            try {
-                Section loadedSection = storageManager.loadFromJson(file, Section.class);
-                var violations =
-                        validator.validate(loadedSection);
+    public void openJsonSection(File file) {
+        try {
+            Section loadedSection = storageManager.loadFromJson(file, Section.class);
+            var violations =
+                    validator.validate(loadedSection);
 
-                if (!violations.isEmpty()) {
-                    alertsFactory.violationsAlert(violations, getStage()).show();
-                    return;
-                }
-
-                sectionManager.setSection(loadedSection);
-                picketIndex.set(0);
-                historyManager.clear();
-                historyManager.snapshot();
-                setWindowFileTitle(file);
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage()).show();
+                return;
             }
+
+            sectionManager.setSection(loadedSection);
+            picketIndex.set(0);
+            historyManager.clear();
+            historyManager.snapshot();
+            setWindowFileTitle(file);
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 
@@ -312,13 +315,17 @@ public class MainViewController extends AbstractController {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
             }
 
-            try {
-                Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
-                historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
-                picketIndex.set(sectionManager.size() - 1);
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
-            }
+            importJsonPicket(file);
+        }
+    }
+
+    public void importJsonPicket(File file) {
+        try {
+            Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
+            historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
+            picketIndex.set(sectionManager.size() - 1);
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 

@@ -23,7 +23,7 @@
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
-                        <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openSection"
+                        <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
                         <Menu text="%import">
                             <Menu text="%picket">
