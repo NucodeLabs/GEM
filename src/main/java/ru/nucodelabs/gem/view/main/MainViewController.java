@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
-import com.sun.glass.ui.Application;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -18,7 +17,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.HistoryManager;
@@ -103,8 +101,6 @@ public class MainViewController extends AbstractController {
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                 this::redo);
 
-        noFileScreenController.visibleProperty().bind(noFileOpened);
-        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
@@ -114,33 +110,22 @@ public class MainViewController extends AbstractController {
             final String prefKey = "USE_SYSTEM_MENU";
             final boolean defVal = true;
             useSystemMenu.setSelected(preferences.getBoolean(prefKey, defVal));
-            useSystemMenu
-                    .selectedProperty()
-                    .addListener((observable, oldValue, newValue) -> preferences.putBoolean(prefKey, newValue));
-            preferences
-                    .addPreferenceChangeListener(
-                            evt -> Platform.runLater(() -> {
-                                if (evt.getKey().equals(prefKey)) {
-                                    useSystemMenu.setSelected(Boolean.parseBoolean(evt.getNewValue()));
-                                }
-                            })
-                    );
-
-
-            Application macSpecificApp = Application.GetApplication();
-            macSpecificApp.setEventHandler(new Application.EventHandler() {
-                @Override
-                public void handleQuitAction(Application app, long time) {
-                    getStage().fireEvent(new WindowEvent(getStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
-                }
-            });
+            useSystemMenu.selectedProperty().addListener((observable, oldValue, newValue) ->
+                    preferences.putBoolean(prefKey, newValue));
+            preferences.addPreferenceChangeListener(evt ->
+                    Platform.runLater(() -> {
+                        if (evt.getKey().equals(prefKey)) {
+                            useSystemMenu.setSelected(Boolean.parseBoolean(evt.getNewValue()));
+                        }
+                    })
+            );
         }
 
         bind();
-        config();
+        initConfig(preferences);
     }
 
-    private void config() {
+    private void initConfig(Preferences preferences) {
         getStage().setWidth(preferences.getDouble("WINDOW_WIDTH", 1280));
         getStage().setHeight(preferences.getDouble("WINDOW_HEIGHT", 720));
         getStage().setX(preferences.getDouble("WINDOW_X", 100));
@@ -162,6 +147,9 @@ public class MainViewController extends AbstractController {
     }
 
     private void bind() {
+        noFileScreenController.visibleProperty().bind(noFileOpened);
+        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
+
         vesNumber.bind(new StringBinding() {
             {
                 super.bind(picketIndex, picketObservableList);
@@ -303,6 +291,7 @@ public class MainViewController extends AbstractController {
             historyManager.clear();
             historyManager.snapshot();
             setWindowFileTitle(file);
+            preferences.put("RECENT_FILES", preferences.get("RECENT_FILES", "") + File.pathSeparator + file.getAbsolutePath());
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -444,6 +433,7 @@ public class MainViewController extends AbstractController {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
                 preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put("RECENT_FILES", preferences.get("RECENT_FILES", "") + File.pathSeparator + file.getAbsolutePath());
             }
             try {
                 storageManager.saveToJson(file, sectionManager.getSnapshot());

@@ -11,7 +11,11 @@
       fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController"
       onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
 
-    <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
+    <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER_LEFT">
+        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20">
+            <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
+            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+        </VBox>
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
             <ImageView fitHeight="100" fitWidth="100">
                 <Image url="/img/gem.png"/>
