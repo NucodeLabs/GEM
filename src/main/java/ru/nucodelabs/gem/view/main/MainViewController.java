@@ -291,7 +291,7 @@ public class MainViewController extends AbstractController {
             historyManager.clear();
             historyManager.snapshot();
             setWindowFileTitle(file);
-            preferences.put("RECENT_FILES", preferences.get("RECENT_FILES", "") + File.pathSeparator + file.getAbsolutePath());
+            preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -433,7 +433,7 @@ public class MainViewController extends AbstractController {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
                 preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
-                preferences.put("RECENT_FILES", preferences.get("RECENT_FILES", "") + File.pathSeparator + file.getAbsolutePath());
+                preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
             }
             try {
                 storageManager.saveToJson(file, sectionManager.getSnapshot());

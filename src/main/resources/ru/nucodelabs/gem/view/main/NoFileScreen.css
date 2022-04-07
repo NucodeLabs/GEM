@@ -5,3 +5,8 @@
 .textContainer {
     -fx-padding: 20px;
 }
+
+.list-cell {
+    -fx-pref-height: 40;
+    -fx-font-size: 16;
+}
