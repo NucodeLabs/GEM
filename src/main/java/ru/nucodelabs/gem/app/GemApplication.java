@@ -8,12 +8,15 @@ import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,11 +35,21 @@ public class GemApplication extends Application {
 
     {
         if (OSDetect.isMacOS()) {
-            com.sun.glass.ui.Application macOSSpecificApp = com.sun.glass.ui.Application.GetApplication();
-            macOSSpecificApp.setEventHandler(new com.sun.glass.ui.Application.EventHandler() {
+            com.sun.glass.ui.Application macSpecificApp = com.sun.glass.ui.Application.GetApplication();
+            macSpecificApp.setEventHandler(new com.sun.glass.ui.Application.EventHandler() {
                 @Override
                 public void handleOpenFilesAction(com.sun.glass.ui.Application app, long time, String[] files) {
                     macOSHandledFiles.addAll(List.of(files));
+                }
+
+                @Override
+                public void handleQuitAction(com.sun.glass.ui.Application app, long time) {
+                    List<Window> windows = new ArrayList<>(Window.getWindows());
+                    Collections.reverse(windows);
+                    for (int i = windows.size() - 1; i >= 0; i--) {
+                        Window window = Window.getWindows().get(i);
+                        window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+                    }
                 }
             });
         }
@@ -49,7 +62,7 @@ public class GemApplication extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         List<String> params = new ArrayList<>(getParameters().getRaw());
         params.addAll(macOSHandledFiles);
 
