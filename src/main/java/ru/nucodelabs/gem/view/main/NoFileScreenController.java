@@ -16,9 +16,11 @@ import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 public class NoFileScreenController extends AbstractController {
 
@@ -61,15 +63,20 @@ public class NoFileScreenController extends AbstractController {
         String filesString = preferences.get("RECENT_FILES", "");
         List<String> pathsFromPrefs = List.of(filesString.split(File.pathSeparator));
         List<String> paths = new ArrayList<>(pathsFromPrefs);
-        for (var path : pathsFromPrefs) {
-            File file = new File(path);
-            if (!file.exists()) {
-                paths.remove(path);
-            }
-        }
-        paths = paths.stream().distinct().toList();
+
+        Collections.reverse(paths);
+        paths = paths.stream()
+                .filter(s -> new File(s).exists())
+                .distinct()
+                .collect(Collectors.toList());
+
         preferences.put("RECENT_FILES", String.join(File.pathSeparator, paths));
-        recentFiles.getItems().addAll(paths.stream().map(File::new).toList());
+
+        List<File> files = paths.stream()
+                .map(File::new)
+                .toList();
+
+        recentFiles.getItems().addAll(files);
     }
 
     @Override
