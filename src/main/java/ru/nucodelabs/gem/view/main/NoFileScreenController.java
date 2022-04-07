@@ -70,7 +70,7 @@ public class NoFileScreenController extends AbstractController {
 
         paths = paths.stream()
                 .filter(s -> new File(s).exists())
-                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .distinct()
                 .collect(Collectors.toList());
 
         preferences.put("RECENT_FILES", String.join(File.pathSeparator, paths));
@@ -119,5 +119,11 @@ public class NoFileScreenController extends AbstractController {
                 }
             }
         }
+    }
+
+    @FXML
+    private void clearRecentFiles() {
+        preferences.put("RECENT_FILES", "");
+        initConfig(preferences);
     }
 }

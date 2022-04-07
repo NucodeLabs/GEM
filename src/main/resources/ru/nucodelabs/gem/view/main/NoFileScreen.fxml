@@ -13,8 +13,16 @@
 
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER_LEFT">
         <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20">
-            <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
-            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+            <HBox alignment="CENTER">
+                <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
+                <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button text="%clear" onAction="#clearRecentFiles"/>
+            </HBox>
+            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="%recentFiles" style="-fx-text-fill: LightGray;"/>
+                </placeholder>
+            </ListView>
         </VBox>
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
             <ImageView fitHeight="100" fitWidth="100">
