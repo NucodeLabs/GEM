@@ -16,7 +16,6 @@ import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -57,6 +56,11 @@ public class NoFileScreenController extends AbstractController {
             }
         });
         initConfig(preferences);
+        visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                initConfig(preferences);
+            }
+        });
     }
 
     private void initConfig(Preferences preferences) {
@@ -64,10 +68,9 @@ public class NoFileScreenController extends AbstractController {
         List<String> pathsFromPrefs = List.of(filesString.split(File.pathSeparator));
         List<String> paths = new ArrayList<>(pathsFromPrefs);
 
-        Collections.reverse(paths);
         paths = paths.stream()
                 .filter(s -> new File(s).exists())
-                .distinct()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.toList());
 
         preferences.put("RECENT_FILES", String.join(File.pathSeparator, paths));
@@ -76,7 +79,7 @@ public class NoFileScreenController extends AbstractController {
                 .map(File::new)
                 .toList();
 
-        recentFiles.getItems().addAll(files);
+        recentFiles.getItems().setAll(files);
     }
 
     @Override
