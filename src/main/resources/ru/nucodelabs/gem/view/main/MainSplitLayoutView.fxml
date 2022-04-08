@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
@@ -18,7 +18,7 @@
         <Image url="@../../../../../img/gem.png"/>
     </icons>
     <scene>
-        <Scene stylesheets="@../common.css">
+        <Scene stylesheets="@../common.css, @Main.css">
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
@@ -68,20 +68,35 @@
                                   VBox.vgrow="ALWAYS">
 
                                 <HBox alignment="CENTER_LEFT" maxWidth="Infinity"
-                                      style="-fx-background-color: WhiteSmoke">
-                                    <HBox style="-fx-padding: 5">
-                                        <Button style="-fx-pref-width: 35" text="%left" onAction="#switchToPrevPicket"/>
-                                    </HBox>
-                                    <HBox style="-fx-padding: 5">
-                                        <Button style="-fx-pref-width: 35" text="%right"
-                                                onAction="#switchToNextPicket"/>
-                                    </HBox>
-                                    <Label style="-fx-padding: 5; -fx-text-fill: Gray" text="${controller.vesNumber}"/>
-                                    <Label style="-fx-padding: 5" text="${controller.vesTitle}"/>
+                                      style="-fx-background-color: WhiteSmoke; -fx-padding: 5" spacing="5">
+                                    <Button styleClass="lr_btns"
+                                            onAction="#switchToPrevPicket"
+                                            contentDisplay="GRAPHIC_ONLY">
+                                        <graphic>
+                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                                <Image url="@../../../../../img/ui_icons/arrow_left/2x/round_chevron_left_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button styleClass="lr_btns"
+                                            onAction="#switchToNextPicket"
+                                            contentDisplay="GRAPHIC_ONLY">
+                                        <graphic>
+                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                                <Image url="@../../../../../img/ui_icons/arrow_right/2x/round_chevron_right_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
+                                    <Label text="${controller.vesTitle}"/>
                                     <HBox HBox.hgrow="ALWAYS"/>
-                                    <HBox style="-fx-padding: 5">
-                                        <Button text="%inverse" onAction="#inverseSolve"/>
-                                    </HBox>
+                                    <Button text="%inverse" onAction="#inverseSolve" contentDisplay="LEFT">
+                                        <graphic>
+                                            <ImageView fitWidth="15" fitHeight="15">
+                                                <Image url="@../../../../../img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
                                 </HBox>
                                 <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
                                            VBox.vgrow="ALWAYS">
