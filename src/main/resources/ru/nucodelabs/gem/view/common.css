@@ -86,6 +86,11 @@
 
 .table-view {
     -fx-font-size: 16;
+    -fx-background-color: white;
+}
+
+.list-view {
+    -fx-background-color: white;
 }
 
 .table-view:focused {
