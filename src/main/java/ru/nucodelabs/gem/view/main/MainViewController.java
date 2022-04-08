@@ -4,8 +4,6 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
@@ -150,38 +148,20 @@ public class MainViewController extends AbstractController {
         noFileScreenController.visibleProperty().bind(noFileOpened);
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
-        vesNumber.bind(new StringBinding() {
-            {
-                super.bind(picketIndex, picketObservableList);
-            }
+        vesNumber.bind(Bindings.createStringBinding(
+                () -> (picketIndex.get() + 1) + "/" + picketObservableList.size(),
+                picketIndex, picketObservableList
+        ));
 
-            @Override
-            protected String computeValue() {
-                return (picketIndex.get() + 1) + "/" + picketObservableList.size();
-            }
-        });
+        vesTitle.bind(Bindings.createStringBinding(
+                () -> picket.get() != null ? picket.get().name() : "-",
+                picket
+        ));
 
-        vesTitle.bind(new StringBinding() {
-            {
-                super.bind(picket);
-            }
-
-            @Override
-            protected String computeValue() {
-                return picket.get() != null ? picket.get().name() : "-";
-            }
-        });
-
-        noFileOpened.bind(new BooleanBinding() {
-            {
-                super.bind(picketObservableList);
-            }
-
-            @Override
-            protected boolean computeValue() {
-                return picketObservableList.isEmpty();
-            }
-        });
+        noFileOpened.bind(Bindings.createBooleanBinding(
+                () -> picketObservableList.isEmpty(),
+                picketObservableList
+        ));
 
         sectionManager.subscribe(new AbstractSectionObserver() {
             @Override

@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -23,10 +24,13 @@ import java.util.stream.Collectors;
 
 public class NoFileScreenController extends AbstractController {
 
+    @FXML
+    private ListView<File> recentFiles;
+    @FXML
+    private VBox recentFilesContainer;
+
     @Inject
     private Provider<MainViewController> mainViewControllerProvider;
-    @FXML
-    public ListView<File> recentFiles;
     @Inject
     private Preferences preferences;
 
@@ -55,6 +59,15 @@ public class NoFileScreenController extends AbstractController {
                 }
             }
         });
+
+        recentFilesContainer.visibleProperty().bind(Bindings.createBooleanBinding(
+                () -> !recentFiles.getItems().isEmpty(),
+                recentFiles.getItems()
+        ));
+
+        recentFilesContainer.managedProperty()
+                .bind(recentFilesContainer.visibleProperty());
+
         initConfig(preferences);
         visibleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
