@@ -10,20 +10,7 @@
       stylesheets="@../common.css, @NoFileScreen.css" style="-fx-background-color: white"
       fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController"
       onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
-
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
-        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20" fx:id="recentFilesContainer">
-            <HBox alignment="CENTER">
-                <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
-                <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-                <Button text="%clear" onAction="#clearRecentFiles"/>
-            </HBox>
-            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS">
-                <placeholder>
-                    <Label text="%recentFiles" style="-fx-text-fill: LightGray;"/>
-                </placeholder>
-            </ListView>
-        </VBox>
         <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
             <ImageView fitHeight="100" fitWidth="100">
                 <Image url="/img/gem.png"/>
@@ -41,7 +28,17 @@
                 <Label text="%drag"/>
             </HBox>
         </VBox>
+        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20" fx:id="recentFilesContainer">
+            <HBox alignment="CENTER">
+                <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
+                <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button text="%clear" onAction="#clearRecentFiles"/>
+            </HBox>
+            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="%recentFiles" style="-fx-text-fill: LightGray;"/>
+                </placeholder>
+            </ListView>
+        </VBox>
     </HBox>
-
-
 </VBox>
