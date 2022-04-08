@@ -28,14 +28,13 @@ public class NoFileScreenController extends AbstractController {
     private ListView<File> recentFiles;
     @FXML
     private VBox recentFilesContainer;
+    @FXML
+    private VBox root;
 
     @Inject
     private Provider<MainViewController> mainViewControllerProvider;
     @Inject
     private Preferences preferences;
-
-    @FXML
-    private VBox root;
 
     @FXML
     private void importEXP() {
