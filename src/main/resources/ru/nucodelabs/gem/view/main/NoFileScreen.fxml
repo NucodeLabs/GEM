@@ -11,8 +11,8 @@
       fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController"
       onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
 
-    <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER_LEFT">
-        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20">
+    <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
+        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20" fx:id="recentFilesContainer">
             <HBox alignment="CENTER">
                 <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
                 <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
