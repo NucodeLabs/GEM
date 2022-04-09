@@ -86,11 +86,11 @@
 
 .table-view {
     -fx-font-size: 16;
-    -fx-background-color: white;
+    -fx-background-color: WhiteSmoke;
 }
 
 .list-view {
-    -fx-background-color: white;
+    -fx-background-color: WhiteSmoke;
 }
 
 .table-view:focused {

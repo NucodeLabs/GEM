@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -50,7 +51,7 @@ public class NoFileScreenController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         recentFiles.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         recentFiles.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getButton() == MouseButton.PRIMARY) {
                 if (recentFiles.getSelectionModel().getSelectedItems().size() == 1) {
                     mainViewControllerProvider.get().openJsonSection(
                             recentFiles.getSelectionModel().getSelectedItem()
