@@ -23,8 +23,8 @@
             <Button styleClass="action_button" text="%openEXPFile" onAction="#importEXP"/>
             <Label text="%drag"/>
         </VBox>
-        <VBox HBox.hgrow="ALWAYS" style="-fx-padding: 20" fx:id="recentFilesContainer">
-            <HBox alignment="CENTER_LEFT">
+        <VBox HBox.hgrow="ALWAYS" fx:id="recentFilesContainer">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 10;">
                 <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
                 <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
                 <Button text="%clear" onAction="#clearRecentFiles"/>
