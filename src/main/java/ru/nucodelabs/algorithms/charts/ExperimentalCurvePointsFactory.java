@@ -111,7 +111,7 @@ final class ExperimentalCurvePointsFactory implements PointsFactory {
             List<Point> points = new ArrayList<>();
 
             for (int i = 0; i < experimentalData.size(); i++) {
-                double dotX = log10(experimentalData.ab_2().get(i));
+                double dotX = experimentalData.ab_2().get(i);
                 double error = experimentalData.errorResistanceApparent().get(i) / 100f;
                 double dotY;
                 if (boundType == BoundType.UPPER_BOUND) {

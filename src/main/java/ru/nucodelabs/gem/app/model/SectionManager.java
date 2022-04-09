@@ -10,7 +10,6 @@ import ru.nucodelabs.data.ves.Section;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
 public class SectionManager extends SubmissionPublisher<Section> {
@@ -19,7 +18,7 @@ public class SectionManager extends SubmissionPublisher<Section> {
 
     @Inject
     public SectionManager(@Named("Initial") Section section) {
-        super(Runnable::run, Flow.defaultBufferSize()); // single threaded
+//        super(Runnable::run, Flow.defaultBufferSize()); // single threaded
         this.section = section;
         submit(section);
     }

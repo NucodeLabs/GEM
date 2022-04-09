@@ -166,11 +166,13 @@ public class MainViewController extends AbstractController {
         sectionManager.subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.compareWithSavedState(item)) {
-                    dirtyAsterisk.set("*");
-                } else {
-                    dirtyAsterisk.set("");
-                }
+                Platform.runLater(() -> {
+                    if (!storageManager.compareWithSavedState(item)) {
+                        dirtyAsterisk.set("*");
+                    } else {
+                        dirtyAsterisk.set("");
+                    }
+                });
             }
         });
 
