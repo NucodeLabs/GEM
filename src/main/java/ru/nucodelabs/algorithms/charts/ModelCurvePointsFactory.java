@@ -9,7 +9,7 @@ import static java.lang.Math.log10;
 
 final class ModelCurvePointsFactory implements PointsFactory {
 
-    private static final double FIRST_X_DEFAULT = 1e-2;
+    private static final double FIRST_X_DEFAULT = 1e-3;
     private static final double LAST_X_DEFAULT = 1e100;
 
     private final ModelData modelData;
