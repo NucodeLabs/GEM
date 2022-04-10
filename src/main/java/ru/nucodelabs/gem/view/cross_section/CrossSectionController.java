@@ -15,7 +15,6 @@ import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -52,45 +51,14 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
-
-        categoryAxis.getCategories().addAll(
-                FXCollections.observableArrayList(
-                        CrossSectionConverters.makeCategories(picketObservableList)));
-
-        XYChart.Series<String, Number> dataSeries1 = new XYChart.Series<String, Number>();
-        dataSeries1.setName("0");
-
-        dataSeries1.getData().add(new XYChart.Data<String, Number>("0", 567));
-        dataSeries1.getData().add(new XYChart.Data<String, Number>("1", 540));
-
-        sectionStackedBarChart.getData().add(dataSeries1);
-
-        XYChart.Series<String, Number> dataSeries2 = new XYChart.Series<>();
-        dataSeries2.setName("1");
-
-        dataSeries2.getData().add(new XYChart.Data<>("2", 65));
-        dataSeries2.getData().add(new XYChart.Data<>("3", 120));
-
-        sectionStackedBarChart.getData().add(dataSeries2);
-
-        XYChart.Series<String, Number> dataSeries3 = new XYChart.Series<>();
-        dataSeries3.setName("2");
-
-        dataSeries3.getData().add(new XYChart.Data<>("4", 23));
-        dataSeries3.getData().add(new XYChart.Data<>("5", 36));
-
-        sectionStackedBarChart.getData().add(dataSeries3);
-        /*categoryAxis.getCategories().addAll(
+        /*categoryAxis.getCategories().clear();
+        categoryAxis.getCategories().setAll(
                 FXCollections.observableArrayList(
                         CrossSectionConverters.makeCategories(picketObservableList)));*/
 
-        /*if (picketObservableList != null) {
-            seriesList = CrossSectionConverters.getLayersOfPowers(picketObservableList);
-        }
-        dataProperty.get().clear();
-        dataProperty.get().addAll(seriesList);
-        //dataProperty.set(FXCollections.observableArrayList(seriesList));*/
+        List<XYChart.Series<String, Number>> seriesList = CrossSectionConverters.getLayersOfPower(picketObservableList);
+
+        dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
     }
 
     protected Stage getStage() {

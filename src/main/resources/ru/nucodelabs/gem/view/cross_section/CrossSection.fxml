@@ -16,16 +16,12 @@
     <HBox prefHeight="300" prefWidth="-Infinity" minWidth="-Infinity" minHeight="20">
         <StackedBarChart fx:id="sectionStackedBarChart" minHeight="20"
                          minWidth="-Infinity" prefWidth="-Infinity"
-                         maxHeight="-Infinity" prefHeight="300" >
+                         maxHeight="-Infinity" prefHeight="300" categoryGap="50" legendVisible="true">
             <xAxis>
-                <CategoryAxis fx:id="categoryAxis" label="%sectionX"
-                              side="TOP">
-                </CategoryAxis>
+                <CategoryAxis fx:id="categoryAxis" label="%sectionX" side="TOP"/>
             </xAxis>
             <yAxis>
-                <NumberAxis fx:id="numberAxis" forceZeroInRange="false"
-                            label="%sectionY" side="LEFT" tickUnit="10.0" upperBound="400" >
-                </NumberAxis>
+                <NumberAxis fx:id="numberAxis" label="%sectionY" side="LEFT" upperBound="400"/>
             </yAxis>
         </StackedBarChart>
     </HBox>
