@@ -21,17 +21,14 @@ import java.util.ResourceBundle;
 
 public class CrossSectionController extends AbstractController {
 
-    private ResourceBundle uiProperties;
-    private int maxLayerCount;
-    public int picketCount;
     private final ObservableList<Picket> picketObservableList;
-
+    public int picketCount;
     @FXML
-    StackedBarChart<String, Number> sectionStackedBarChart;
+    public CategoryAxis categoryAxis;
     @FXML
-    public CategoryAxis sectionStackedBarChartXAxis;
+    public NumberAxis numberAxis;
     @FXML
-    public NumberAxis sectionStackedBarChartYAxis;
+    public StackedBarChart<String, Number> sectionStackedBarChart;
 
     @Inject
     private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> dataProperty;
@@ -39,7 +36,8 @@ public class CrossSectionController extends AbstractController {
     @Inject
     public CrossSectionController(ObservableList<Picket> picketObservableList) {
         this.picketObservableList = picketObservableList;
-        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
+
+        this.picketObservableList.addListener((ListChangeListener<Picket>) c -> {
             if (c.next()) {
                 update();
             }
@@ -48,23 +46,51 @@ public class CrossSectionController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        uiProperties = resources;
+        //uiProperties = resources;
         sectionStackedBarChart.dataProperty().bind(dataProperty);
 
     }
 
     public void update() {
         List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
-        sectionStackedBarChartXAxis.setCategories(FXCollections.observableArrayList(CrossSectionConverters.makeCategories(picketObservableList)));
 
-        if (picketObservableList != null) {
+        categoryAxis.getCategories().addAll(
+                FXCollections.observableArrayList(
+                        CrossSectionConverters.makeCategories(picketObservableList)));
+
+        XYChart.Series<String, Number> dataSeries1 = new XYChart.Series<String, Number>();
+        dataSeries1.setName("0");
+
+        dataSeries1.getData().add(new XYChart.Data<String, Number>("0", 567));
+        dataSeries1.getData().add(new XYChart.Data<String, Number>("1", 540));
+
+        sectionStackedBarChart.getData().add(dataSeries1);
+
+        XYChart.Series<String, Number> dataSeries2 = new XYChart.Series<>();
+        dataSeries2.setName("1");
+
+        dataSeries2.getData().add(new XYChart.Data<>("2", 65));
+        dataSeries2.getData().add(new XYChart.Data<>("3", 120));
+
+        sectionStackedBarChart.getData().add(dataSeries2);
+
+        XYChart.Series<String, Number> dataSeries3 = new XYChart.Series<>();
+        dataSeries3.setName("2");
+
+        dataSeries3.getData().add(new XYChart.Data<>("4", 23));
+        dataSeries3.getData().add(new XYChart.Data<>("5", 36));
+
+        sectionStackedBarChart.getData().add(dataSeries3);
+        /*categoryAxis.getCategories().addAll(
+                FXCollections.observableArrayList(
+                        CrossSectionConverters.makeCategories(picketObservableList)));*/
+
+        /*if (picketObservableList != null) {
             seriesList = CrossSectionConverters.getLayersOfPowers(picketObservableList);
         }
         dataProperty.get().clear();
         dataProperty.get().addAll(seriesList);
-
-        //System.out.println(sectionStackedBarChartXAxis.getCategories().toString());
-        //System.out.println(sectionStackedBarChart.dataProperty().toString());
+        //dataProperty.set(FXCollections.observableArrayList(seriesList));*/
     }
 
     protected Stage getStage() {
