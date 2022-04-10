@@ -11,20 +11,19 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.convert.CrossSectionConverters;
+import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class CrossSectionController extends Controller {
+public class CrossSectionController extends AbstractController {
 
     private ResourceBundle uiProperties;
     private int maxLayerCount;
+    public int picketCount;
     private final ObservableList<Picket> picketObservableList;
 
     @FXML
@@ -70,5 +69,9 @@ public class CrossSectionController extends Controller {
 
     protected Stage getStage() {
         return (Stage) sectionStackedBarChart.getScene().getWindow();
+    }
+
+    public int getPicketCount() {
+        return picketCount;
     }
 }

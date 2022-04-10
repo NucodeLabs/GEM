@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.files.sonet.EXPFile;
 import ru.nucodelabs.files.sonet.STTFile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
@@ -28,8 +30,20 @@ public record ExperimentalData(
         @NotNull List<@Min(0) Double> polarizationApparent,
         // Погрешность, %
         @NotNull List<@Min(0) Double> errorPolarizationApparent
-) implements Sizeable {
-    public static ExperimentalData of(STTFile sttFile, EXPFile expFile) {
+) implements Sizeable, Serializable {
+    private static final ExperimentalData EMPTY =
+            new ExperimentalData(
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList()
+            );
+
+    public static ExperimentalData from(STTFile sttFile, EXPFile expFile) {
         return new ExperimentalData(
                 sttFile.getAB_2(),
                 sttFile.getMN_2(),
@@ -42,12 +56,16 @@ public record ExperimentalData(
         );
     }
 
+    public static ExperimentalData empty() {
+        return EMPTY;
+    }
+
     @JsonIgnore
-    public List<ExperimentalTableLine> getLines() {
-        List<ExperimentalTableLine> res = new ArrayList<>();
-        for (int i = 0; i < getSize(); i++) {
+    public List<ExperimentalDataRow> getRows() {
+        List<ExperimentalDataRow> res = new ArrayList<>();
+        for (int i = 0; i < size(); i++) {
             res.add(
-                    new ExperimentalTableLine(
+                    new ExperimentalDataRow(
                             i,
                             requireNonNullElse(resistanceApparent().get(i), 0d),
                             requireNonNullElse(ab_2().get(i), 0d),

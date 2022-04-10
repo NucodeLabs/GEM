@@ -1,35 +1,33 @@
 package ru.nucodelabs.gem.view.main;
 
-import com.google.inject.name.Named;
+import javafx.beans.property.BooleanProperty;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.Controller;
+import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NoFileScreenController extends Controller {
+public class NoFileScreenController extends AbstractController {
 
     @Inject
-    @Named("ImportEXP")
-    private Runnable importEXP;
-    @Inject
-    @Named("OpenJSON")
-    private Runnable openSection;
+    private Provider<MainViewController> mainViewControllerProvider;
 
     @FXML
-    public VBox root;
+    private VBox root;
 
     @FXML
     private void importEXP() {
-        importEXP.run();
+        mainViewControllerProvider.get().importEXP();
     }
 
     @FXML
-    private void openSection() {
-        openSection.run();
+    private void openSection(Event event) {
+        mainViewControllerProvider.get().openSection(event);
     }
 
     @Override
@@ -37,11 +35,11 @@ public class NoFileScreenController extends Controller {
     }
 
     @Override
-    protected Stage getStage() {
+    public Stage getStage() {
         return (Stage) root.getScene().getWindow();
     }
 
-    public void hide() {
-        root.setVisible(false);
+    public BooleanProperty visibleProperty() {
+        return root.visibleProperty();
     }
 }
