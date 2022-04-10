@@ -8,52 +8,28 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
-    /*public static List<XYChart.Series<String, Number>> getPicketBars(List<Picket> pickets) {
-        List<XYChart.Series<String,Number>> picketSeries = new ArrayList<>();
+    public static List<XYChart.Series<String, Number>> getLayersOfPower(List<Picket> pickets) {
         int maxLayer = getMaxLayerCount(pickets);
-        List<String> categories = makeCategories(pickets);
-
-        for (Picket picket : pickets) {
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            for (int i = 0; i < maxLayer; i++) {
-
-                series.getData().add(new XYChart.Data<>())
-            }
-        }
-    }*/
-
-    public static List<XYChart.Series<String, Number>> getLayersOfPowers(List<Picket> pickets) {
-        int maxLayer = getMaxLayerCount(pickets);
-        List<XYChart.Series<String, Number>> powerLayers = new ArrayList<>(maxLayer);
+        List<XYChart.Series<String, Number>> powerLayers = new ArrayList<>();
         List<String> categories = makeCategories(pickets);
 
         for (int i = 0; i < maxLayer; i++) {
-            powerLayers.add(new XYChart.Series<>());
-        }
-
-        for (int i = 0; i < maxLayer; i++) {
-            for (Picket picket : pickets) {
-                powerLayers.get(i).setName(categories.get(i));
-                if (picket.modelData() != null) {
-                    if (i < picket.modelData().getRows().size()) {
-                        powerLayers.get(i).getData().add(new XYChart.Data<>(
-                                picket.name(),
-                                picket.modelData().power().get(i)));
-                    } else {
-                        powerLayers.get(i).getData().add(new XYChart.Data<>(
-                                picket.name(),
-                                0.0));
-                    }
-                } else {
-                    powerLayers.get(i).getData().add(new XYChart.Data<>(
-                            picket.name(),
-                            0.0));
-                }
-
-            }
+            powerLayers.add(makeLayer(pickets, i, categories.get(i)));
         }
 
         return powerLayers;
+    }
+
+    public static XYChart.Series<String, Number> makeLayer(List<Picket> pickets, int layerNum, String name) {
+        XYChart.Series<String, Number> layer = new XYChart.Series<>();
+        layer.setName(name);
+        for (Picket picket : pickets) {
+            if (layerNum < picket.modelData().size()) {
+                layer.getData().add(new XYChart.Data<>(picket.name(), picket.modelData().power().get(layerNum)));
+            }
+        }
+
+        return layer;
     }
 
     public static int getMaxLayerCount(List<Picket> pickets) {
@@ -77,7 +53,6 @@ public class CrossSectionConverters {
             categories.add(((Integer) i).toString());
         }
 
-        System.out.println(categories);
         return categories;
     }
 }
