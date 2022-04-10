@@ -51,10 +51,9 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        /*categoryAxis.getCategories().clear();
         categoryAxis.getCategories().setAll(
                 FXCollections.observableArrayList(
-                        CrossSectionConverters.makeCategories(picketObservableList)));*/
+                        CrossSectionConverters.makeCategories(picketObservableList)));
 
         List<XYChart.Series<String, Number>> seriesList = CrossSectionConverters.getLayersOfPower(picketObservableList);
 

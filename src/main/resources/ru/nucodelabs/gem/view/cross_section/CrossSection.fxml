@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.StackedBarChart?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.chart.CategoryAxis?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController">
 
-    <HBox prefHeight="300" prefWidth="-Infinity" minWidth="-Infinity" minHeight="20">
-        <StackedBarChart fx:id="sectionStackedBarChart" minHeight="20"
-                         minWidth="-Infinity" prefWidth="-Infinity"
-                         maxHeight="-Infinity" prefHeight="300" categoryGap="50" legendVisible="true">
-            <xAxis>
-                <CategoryAxis fx:id="categoryAxis" label="%sectionX" side="TOP"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="numberAxis" label="%sectionY" side="LEFT" upperBound="400"/>
-            </yAxis>
-        </StackedBarChart>
-    </HBox>
+    <StackedBarChart fx:id="sectionStackedBarChart" maxWidth="Infinity"
+                     maxHeight="Infinity" legendVisible="true" categoryGap="0" animated="false">
+        <xAxis>
+            <CategoryAxis fx:id="categoryAxis" label="X" side="TOP"/>
+            <!--                label был назначен на слова в UI.properties но ты не закоммитил их-->
+        </xAxis>
+        <yAxis>
+            <NumberAxis fx:id="numberAxis" label="Y" side="LEFT" upperBound="400" autoRanging="true"/>
+        </yAxis>
+    </StackedBarChart>
 </VBox>
