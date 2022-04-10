@@ -7,12 +7,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-
 import java.util.ArrayList;
 
 public class CrossSectionModule extends AbstractModule {
     @Provides
-    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> emptyCrossSectionData() {
+    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> provideEmptyCrossSectionData() {
         return new SimpleObjectProperty<>(
                 FXCollections.observableArrayList(new ArrayList<>()));
     }
