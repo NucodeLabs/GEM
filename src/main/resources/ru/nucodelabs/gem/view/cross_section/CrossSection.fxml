@@ -18,13 +18,13 @@
                          minWidth="-Infinity" prefWidth="-Infinity"
                          maxHeight="-Infinity" prefHeight="300">
             <xAxis>
-                <CategoryAxis fx:id="sectionStackedBarChartXAxis" label="%geoSectionX"
+                <CategoryAxis fx:id="sectionStackedBarChartXAxis" label="%sectionX"
                               side="TOP" autoRanging="false">
                 </CategoryAxis>
             </xAxis>
             <yAxis>
                 <NumberAxis fx:id="sectionStackedBarChartYAxis" forceZeroInRange="false"
-                            label="%geoSectionY" side="LEFT" tickUnit="10.0" upperBound="400">
+                            label="%sectionY" side="LEFT" tickUnit="10.0" upperBound="400">
                 </NumberAxis>
             </yAxis>
         </StackedBarChart>

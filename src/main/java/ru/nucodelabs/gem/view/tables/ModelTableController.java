@@ -1,104 +1,112 @@
 package ru.nucodelabs.gem.view.tables;
 
-import com.google.inject.name.Named;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.ModelTableLine;
+import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.Controller;
-import ru.nucodelabs.gem.view.alerts.ExceptionAlert;
-import ru.nucodelabs.gem.view.convert.VESTablesConverters;
+import ru.nucodelabs.gem.app.HistoryManager;
+import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.AlertsFactory;
+import ru.nucodelabs.gem.view.main.MainViewController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class ModelTableController extends Controller {
+import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
+import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
-    private final ObjectProperty<Picket> picket;
+public class ModelTableController extends AbstractController {
+
+    private final ObservableObjectValue<Picket> picket;
+
     @FXML
-    public TextField powerTextField;
+    private TextField powerTextField;
     @FXML
-    public TextField resistanceTextField;
+    private TextField resistanceTextField;
     @FXML
-    public TextField polarizationTextField;
+    private TextField polarizationTextField;
     @FXML
-    public TextField indexTextField;
+    private TextField indexTextField;
     @FXML
-    public Button deleteBtn;
+    private Button deleteBtn;
     @FXML
-    public Button addBtn;
+    private Button addBtn;
     @FXML
-    private TableView<ModelTableLine> table;
+    private TableView<ModelDataRow> table;
+
     @Inject
-    @Named("ImportMOD")
-    private Runnable importMOD;
-
+    private Provider<MainViewController> mainViewControllerProvider;
+    @Inject
+    private AlertsFactory alertsFactory;
+    @Inject
+    private Validator validator;
+    @Inject
+    private SectionManager sectionManager;
+    @Inject
+    private HistoryManager historyManager;
+    @Inject
+    private IntegerProperty picketIndex;
     private List<TextField> requiredForAdd;
 
     @Inject
-    public ModelTableController(
-            ObjectProperty<Picket> picket) {
+    public ModelTableController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
 
         picket.addListener((observable, oldValue, newValue) -> {
-            if (oldValue == null
-                    || oldValue.modelData() == null
-                    || !oldValue.modelData().equals(newValue.modelData())) {
-                update();
+            if (newValue != null) {
+                if (oldValue != null
+                        && !oldValue.modelData().equals(newValue.modelData())) {
+                    update();
+                } else if (oldValue == null) {
+                    update();
+                }
             }
         });
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ModelTableLine>) c -> {
+                .addListener((ListChangeListener<? super ModelDataRow>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
                     }
                 });
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
-            ((TableColumn<ModelTableLine, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(
-                            new StringConverter<>() {
-                                @Override
-                                public String toString(Double object) {
-                                    return object.toString();
-                                }
-
-                                @Override
-                                public Double fromString(String string) {
-                                    try {
-                                        return Double.parseDouble(string);
-                                    } catch (NumberFormatException e) {
-                                        return Double.NaN;
-                                    }
-                                }
-                            }));
+            ((TableColumn<ModelDataRow, Double>) table.getColumns().get(i))
+                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
         indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             indexTextField.getStyleClass().remove("wrong-input");
-            try {
-                Integer.parseInt(newValue);
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    indexTextField.getStyleClass().add("wrong-input");
+            addBtn.setDisable(false);
+            if (!validateIndexInput(newValue)) {
+                indexTextField.getStyleClass().add("wrong-input");
+                addBtn.setDisable(true);
+            } else {
+                if (!requiredForAdd.stream()
+                        .allMatch(textField ->
+                                !textField.getText().isBlank()
+                                        && validateDataInput(textField.getText()))) {
+                    addBtn.setDisable(true);
                 }
             }
         });
@@ -107,26 +115,34 @@ public class ModelTableController extends Controller {
         addInputCheckListener(polarizationTextField);
         addInputCheckListener(resistanceTextField);
         addInputCheckListener(powerTextField);
+
+        addEnterKeyHandler(indexTextField);
+        addEnterKeyHandler(polarizationTextField);
+        addEnterKeyHandler(resistanceTextField);
+        addEnterKeyHandler(powerTextField);
+    }
+
+    private void addEnterKeyHandler(TextField textField) {
+        textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == KeyCode.ENTER
+                    && !addBtn.isDisabled()) {
+                addBtn.fire();
+            }
+        });
     }
 
     private void addInputCheckListener(TextField doubleTextField) {
         doubleTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             doubleTextField.getStyleClass().remove("wrong-input");
-            if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
-                addBtn.setDisable(false);
-            }
-            if (newValue.isBlank()) {
+            addBtn.setDisable(false);
+            if (!validateDataInput(newValue)) {
+                doubleTextField.getStyleClass().add("wrong-input");
                 addBtn.setDisable(true);
-            }
-            try {
-                double value = Double.parseDouble(newValue);
-                if (value < 0) {
-                    doubleTextField.getStyleClass().add("wrong-input");
-                    addBtn.setDisable(true);
-                }
-            } catch (NumberFormatException e) {
-                if (!newValue.isBlank()) {
-                    doubleTextField.getStyleClass().add("wrong-input");
+            } else {
+                if (!requiredForAdd.stream()
+                        .allMatch(textField ->
+                                !textField.getText().isBlank()
+                                        && validateDataInput(textField.getText()))) {
                     addBtn.setDisable(true);
                 }
             }
@@ -139,19 +155,12 @@ public class ModelTableController extends Controller {
     }
 
     protected void update() {
-        ObservableList<ModelTableLine> modelTableLines = FXCollections.emptyObservableList();
-
-        if (picket.get().modelData() != null) {
-            modelTableLines = VESTablesConverters.toModelTableData(
-                    picket.get().modelData()
-            );
-        }
-
-        table.itemsProperty().setValue(modelTableLines);
+        ObservableList<ModelDataRow> modelDataRows = FXCollections.observableList(picket.get().modelData().getRows());
+        table.itemsProperty().setValue(modelDataRows);
     }
 
     @FXML
-    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         newPower.set(index, event.getNewValue());
@@ -160,21 +169,15 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 newPower
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
+        } else {
             table.refresh();
-            return;
         }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
     }
 
     @FXML
-    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         newResistance.set(index, event.getNewValue());
@@ -183,21 +186,16 @@ public class ModelTableController extends Controller {
                 picket.get().modelData().polarization(),
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
+
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
+        } else {
             table.refresh();
-            return;
         }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
     }
 
     @FXML
-    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelTableLine, Double> event) {
+    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
         int index = event.getRowValue().index();
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().resistance());
         newPolarization.set(index, event.getNewValue());
@@ -206,35 +204,15 @@ public class ModelTableController extends Controller {
                 newPolarization,
                 picket.get().modelData().power()
         );
-        if (invalidInputAlert(newModelData) || event.getNewValue().isNaN()) {
-            table.refresh();
-            return;
-        }
-        picket.set(
-                new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                )
-        );
-    }
-
-    private boolean invalidInputAlert(ModelData modelData) {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<ModelData>> violations = validator.validate(modelData);
-        if (!violations.isEmpty()) {
-            String message = violations.stream().map(v -> v.getPropertyPath() + " " + v.getMessage()).collect(Collectors.joining("\n"));
-            Alert alert = new Alert(Alert.AlertType.ERROR, message);
-            alert.initOwner(getStage());
-            alert.show();
-            return true;
+        if (!event.getNewValue().isNaN()) {
+            setIfValidElseAlert(newModelData);
         } else {
-            return false;
+            table.refresh();
         }
     }
 
     @FXML
-    public void addLayer() {
+    private void addLayer() {
         if (!resistanceTextField.getText().isBlank()
                 && !powerTextField.getText().isBlank()
                 && !polarizationTextField.getText().isBlank()) {
@@ -269,7 +247,9 @@ public class ModelTableController extends Controller {
                     newPower.add(index, newPowerValue);
                     newPolarization.add(index, newPolarizationValue);
                 } catch (IndexOutOfBoundsException e) {
-                    new ExceptionAlert(e, getStage()).show();
+                    newResistance.add(newResistanceValue);
+                    newPower.add(newPowerValue);
+                    newPolarization.add(newPolarizationValue);
                 }
             } else {
                 newResistance.add(newResistanceValue);
@@ -282,25 +262,20 @@ public class ModelTableController extends Controller {
                     newPolarization,
                     newPower
             );
-            if (!invalidInputAlert(newModelData)) {
-                picket.set(new Picket(
-                        picket.get().name(),
-                        picket.get().experimentalData(),
-                        newModelData
-                ));
-            }
+
+            setIfValidElseAlert(newModelData);
         }
     }
 
     @FXML
-    public void deleteSelected() {
-        List<ModelTableLine> selectedRows = table.getSelectionModel().getSelectedItems();
+    private void deleteSelected() {
+        List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
         List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
         List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
         List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
 
         List<Integer> indicesToRemove = selectedRows.stream()
-                .map(ModelTableLine::index)
+                .map(ModelDataRow::index)
                 .sorted(Collections.reverseOrder())
                 .toList();
 
@@ -311,14 +286,22 @@ public class ModelTableController extends Controller {
             newPower.remove(index);
         });
 
-        picket.set(new Picket(
-                picket.get().name(),
-                picket.get().experimentalData(),
-                new ModelData(newResistance, newPolarization, newPower)
-        ));
+        setIfValidElseAlert(new ModelData(newResistance, newPolarization, newPower));
     }
 
-    public void importModel() {
-        importMOD.run();
+    private void setIfValidElseAlert(ModelData newModelData) {
+        Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
+            table.refresh();
+        } else {
+            historyManager.performThenSnapshot(
+                    () -> sectionManager.updateModelData(picketIndex.get(), newModelData));
+        }
+    }
+
+    @FXML
+    private void importModel() {
+        mainViewControllerProvider.get().importMOD();
     }
 }

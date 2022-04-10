@@ -22,25 +22,28 @@
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
-                        <MenuItem text="%newWindow" onAction="#newWindow"/>
-                        <Menu text="%open">
-                            <MenuItem text="%section" fx:id="menuFileOpenSection" onAction="#openSection"/>
-                            <MenuItem text="%picket"/>
-                        </Menu>
+                        <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
+                        <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openSection"
+                                  accelerator="Shortcut+O"/>
                         <Menu text="%import">
                             <Menu text="%picket">
                                 <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
                                 <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
+                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
                             </Menu>
                         </Menu>
-                        <Menu text="%save">
-                            <MenuItem text="%section" onAction="#saveSection" disable="${controller.noFileOpened}"/>
-                            <MenuItem text="%picket"/>
+                        <MenuItem text="%saveSection" onAction="#saveSection" disable="${controller.noFileOpened}"
+                                  accelerator="Shortcut+S"/>
+                        <MenuItem text="%saveSectionAs" onAction="#saveSectionAs" disable="${controller.noFileOpened}"
+                                  accelerator="Shift+Shortcut+S"/>
+                        <Menu text="%export">
+                            <MenuItem text="%picket" onAction="#exportJsonPicket"/>
                         </Menu>
-                        <MenuItem text="%close" onAction="#closeFile"/>
+                        <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"/>
                     </Menu>
                     <Menu text="%edit">
-                        <MenuItem text="Delete"/>
+                        <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
+                        <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
                     </Menu>
                     <Menu fx:id="menuView" text="%view">
                         <Menu text="%legend">
@@ -57,9 +60,7 @@
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
                             <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
                                 <Placeholder text="%pseudoSection"/>
-
-                                <fx:include fx:id="CrossSection" source="../cross_section/CrossSection.fxml"/>
-
+                                <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
                             </SplitPane>
 
                             <VBox maxWidth="Infinity"

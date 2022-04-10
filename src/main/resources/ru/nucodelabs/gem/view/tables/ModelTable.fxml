@@ -18,7 +18,7 @@
             <Button text="%import" onAction="#importModel"/>
         </placeholder>
         <columns>
-            <TableColumn fx:id="indexCol" maxWidth="25" prefWidth="25" sortable="false" text="N"
+            <TableColumn fx:id="indexCol" maxWidth="35" prefWidth="35" sortable="false" text="N"
                          styleClass="centered-column"
                          resizable="false" editable="false">
                 <cellValueFactory>

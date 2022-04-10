@@ -85,7 +85,7 @@ javafx {
 }
 
 dependencies {
-    implementation 'org.hibernate.validator:hibernate-validator:7.0.3.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     implementation 'org.jetbrains:annotations:20.1.0'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
@@ -179,7 +179,7 @@ tasks.withType(JavaExec) {
 }
 
 javapackager {
-    mainClass = 'ru.nucodelabs.gem.core.StartGemApplication'
+    mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
     bundleJre = true
     organizationName = "NucodeLabs"
     name = "GEM"
