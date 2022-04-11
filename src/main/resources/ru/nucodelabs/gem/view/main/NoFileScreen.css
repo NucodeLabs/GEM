@@ -1,7 +1,23 @@
-.root {
+#root {
+    -fx-padding: 50;
     -fx-background-color: White;
+    /*-fx-background-image: url('../../../../../img/bg.jpeg');*/
+    /*-fx-background-size: 100%;*/
+    /*-fx-background-repeat: no-repeat;*/
 }
 
-#textContainer {
-    -fx-padding: 20px;
+.action_button {
+    -fx-pref-width: 150;
+    -fx-pref-height: 50;
+    -fx-font-size: 16;
 }
+
+#recentFiles .list-cell {
+    -fx-pref-height: 40;
+    -fx-font-size: 16;
+}
+
+/*.list-cell {*/
+/*    -fx-pref-height: 40;*/
+/*    -fx-font-size: 16;*/
+/*}*/

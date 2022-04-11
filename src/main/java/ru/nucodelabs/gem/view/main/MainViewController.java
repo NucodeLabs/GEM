@@ -2,9 +2,8 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
 import jakarta.validation.Validator;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
@@ -35,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
 
@@ -91,6 +91,8 @@ public class MainViewController extends AbstractController {
     private Provider<Dialog<ButtonType>> saveDialogProvider;
     @Inject
     private Validator validator;
+    @Inject
+    private Preferences preferences;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -99,60 +101,80 @@ public class MainViewController extends AbstractController {
                 new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                 this::redo);
 
-        noFileScreenController.visibleProperty().bind(noFileOpened);
-        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
         if (OSDetect.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
+
+            final String prefKey = "USE_SYSTEM_MENU";
+            final boolean defVal = true;
+            useSystemMenu.setSelected(preferences.getBoolean(prefKey, defVal));
+            useSystemMenu.selectedProperty().addListener((observable, oldValue, newValue) ->
+                    preferences.putBoolean(prefKey, newValue));
+            preferences.addPreferenceChangeListener(evt ->
+                    Platform.runLater(() -> {
+                        if (evt.getKey().equals(prefKey)) {
+                            useSystemMenu.setSelected(Boolean.parseBoolean(evt.getNewValue()));
+                        }
+                    })
+            );
         }
 
         bind();
+        initConfig(preferences);
+    }
+
+    private void initConfig(Preferences preferences) {
+        getStage().setWidth(preferences.getDouble("WINDOW_WIDTH", 1280));
+        getStage().setHeight(preferences.getDouble("WINDOW_HEIGHT", 720));
+        getStage().setX(preferences.getDouble("WINDOW_X", 100));
+        getStage().setY(preferences.getDouble("WINDOW_Y", 100));
+
+        getStage().xProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_X", newValue.doubleValue()));
+        getStage().yProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_Y", newValue.doubleValue()));
+
+        getStage().widthProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_WIDTH", newValue.doubleValue()));
+        getStage().heightProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putDouble("WINDOW_HEIGHT", newValue.doubleValue()));
+
+        menuViewVESCurvesLegend.setSelected(preferences.getBoolean("VES_CURVES_LEGEND_VISIBLE", false));
+        menuViewVESCurvesLegend.selectedProperty().addListener((observable, oldValue, newValue) ->
+                preferences.putBoolean("VES_CURVES_LEGEND_VISIBLE", newValue));
     }
 
     private void bind() {
-        vesNumber.bind(new StringBinding() {
-            {
-                super.bind(picketIndex, picketObservableList);
-            }
+        noFileScreenController.visibleProperty().bind(noFileOpened);
+        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
-            @Override
-            protected String computeValue() {
-                return (picketIndex.get() + 1) + "/" + picketObservableList.size();
-            }
-        });
+        vesNumber.bind(Bindings.createStringBinding(
+                () -> (picketIndex.get() + 1) + "/" + picketObservableList.size(),
+                picketIndex, picketObservableList
+        ));
 
-        vesTitle.bind(new StringBinding() {
-            {
-                super.bind(picket);
-            }
+        vesTitle.bind(Bindings.createStringBinding(
+                () -> picket.get() != null ? picket.get().name() : "-",
+                picket
+        ));
 
-            @Override
-            protected String computeValue() {
-                return picket.get() != null ? picket.get().name() : "-";
-            }
-        });
-
-        noFileOpened.bind(new BooleanBinding() {
-            {
-                super.bind(picketObservableList);
-            }
-
-            @Override
-            protected boolean computeValue() {
-                return picketObservableList.isEmpty();
-            }
-        });
+        noFileOpened.bind(Bindings.createBooleanBinding(
+                () -> picketObservableList.isEmpty(),
+                picketObservableList
+        ));
 
         sectionManager.subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.compareWithSavedState(item)) {
-                    dirtyAsterisk.set("*");
-                } else {
-                    dirtyAsterisk.set("");
-                }
+                Platform.runLater(() -> {
+                    if (!storageManager.compareWithSavedState(item)) {
+                        dirtyAsterisk.set("*");
+                    } else {
+                        dirtyAsterisk.set("");
+                    }
+                });
             }
         });
 
@@ -197,6 +219,7 @@ public class MainViewController extends AbstractController {
         if (files != null) {
             if (files.get(files.size() - 1).getParentFile().isDirectory()) {
                 expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
+                preferences.put("EXP_FC_INIT_DIR", files.get(files.size() - 1).getParentFile().getAbsolutePath());
             }
             for (var file : files) {
                 addEXP(file);
@@ -204,7 +227,7 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    private void addEXP(File file) {
+    public void addEXP(File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file);
             var violations = validator.validate(picketFromEXPFile);
@@ -222,7 +245,7 @@ public class MainViewController extends AbstractController {
 
 
     @FXML
-    public void openSection(Event event) {
+    public void openJsonSection(Event event) {
         if (askToSave(event).isConsumed()) {
             return;
         }
@@ -230,26 +253,31 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+            }
+            openJsonSection(file);
+        }
+    }
+
+    public void openJsonSection(File file) {
+        try {
+            Section loadedSection = storageManager.loadFromJson(file, Section.class);
+            var violations =
+                    validator.validate(loadedSection);
+
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage()).show();
+                return;
             }
 
-            try {
-                Section loadedSection = storageManager.loadFromJson(file, Section.class);
-                var violations =
-                        validator.validate(loadedSection);
-
-                if (!violations.isEmpty()) {
-                    alertsFactory.violationsAlert(violations, getStage()).show();
-                    return;
-                }
-
-                sectionManager.setSection(loadedSection);
-                picketIndex.set(0);
-                historyManager.clear();
-                historyManager.snapshot();
-                setWindowFileTitle(file);
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
-            }
+            sectionManager.setSection(loadedSection);
+            picketIndex.set(0);
+            historyManager.clear();
+            historyManager.snapshot();
+            setWindowFileTitle(file);
+            preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
 
     }
@@ -288,21 +316,26 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 modFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("MOD_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
-            try {
-                Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+            importMOD(file);
+        }
+    }
 
-                var violations = validator.validate(newPicket);
+    public void importMOD(File file) {
+        try {
+            Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
 
-                if (!violations.isEmpty()) {
-                    alertsFactory.violationsAlert(violations, getStage());
-                    return;
-                }
+            var violations = validator.validate(newPicket);
 
-                historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
+            if (!violations.isEmpty()) {
+                alertsFactory.violationsAlert(violations, getStage());
+                return;
             }
+
+            historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 
@@ -313,15 +346,20 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
 
-            try {
-                Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
-                historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
-                picketIndex.set(sectionManager.size() - 1);
-            } catch (Exception e) {
-                alertsFactory.incorrectFileAlert(e, getStage()).show();
-            }
+            importJsonPicket(file);
+        }
+    }
+
+    public void importJsonPicket(File file) {
+        try {
+            Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
+            historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
+            picketIndex.set(sectionManager.size() - 1);
+        } catch (Exception e) {
+            alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 
@@ -332,6 +370,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
             }
 
             try {
@@ -378,6 +417,8 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
+                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
             }
             try {
                 storageManager.saveToJson(file, sectionManager.getSnapshot());

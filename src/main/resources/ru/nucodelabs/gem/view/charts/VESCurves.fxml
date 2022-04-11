@@ -34,41 +34,4 @@
             </NumberAxis>
         </yAxis>
     </LineChart>
-    <!--    <HBox style="-fx-padding: 5" alignment="BASELINE_LEFT">-->
-
-    <!--        <fx:define>-->
-    <!--            <Duration fx:id="delay" fx:value="100ms"/>-->
-    <!--        </fx:define>-->
-
-    <!--        <Button fx:id="minusBtn" text="%zoomOut">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl-" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--        <Button fx:id="plusBtn" text="%zoomIn">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl+" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--        <Button fx:id="leftBtn" text="%left">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl←" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--        <Button fx:id="rightBtn" text="%right">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl→" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--        <Button fx:id="upBtn" text="%up">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl↑" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--        <Button fx:id="downBtn" text="%down">-->
-    <!--            <tooltip>-->
-    <!--                <Tooltip text="Ctrl↓" showDelay="$delay"/>-->
-    <!--            </tooltip>-->
-    <!--        </Button>-->
-    <!--    </HBox>-->
 </VBox>
