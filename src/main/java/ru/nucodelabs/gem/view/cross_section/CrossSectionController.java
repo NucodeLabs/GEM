@@ -6,10 +6,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedBarChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -24,14 +21,14 @@ public class CrossSectionController extends AbstractController {
     private final ObservableList<Picket> picketObservableList;
     public int picketCount;
     @FXML
-    public CategoryAxis categoryAxis;
+    public NumberAxis sectionX;
     @FXML
-    public NumberAxis numberAxis;
+    public NumberAxis sectionY;
     @FXML
-    public StackedBarChart<String, Number> sectionStackedBarChart;
+    public AreaChart<Number, Number> sectionAreaChart;
 
     @Inject
-    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> dataProperty;
+    private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
 
     @Inject
     public CrossSectionController(ObservableList<Picket> picketObservableList) {
@@ -47,28 +44,23 @@ public class CrossSectionController extends AbstractController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //uiProperties = resources;
-        sectionStackedBarChart.dataProperty().bind(dataProperty);
+        sectionAreaChart.dataProperty().bind(dataProperty);
 
     }
 
     public void update() {
-        categoryAxis.getCategories().setAll(
-                FXCollections.observableArrayList(
-                        CrossSectionConverters.makeCategories(picketObservableList)));
-
-
-        List<XYChart.Series<String, Number>> seriesList = CrossSectionConverters.getLayersOfPower(picketObservableList);
+        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.getLayersOfPower(picketObservableList);
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateBarColor(dataProperty.get());
 
     }
 
-    private void updateBarColor(List<XYChart.Series<String, Number>> seriesList) {
+    private void updateBarColor(List<XYChart.Series<Number, Number>> seriesList) {
         int layer = 0;
         int picket = 0;
-        for (XYChart.Series<String, Number> series : seriesList) {
-            for (XYChart.Data<String, Number> data : series.getData()) {
+        for (XYChart.Series<Number, Number> series : seriesList) {
+            for (XYChart.Data<Number, Number> data : series.getData()) {
                 double resistance = picketObservableList.get(picket).modelData().resistance().get(layer);
                 Node node = data.getNode();
                 //if (node != null) {
@@ -97,14 +89,14 @@ public class CrossSectionController extends AbstractController {
                 //}
 
                 picket++;
+                picket %= picketObservableList.size();
             }
-            picket %= picketObservableList.size();
             layer++;
         }
     }
 
     protected Stage getStage() {
-        return (Stage) sectionStackedBarChart.getScene().getWindow();
+        return (Stage) sectionAreaChart.getScene().getWindow();
     }
 
     public int getPicketCount() {

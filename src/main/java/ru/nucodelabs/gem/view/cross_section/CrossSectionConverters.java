@@ -8,9 +8,9 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
-    public static List<XYChart.Series<String, Number>> getLayersOfPower(List<Picket> pickets) {
+    public static List<XYChart.Series<Number, Number>> getLayersOfPower(List<Picket> pickets) {
         int maxLayer = getMaxLayerCount(pickets);
-        List<XYChart.Series<String, Number>> powerLayers = new ArrayList<>();
+        List<XYChart.Series<Number, Number>> powerLayers = new ArrayList<>();
         List<String> categories = makeCategories(pickets);
 
         for (int i = 0; i < maxLayer; i++) {
@@ -20,13 +20,27 @@ public class CrossSectionConverters {
         return powerLayers;
     }
 
-    public static XYChart.Series<String, Number> makeLayer(List<Picket> pickets, int layerNum, String name) {
-        XYChart.Series<String, Number> layer = new XYChart.Series<>();
+    public static XYChart.Series<Number, Number> makeLayer(List<Picket> pickets, int layerNum, String name) {
+        XYChart.Series<Number, Number> layer = new XYChart.Series<>();
         layer.setName(name);
+        double currentCoordinate = 0.0;
+        double picketWidth = 100.0;
         for (Picket picket : pickets) {
             if (layerNum < picket.modelData().size()) {
-                layer.getData().add(new XYChart.Data<>(picket.name(), picket.modelData().power().get(layerNum)));
+                layer.getData().add(new XYChart.Data<>(
+                        currentCoordinate,
+                        0.0));
+                layer.getData().add(new XYChart.Data<>(
+                        currentCoordinate,
+                        picket.modelData().getHeight().get(layerNum)));
+                layer.getData().add(new XYChart.Data<>(
+                        currentCoordinate + picketWidth,
+                        picket.modelData().getHeight().get(layerNum)));
+                layer.getData().add(new XYChart.Data<>(
+                        currentCoordinate + picketWidth,
+                        0.0));
             }
+            currentCoordinate += picketWidth;
         }
 
         return layer;

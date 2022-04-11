@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class CrossSectionModule extends AbstractModule {
     @Provides
-    private ObjectProperty<ObservableList<XYChart.Series<String, Number>>> provideEmptyCrossSectionData() {
+    private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> provideEmptyCrossSectionData() {
         return new SimpleObjectProperty<>(
                 FXCollections.observableArrayList(new ArrayList<>()));
     }

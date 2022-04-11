@@ -73,15 +73,15 @@ public record ModelData(
      */
     @JsonIgnore
     public List<Double> getHeight() {
-        List<Double> h = new ArrayList<>();
+        List<Double> heightList = new ArrayList<>();
 
         double sum = 0;
         for (var p : power) {
             sum += p;
-            h.add(sum);
+            heightList.add(sum);
         }
 
         // последняя уходит в бесконечность
-        return h;
+        return heightList;
     }
 }

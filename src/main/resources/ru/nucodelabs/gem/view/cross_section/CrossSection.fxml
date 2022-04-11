@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.AreaChart?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -11,14 +10,13 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController">
 
-    <StackedBarChart fx:id="sectionStackedBarChart" maxWidth="Infinity"
-                     maxHeight="Infinity" legendVisible="true" categoryGap="0" animated="false">
+    <AreaChart fx:id="sectionAreaChart" maxWidth="Infinity"
+               maxHeight="Infinity" animated="false">
         <xAxis>
-            <CategoryAxis fx:id="categoryAxis" label="Пикеты" side="TOP"/>
-            <!--                label был назначен на слова в UI.properties но ты не закоммитил их-->
+            <NumberAxis fx:id="sectionX" label="Пикеты" side="TOP"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="numberAxis" label="Слои" side="LEFT" upperBound="400" autoRanging="true"/>
+            <NumberAxis fx:id="sectionY" label="Слои" side="LEFT"/>
         </yAxis>
-    </StackedBarChart>
+    </AreaChart>
 </VBox>
