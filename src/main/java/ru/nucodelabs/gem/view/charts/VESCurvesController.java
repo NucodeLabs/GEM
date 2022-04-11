@@ -13,7 +13,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.charts.PointsFactory;
+import ru.nucodelabs.algorithms.charts.VESChartsService;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
@@ -61,6 +61,8 @@ public class VESCurvesController extends AbstractController {
     private HistoryManager historyManager;
     @Inject
     private IntegerProperty picketIndex;
+    @Inject
+    private VESChartsService vesChartsService;
 
     @Inject
     public VESCurvesController(ObservableObjectValue<Picket> picket) {
@@ -111,10 +113,10 @@ public class VESCurvesController extends AbstractController {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
         try {
-            PointsFactory pointsFactory = PointsFactory.theoreticalCurvePointsFactory(
-                    picket.get().experimentalData(), picket.get().modelData());
             theorCurveSeries.getData().addAll(
-                    pointsFactory.log10Points().stream()
+                    vesChartsService.theoreticalCurveOf(
+                                    picket.get().experimentalData(), picket.get().modelData())
+                            .stream()
                             .map(point -> new XYChart.Data<>(point.x(), point.y()))
                             .toList()
             );
@@ -129,9 +131,9 @@ public class VESCurvesController extends AbstractController {
     private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        PointsFactory pointsFactory = PointsFactory.modelCurvePointsFactory(picket.get().modelData());
         modelCurveSeries.getData().addAll(
-                pointsFactory.log10Points().stream()
+                vesChartsService.modelCurveOf(picket.get().modelData())
+                        .stream()
                         .map(point -> new XYChart.Data<>(point.x(), point.y()))
                         .toList()
         );
@@ -165,30 +167,30 @@ public class VESCurvesController extends AbstractController {
     }
 
     private void updateExpCurves() {
-        PointsFactory pointsFactory = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> expCurveSeries = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
+                        vesChartsService.experimentalCurveOf(picket.get().experimentalData())
+                                .stream()
                                 .map(point -> new XYChart.Data<>(point.x(), point.y()))
                                 .toList()
                 )
         );
         expCurveSeries.setName(uiProperties.getString("expCurve"));
 
-        pointsFactory = PointsFactory.experimentalCurveUpperBoundErrorPointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> errUpperExp = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
+                        vesChartsService.experimentalCurveErrorUpperBoundOf(picket.get().experimentalData())
+                                .stream()
                                 .map(point -> new XYChart.Data<>(point.x(), point.y()))
                                 .toList()
                 )
         );
         errUpperExp.setName(uiProperties.getString("expCurveUpper"));
 
-        pointsFactory = PointsFactory.experimentalCurveLowerBoundErrorPointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> errLowerExp = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
+                        vesChartsService.experimentalCurveErrorLowerBoundOf(picket.get().experimentalData())
+                                .stream()
                                 .map(point -> new XYChart.Data<>(point.x(), point.y()))
                                 .toList()
                 )
