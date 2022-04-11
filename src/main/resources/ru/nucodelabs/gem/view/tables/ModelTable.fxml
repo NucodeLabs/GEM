@@ -64,31 +64,21 @@
             </TableColumn>
         </columns>
     </TableView>
-    <HBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="indexTextField" promptText="N"
-                       prefWidth="45" minWidth="45"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="powerTextField" promptText="%modelPower"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="polarizationTextField" promptText="%modelPolarization"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
-                <graphic>
+    <HBox spacing="5" style="-fx-padding: 5">
+        <TextField fx:id="indexTextField" promptText="N"
+                   prefWidth="45" minWidth="45"/>
+        <TextField fx:id="powerTextField" promptText="%modelPower"
+                   maxWidth="Infinity"/>
+        <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
+                   maxWidth="Infinity"/>
+        <TextField fx:id="polarizationTextField" promptText="%modelPolarization"
+                   maxWidth="Infinity"/>
+        <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
+            <graphic>
                     <ImageView fitWidth="15" fitHeight="15">
                         <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
                     </ImageView>
                 </graphic>
             </Button>
-        </VBox>
     </HBox>
 </VBox>
