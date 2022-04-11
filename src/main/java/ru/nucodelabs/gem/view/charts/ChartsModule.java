@@ -36,6 +36,6 @@ public class ChartsModule extends AbstractModule {
     @Provides
     @Singleton
     private VESChartsService pointsService() {
-        return new VESChartsService(true);
+        return new VESChartsService();
     }
 }

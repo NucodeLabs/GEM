@@ -24,6 +24,8 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static java.lang.Math.log10;
+
 public class VESCurvesController extends AbstractController {
     /**
      * Constants
@@ -117,7 +119,8 @@ public class VESCurvesController extends AbstractController {
                     vesChartsService.theoreticalCurveOf(
                                     picket.get().experimentalData(), picket.get().modelData())
                             .stream()
-                            .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                            .map(point -> new XYChart.Data<>(
+                                    log10(point.x()), log10(point.y())))
                             .toList()
             );
         } catch (UnsatisfiedLinkError e) {
@@ -134,7 +137,8 @@ public class VESCurvesController extends AbstractController {
         modelCurveSeries.getData().addAll(
                 vesChartsService.modelCurveOf(picket.get().modelData())
                         .stream()
-                        .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                        .map(point -> new XYChart.Data<>(
+                                log10(point.x()), log10(point.y())))
                         .toList()
         );
 
@@ -171,7 +175,8 @@ public class VESCurvesController extends AbstractController {
                 FXCollections.observableList(
                         vesChartsService.experimentalCurveOf(picket.get().experimentalData())
                                 .stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );
@@ -181,7 +186,8 @@ public class VESCurvesController extends AbstractController {
                 FXCollections.observableList(
                         vesChartsService.experimentalCurveErrorUpperBoundOf(picket.get().experimentalData())
                                 .stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );
@@ -191,7 +197,8 @@ public class VESCurvesController extends AbstractController {
                 FXCollections.observableList(
                         vesChartsService.experimentalCurveErrorLowerBoundOf(picket.get().experimentalData())
                                 .stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );
