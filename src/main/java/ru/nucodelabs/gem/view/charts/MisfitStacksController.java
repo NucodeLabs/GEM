@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.log10;
 
 public class MisfitStacksController extends AbstractController {
 
@@ -67,7 +68,11 @@ public class MisfitStacksController extends AbstractController {
 
         try {
             List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().experimentalData(), picket.get().modelData());
-            List<Point> expPoints = vesChartsService.experimentalCurveOf(picket.get().experimentalData());
+            List<Point> expPoints = vesChartsService.experimentalCurveOf(picket.get().experimentalData())
+                    .stream()
+                    .map(point -> new Point(log10(point.x()), log10(point.y())))
+                    .toList();
+
             misfitStacksSeriesList = FXCollections.observableList(new ArrayList<>());
 
             if (picket.get().experimentalData().size() != 0
