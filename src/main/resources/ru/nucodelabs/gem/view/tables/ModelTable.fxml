@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -11,11 +13,28 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ModelTableController">
     <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">
-        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true"/>
+        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">
+            <graphic>
+                <ImageView fitHeight="15" fitWidth="15">
+                    <Image url="@../../../../../img/ui_icons/backspace/2x/round_backspace_black_24dp.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
     </HBox>
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
-            <Button text="%import" onAction="#importModel"/>
+            <VBox alignment="BASELINE_CENTER" fx:id="dragDropPlaceholder"
+                  onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
+                <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
+                    <VBox alignment="BASELINE_CENTER">
+                        <Button text="%import" onAction="#importModel"/>
+                        <Label text="(*.MOD)"  style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
+                    </VBox>
+                </HBox>
+                <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
+                    <Label text="%drag"/>
+                </HBox>
+            </VBox>
         </placeholder>
         <columns>
             <TableColumn fx:id="indexCol" maxWidth="35" prefWidth="35" sortable="false" text="N"
@@ -63,7 +82,13 @@
                        maxWidth="Infinity"/>
         </VBox>
         <VBox style="-fx-padding: 5">
-            <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true"/>
+            <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
+                <graphic>
+                    <ImageView fitWidth="15" fitHeight="15">
+                        <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                    </ImageView>
+                </graphic>
+            </Button>
         </VBox>
     </HBox>
 </VBox>

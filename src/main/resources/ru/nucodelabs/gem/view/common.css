@@ -86,6 +86,11 @@
 
 .table-view {
     -fx-font-size: 16;
+    -fx-background-color: WhiteSmoke;
+}
+
+.list-view {
+    -fx-background-color: WhiteSmoke;
 }
 
 .table-view:focused {
@@ -98,20 +103,20 @@
     -fx-background-color: WhiteSmoke;
 }
 
-.table-view .virtual-flow .scroll-bar:vertical,
-.table-view .virtual-flow .scroll-bar:vertical .track,
-.table-view .virtual-flow .scroll-bar:vertical .track-background,
-.table-view .virtual-flow .scroll-bar:horizontal,
-.table-view .virtual-flow .scroll-bar:horizontal .track,
-.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+.scroll-bar:vertical,
+.scroll-bar:vertical .track,
+.scroll-bar:vertical .track-background,
+.scroll-bar:horizontal,
+.scroll-bar:horizontal .track,
+.scroll-bar:horizontal .track-background {
     -fx-background-color: transparent;
 }
 
-.table-view .virtual-flow .scroll-bar:vertical .thumb {
+.scroll-bar:vertical .thumb {
     -fx-background-color: LightGray;
 }
 
-.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+.scroll-bar:horizontal .thumb {
     -fx-background-color: LightGray;
 }
 
