@@ -10,7 +10,6 @@ import ru.nucodelabs.data.ves.Section;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
 public class SectionManager extends SubmissionPublisher<Section> {
@@ -19,70 +18,70 @@ public class SectionManager extends SubmissionPublisher<Section> {
 
     @Inject
     public SectionManager(@Named("Initial") Section section) {
-        super(Runnable::run, Flow.defaultBufferSize()); // single threaded
+//        super(Runnable::run, Flow.defaultBufferSize()); // single threaded
         this.section = section;
         submit(section);
     }
 
-    public Section getSnapshot() {
+    public synchronized Section getSnapshot() {
         return new Section(new ArrayList<>(section.pickets()));
     }
 
-    public void setSection(Section section) {
+    public synchronized void setSection(Section section) {
         this.section = new Section(new ArrayList<>(section.pickets()));
         submit(section);
     }
 
-    public void updateModelData(int index, ModelData modelData) {
+    public synchronized void updateModelData(int index, ModelData modelData) {
         Picket old = section.pickets().get(index);
         Picket picket = new Picket(old.name(), old.experimentalData(), modelData);
         section.pickets().set(index, picket);
         submit(section);
     }
 
-    public void updateExperimentalData(int index, ExperimentalData experimentalData) {
+    public synchronized void updateExperimentalData(int index, ExperimentalData experimentalData) {
         Picket old = section.pickets().get(index);
         Picket picket = new Picket(old.name(), experimentalData, old.modelData());
         section.pickets().set(index, picket);
         submit(section);
     }
 
-    public void updateName(int index, String name) {
+    public synchronized void updateName(int index, String name) {
         Picket old = section.pickets().get(index);
         Picket picket = new Picket(name, old.experimentalData(), old.modelData());
         section.pickets().set(index, picket);
         submit(section);
     }
 
-    public void updatePicket(int index, Picket picket) {
+    public synchronized void updatePicket(int index, Picket picket) {
         section.pickets().set(index, picket);
         submit(section);
     }
 
-    public void add(Picket picket) {
+    public synchronized void add(Picket picket) {
         section.pickets().add(picket);
         submit(section);
     }
 
-    public void swap(int index1, int index2) {
+    public synchronized void swap(int index1, int index2) {
         Collections.swap(section.pickets(), index1, index2);
         submit(section);
     }
 
-    public void remove(int index) {
+    public synchronized void remove(int index) {
         section.pickets().remove(index);
         submit(section);
     }
 
-    public Picket get(int index) {
+    public synchronized Picket get(int index) {
         return section.pickets().get(index);
     }
 
-    public int size() {
+    public synchronized int size() {
         return section.pickets().size();
     }
 
-    public void inverseSolve(int index) {
+    public synchronized void inverseSolve(int index) {
         InverseSolver inverseSolver = new InverseSolver(get(index));
         updateModelData(index, inverseSolver.getOptimizedModelData());
     }
