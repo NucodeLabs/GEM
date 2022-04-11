@@ -2,12 +2,14 @@ package ru.nucodelabs.gem.view.charts;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.algorithms.charts.VESChartsService;
 
 import java.util.ArrayList;
 
@@ -29,5 +31,11 @@ public class ChartsModule extends AbstractModule {
             dataProperty.get().add(new XYChart.Series<>());
         }
         return dataProperty;
+    }
+
+    @Provides
+    @Singleton
+    private VESChartsService pointsService() {
+        return new VESChartsService(true);
     }
 }
