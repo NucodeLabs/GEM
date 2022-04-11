@@ -14,11 +14,11 @@
     <StackedBarChart fx:id="sectionStackedBarChart" maxWidth="Infinity"
                      maxHeight="Infinity" legendVisible="true" categoryGap="0" animated="false">
         <xAxis>
-            <CategoryAxis fx:id="categoryAxis" label="%sectionX" side="TOP"/>
+            <CategoryAxis fx:id="categoryAxis" label="Пикеты" side="TOP"/>
             <!--                label был назначен на слова в UI.properties но ты не закоммитил их-->
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="numberAxis" label="%sectionY" side="LEFT" upperBound="400" autoRanging="true"/>
+            <NumberAxis fx:id="numberAxis" label="Слои" side="LEFT" upperBound="400" autoRanging="true"/>
         </yAxis>
     </StackedBarChart>
 </VBox>
