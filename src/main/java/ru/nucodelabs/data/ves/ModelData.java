@@ -67,4 +67,21 @@ public record ModelData(
             );
         }
     }
+
+    /**
+     * @return глубины, две последние равны
+     */
+    @JsonIgnore
+    public List<Double> getHeight() {
+        List<Double> h = new ArrayList<>();
+
+        double sum = 0;
+        for (var p : power) {
+            sum += p;
+            h.add(sum);
+        }
+
+        // последняя уходит в бесконечность
+        return h;
+    }
 }
