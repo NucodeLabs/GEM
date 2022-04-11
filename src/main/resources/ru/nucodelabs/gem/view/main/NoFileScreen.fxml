@@ -6,26 +6,34 @@
 <?import javafx.scene.layout.*?>
 <VBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      prefHeight="400.0" prefWidth="600.0"
-      stylesheets="@../common.css, @NoFileScreen.css" style="-fx-background-color: white"
-      fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController">
-
+      stylesheets="@../common.css, @NoFileScreen.css"
+      fx:controller="ru.nucodelabs.gem.view.main.NoFileScreenController"
+      onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle"
+      maxWidth="Infinity" maxHeight="Infinity">
     <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS" alignment="CENTER">
-        <VBox alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
+        <VBox maxWidth="Infinity" maxHeight="Infinity" spacing="10" HBox.hgrow="ALWAYS">
             <ImageView fitHeight="100" fitWidth="100">
                 <Image url="/img/gem.png"/>
             </ImageView>
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
-            <Label VBox.vgrow="ALWAYS"
-                   style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
-            <HBox fx:id="textContainer">
-                <Label text="%noFileText"/>
+            <Label style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
+            <Label text="%noFileText"/>
+            <VBox VBox.vgrow="ALWAYS"/>
+            <Button styleClass="action_button" text="%openSection" defaultButton="true" onAction="#openSection"/>
+            <Button styleClass="action_button" text="%openEXPFile" onAction="#importEXP"/>
+            <Label text="%drag"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" fx:id="recentFilesContainer">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                <Label text="%recentFiles" style="-fx-font-size: 22pt;"/>
+                <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button text="%clear" onAction="#clearRecentFiles"/>
             </HBox>
-            <Button text="%openSection" defaultButton="true" onAction="#openSection"/>
-            <HBox maxHeight="10" prefHeight="10"/>
-            <Button text="%openEXPFile" onAction="#importEXP"/>
+            <ListView fx:id="recentFiles" maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="%recentFiles" style="-fx-text-fill: LightGray;"/>
+                </placeholder>
+            </ListView>
         </VBox>
     </HBox>
-
-
 </VBox>
