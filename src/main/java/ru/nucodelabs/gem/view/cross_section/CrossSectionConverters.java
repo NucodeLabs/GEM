@@ -1,6 +1,8 @@
 package ru.nucodelabs.gem.view.cross_section;
 
+import javafx.collections.FXCollections;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 
 import java.util.ArrayList;
@@ -44,6 +46,42 @@ public class CrossSectionConverters {
         }
 
         return layer;
+    }
+
+    public static List<XYChart.Series<Number, Number>> makeResistanceSeries(List<Picket> pickets) {
+        List<XYChart.Series<Number, Number>> picketSeries = new ArrayList<>();
+        double currentCoordinate = 0.0;
+        double picketWidth = 100.0;
+        for (Picket picket : pickets) {
+            for (int i = 0; i < picket.modelData().getRows().size(); i++) {
+                picketSeries.add(new XYChart.Series<>());
+                //System.out.println(picket.name());
+                picketSeries.get(i).setName(picket.name() + " - " + i);
+
+                XYChart.Data<Number, Number> leftZero = new XYChart.Data<>(
+                        currentCoordinate,
+                        0.0);
+                XYChart.Data<Number, Number> leftLineDot = new XYChart.Data<>(
+                        currentCoordinate,
+                        picket.modelData().getHeight().get(i));
+                XYChart.Data<Number, Number> rightLineDot = new XYChart.Data<>(
+                        currentCoordinate + picketWidth,
+                        picket.modelData().getHeight().get(i));
+                XYChart.Data<Number, Number> rightZero = new XYChart.Data<>(
+                        currentCoordinate + picketWidth,
+                        0.0);
+
+                picketSeries.get(i).getData().addAll(
+                        leftZero,
+                        leftLineDot,
+                        rightLineDot,
+                        rightZero);
+
+            }
+            currentCoordinate += picketWidth;
+        }
+
+        return picketSeries;
     }
 
     public static int getMaxLayerCount(List<Picket> pickets) {
