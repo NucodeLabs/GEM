@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -10,50 +12,94 @@
       stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ExperimentalTableController">
-    <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">
+        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">
+            <graphic>
+                <ImageView fitHeight="15" fitWidth="15">
+                    <Image url="@../../../../../img/ui_icons/backspace/2x/round_backspace_black_24dp.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+    <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
+               editable="true">
         <columns>
             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="N" styleClass="centered-column"
-                         resizable="false">
+                         resizable="false" editable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="index"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="AB_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAB_2" sortable="false">
+                         text="%experimentalAB_2" sortable="false" onEditCommit="#onAb2EditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="AB_2"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="MN_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalMN_2" sortable="false">
+                         text="%experimentalMN_2" sortable="false" onEditCommit="#onMn2EditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="MN_2"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalResistanceApparent" sortable="false">
+                         prefWidth="100.0" text="%experimentalResistanceApparent" sortable="false"
+                         onEditCommit="#onResistanceApparentEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="resistanceApparent"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalErrorResistanceApparent" sortable="false">
+                         prefWidth="100.0" text="%experimentalErrorResistanceApparent" sortable="false"
+                         onEditCommit="#onErrorResistanceApparentEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="errorResistanceApparent"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAmperage" sortable="false">
+                         text="%experimentalAmperage" sortable="false"
+                         onEditCommit="#onAmperageEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="amperage"/>
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalVoltage" sortable="false">
+                         text="%experimentalVoltage" sortable="false" onEditCommit="#onVoltageEditCommit">
                 <cellValueFactory>
                     <PropertyValueFactory property="voltage"/>
                 </cellValueFactory>
             </TableColumn>
+            <TableColumn fx:id="polarizationAppCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%polarizationApp" sortable="false" onEditCommit="#onPolarizationApparentEditCommit">
+                <cellValueFactory>
+                    <PropertyValueFactory property="polarizationApparent"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="errorPolarizationAppCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%errorPolApp" sortable="false" onEditCommit="#onErrorPolarizationApparentEditCommit">
+                <cellValueFactory>
+                    <PropertyValueFactory property="errorPolarizationApparent"/>
+                </cellValueFactory>
+            </TableColumn>
         </columns>
     </TableView>
+    <HBox spacing="5" style="-fx-padding: 5">
+        <TextField fx:id="indexTextField" promptText="N"
+                   prefWidth="45" minWidth="45"/>
+        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%experimentalAB_2"/>
+        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%experimentalMN_2"/>
+        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%experimentalResistanceApparent"/>
+        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%experimentalErrorResistanceApparent"/>
+        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%experimentalAmperage"/>
+        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%experimentalVoltage"/>
+        <TextField fx:id="polarizationAppTextField" maxWidth="Infinity" promptText="%polarizationApp"/>
+        <TextField fx:id="errorPolarizationAppTextField" maxWidth="Infinity" promptText="%errorPolApp"/>
+        <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
+            <graphic>
+                <ImageView fitWidth="15" fitHeight="15">
+                    <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
 </VBox>

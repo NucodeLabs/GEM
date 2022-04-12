@@ -11,8 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,7 +19,6 @@ import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
-import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
@@ -31,10 +28,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
-import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
-import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
+import static java.lang.Math.min;
 
-public class ModelTableController extends AbstractController {
+public class ModelTableController extends AbstractEditableTableController {
 
     private final ObservableObjectValue<Picket> picket;
 
@@ -101,58 +97,17 @@ public class ModelTableController extends AbstractController {
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
-        indexTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexTextField.getStyleClass().remove("wrong-input");
-            addBtn.setDisable(false);
-            if (!validateIndexInput(newValue)) {
-                indexTextField.getStyleClass().add("wrong-input");
-                addBtn.setDisable(true);
-            } else {
-                if (!requiredForAdd.stream()
-                        .allMatch(textField ->
-                                !textField.getText().isBlank()
-                                        && validateDataInput(textField.getText()))) {
-                    addBtn.setDisable(true);
-                }
-            }
-        });
+        addIndexInputCheckListener(indexTextField);
 
         requiredForAdd = List.of(powerTextField, resistanceTextField, polarizationTextField);
-        addInputCheckListener(polarizationTextField);
-        addInputCheckListener(resistanceTextField);
-        addInputCheckListener(powerTextField);
+        addDataInputCheckListener(polarizationTextField);
+        addDataInputCheckListener(resistanceTextField);
+        addDataInputCheckListener(powerTextField);
 
         addEnterKeyHandler(indexTextField);
         addEnterKeyHandler(polarizationTextField);
         addEnterKeyHandler(resistanceTextField);
         addEnterKeyHandler(powerTextField);
-    }
-
-    private void addEnterKeyHandler(TextField textField) {
-        textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == KeyCode.ENTER
-                    && !addBtn.isDisabled()) {
-                addBtn.fire();
-            }
-        });
-    }
-
-    private void addInputCheckListener(TextField doubleTextField) {
-        doubleTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            doubleTextField.getStyleClass().remove("wrong-input");
-            addBtn.setDisable(false);
-            if (!validateDataInput(newValue)) {
-                doubleTextField.getStyleClass().add("wrong-input");
-                addBtn.setDisable(true);
-            } else {
-                if (!requiredForAdd.stream()
-                        .allMatch(textField ->
-                                !textField.getText().isBlank()
-                                        && validateDataInput(textField.getText()))) {
-                    addBtn.setDisable(true);
-                }
-            }
-        });
     }
 
     @Override
@@ -219,9 +174,7 @@ public class ModelTableController extends AbstractController {
 
     @FXML
     private void addLayer() {
-        if (!resistanceTextField.getText().isBlank()
-                && !powerTextField.getText().isBlank()
-                && !polarizationTextField.getText().isBlank()) {
+        if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
 
             double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
             double newPowerValue = Double.parseDouble(powerTextField.getText());
@@ -241,27 +194,18 @@ public class ModelTableController extends AbstractController {
                 newPolarization = new ArrayList<>(picket.get().modelData().polarization());
             }
 
-            if (!indexTextField.getText().isBlank()) {
-                int index;
-                try {
-                    index = Integer.parseInt(indexTextField.getText());
-                } catch (NumberFormatException e) {
-                    return;
-                }
-                try {
-                    newResistance.add(index, newResistanceValue);
-                    newPower.add(index, newPowerValue);
-                    newPolarization.add(index, newPolarizationValue);
-                } catch (IndexOutOfBoundsException e) {
-                    newResistance.add(newResistanceValue);
-                    newPower.add(newPowerValue);
-                    newPolarization.add(newPolarizationValue);
-                }
-            } else {
-                newResistance.add(newResistanceValue);
-                newPower.add(newPowerValue);
-                newPolarization.add(newPolarizationValue);
+            int index = picket.get().modelData().size() + 1;
+
+            try {
+                index = Integer.parseInt(indexTextField.getText());
+            } catch (NumberFormatException ignored) {
             }
+
+            index = min(index, newPower.size());
+            newResistance.add(index, newResistanceValue);
+            newPower.add(index, newPowerValue);
+            newPolarization.add(index, newPolarizationValue);
+
 
             ModelData newModelData = new ModelData(
                     newResistance,
@@ -338,4 +282,13 @@ public class ModelTableController extends AbstractController {
         }
     }
 
+    @Override
+    protected List<TextField> getRequiredForAdd() {
+        return requiredForAdd;
+    }
+
+    @Override
+    protected Button getAddButton() {
+        return addBtn;
+    }
 }
