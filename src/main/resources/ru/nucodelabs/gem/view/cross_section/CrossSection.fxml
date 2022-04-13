@@ -11,7 +11,7 @@
       fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController" stylesheets="@CrossSection.css">
 
     <AreaChart fx:id="sectionAreaChart" maxWidth="Infinity"
-               maxHeight="Infinity" animated="false" legendVisible="false">
+               maxHeight="Infinity" animated="false" legendVisible="true">
         <xAxis>
             <NumberAxis fx:id="sectionX" label="Пикеты" side="TOP"/>
         </xAxis>
