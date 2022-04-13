@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
-    public static List<XYChart.Series<Number, Number>> getLayersOfPower(List<Picket> pickets) {
+    /*public static List<XYChart.Series<Number, Number>> getLayersOfPower(List<Picket> pickets) {
         int maxLayer = getMaxLayerCount(pickets);
         List<XYChart.Series<Number, Number>> powerLayers = new ArrayList<>();
         List<String> categories = makeCategories(pickets);
@@ -20,7 +20,7 @@ public class CrossSectionConverters {
         }
 
         return powerLayers;
-    }
+    }*/
 
     public static XYChart.Series<Number, Number> makeLayer(List<Picket> pickets, int layerNum, String name) {
         XYChart.Series<Number, Number> layer = new XYChart.Series<>();
@@ -55,8 +55,9 @@ public class CrossSectionConverters {
         for (Picket picket : pickets) {
             for (int i = 0; i < picket.modelData().getRows().size(); i++) {
                 picketSeries.add(new XYChart.Series<>());
-                //System.out.println(picket.name());
-                picketSeries.get(i).setName(picket.name() + " - " + i);
+                String seriesName = picket.name() + " - " + i;
+                picketSeries.get(i).setName(seriesName);
+                System.out.println(picketSeries.get(i).getName());
 
                 XYChart.Data<Number, Number> leftZero = new XYChart.Data<>(
                         currentCoordinate,
@@ -75,7 +76,8 @@ public class CrossSectionConverters {
                         leftZero,
                         leftLineDot,
                         rightLineDot,
-                        rightZero);
+                        rightZero
+                        );
 
             }
             currentCoordinate += picketWidth;

@@ -52,13 +52,10 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        //List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.getLayersOfPower(picketObservableList);
         List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(picketObservableList);
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
-        //System.out.println(dataProperty.get());
         updateSeriesColors(dataProperty.get());
-
     }
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
@@ -66,22 +63,15 @@ public class CrossSectionController extends AbstractController {
             for (int i = 0; i < picket.modelData().getRows().size(); i++) {
                 double resistance = picket.modelData().getRows().get(i).resistance();
                 String layerColor = getRGBColor(resistance);
-                System.out.println(resistance + " - " + layerColor);
-                seriesList.get(i).getNode().setStyle("-fx-stroke: rgb(128,128,128);"
-                        + "-fx-fill: rgb(128,128,128);"
-                        + "-fx-background-color: rgb(128,128,128);"
-                        + "-fx-opacity: 0.2;");
-                //seriesList.get(i).getNode().setStyle("-fx-stroke: 0.5");
 
-                //seriesList.get(i).getNode().setStyle("-fx-stroke: rgba(" + layerColor + ", 0.0);");
-
-
-                //seriesList.get(i).getNode().setStyle("-fx-fill: rgba(" + layerColor + ", 0.0);");
-                // seriesList.get(i).getNode().setStyle("-fx-stroke: rgba(" + layerColor + ", 0.0);");
+                seriesList.get(i).getNode().viewOrderProperty().setValue(i);
+                seriesList.get(i).getNode().lookup(".chart-series-area-fill")
+                        .setStyle("-fx-stroke: rgba(" + layerColor + ", 1.0);"
+                        + "-fx-fill: rgba(" + layerColor + ", 1.0);");
             }
         }
     }
-
+/*
     private void updateLayersColors(List<XYChart.Series<Number, Number>> seriesList) {
         for (int i = 0; i < seriesList.size(); i++) {
             XYChart.Series<Number, Number> series = seriesList.get(i);
@@ -101,7 +91,7 @@ public class CrossSectionController extends AbstractController {
             }
         }
     }
-
+*/
     public String getRGBColor(double resistance) {
         Color color = Color.WHITESMOKE;
 
