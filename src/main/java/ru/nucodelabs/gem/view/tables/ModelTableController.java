@@ -162,7 +162,7 @@ public class ModelTableController extends AbstractEditableTableController {
             double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
             double newPowerValue = Double.parseDouble(powerTextField.getText());
 
-            int index = picket.get().getModelData().size() + 1;
+            int index = picket.get().getModelData().size();
 
             int inputIndex = index;
             try {

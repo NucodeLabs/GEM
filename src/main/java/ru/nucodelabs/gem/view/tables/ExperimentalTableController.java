@@ -165,7 +165,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
             double newAmperageValue = Double.parseDouble(amperageTextField.getText());
             double newVoltageValue = Double.parseDouble(voltageTextField.getText());
 
-            int index = picket.get().getExperimentalData().size() + 1;
+            int index = picket.get().getExperimentalData().size();
 
             try {
                 index = Integer.parseInt(indexTextField.getText());
