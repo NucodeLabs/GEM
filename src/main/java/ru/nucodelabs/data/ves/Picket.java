@@ -3,6 +3,7 @@ package ru.nucodelabs.data.ves;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -32,5 +33,5 @@ public interface Picket {
     /**
      * Модельные данные
      */
-    @NotNull @Valid List<ModelLayer> getModelData();
+    @NotNull @Valid @Size(max = 40) List<ModelLayer> getModelData();
 }
