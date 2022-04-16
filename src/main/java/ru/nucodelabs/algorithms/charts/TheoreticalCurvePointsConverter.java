@@ -1,19 +1,19 @@
 package ru.nucodelabs.algorithms.charts;
 
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.max;
 
-final class TheoreticalCurvePointsFactory implements PointsFactory {
-    private final ExperimentalData experimentalData;
-    private final ModelData modelData;
+final class TheoreticalCurvePointsConverter implements PointsConverter {
+    private final List<ExperimentalMeasurement> experimentalData;
+    private final List<ModelLayer> modelData;
 
-    public TheoreticalCurvePointsFactory(ExperimentalData experimentalData, ModelData modelData) {
+    public TheoreticalCurvePointsConverter(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
         this.experimentalData = experimentalData;
         this.modelData = modelData;
     }
@@ -30,7 +30,7 @@ final class TheoreticalCurvePointsFactory implements PointsFactory {
 
         List<Point> points = new ArrayList<>();
         for (int i = 0; i < experimentalData.size(); i++) {
-            double dotX = experimentalData.ab_2().get(i);
+            double dotX = experimentalData.get(i).getAb2();
             double dotY = max(
                     solvedResistance.get(i),
                     0

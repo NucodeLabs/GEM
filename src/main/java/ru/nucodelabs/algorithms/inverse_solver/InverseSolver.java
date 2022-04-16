@@ -10,7 +10,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class InverseSolver {
                 RELATIVE_THRESHOLD_DEFAULT,
                 ABSOLUTE_THRESHOLD_DEFAULT,
                 new FunctionValue(
-                        picket.experimentalData(),
+                        picket.getExperimentalData(),
                         new SquaresDiff())
         );
     }
@@ -56,13 +56,13 @@ public class InverseSolver {
         this.multivariateFunction = multivariateFunction;
     }
 
-    public ModelData getOptimizedModelData() {
+    public List<ModelLayer> getOptimizedModelData() {
         final int MAX_EVAL = 1000000;
 
-        ModelData modelData = picket.modelData();
+        List<ModelLayer> modelData = picket.getModelData();
 
-        List<Double> modelResistance = modelData.resistance();
-        List<Double> modelPower = modelData.power();
+        List<Double> modelResistance = modelData.stream().map(ModelLayer::getResistance).toList();
+        List<Double> modelPower = modelData.stream().map(ModelLayer::getPower).toList();
 
         //anyArray = resistance.size...(model.size - 1)
         int dimension = modelResistance.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
@@ -101,6 +101,12 @@ public class InverseSolver {
         }
         newModelPower.add(0.0); //Для последнего слоя
 
-        return new ModelData(newModelResistance, modelData.polarization(), newModelPower);
+        List<ModelLayer> res = new ArrayList<>();
+
+        for (int i = 0; i < modelData.size(); i++) {
+            res.add(ModelLayer.create(newModelPower.get(i), newModelResistance.get(i)));
+        }
+
+        return res;
     }
 }

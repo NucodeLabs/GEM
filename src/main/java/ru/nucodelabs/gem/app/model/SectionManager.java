@@ -2,17 +2,19 @@ package ru.nucodelabs.gem.app.model;
 
 import com.google.inject.name.Named;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.snapshot.Snapshot;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.SubmissionPublisher;
 
-public class SectionManager extends SubmissionPublisher<Section> {
+public class SectionManager extends SubmissionPublisher<Section> implements Snapshot.Originator<ru.nucodelabs.data.ves.Section> {
 
     private Section section;
 
@@ -23,66 +25,72 @@ public class SectionManager extends SubmissionPublisher<Section> {
         submit(section);
     }
 
-    public synchronized Section getSnapshot() {
-        return new Section(new ArrayList<>(section.pickets()));
+    @Override
+    public synchronized Snapshot<Section> getSnapshot() {
+        return Snapshot.create(Section.create(new ArrayList<>(section.getPickets())));
     }
 
-    public synchronized void setSection(Section section) {
-        this.section = new Section(new ArrayList<>(section.pickets()));
+    @Override
+    public synchronized void restoreFromSnapshot(Snapshot<Section> snapshot) {
+        this.section = Section.create(new ArrayList<>(snapshot.get().getPickets()));
         submit(section);
     }
 
-    public synchronized void updateModelData(int index, ModelData modelData) {
-        Picket old = section.pickets().get(index);
-        Picket picket = new Picket(old.name(), old.experimentalData(), modelData);
-        section.pickets().set(index, picket);
+    public synchronized void updateModelData(int index, List<ModelLayer> modelData) {
+        Picket old = section.getPickets().get(index);
+        Picket picket = Picket.create(old.getName(), old.getExperimentalData(), modelData);
+        section.getPickets().set(index, picket);
         submit(section);
     }
 
-    public synchronized void updateExperimentalData(int index, ExperimentalData experimentalData) {
-        Picket old = section.pickets().get(index);
-        Picket picket = new Picket(old.name(), experimentalData, old.modelData());
-        section.pickets().set(index, picket);
+    public synchronized void updateExperimentalData(int index, List<ExperimentalMeasurement> experimentalData) {
+        Picket old = section.getPickets().get(index);
+        Picket picket = Picket.create(old.getName(), experimentalData, old.getModelData());
+        section.getPickets().set(index, picket);
         submit(section);
     }
 
     public synchronized void updateName(int index, String name) {
-        Picket old = section.pickets().get(index);
-        Picket picket = new Picket(name, old.experimentalData(), old.modelData());
-        section.pickets().set(index, picket);
+        Picket old = section.getPickets().get(index);
+        Picket picket = Picket.create(name, old.getExperimentalData(), old.getModelData());
+        section.getPickets().set(index, picket);
         submit(section);
     }
 
     public synchronized void updatePicket(int index, Picket picket) {
-        section.pickets().set(index, picket);
+        section.getPickets().set(index, picket);
         submit(section);
     }
 
     public synchronized void add(Picket picket) {
-        section.pickets().add(picket);
+        section.getPickets().add(picket);
         submit(section);
     }
 
     public synchronized void swap(int index1, int index2) {
-        Collections.swap(section.pickets(), index1, index2);
+        Collections.swap(section.getPickets(), index1, index2);
         submit(section);
     }
 
     public synchronized void remove(int index) {
-        section.pickets().remove(index);
+        section.getPickets().remove(index);
         submit(section);
     }
 
     public synchronized Picket get(int index) {
-        return section.pickets().get(index);
+        return section.getPickets().get(index);
     }
 
     public synchronized int size() {
-        return section.pickets().size();
+        return section.getPickets().size();
     }
 
     public synchronized void inverseSolve(int index) {
         InverseSolver inverseSolver = new InverseSolver(get(index));
         updateModelData(index, inverseSolver.getOptimizedModelData());
+    }
+
+    public synchronized void forceSubmitUpdate() {
+        submit(section);
     }
 }
