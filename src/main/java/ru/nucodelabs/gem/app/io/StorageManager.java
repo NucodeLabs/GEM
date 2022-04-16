@@ -6,6 +6,7 @@ import ru.nucodelabs.data.ves.Section;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     @Override
-    public <T> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
+    public <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
         T loaded = jsonFileManagerDelegate.loadFromJson(jsonFile, type);
         if (loaded instanceof Section) {
             savedState = Section.create(List.copyOf(((Section) loaded).getPickets()));
@@ -69,7 +70,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     @Override
-    public <T> void saveToJson(File jsonFile, T object) throws Exception {
+    public <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception {
         jsonFileManagerDelegate.saveToJson(jsonFile, object);
         if (object instanceof Section) {
             savedState = Section.create(List.copyOf(((Section) object).getPickets()));
