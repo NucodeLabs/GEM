@@ -3,7 +3,7 @@ package ru.nucodelabs.algorithms.charts;
 import java.util.List;
 
 @FunctionalInterface
-public interface PointsFactory {
+public interface PointsConverter {
     /**
      * Возвращает новые точки для графика
      *

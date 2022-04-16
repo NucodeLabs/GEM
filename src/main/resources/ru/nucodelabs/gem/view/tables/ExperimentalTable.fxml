@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -25,62 +24,22 @@
                editable="true">
         <columns>
             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="N" styleClass="centered-column"
-                         resizable="false" editable="false">
-                <cellValueFactory>
-                    <PropertyValueFactory property="index"/>
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="AB_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAB_2" sortable="false" onEditCommit="#onAb2EditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="AB_2"/>
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="MN_2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalMN_2" sortable="false" onEditCommit="#onMn2EditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="MN_2"/>
-                </cellValueFactory>
-            </TableColumn>
+                         resizable="false" editable="false" fx:id="indexCol"/>
+            <TableColumn fx:id="ab2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalAB_2" sortable="false" onEditCommit="#onEditCommit"/>
+            <TableColumn fx:id="mn2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                         text="%experimentalMN_2" sortable="false" onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
                          prefWidth="100.0" text="%experimentalResistanceApparent" sortable="false"
-                         onEditCommit="#onResistanceApparentEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="resistanceApparent"/>
-                </cellValueFactory>
-            </TableColumn>
+                         onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
                          prefWidth="100.0" text="%experimentalErrorResistanceApparent" sortable="false"
-                         onEditCommit="#onErrorResistanceApparentEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="errorResistanceApparent"/>
-                </cellValueFactory>
-            </TableColumn>
+                         onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
                          text="%experimentalAmperage" sortable="false"
-                         onEditCommit="#onAmperageEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="amperage"/>
-                </cellValueFactory>
-            </TableColumn>
+                         onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalVoltage" sortable="false" onEditCommit="#onVoltageEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="voltage"/>
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="polarizationAppCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%polarizationApp" sortable="false" onEditCommit="#onPolarizationApparentEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="polarizationApparent"/>
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="errorPolarizationAppCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%errorPolApp" sortable="false" onEditCommit="#onErrorPolarizationApparentEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="errorPolarizationApparent"/>
-                </cellValueFactory>
-            </TableColumn>
+                         text="%experimentalVoltage" sortable="false" onEditCommit="#onEditCommit"/>
         </columns>
     </TableView>
     <HBox spacing="5" style="-fx-padding: 5">
@@ -92,8 +51,6 @@
         <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%experimentalErrorResistanceApparent"/>
         <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%experimentalAmperage"/>
         <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%experimentalVoltage"/>
-        <TextField fx:id="polarizationAppTextField" maxWidth="Infinity" promptText="%polarizationApp"/>
-        <TextField fx:id="errorPolarizationAppTextField" maxWidth="Infinity" promptText="%errorPolApp"/>
         <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
             <graphic>
                 <ImageView fitWidth="15" fitHeight="15">

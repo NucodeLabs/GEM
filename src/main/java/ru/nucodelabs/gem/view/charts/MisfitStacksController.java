@@ -67,16 +67,16 @@ public class MisfitStacksController extends AbstractController {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         try {
-            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().experimentalData(), picket.get().modelData());
-            List<Point> expPoints = vesChartsService.experimentalCurveOf(picket.get().experimentalData())
+            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().getExperimentalData(), picket.get().getModelData());
+            List<Point> expPoints = vesChartsService.experimentalCurveOf(picket.get().getExperimentalData())
                     .stream()
                     .map(point -> new Point(log10(point.x()), log10(point.y())))
                     .toList();
 
             misfitStacksSeriesList = FXCollections.observableList(new ArrayList<>());
 
-            if (picket.get().experimentalData().size() != 0
-                    && picket.get().modelData().size() != 0) {
+            if (picket.get().getExperimentalData().size() != 0
+                    && picket.get().getModelData().size() != 0) {
                 if (values.size() != expPoints.size()) {
                     throw new IllegalStateException();
                 } else {

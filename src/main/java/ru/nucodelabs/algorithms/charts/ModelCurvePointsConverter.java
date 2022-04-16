@@ -1,24 +1,24 @@
 package ru.nucodelabs.algorithms.charts;
 
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-final class ModelCurvePointsFactory implements PointsFactory {
+final class ModelCurvePointsConverter implements PointsConverter {
 
     private static final double FIRST_X_DEFAULT = 1e-2;
     private static final double LAST_X_DEFAULT = 1e100;
 
-    private final ModelData modelData;
+    private final List<ModelLayer> modelData;
     private final double FIRST_X;
     private final double LAST_X;
 
-    ModelCurvePointsFactory(ModelData modelData) {
+    ModelCurvePointsConverter(List<ModelLayer> modelData) {
         this(modelData, FIRST_X_DEFAULT, LAST_X_DEFAULT);
     }
 
-    ModelCurvePointsFactory(ModelData modelData, double firstX, double lastX) {
+    ModelCurvePointsConverter(List<ModelLayer> modelData, double firstX, double lastX) {
         this.modelData = modelData;
         FIRST_X = firstX;
         LAST_X = lastX;
@@ -30,19 +30,22 @@ final class ModelCurvePointsFactory implements PointsFactory {
             return new ArrayList<>();
         }
 
+        List<Double> resistance = modelData.stream().map(ModelLayer::getResistance).toList();
+        List<Double> power = modelData.stream().map(ModelLayer::getPower).toList();
+
         List<Point> points = new ArrayList<>();
         // first point
         points.add(
                 new Point(
                         FIRST_X,
-                        modelData.resistance().get(0)
+                        resistance.get(0)
                 )
         );
 
         Double prevSum = 0d;
-        for (int i = 0; i < modelData.resistance().size() - 1; i++) {
-            final Double currentResistance = modelData.resistance().get(i);
-            final Double currentPower = modelData.power().get(i);
+        for (int i = 0; i < modelData.size() - 1; i++) {
+            final Double currentResistance = resistance.get(i);
+            final Double currentPower = power.get(i);
 
             points.add(
                     new Point(
@@ -51,7 +54,7 @@ final class ModelCurvePointsFactory implements PointsFactory {
                     )
             );
 
-            Double nextResistance = modelData.resistance().get(i + 1);
+            Double nextResistance = resistance.get(i + 1);
             points.add(
                     new Point(
                             currentPower + prevSum,
@@ -62,11 +65,11 @@ final class ModelCurvePointsFactory implements PointsFactory {
         }
 
         // last point
-        final int lastResistanceIndex = modelData.resistance().size() - 1;
+        final int lastResistanceIndex = resistance.size() - 1;
         points.add(
                 new Point(
                         LAST_X,
-                        modelData.resistance().get(lastResistanceIndex)
+                        resistance.get(lastResistanceIndex)
                 )
         );
 

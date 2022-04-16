@@ -1,5 +1,9 @@
 package ru.nucodelabs.gem.view.tables;
 
+import javafx.beans.binding.Bindings;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.math.RoundingMode;
@@ -23,6 +27,18 @@ final class Tables {
             }
         }
     };
+
+    private static final Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> indexCellFactory = col -> {
+        TableCell<Object, Integer> cell = new TableCell<>();
+        cell.textProperty().bind(Bindings.when(cell.emptyProperty())
+                .then("")
+                .otherwise(cell.indexProperty().asString()));
+        return cell;
+    };
+
+    public static Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> indexCellFactory() {
+        return indexCellFactory;
+    }
 
     static {
         DECIMAL_FORMAT = new DecimalFormat("#.##");

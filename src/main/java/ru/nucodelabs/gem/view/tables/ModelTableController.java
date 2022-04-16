@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.tables;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -14,11 +15,10 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.ModelData;
-import ru.nucodelabs.data.ves.ModelDataRow;
+import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
@@ -35,13 +35,17 @@ public class ModelTableController extends AbstractEditableTableController {
     private final ObservableObjectValue<Picket> picket;
 
     @FXML
+    private TableColumn<Object, Integer> indexCol;
+    @FXML
+    private TableColumn<ModelLayer, Double> powerCol;
+    @FXML
+    private TableColumn<ModelLayer, Double> resistanceCol;
+    @FXML
     private VBox dragDropPlaceholder;
     @FXML
     private TextField powerTextField;
     @FXML
     private TextField resistanceTextField;
-    @FXML
-    private TextField polarizationTextField;
     @FXML
     private TextField indexTextField;
     @FXML
@@ -49,7 +53,7 @@ public class ModelTableController extends AbstractEditableTableController {
     @FXML
     private Button addBtn;
     @FXML
-    private TableView<ModelDataRow> table;
+    private TableView<ModelLayer> table;
 
     @Inject
     private Provider<MainViewController> mainViewControllerProvider;
@@ -72,7 +76,7 @@ public class ModelTableController extends AbstractEditableTableController {
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 if (oldValue != null
-                        && !oldValue.modelData().equals(newValue.modelData())) {
+                        && !oldValue.getModelData().equals(newValue.getModelData())) {
                     update();
                 } else if (oldValue == null) {
                     update();
@@ -86,26 +90,30 @@ public class ModelTableController extends AbstractEditableTableController {
     public void initialize(URL location, ResourceBundle resources) {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ModelDataRow>) c -> {
+                .addListener((ListChangeListener<? super ModelLayer>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
                     }
                 });
+
+        indexCol.setCellFactory(Tables.indexCellFactory());
+
+        powerCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getPower()));
+        resistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistance()));
+
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
-            ((TableColumn<ModelDataRow, Double>) table.getColumns().get(i))
+            ((TableColumn<ModelLayer, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
         addIndexInputCheckListener(indexTextField);
 
-        requiredForAdd = List.of(powerTextField, resistanceTextField, polarizationTextField);
-        addDataInputCheckListener(polarizationTextField);
+        requiredForAdd = List.of(powerTextField, resistanceTextField);
         addDataInputCheckListener(resistanceTextField);
         addDataInputCheckListener(powerTextField);
 
         addEnterKeyHandler(indexTextField);
-        addEnterKeyHandler(polarizationTextField);
         addEnterKeyHandler(resistanceTextField);
         addEnterKeyHandler(powerTextField);
     }
@@ -116,55 +124,30 @@ public class ModelTableController extends AbstractEditableTableController {
     }
 
     protected void update() {
-        ObservableList<ModelDataRow> modelDataRows = FXCollections.observableList(picket.get().modelData().getRows());
+        ObservableList<ModelLayer> modelDataRows = FXCollections.observableList(picket.get().getModelData());
         table.itemsProperty().setValue(modelDataRows);
     }
 
     @FXML
-    private void onPowerEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
-        int index = event.getRowValue().index();
-        List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
-        newPower.set(index, event.getNewValue());
-        ModelData newModelData = new ModelData(
-                picket.get().modelData().resistance(),
-                picket.get().modelData().polarization(),
-                newPower
-        );
-        if (!event.getNewValue().isNaN()) {
-            setIfValidElseAlert(newModelData);
+    private void onEditCommit(TableColumn.CellEditEvent<ModelLayer, Double> event) {
+        int index = event.getTablePosition().getRow();
+        var column = event.getTableColumn();
+        ModelLayer oldValue = event.getRowValue();
+        ModelLayer newValue;
+        double newInputValue = event.getNewValue();
+
+        if (column == powerCol) {
+            newValue = ModelLayer.create(newInputValue, oldValue.getResistance());
+        } else if (column == resistanceCol) {
+            newValue = ModelLayer.create(oldValue.getResistance(), newInputValue);
         } else {
-            table.refresh();
+            throw new RuntimeException("Something went wrong!");
         }
-    }
 
-    @FXML
-    private void onResistanceEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
-        int index = event.getRowValue().index();
-        List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
-        newResistance.set(index, event.getNewValue());
-        ModelData newModelData = new ModelData(
-                newResistance,
-                picket.get().modelData().polarization(),
-                picket.get().modelData().power()
-        );
+        List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
 
-        if (!event.getNewValue().isNaN()) {
-            setIfValidElseAlert(newModelData);
-        } else {
-            table.refresh();
-        }
-    }
+        newModelData.set(index, newValue);
 
-    @FXML
-    private void onPolarizationEditCommit(TableColumn.CellEditEvent<ModelDataRow, Double> event) {
-        int index = event.getRowValue().index();
-        List<Double> newPolarization = new ArrayList<>(picket.get().modelData().resistance());
-        newPolarization.set(index, event.getNewValue());
-        ModelData newModelData = new ModelData(
-                picket.get().modelData().resistance(),
-                newPolarization,
-                picket.get().modelData().power()
-        );
         if (!event.getNewValue().isNaN()) {
             setIfValidElseAlert(newModelData);
         } else {
@@ -178,40 +161,19 @@ public class ModelTableController extends AbstractEditableTableController {
 
             double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
             double newPowerValue = Double.parseDouble(powerTextField.getText());
-            double newPolarizationValue = Double.parseDouble(polarizationTextField.getText());
 
-            List<Double> newResistance;
-            List<Double> newPower;
-            List<Double> newPolarization;
+            int index = picket.get().getModelData().size() + 1;
 
-            if (picket.get().modelData() == null) {
-                newResistance = new ArrayList<>();
-                newPower = new ArrayList<>();
-                newPolarization = new ArrayList<>();
-            } else {
-                newResistance = new ArrayList<>(picket.get().modelData().resistance());
-                newPower = new ArrayList<>(picket.get().modelData().power());
-                newPolarization = new ArrayList<>(picket.get().modelData().polarization());
-            }
-
-            int index = picket.get().modelData().size() + 1;
-
+            int inputIndex = index;
             try {
-                index = Integer.parseInt(indexTextField.getText());
+                inputIndex = Integer.parseInt(indexTextField.getText());
             } catch (NumberFormatException ignored) {
             }
 
-            index = min(index, newPower.size());
-            newResistance.add(index, newResistanceValue);
-            newPower.add(index, newPowerValue);
-            newPolarization.add(index, newPolarizationValue);
+            index = min(index, inputIndex);
 
-
-            ModelData newModelData = new ModelData(
-                    newResistance,
-                    newPolarization,
-                    newPower
-            );
+            List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
+            newModelData.add(index, ModelLayer.create(newPowerValue, newResistanceValue));
 
             setIfValidElseAlert(newModelData);
         }
@@ -219,28 +181,24 @@ public class ModelTableController extends AbstractEditableTableController {
 
     @FXML
     private void deleteSelected() {
-        List<ModelDataRow> selectedRows = table.getSelectionModel().getSelectedItems();
-        List<Double> newResistance = new ArrayList<>(picket.get().modelData().resistance());
-        List<Double> newPower = new ArrayList<>(picket.get().modelData().power());
-        List<Double> newPolarization = new ArrayList<>(picket.get().modelData().polarization());
+        List<ModelLayer> selectedRows = table.getSelectionModel().getSelectedItems();
 
         List<Integer> indicesToRemove = selectedRows.stream()
-                .map(ModelDataRow::index)
+                .map(modelLayer -> picket.get().getModelData().indexOf(modelLayer))
                 .sorted(Collections.reverseOrder())
                 .toList();
 
-        indicesToRemove.forEach(i -> {
-            int index = i;
-            newResistance.remove(index);
-            newPolarization.remove(index);
-            newPower.remove(index);
-        });
+        List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
 
-        setIfValidElseAlert(new ModelData(newResistance, newPolarization, newPower));
+        indicesToRemove.forEach(i -> newModelData.remove(i.intValue()));
+
+        setIfValidElseAlert(newModelData);
     }
 
-    private void setIfValidElseAlert(ModelData newModelData) {
-        Set<ConstraintViolation<ModelData>> violations = validator.validate(newModelData);
+    private void setIfValidElseAlert(List<ModelLayer> newModelData) {
+        Picket test = Picket.create(picket.get().getName(), picket.get().getExperimentalData(), newModelData);
+        Set<ConstraintViolation<Picket>> violations = validator.validate(test);
+
         if (!violations.isEmpty()) {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();

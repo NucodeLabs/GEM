@@ -1,29 +1,30 @@
 package ru.nucodelabs.algorithms.charts;
 
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
+
+import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.List;
 
 public class VESChartsService {
 
-    public List<Point> experimentalCurveOf(ExperimentalData experimentalData) {
-        return new ExperimentalCurvePointsFactory(experimentalData).points();
+    public List<Point> experimentalCurveOf(List<ExperimentalMeasurement> experimentalData) {
+        return new ExperimentalCurvePointsConverter(experimentalData).points();
     }
 
-    public List<Point> experimentalCurveErrorUpperBoundOf(ExperimentalData experimentalData) {
-        return new ExperimentalCurvePointsFactory.UpperBoundErrorPointsFactory(experimentalData).points();
+    public List<Point> experimentalCurveErrorUpperBoundOf(List<ExperimentalMeasurement> experimentalData) {
+        return new ExperimentalCurvePointsConverter.UpperBoundErrorPointsConverter(experimentalData).points();
     }
 
-    public List<Point> experimentalCurveErrorLowerBoundOf(ExperimentalData experimentalData) {
-        return new ExperimentalCurvePointsFactory.LowerBoundErrorPointsFactory(experimentalData).points();
+    public List<Point> experimentalCurveErrorLowerBoundOf(List<ExperimentalMeasurement> experimentalData) {
+        return new ExperimentalCurvePointsConverter.LowerBoundErrorPointsConverter(experimentalData).points();
     }
 
-    public List<Point> theoreticalCurveOf(ExperimentalData experimentalData, ModelData modelData) {
-        return new TheoreticalCurvePointsFactory(experimentalData, modelData).points();
+    public List<Point> theoreticalCurveOf(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
+        return new TheoreticalCurvePointsConverter(experimentalData, modelData).points();
     }
 
-    public List<Point> modelCurveOf(ModelData modelData) {
-        return new ModelCurvePointsFactory(modelData).points();
+    public List<Point> modelCurveOf(List<ModelLayer> modelData) {
+        return new ModelCurvePointsConverter(modelData).points();
     }
 }

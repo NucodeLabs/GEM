@@ -17,10 +17,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -154,7 +154,7 @@ public class MainViewController extends AbstractController {
         ));
 
         vesTitle.bind(Bindings.createStringBinding(
-                () -> picket.get() != null ? picket.get().name() : "-",
+                () -> picket.get() != null ? picket.get().getName() : "-",
                 picket
         ));
 
@@ -190,13 +190,13 @@ public class MainViewController extends AbstractController {
             return;
         }
         storageManager.clearSavedState();
-        sectionManager.setSection(new Section(Collections.emptyList()));
+        sectionManager.restoreFromSnapshot(() -> Section.create(Collections.emptyList()));
         historyManager.clear();
         resetWindowTitle();
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot().get())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -227,7 +227,8 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file);
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file,
+                    Picket.create("", Collections.emptyList(), Collections.emptyList()));
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -235,7 +236,6 @@ public class MainViewController extends AbstractController {
             }
             historyManager.performThenSnapshot(() -> sectionManager.add(picketFromEXPFile));
             picketIndex.set(sectionManager.size() - 1);
-            compatibilityModeAlert();
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -268,7 +268,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            sectionManager.setSection(loadedSection);
+            sectionManager.restoreFromSnapshot(() -> loadedSection);
             picketIndex.set(0);
             historyManager.clear();
             historyManager.snapshot();
@@ -403,13 +403,6 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    private void compatibilityModeAlert() {
-        if (sectionManager.get(picketIndex.get()) != null
-                && sectionManager.get(picketIndex.get()).experimentalData().isUnsafe()) {
-            alertsFactory.unsafeDataAlert(sectionManager.get(picketIndex.get()).name(), getStage()).show();
-        }
-    }
-
     private void saveSection(File file) {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
@@ -418,7 +411,7 @@ public class MainViewController extends AbstractController {
                 preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
             }
             try {
-                storageManager.saveToJson(file, sectionManager.getSnapshot());
+                storageManager.saveToJson(file, sectionManager.getSnapshot().get());
                 setWindowFileTitle(file);
                 dirtyAsterisk.set("");
             } catch (Exception e) {

@@ -1,7 +1,7 @@
 package ru.nucodelabs.algorithms.forward_solver;
 
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ final class SonetForwardSolver implements ForwardSolver {
         System.loadLibrary("forwardsolver");
     }
 
-    private final ExperimentalData experimentalData;
-    private final ModelData modelData;
+    private final List<ExperimentalMeasurement> experimentalData;
+    private final List<ModelLayer> modelData;
 
-    SonetForwardSolver(ExperimentalData experimentalData, ModelData modelData) {
+    SonetForwardSolver(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
         this.experimentalData = experimentalData;
         this.modelData = modelData;
     }
@@ -31,11 +31,11 @@ final class SonetForwardSolver implements ForwardSolver {
     public List<Double> solve() {
         List<Double> res = new ArrayList<>();
         double[] doubleArr = ves(
-                modelData.resistance().stream().mapToDouble(d -> d).toArray(),
-                modelData.power().stream().mapToDouble(d -> d).toArray(),
-                modelData.power().size(),
-                experimentalData.ab_2().stream().mapToDouble(d -> d).toArray(),
-                experimentalData.ab_2().size());
+                modelData.stream().map(ModelLayer::getResistance).mapToDouble(d -> d).toArray(),
+                modelData.stream().map(ModelLayer::getPower).mapToDouble(d -> d).toArray(),
+                modelData.size(),
+                experimentalData.stream().map(ExperimentalMeasurement::getAb2).mapToDouble(d -> d).toArray(),
+                experimentalData.size());
         for (double number : doubleArr) {
             res.add(number);
         }
