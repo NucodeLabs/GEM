@@ -5,13 +5,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.util.List;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = PicketImpl.class
 )
-public interface Picket {
+public interface Picket extends Serializable {
     static Picket create(
             String name,
             List<ExperimentalMeasurement> experimentalData,
