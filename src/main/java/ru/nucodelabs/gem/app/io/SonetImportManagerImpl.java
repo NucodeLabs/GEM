@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.app.io;
 
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.files.sonet.*;
@@ -60,9 +60,9 @@ class SonetImportManagerImpl implements SonetImportManager {
 
         int minSize = Collections.min(sizes);
 
-        List<ExperimentalMeasurement> expData = new ArrayList<>();
+        List<ExperimentalData> expData = new ArrayList<>();
         for (int i = 0; i < minSize; i++) {
-            expData.add(ExperimentalMeasurement.create(
+            expData.add(ExperimentalData.create(
                     sttFile.getAB_2().get(i),
                     sttFile.getMN_2().get(i),
                     expFile1.getResistanceApparent().get(i),

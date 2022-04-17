@@ -1,26 +1,26 @@
 package ru.nucodelabs.algorithms.charts;
 
 
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.List;
 
 public class VESChartsService {
 
-    public List<Point> experimentalCurveOf(List<ExperimentalMeasurement> experimentalData) {
+    public List<Point> experimentalCurveOf(List<ExperimentalData> experimentalData) {
         return new ExperimentalCurvePointsConverter(experimentalData).points();
     }
 
-    public List<Point> experimentalCurveErrorUpperBoundOf(List<ExperimentalMeasurement> experimentalData) {
+    public List<Point> experimentalCurveErrorUpperBoundOf(List<ExperimentalData> experimentalData) {
         return new ExperimentalCurvePointsConverter.UpperBoundErrorPointsConverter(experimentalData).points();
     }
 
-    public List<Point> experimentalCurveErrorLowerBoundOf(List<ExperimentalMeasurement> experimentalData) {
+    public List<Point> experimentalCurveErrorLowerBoundOf(List<ExperimentalData> experimentalData) {
         return new ExperimentalCurvePointsConverter.LowerBoundErrorPointsConverter(experimentalData).points();
     }
 
-    public List<Point> theoreticalCurveOf(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
+    public List<Point> theoreticalCurveOf(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
         return new TheoreticalCurvePointsConverter(experimentalData, modelData).points();
     }
 

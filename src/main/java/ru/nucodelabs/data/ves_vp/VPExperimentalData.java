@@ -2,15 +2,15 @@ package ru.nucodelabs.data.ves_vp;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Min;
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
-        defaultImpl = VPExperimentalMeasurementImpl.class
+        defaultImpl = VPExperimentalDataImpl.class
 )
-public interface VPExperimentalMeasurement extends ExperimentalMeasurement {
+public interface VPExperimentalData extends ExperimentalData {
 
-    static ExperimentalMeasurement create(
+    static ExperimentalData create(
             double ab2,
             double mn2,
             double resistanceApparent,
@@ -20,7 +20,7 @@ public interface VPExperimentalMeasurement extends ExperimentalMeasurement {
             double polarizationApparent,
             double errorPolarizationApparent
     ) {
-        return new VPExperimentalMeasurementImpl(
+        return new VPExperimentalDataImpl(
                 ab2, mn2, resistanceApparent, errorResistanceApparent, amperage, voltage,
                 polarizationApparent, errorPolarizationApparent);
     }

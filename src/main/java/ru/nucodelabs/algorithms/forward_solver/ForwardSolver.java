@@ -1,7 +1,7 @@
 package ru.nucodelabs.algorithms.forward_solver;
 
 
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface ForwardSolver {
      * @param modelData        model data of picket
      * @return new instance
      */
-    static ForwardSolver createDefaultForwardSolver(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
+    static ForwardSolver createDefaultForwardSolver(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
         return createSonetForwardSolver(experimentalData, modelData);
     }
 
@@ -26,7 +26,7 @@ public interface ForwardSolver {
      * @param modelData        model data of picket
      * @return new instance
      */
-    static ForwardSolver createSonetForwardSolver(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
+    static ForwardSolver createSonetForwardSolver(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
         return new SonetForwardSolver(experimentalData, modelData);
     }
 

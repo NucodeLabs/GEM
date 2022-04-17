@@ -2,7 +2,7 @@ package ru.nucodelabs.algorithms.inverse_solver.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.ArrayList;
@@ -11,10 +11,10 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FunctionValue implements MultivariateFunction {
-    private final List<ExperimentalMeasurement> experimentalData;
+    private final List<ExperimentalData> experimentalData;
     private final BiFunction<List<Double>, List<Double>, Double> inverseFunction;
 
-    public FunctionValue(List<ExperimentalMeasurement> experimentalData, BiFunction<List<Double>, List<Double>, Double> inverseFunction) {
+    public FunctionValue(List<ExperimentalData> experimentalData, BiFunction<List<Double>, List<Double>, Double> inverseFunction) {
         this.experimentalData = experimentalData;
         this.inverseFunction = inverseFunction;
     }
@@ -43,6 +43,6 @@ public class FunctionValue implements MultivariateFunction {
         ).solve();
 
         return inverseFunction.apply(solvedResistance,
-                experimentalData.stream().map(ExperimentalMeasurement::getResistanceApparent).collect(Collectors.toList()));
+                experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public interface Picket extends Serializable {
     static Picket create(
             String name,
-            List<ExperimentalMeasurement> experimentalData,
+            List<ExperimentalData> experimentalData,
             List<ModelLayer> modelData
     ) {
         return new PicketImpl(name, experimentalData, modelData);
@@ -29,7 +29,7 @@ public interface Picket extends Serializable {
     /**
      * Полевые данные
      */
-    @NotNull @Valid List<ExperimentalMeasurement> getExperimentalData();
+    @NotNull @Valid List<ExperimentalData> getExperimentalData();
 
     /**
      * Модельные данные

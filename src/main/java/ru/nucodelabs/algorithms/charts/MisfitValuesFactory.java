@@ -1,13 +1,13 @@
 package ru.nucodelabs.algorithms.charts;
 
 
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
-public interface MisfitValuesFactory extends BiFunction<List<ExperimentalMeasurement>, List<ModelLayer>, List<Double>> {
+public interface MisfitValuesFactory extends BiFunction<List<ExperimentalData>, List<ModelLayer>, List<Double>> {
 
     MisfitValuesFactory DEFAULT_IMPL = new MisfitValuesFactoryNative();
 
@@ -16,5 +16,5 @@ public interface MisfitValuesFactory extends BiFunction<List<ExperimentalMeasure
     }
 
     @Override
-    List<Double> apply(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData);
+    List<Double> apply(List<ExperimentalData> experimentalData, List<ModelLayer> modelData);
 }

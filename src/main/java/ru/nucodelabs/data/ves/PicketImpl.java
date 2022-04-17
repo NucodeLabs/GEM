@@ -5,7 +5,7 @@ import java.util.List;
 
 record PicketImpl(
         String name,
-        List<ExperimentalMeasurement> experimentalData,
+        List<ExperimentalData> experimentalData,
         List<ModelLayer> modelData
 ) implements Picket, Serializable {
     @Override
@@ -14,7 +14,7 @@ record PicketImpl(
     }
 
     @Override
-    public List<ExperimentalMeasurement> getExperimentalData() {
+    public List<ExperimentalData> getExperimentalData() {
         return experimentalData();
     }
 

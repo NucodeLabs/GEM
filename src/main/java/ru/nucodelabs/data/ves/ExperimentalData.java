@@ -7,11 +7,11 @@ import java.io.Serializable;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
-        defaultImpl = ExperimentalMeasurementImpl.class
+        defaultImpl = ExperimentalDataImpl.class
 )
-public interface ExperimentalMeasurement extends Serializable {
+public interface ExperimentalData extends Serializable {
 
-    static ExperimentalMeasurement create(
+    static ExperimentalData create(
             double ab2,
             double mn2,
             double resistanceApparent,
@@ -19,7 +19,7 @@ public interface ExperimentalMeasurement extends Serializable {
             double amperage,
             double voltage
     ) {
-        return new ExperimentalMeasurementImpl(
+        return new ExperimentalDataImpl(
                 ab2, mn2, resistanceApparent, errorResistanceApparent, amperage, voltage);
     }
 

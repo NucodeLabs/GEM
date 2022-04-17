@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.app.model;
 
 import com.google.inject.name.Named;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -43,7 +43,7 @@ public class SectionManager extends SubmissionPublisher<Section> implements Snap
         submit(section);
     }
 
-    public synchronized void updateExperimentalData(int index, List<ExperimentalMeasurement> experimentalData) {
+    public synchronized void updateExperimentalData(int index, List<ExperimentalData> experimentalData) {
         Picket old = section.getPickets().get(index);
         Picket picket = Picket.create(old.getName(), experimentalData, old.getModelData());
         section.getPickets().set(index, picket);
