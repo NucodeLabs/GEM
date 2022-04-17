@@ -1,7 +1,7 @@
 package ru.nucodelabs.algorithms.charts;
 
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
 import java.util.ArrayList;
@@ -13,9 +13,9 @@ import static java.lang.Math.signum;
 final class MisfitValuesFactoryNative implements MisfitValuesFactory {
 
     @Override
-    public List<Double> apply(List<ExperimentalMeasurement> experimentalData, List<ModelLayer> modelData) {
-        List<Double> resistanceApparent = experimentalData.stream().map(ExperimentalMeasurement::getResistanceApparent).toList();
-        List<Double> errorResistanceApparent = experimentalData.stream().map(ExperimentalMeasurement::geErrorResistanceApparent).toList();
+    public List<Double> apply(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
+        List<Double> resistanceApparent = experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList();
+        List<Double> errorResistanceApparent = experimentalData.stream().map(ExperimentalData::geErrorResistanceApparent).toList();
 
         if (experimentalData.size() == 0 || modelData.size() == 0) {
             return new ArrayList<>();

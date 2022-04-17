@@ -18,7 +18,7 @@ public class VesDataTest {
     static ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     static List<ModelLayer> vesModelData;
-    static List<ExperimentalMeasurement> vesExperimentalData;
+    static List<ExperimentalData> vesExperimentalData;
 
     @BeforeAll
     static void prepare() {

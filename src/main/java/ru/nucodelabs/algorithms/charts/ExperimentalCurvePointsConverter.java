@@ -1,6 +1,6 @@
 package ru.nucodelabs.algorithms.charts;
 
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,14 +9,14 @@ import static java.lang.Math.max;
 
 final class ExperimentalCurvePointsConverter implements PointsConverter {
 
-    private final List<ExperimentalMeasurement> experimentalData;
+    private final List<ExperimentalData> experimentalData;
     private final List<Double> ab2;
     private final List<Double> resistanceApparent;
 
-    ExperimentalCurvePointsConverter(List<ExperimentalMeasurement> experimentalData) {
+    ExperimentalCurvePointsConverter(List<ExperimentalData> experimentalData) {
         this.experimentalData = experimentalData;
-        ab2 = experimentalData.stream().map(ExperimentalMeasurement::getAb2).toList();
-        resistanceApparent = experimentalData.stream().map(ExperimentalMeasurement::getResistanceApparent).toList();
+        ab2 = experimentalData.stream().map(ExperimentalData::getAb2).toList();
+        resistanceApparent = experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList();
     }
 
     @Override
@@ -42,9 +42,9 @@ final class ExperimentalCurvePointsConverter implements PointsConverter {
 
     static final class UpperBoundErrorPointsConverter implements PointsConverter {
 
-        private final List<ExperimentalMeasurement> experimentalData;
+        private final List<ExperimentalData> experimentalData;
 
-        UpperBoundErrorPointsConverter(List<ExperimentalMeasurement> experimentalData) {
+        UpperBoundErrorPointsConverter(List<ExperimentalData> experimentalData) {
             this.experimentalData = experimentalData;
         }
 
@@ -56,9 +56,9 @@ final class ExperimentalCurvePointsConverter implements PointsConverter {
 
     static final class LowerBoundErrorPointsConverter implements PointsConverter {
 
-        private final List<ExperimentalMeasurement> experimentalData;
+        private final List<ExperimentalData> experimentalData;
 
-        LowerBoundErrorPointsConverter(List<ExperimentalMeasurement> experimentalData) {
+        LowerBoundErrorPointsConverter(List<ExperimentalData> experimentalData) {
             this.experimentalData = experimentalData;
         }
 
@@ -70,17 +70,17 @@ final class ExperimentalCurvePointsConverter implements PointsConverter {
 
     private static final class ErrorPointsConverter implements PointsConverter {
         private final BoundType boundType;
-        private final List<ExperimentalMeasurement> experimentalData;
+        private final List<ExperimentalData> experimentalData;
         private final List<Double> errorResistanceApparent;
         private final List<Double> resistanceApparent;
         private final List<Double> ab2;
 
-        ErrorPointsConverter(BoundType boundType, List<ExperimentalMeasurement> experimentalData) {
+        ErrorPointsConverter(BoundType boundType, List<ExperimentalData> experimentalData) {
             this.boundType = boundType;
             this.experimentalData = experimentalData;
-            errorResistanceApparent = experimentalData.stream().map(ExperimentalMeasurement::geErrorResistanceApparent).toList();
-            resistanceApparent = experimentalData.stream().map(ExperimentalMeasurement::getResistanceApparent).toList();
-            ab2 = experimentalData.stream().map(ExperimentalMeasurement::getAb2).toList();
+            errorResistanceApparent = experimentalData.stream().map(ExperimentalData::geErrorResistanceApparent).toList();
+            resistanceApparent = experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList();
+            ab2 = experimentalData.stream().map(ExperimentalData::getAb2).toList();
         }
 
         @Override

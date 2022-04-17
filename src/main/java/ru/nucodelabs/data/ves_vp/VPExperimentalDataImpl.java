@@ -2,7 +2,7 @@ package ru.nucodelabs.data.ves_vp;
 
 import java.io.Serializable;
 
-record VPExperimentalMeasurementImpl(
+record VPExperimentalDataImpl(
         double ab2,
         double mn2,
         double resistanceApparent,
@@ -11,7 +11,7 @@ record VPExperimentalMeasurementImpl(
         double voltage,
         double polarizationApparent,
         double errorPolarizationApparent
-) implements VPExperimentalMeasurement, Serializable {
+) implements VPExperimentalData, Serializable {
     @Override
     public double getAb2() {
         return ab2();

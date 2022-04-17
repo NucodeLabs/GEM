@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.ExperimentalMeasurement;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
@@ -30,17 +30,17 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @FXML
     private TableColumn<Object, Integer> indexCol;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> ab2Col;
+    private TableColumn<ExperimentalData, Double> ab2Col;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> mn2Col;
+    private TableColumn<ExperimentalData, Double> mn2Col;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> resistanceApparentCol;
+    private TableColumn<ExperimentalData, Double> resistanceApparentCol;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> errorResistanceCol;
+    private TableColumn<ExperimentalData, Double> errorResistanceCol;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> amperageCol;
+    private TableColumn<ExperimentalData, Double> amperageCol;
     @FXML
-    private TableColumn<ExperimentalMeasurement, Double> voltageCol;
+    private TableColumn<ExperimentalData, Double> voltageCol;
     @FXML
     private TextField indexTextField;
     @FXML
@@ -61,7 +61,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @FXML
     private Button deleteBtn;
     @FXML
-    private TableView<ExperimentalMeasurement> table;
+    private TableView<ExperimentalData> table;
 
     private List<TextField> requiredForAdd;
 
@@ -103,7 +103,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                 voltageTextField);
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ExperimentalMeasurement>) c -> {
+                .addListener((ListChangeListener<? super ExperimentalData>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
                     }
@@ -120,7 +120,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
-            ((TableColumn<ExperimentalMeasurement, Double>) table.getColumns().get(i))
+            ((TableColumn<ExperimentalData, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
@@ -141,14 +141,14 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     @FXML
     private void deleteSelected() {
-        List<ExperimentalMeasurement> selectedRows = table.getSelectionModel().getSelectedItems();
+        List<ExperimentalData> selectedRows = table.getSelectionModel().getSelectedItems();
 
         List<Integer> indicesToRemove = selectedRows.stream()
                 .map(experimentalMeasurement -> picket.get().getExperimentalData().indexOf(experimentalMeasurement))
                 .sorted(Collections.reverseOrder())
                 .toList();
 
-        List<ExperimentalMeasurement> newExpData = new ArrayList<>(picket.get().getExperimentalData());
+        List<ExperimentalData> newExpData = new ArrayList<>(picket.get().getExperimentalData());
         indicesToRemove.forEach(i -> newExpData.remove(i.intValue()));
 
         setIfValidElseAlert(newExpData);
@@ -174,9 +174,9 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
             index = min(index, picket.get().getExperimentalData().size());
 
-            List<ExperimentalMeasurement> experimentalData = new ArrayList<>(picket.get().getExperimentalData());
+            List<ExperimentalData> experimentalData = new ArrayList<>(picket.get().getExperimentalData());
 
-            experimentalData.add(index, ExperimentalMeasurement.create(
+            experimentalData.add(index, ExperimentalData.create(
                     newAb2Value, newMn2Value, newResAppValue, newErrResAppValue, newAmperageValue, newVoltageValue
             ));
 
@@ -185,7 +185,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
     }
 
 
-    private void setIfValidElseAlert(List<ExperimentalMeasurement> newExpData) {
+    private void setIfValidElseAlert(List<ExperimentalData> newExpData) {
         Picket test = Picket.create(picket.get().getName(), newExpData, picket.get().getModelData());
 
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
@@ -210,15 +210,15 @@ public class ExperimentalTableController extends AbstractEditableTableController
     }
 
     @FXML
-    private void onEditCommit(TableColumn.CellEditEvent<ExperimentalMeasurement, Double> event) {
+    private void onEditCommit(TableColumn.CellEditEvent<ExperimentalData, Double> event) {
         int index = event.getTablePosition().getRow();
 
         double newInputValue = event.getNewValue();
-        ExperimentalMeasurement oldValue = event.getRowValue();
-        ExperimentalMeasurement newValue;
+        ExperimentalData oldValue = event.getRowValue();
+        ExperimentalData newValue;
         var column = event.getTableColumn();
         if (column == ab2Col) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     newInputValue,
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
@@ -227,7 +227,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getVoltage()
             );
         } else if (column == mn2Col) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     oldValue.getAb2(),
                     newInputValue,
                     oldValue.getResistanceApparent(),
@@ -236,7 +236,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getVoltage()
             );
         } else if (column == resistanceApparentCol) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     newInputValue,
@@ -245,7 +245,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getVoltage()
             );
         } else if (column == errorResistanceCol) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
@@ -254,7 +254,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getVoltage()
             );
         } else if (column == amperageCol) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
@@ -263,7 +263,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getVoltage()
             );
         } else if (column == voltageCol) {
-            newValue = ExperimentalMeasurement.create(
+            newValue = ExperimentalData.create(
                     newInputValue,
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
@@ -275,7 +275,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
             throw new RuntimeException("Something went wrong!");
         }
 
-        List<ExperimentalMeasurement> newExpData = new ArrayList<>(picket.get().getExperimentalData());
+        List<ExperimentalData> newExpData = new ArrayList<>(picket.get().getExperimentalData());
 
         newExpData.set(index, newValue);
 

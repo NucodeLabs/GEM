@@ -2,14 +2,14 @@ package ru.nucodelabs.data.ves;
 
 import java.io.Serializable;
 
-record ExperimentalMeasurementImpl(
+record ExperimentalDataImpl(
         double ab2,
         double mn2,
         double resistanceApparent,
         double errorResistanceApparent,
         double amperage,
         double voltage
-) implements ExperimentalMeasurement, Serializable {
+) implements ExperimentalData, Serializable {
     @Override
     public double getAb2() {
         return ab2();
