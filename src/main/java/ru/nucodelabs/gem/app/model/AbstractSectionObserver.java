@@ -1,10 +1,11 @@
 package ru.nucodelabs.gem.app.model;
 
+
 import ru.nucodelabs.data.ves.Section;
 
 import java.util.concurrent.Flow;
 
-public abstract class AbstractSectionObserver implements Flow.Subscriber<Section> {
+public abstract class AbstractSectionObserver implements Flow.Subscriber<ru.nucodelabs.data.ves.Section> {
 
     protected Flow.Subscription subscription;
 

@@ -13,16 +13,18 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.charts.PointsFactory;
+import ru.nucodelabs.algorithms.charts.VesChartsConverter;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static java.lang.Math.log10;
 
 public class VESCurvesController extends AbstractController {
     /**
@@ -61,6 +63,8 @@ public class VESCurvesController extends AbstractController {
     private HistoryManager historyManager;
     @Inject
     private IntegerProperty picketIndex;
+    @Inject
+    private VesChartsConverter vesChartsConverter;
 
     @Inject
     public VESCurvesController(ObservableObjectValue<Picket> picket) {
@@ -111,11 +115,12 @@ public class VESCurvesController extends AbstractController {
         XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
 
         try {
-            PointsFactory pointsFactory = PointsFactory.theoreticalCurvePointsFactory(
-                    picket.get().experimentalData(), picket.get().modelData());
             theorCurveSeries.getData().addAll(
-                    pointsFactory.log10Points().stream()
-                            .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                    vesChartsConverter.theoreticalCurveOf(
+                                    picket.get().getExperimentalData(), picket.get().getModelData())
+                            .stream()
+                            .map(point -> new XYChart.Data<>(
+                                    log10(point.x()), log10(point.y())))
                             .toList()
             );
         } catch (UnsatisfiedLinkError e) {
@@ -129,10 +134,11 @@ public class VESCurvesController extends AbstractController {
     private void updateModelCurve() {
         XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
 
-        PointsFactory pointsFactory = PointsFactory.modelCurvePointsFactory(picket.get().modelData());
         modelCurveSeries.getData().addAll(
-                pointsFactory.log10Points().stream()
-                        .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                vesChartsConverter.modelCurveOf(picket.get().getModelData())
+                        .stream()
+                        .map(point -> new XYChart.Data<>(
+                                log10(point.x()), log10(point.y())))
                         .toList()
         );
 
@@ -153,7 +159,7 @@ public class VESCurvesController extends AbstractController {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             isDragging = true;
-            sectionManager.updateModelData(picketIndex.get(), modelCurveDragger.dragHandler(e, picket.get().modelData()));
+            sectionManager.updateModelData(picketIndex.get(), modelCurveDragger.dragHandler(e, picket.get().getModelData()));
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
             historyManager.snapshot();
@@ -165,31 +171,34 @@ public class VESCurvesController extends AbstractController {
     }
 
     private void updateExpCurves() {
-        PointsFactory pointsFactory = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> expCurveSeries = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                        vesChartsConverter.experimentalCurveOf(picket.get().getExperimentalData())
+                                .stream()
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );
         expCurveSeries.setName(uiProperties.getString("expCurve"));
 
-        pointsFactory = PointsFactory.experimentalCurveUpperBoundErrorPointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> errUpperExp = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                        vesChartsConverter.experimentalCurveErrorBoundOf(picket.get().getExperimentalData(), VesChartsConverter.BoundType.UPPER_BOUND)
+                                .stream()
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );
         errUpperExp.setName(uiProperties.getString("expCurveUpper"));
 
-        pointsFactory = PointsFactory.experimentalCurveLowerBoundErrorPointsFactory(picket.get().experimentalData());
         XYChart.Series<Double, Double> errLowerExp = new XYChart.Series<>(
                 FXCollections.observableList(
-                        pointsFactory.log10Points().stream()
-                                .map(point -> new XYChart.Data<>(point.x(), point.y()))
+                        vesChartsConverter.experimentalCurveErrorBoundOf(picket.get().getExperimentalData(), VesChartsConverter.BoundType.LOWER_BOUND)
+                                .stream()
+                                .map(point -> new XYChart.Data<>(
+                                        log10(point.x()), log10(point.y())))
                                 .toList()
                 )
         );

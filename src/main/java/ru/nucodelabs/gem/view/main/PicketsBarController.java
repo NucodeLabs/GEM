@@ -10,8 +10,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -64,7 +64,7 @@ public class PicketsBarController extends AbstractController {
 
         for (int i = 0; i < picketObservableList.size(); i++) {
             final int picketNumber = i;
-            Button button = new Button(picketObservableList.get(picketNumber).name());
+            Button button = new Button(picketObservableList.get(picketNumber).getName());
 
             if (i == picketIndex.get()) {
                 button.setStyle(
