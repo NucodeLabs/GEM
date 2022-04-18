@@ -6,12 +6,21 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ru.nucodelabs.gem.view.AbstractController;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static ru.nucodelabs.gem.view.tables.Tables.validateDataInput;
 import static ru.nucodelabs.gem.view.tables.Tables.validateIndexInput;
 
 public abstract class AbstractEditableTableController extends AbstractController {
+
+    protected <T> List<T> deleteIndices(List<Integer> indicesToRemove, List<T> removeFrom) {
+        indicesToRemove = indicesToRemove.stream().sorted(Comparator.reverseOrder()).toList();
+        List<T> list = new ArrayList<>(removeFrom);
+        indicesToRemove.forEach(i -> list.remove(i.intValue()));
+        return list;
+    }
 
     abstract protected List<TextField> getRequiredForAdd();
 

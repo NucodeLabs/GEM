@@ -19,7 +19,10 @@ import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import static java.lang.Math.min;
 
@@ -136,21 +139,15 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     protected void update() {
         table.itemsProperty().setValue(FXCollections.observableList(picket.get().getExperimentalData()));
+        table.refresh();
     }
 
 
     @FXML
     private void deleteSelected() {
-        List<ExperimentalData> selectedRows = table.getSelectionModel().getSelectedItems();
-
-        List<Integer> indicesToRemove = selectedRows.stream()
-                .map(experimentalMeasurement -> picket.get().getExperimentalData().indexOf(experimentalMeasurement))
-                .sorted(Collections.reverseOrder())
-                .toList();
-
-        List<ExperimentalData> newExpData = new ArrayList<>(picket.get().getExperimentalData());
-        indicesToRemove.forEach(i -> newExpData.remove(i.intValue()));
-
+        List<ExperimentalData> newExpData = deleteIndices(
+                table.getSelectionModel().getSelectedIndices(),
+                picket.get().getExperimentalData());
         setIfValidElseAlert(newExpData);
     }
 
