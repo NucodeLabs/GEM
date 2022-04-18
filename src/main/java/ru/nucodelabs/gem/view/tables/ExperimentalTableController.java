@@ -13,6 +13,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -75,7 +76,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @Inject
     private SectionManager sectionManager;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
     @Inject
     private AlertsFactory alertsFactory;
 

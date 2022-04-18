@@ -72,7 +72,7 @@ public class MainViewController extends AbstractController {
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
