@@ -29,10 +29,10 @@ public class CrossSectionConverters {
 
                 XYChart.Data<Number, Number> leftLineDot = new XYChart.Data<>(
                         currentCoordinate,
-                        picket.modelData().getHeight().get(i) + 0.001);
+                        picket.modelData().getHeight().get(i));
                 XYChart.Data<Number, Number> rightLineDot = new XYChart.Data<>(
                         currentCoordinate + picketWidth,
-                        picket.modelData().getHeight().get(i) + 0.001);
+                        picket.modelData().getHeight().get(i));
 
                 picketSeries.get(count++).getData().addAll(
                         leftLineDot,
@@ -40,7 +40,7 @@ public class CrossSectionConverters {
                         );
 
             }
-            currentCoordinate += picketWidth;
+            currentCoordinate += picketWidth + 0.001;
         }
 
         return picketSeries;
