@@ -103,6 +103,14 @@
     -fx-background-color: WhiteSmoke;
 }
 
+.table-view .column-header,
+.table-row-cell {
+    -fx-border-color: LightGray;
+    -fx-table-cell-border-color: LightGray;
+    -fx-border-width: 0.5;
+    -fx-border-insets: -1 -1 -1 -1;
+}
+
 .scroll-bar:vertical,
 .scroll-bar:vertical .track,
 .scroll-bar:vertical .track-background,

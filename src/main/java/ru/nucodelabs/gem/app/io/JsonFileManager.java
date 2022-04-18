@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.app.io;
 
 import java.io.File;
+import java.io.Serializable;
 
 public interface JsonFileManager {
 
@@ -8,7 +9,7 @@ public interface JsonFileManager {
         return new JsonFileManagerImpl();
     }
 
-    <T> T loadFromJson(File jsonFile, Class<T> type) throws Exception;
+    <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception;
 
-    <T> void saveToJson(File jsonFile, T object) throws Exception;
+    <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception;
 }
