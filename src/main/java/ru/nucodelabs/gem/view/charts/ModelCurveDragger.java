@@ -5,11 +5,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
-import ru.nucodelabs.data.ves.ModelData;
+import ru.nucodelabs.data.ves.ModelLayer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.lang.Math.pow;
@@ -117,8 +115,8 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse dragged event
      * @param modelData  model data
      */
-    public ModelData dragHandler(MouseEvent mouseEvent, ModelData modelData) {
-        modelData = modelData.clone();
+    public List<ModelLayer> dragHandler(MouseEvent mouseEvent, List<ModelLayer> modelData) {
+        modelData = new ArrayList<>(modelData);
         mapModelData(modelData);
         var valuesForAxis = coordinatesToValues(mouseEvent);
         Double mouseX = valuesForAxis.getXValue();
@@ -138,24 +136,25 @@ public class ModelCurveDragger {
                 double diff = pow(10, mouseX) - pow(10, point1.getXValue());
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
-                if (modelData != null) {
-                    int index1 = pointPowerMap.get(point1);
-                    int index2 = index1 + 1; // neighbor
-                    double initialValue1 = modelData.power().get(index1);
-                    double initialValue2 = modelData.power().get(index2);
-                    double newValue1 = initialValue1 + diff;
-                    double newValue2 = initialValue2 - diff;
-                    modelData.power().set(index1, newValue1);
-                    if (index2 != modelData.size() - 1) {
-                        modelData.power().set(index2, newValue2);
-                    }
+                int index1 = pointPowerMap.get(point1);
+                int index2 = index1 + 1; // neighbor
+                double initialValue1 = modelData.get(index1).getPower();
+                double initialValue2 = modelData.get(index2).getPower();
+                double newValue1 = initialValue1 + diff;
+                double newValue2 = initialValue2 - diff;
+                ModelLayer old = modelData.get(index1);
+                modelData.set(index1, ModelLayer.create(newValue1, old.getResistance()));
+                if (index2 != modelData.size() - 1) {
+                    old = modelData.get(index2);
+                    modelData.set(index2, ModelLayer.create(newValue2, old.getResistance()));
                 }
             } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 int index = pointResistanceMap.get(point1);
                 double newValue = pow(10, mouseY);
-                modelData.resistance().set(index, newValue);
+                ModelLayer old = modelData.get(index);
+                modelData.set(index, ModelLayer.create(old.getPower(), newValue));
             }
         }
         return modelData;
@@ -166,7 +165,7 @@ public class ModelCurveDragger {
      *
      * @param modelData model data that match curve
      */
-    private void mapModelData(ModelData modelData) {
+    private void mapModelData(List<ModelLayer> modelData) {
         String E_MSG = "ModelData array size: %d does not match mapping size: %d";
 
         pointResistanceMap = new HashMap<>();
@@ -176,11 +175,11 @@ public class ModelCurveDragger {
             pointResistanceMap.put(points.get(i + 1), j);
         }
 
-        if (pointResistanceMap.values().stream().distinct().count() != modelData.resistance().size()) {
+        if (pointResistanceMap.values().stream().distinct().count() != modelData.size()) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
                             pointResistanceMap.values().stream().distinct().count(),
-                            modelData.resistance().size()
+                            modelData.size()
                     )
             );
         }
@@ -191,11 +190,11 @@ public class ModelCurveDragger {
             pointPowerMap.put(points.get(i + 1), j);
         }
 
-        if (pointPowerMap.values().stream().distinct().count() != modelData.power().size() - 1) {
+        if (pointPowerMap.values().stream().distinct().count() != modelData.size() - 1) {
             throw new IllegalArgumentException(
                     String.format(E_MSG,
                             pointPowerMap.values().stream().distinct().count(),
-                            modelData.power().size()
+                            modelData.size()
                     )
             );
         }

@@ -1,29 +1,38 @@
 package ru.nucodelabs.data.ves;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import ru.nucodelabs.files.sonet.EXPFile;
-import ru.nucodelabs.files.sonet.STTFile;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.List;
 
-public record Picket(
-        // Наименование пикета
-        @NotNull String name,
-        // Экспериментальные(полевые) данные
-        @Valid @NotNull ExperimentalData experimentalData,
-        // Данные модели
-        @Valid @NotNull ModelData modelData
-) implements Serializable {
-    public static Picket from(STTFile sttFile, EXPFile expFile) {
-        String fileName = expFile.getFile().getName();
-        String newName;
-        if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
-            newName = fileName.substring(0, fileName.length() - 4);
-        } else {
-            newName = fileName;
-        }
-        ExperimentalData newExperimentalData = ExperimentalData.from(sttFile, expFile);
-        return new Picket(newName, newExperimentalData, ModelData.empty());
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.DEDUCTION,
+        defaultImpl = PicketImpl.class
+)
+public interface Picket extends Serializable {
+    static Picket create(
+            String name,
+            List<ExperimentalData> experimentalData,
+            List<ModelLayer> modelData
+    ) {
+        return new PicketImpl(name, experimentalData, modelData);
     }
+
+    /**
+     * Наименование пикета
+     */
+    @NotNull String getName();
+
+    /**
+     * Полевые данные
+     */
+    @NotNull @Valid List<ExperimentalData> getExperimentalData();
+
+    /**
+     * Модельные данные
+     */
+    @NotNull @Valid @Size(max = 40) List<ModelLayer> getModelData();
 }

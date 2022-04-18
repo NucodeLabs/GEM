@@ -56,14 +56,14 @@ ext {
 }
 
 def prepareJNIArgs() {
-    def jniArgs = new ArrayList();
+    def jniArgs = new ArrayList()
     jniArgs.add(compiler)
     jniArgs.addAll(arch)
     jniArgs.add(optimization)
     jniArgs.add(pic)
     jniArgs.add(shared)
     jniArgs.addAll(jniIncludePaths)
-    return jniArgs;
+    return jniArgs
 }
 
 task printPlatformInfo {
