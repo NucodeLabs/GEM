@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -39,56 +38,26 @@
         <columns>
             <TableColumn fx:id="indexCol" maxWidth="35" prefWidth="35" sortable="false" text="N"
                          styleClass="centered-column"
-                         resizable="false" editable="false">
-                <cellValueFactory>
-                    <PropertyValueFactory property="index"/>
-                </cellValueFactory>
-            </TableColumn>
+                         resizable="false" editable="false"/>
             <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPower" sortable="false" onEditCommit="#onPowerEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="power"/>
-                </cellValueFactory>
-            </TableColumn>
+                         text="%modelPower" sortable="false" onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelResistanceApparent" sortable="false" onEditCommit="#onResistanceEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="resistance"/>
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="polarizationCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%modelPolarization" sortable="false" onEditCommit="#onPolarizationEditCommit">
-                <cellValueFactory>
-                    <PropertyValueFactory property="polarization"/>
-                </cellValueFactory>
-            </TableColumn>
+                         text="%modelResistanceApparent" sortable="false" onEditCommit="#onEditCommit"/>
         </columns>
     </TableView>
-    <HBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="indexTextField" promptText="N"
-                       prefWidth="45" minWidth="45"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="powerTextField" promptText="%modelPower"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <TextField fx:id="polarizationTextField" promptText="%modelPolarization"
-                       maxWidth="Infinity"/>
-        </VBox>
-        <VBox style="-fx-padding: 5">
-            <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
-                <graphic>
+    <HBox spacing="5" style="-fx-padding: 5">
+        <TextField fx:id="indexTextField" promptText="N"
+                   prefWidth="45" minWidth="45"/>
+        <TextField fx:id="powerTextField" promptText="%modelPower"
+                   maxWidth="Infinity"/>
+        <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
+                   maxWidth="Infinity"/>
+        <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
+            <graphic>
                     <ImageView fitWidth="15" fitHeight="15">
                         <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
                     </ImageView>
                 </graphic>
             </Button>
-        </VBox>
     </HBox>
 </VBox>

@@ -17,6 +17,7 @@ import ru.nucodelabs.gem.view.main.MainViewModule;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -33,7 +34,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     private ResourceBundle provideUIProperties() {
-        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
+        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
     }
 
     @Provides

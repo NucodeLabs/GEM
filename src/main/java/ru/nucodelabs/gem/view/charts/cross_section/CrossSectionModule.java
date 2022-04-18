@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.cross_section;
+package ru.nucodelabs.gem.view.charts.cross_section;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
+
 import java.util.ArrayList;
 
 public class CrossSectionModule extends AbstractModule {

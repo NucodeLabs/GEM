@@ -4,14 +4,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.HistoryManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
-import ru.nucodelabs.gem.view.cross_section.CrossSectionController;
-import ru.nucodelabs.gem.view.cross_section.CrossSectionModule;
+import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionController;
+import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionModule;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 
@@ -43,6 +44,11 @@ public class MainViewModule extends AbstractModule {
     @Provides
     @Named("Initial")
     private Section provideInitialSection() {
-        return new Section(new ArrayList<>());
+        return Section.create(new ArrayList<>());
+    }
+
+    @Provides
+    private Snapshot.Originator<Section> sectionOriginator(SectionManager sectionManager) {
+        return sectionManager;
     }
 }
