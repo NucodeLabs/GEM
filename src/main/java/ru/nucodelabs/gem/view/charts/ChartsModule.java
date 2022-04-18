@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.algorithms.charts.VESChartsService;
+import ru.nucodelabs.algorithms.charts.VesChartsConverter;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class ChartsModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private VESChartsService pointsService() {
-        return new VESChartsService();
+    private VesChartsConverter vesChartsConverter() {
+        return VesChartsConverter.getInstance();
     }
 }
