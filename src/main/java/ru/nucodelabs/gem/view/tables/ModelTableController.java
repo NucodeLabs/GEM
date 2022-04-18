@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -116,6 +115,11 @@ public class ModelTableController extends AbstractEditableTableController {
         addEnterKeyHandler(indexTextField);
         addEnterKeyHandler(resistanceTextField);
         addEnterKeyHandler(powerTextField);
+
+        table.itemsProperty().addListener((observable, oldValue, newValue) -> {
+            newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
+            table.refresh();
+        });
     }
 
     @Override
@@ -124,9 +128,7 @@ public class ModelTableController extends AbstractEditableTableController {
     }
 
     protected void update() {
-        ObservableList<ModelLayer> modelDataRows = FXCollections.observableList(picket.get().getModelData());
-        table.itemsProperty().setValue(modelDataRows);
-        table.refresh();
+        table.itemsProperty().setValue(FXCollections.observableList(picket.get().getModelData()));
     }
 
     @FXML
