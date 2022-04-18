@@ -8,26 +8,28 @@ import java.util.List;
 
 public interface ForwardSolver {
 
+    ForwardSolver DEFAULT_IMPL = new SonetForwardSolver();
+
+    static ForwardSolver getDefaultImpl() {
+        return DEFAULT_IMPL;
+    }
+
     /**
      * Returns default ForwardSolver implementation
      *
-     * @param experimentalData experimental data of picket
-     * @param modelData        model data of picket
      * @return new instance
      */
-    static ForwardSolver createDefaultForwardSolver(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
-        return createSonetForwardSolver(experimentalData, modelData);
+    static ForwardSolver createDefaultForwardSolver() {
+        return createSonetForwardSolver();
     }
 
     /**
      * Returns Sonet implementation of ForwardSolver
      *
-     * @param experimentalData experimental data of picket
-     * @param modelData        model data of picket
      * @return new instance
      */
-    static ForwardSolver createSonetForwardSolver(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
-        return new SonetForwardSolver(experimentalData, modelData);
+    static ForwardSolver createSonetForwardSolver() {
+        return new SonetForwardSolver();
     }
 
     /**
@@ -35,5 +37,5 @@ public interface ForwardSolver {
      *
      * @return resistance apparent
      */
-    List<Double> solve();
+    List<Double> solve(List<ExperimentalData> experimentalData, List<ModelLayer> modelData);
 }

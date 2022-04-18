@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.SubmissionPublisher;
 
-public class SectionManager extends SubmissionPublisher<Section> implements Snapshot.Originator<ru.nucodelabs.data.ves.Section> {
+public class SectionManager extends SubmissionPublisher<Section> implements Snapshot.Originator<Section> {
 
     private Section section;
 

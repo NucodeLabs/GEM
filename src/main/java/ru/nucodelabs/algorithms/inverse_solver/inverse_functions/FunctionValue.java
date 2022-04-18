@@ -37,10 +37,7 @@ public class FunctionValue implements MultivariateFunction {
             modelLayers.add(ModelLayer.create(currentModelPower.get(i), currentModelResistance.get(i)));
         }
 
-        List<Double> solvedResistance = ForwardSolver.createDefaultForwardSolver(
-                experimentalData,
-                modelLayers
-        ).solve();
+        List<Double> solvedResistance = ForwardSolver.getDefaultImpl().solve(experimentalData, modelLayers);
 
         return inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
