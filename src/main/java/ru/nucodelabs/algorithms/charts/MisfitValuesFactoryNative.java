@@ -15,7 +15,7 @@ final class MisfitValuesFactoryNative implements MisfitValuesFactory {
     @Override
     public List<Double> apply(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
         List<Double> resistanceApparent = experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList();
-        List<Double> errorResistanceApparent = experimentalData.stream().map(ExperimentalData::geErrorResistanceApparent).toList();
+        List<Double> errorResistanceApparent = experimentalData.stream().map(ExperimentalData::getErrorResistanceApparent).toList();
 
         if (experimentalData.size() == 0 || modelData.size() == 0) {
             return new ArrayList<>();

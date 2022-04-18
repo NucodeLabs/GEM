@@ -28,7 +28,7 @@ record VPExperimentalDataImpl(
     }
 
     @Override
-    public double geErrorResistanceApparent() {
+    public double getErrorResistanceApparent() {
         return errorResistanceApparent();
     }
 

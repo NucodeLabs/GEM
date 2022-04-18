@@ -41,7 +41,7 @@ public interface ExperimentalData extends Serializable {
     /**
      * Погрешность, %
      */
-    @Min(0) double geErrorResistanceApparent();
+    @Min(0) double getErrorResistanceApparent();
 
     /**
      * Ток, мА

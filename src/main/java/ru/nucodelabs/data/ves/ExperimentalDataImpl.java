@@ -26,7 +26,7 @@ record ExperimentalDataImpl(
     }
 
     @Override
-    public double geErrorResistanceApparent() {
+    public double getErrorResistanceApparent() {
         return errorResistanceApparent();
     }
 

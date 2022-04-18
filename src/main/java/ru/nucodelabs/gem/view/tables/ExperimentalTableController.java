@@ -117,7 +117,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
         ab2Col.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getAb2()));
         mn2Col.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getMn2()));
         resistanceApparentCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistanceApparent()));
-        errorResistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().geErrorResistanceApparent()));
+        errorResistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getErrorResistanceApparent()));
         amperageCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getAmperage()));
         voltageCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getVoltage()));
 
@@ -223,7 +223,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     newInputValue,
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
-                    oldValue.geErrorResistanceApparent(),
+                    oldValue.getErrorResistanceApparent(),
                     oldValue.getAmperage(),
                     oldValue.getVoltage()
             );
@@ -232,7 +232,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getAb2(),
                     newInputValue,
                     oldValue.getResistanceApparent(),
-                    oldValue.geErrorResistanceApparent(),
+                    oldValue.getErrorResistanceApparent(),
                     oldValue.getAmperage(),
                     oldValue.getVoltage()
             );
@@ -241,7 +241,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     newInputValue,
-                    oldValue.geErrorResistanceApparent(),
+                    oldValue.getErrorResistanceApparent(),
                     oldValue.getAmperage(),
                     oldValue.getVoltage()
             );
@@ -259,7 +259,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
-                    oldValue.geErrorResistanceApparent(),
+                    oldValue.getErrorResistanceApparent(),
                     newInputValue,
                     oldValue.getVoltage()
             );
@@ -268,7 +268,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     oldValue.getAb2(),
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
-                    oldValue.geErrorResistanceApparent(),
+                    oldValue.getErrorResistanceApparent(),
                     oldValue.getAmperage(),
                     newInputValue
             );
