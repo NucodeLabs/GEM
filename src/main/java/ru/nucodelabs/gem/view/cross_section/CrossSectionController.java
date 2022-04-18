@@ -5,17 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,44 +56,26 @@ public class CrossSectionController extends AbstractController {
     }
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
+        int count = 0;
         for (Picket picket : picketObservableList) {
             for (int i = 0; i < picket.modelData().getRows().size(); i++) {
                 double resistance = picket.modelData().getRows().get(i).resistance();
                 String layerColor = getRGBColor(resistance);
 
-                seriesList.get(i).getNode().viewOrderProperty().setValue(i);
-                seriesList.get(i).getNode().lookup(".chart-series-area-fill")
+                seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-stroke: rgba(" + layerColor + ", 1.0);"
                         + "-fx-fill: rgba(" + layerColor + ", 1.0);");
+                seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
+                //count++;
             }
         }
     }
-/*
-    private void updateLayersColors(List<XYChart.Series<Number, Number>> seriesList) {
-        for (int i = 0; i < seriesList.size(); i++) {
-            XYChart.Series<Number, Number> series = seriesList.get(i);
-            for (int j = 0; j < series.getData().size(); j++) {
-                XYChart.Data<Number, Number> picketLine = series.getData().get(j);
-                ModelData modelData = picketObservableList.get(j / 4).modelData();
-                if (i < modelData.getRows().size()) {
-                    double resistance = modelData.resistance().get(i);
-                    String layerColor = getRGBColor(resistance);
 
-                    picketLine.getNode().setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
-                    picketLine.getNode().setStyle("-fx-border-color: rgba(" + layerColor + ", 1.0);");
-
-                    //picketLine.getNode().setStyle("-fx-background-color:" + layerColor);
-                    //picketLine.getNode().setStyle("-fx-opacity: 0.0");
-                }
-            }
-        }
-    }
-*/
     public String getRGBColor(double resistance) {
         Color color = Color.WHITESMOKE;
 
         if (0 < resistance & resistance < 20) {
-            color = Color.LIGHTGREEN; //"#90EE90"
+            color = Color.LIGHTGREEN;
         } else if (20 <= resistance & resistance < 50) {
             color = Color.GREEN;
         } else if (50 <= resistance & resistance < 100) {
