@@ -1,8 +1,6 @@
 package ru.nucodelabs.gem.view.cross_section;
 
-import javafx.collections.FXCollections;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.data.ves.ModelDataRow;
 import ru.nucodelabs.data.ves.Picket;
 
 import java.util.ArrayList;
@@ -10,9 +8,8 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
-    public static List<XYChart.Series<Number, Number>> makeResistanceSeries(List<Picket> pickets) {
+    public static List<XYChart.Series<Number, Number>> makeResistanceSeries(List<Picket> pickets, double currentCoordinate) {
         List<XYChart.Series<Number, Number>> picketSeries = new ArrayList<>();
-        double currentCoordinate = 0.0;
         double picketWidth = 100.0;
 
         for (Picket picket : pickets) {
@@ -40,7 +37,7 @@ public class CrossSectionConverters {
                         );
 
             }
-            currentCoordinate += picketWidth + 0.001;
+            currentCoordinate += picketWidth;
         }
 
         return picketSeries;
