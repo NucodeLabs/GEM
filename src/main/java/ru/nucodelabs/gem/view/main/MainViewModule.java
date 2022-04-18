@@ -11,8 +11,8 @@ import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
-import ru.nucodelabs.gem.view.cross_section.CrossSectionController;
-import ru.nucodelabs.gem.view.cross_section.CrossSectionModule;
+import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionController;
+import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionModule;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
 

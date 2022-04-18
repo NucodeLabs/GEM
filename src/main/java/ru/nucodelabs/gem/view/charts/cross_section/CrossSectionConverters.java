@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.cross_section;
+package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.Picket;
@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CrossSectionConverters {
 
+    @SuppressWarnings("unchecked")
     public static List<XYChart.Series<Number, Number>> makeResistanceSeries(List<Picket> pickets, double currentCoordinate) {
         List<XYChart.Series<Number, Number>> picketSeries = new ArrayList<>();
         double picketWidth = 100.0;
@@ -33,6 +34,7 @@ public class CrossSectionConverters {
                         currentCoordinate + picketWidth,
                         hValue);
 
+                // safe
                 picketSeries.get(count++).getData().addAll(
                         leftLineDot,
                         rightLineDot
@@ -43,29 +45,5 @@ public class CrossSectionConverters {
         }
 
         return picketSeries;
-    }
-
-    public static int getMaxLayerCount(List<Picket> pickets) {
-        int maxLayer = 0;
-        for (Picket picket : pickets) {
-            if (picket.getModelData() != null) {
-                if (maxLayer < picket.getModelData().size()) {
-                    maxLayer = picket.getModelData().size();
-                }
-            }
-        }
-
-        return maxLayer;
-    }
-
-    public static List<String> makeCategories(List<Picket> pickets) {
-        List<String> categories = new ArrayList<>();
-        int layers = getMaxLayerCount(pickets);
-
-        for (int i = 0; i < layers; i++) {
-            categories.add(((Integer) i).toString());
-        }
-
-        return categories;
     }
 }
