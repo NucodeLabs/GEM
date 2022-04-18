@@ -261,7 +261,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
             );
         } else if (column == voltageCol) {
             newValue = ExperimentalData.create(
-                    newInputValue,
+                    oldValue.getAb2(),
                     oldValue.getMn2(),
                     oldValue.getResistanceApparent(),
                     oldValue.geErrorResistanceApparent(),
