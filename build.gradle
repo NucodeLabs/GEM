@@ -1,0 +1,246 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.FileAssociation
+import io.github.fvarrui.javapackager.model.SetupMode
+import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
+import org.gradle.internal.jvm.Jvm
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+buildscript {
+    dependencies {
+        classpath "io.github.fvarrui:javapackager:${DefaultNativePlatform.currentOperatingSystem.isMacOsX() ? "1.6.3" : "1.6.4"}"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
+    id "com.google.osdetector" version "1.7.0"
+}
+
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
+
+group 'ru.nucodelabs'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    // Platform Info
+    currentOS = DefaultNativePlatform.currentOperatingSystem
+    currentArch = DefaultNativePlatform.currentArchitecture
+    currentOSVer = System.getProperty("os.version").toString()
+
+    // JNI specific variables
+    platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
+    libPrefix = currentOS.isWindows() ? "" : "lib"
+    libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
+
+    compiler = currentOS.isMacOsX() ? "/usr/bin/clang" : currentOS.isLinux() ? "/usr/bin/gcc" : "clang"
+    arch = currentOS.isMacOsX() ? ["-arch", "x86_64", "-arch", "arm64"] : []
+    optimization = "-O3"
+    pic = currentOS.isWindows() ? "" : "-fPIC"
+    shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
+
+    jniIncludePaths = [
+            "-I", file("${Jvm.current().javaHome}/include").absolutePath,
+            "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
+    ]
+
+    jniArgs = prepareJNIArgs()
+}
+
+def prepareJNIArgs() {
+    def jniArgs = new ArrayList();
+    jniArgs.add(compiler)
+    jniArgs.addAll(arch)
+    jniArgs.add(optimization)
+    jniArgs.add(pic)
+    jniArgs.add(shared)
+    jniArgs.addAll(jniIncludePaths)
+    return jniArgs;
+}
+
+task printPlatformInfo {
+    println "OS:             ${currentOS.name}"
+    println "OS VERSION:     ${currentOSVer}"
+    println "ARCHITECTURE:   ${currentArch.name}"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
+}
+
+javafx {
+    version = "17.0.2"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
+}
+
+dependencies {
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
+    implementation 'org.jetbrains:annotations:20.1.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+    testImplementation 'org.openjfx:javafx:17.0.2'
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
+    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
+}
+
+task forwardSolver(type: Exec) {
+    workingDir "${projectDir}/orig/ForwardSolver"
+
+    def language = ["-x", "c"]
+
+    def sources = [
+            file("${workingDir}/forwardsolverJNI.c").absolutePath,
+            file("${workingDir}/VESER.C").absolutePath
+    ]
+
+    def libName = "forwardsolver"
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
+    doFirst {
+        mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
+    }
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
+            file("${projectDir}/lib/" + libName + ".exp").delete()
+            file("${workingDir}/lib/" + libName + ".lib").delete()
+        }
+    }
+}
+
+task misfitFunctions(type: Exec) {
+    workingDir "${projectDir}/orig/ForwardSolver"
+    def language = ["-std=c++14"]
+
+    def sources = [
+            file("${workingDir}/MisfitFunctions.cpp"),
+            file("${workingDir}/misfitJNI.cpp")
+    ]
+
+    def libName = "misfit"
+
+    def out = ["-o", file("${projectDir}/lib/${libPrefix + libName}.${libExt}").absolutePath]
+
+    def args = new ArrayList<>()
+    args.addAll(jniArgs)
+    args.addAll(["-I", file("${workingDir}").absolutePath])
+    args.addAll(language)
+    args.addAll(sources)
+    args.addAll(out)
+
+    doFirst {
+        mkdir "${projectDir}/lib"
+        commandLine.forEach(a -> println a)
+    }
+
+    commandLine args
+
+    doLast {
+        if (currentOS.isWindows()) {
+            file("${projectDir}/lib/${libName}.exp").delete()
+            file("${workingDir}/lib/${libName}.lib").delete()
+        }
+    }
+}
+
+test {
+    dependsOn forwardSolver, misfitFunctions
+    useJUnitPlatform()
+    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
+}
+
+tasks.withType(JavaExec) {
+    dependsOn forwardSolver, misfitFunctions
+    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
+}
+
+javapackager {
+    mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
+    bundleJre = true
+    organizationName = "NucodeLabs"
+    name = "GEM"
+    applicationName = "GEM"
+    version = "0.1"
+    vmArgs = ["-Djava.library.path=."]
+    administratorRequired = false
+    additionalResources = [
+            file("lib/${libPrefix}forwardsolver.${libExt}"),
+            file("lib/${libPrefix}misfit.${libExt}")
+    ]
+    fileAssociations = [
+            new FileAssociation() {
+                {
+                    mimeType = "text/plain"
+                    extension = "EXP"
+                    description = "Exp Data"
+                }
+            },
+            new FileAssociation() {
+                {
+                    mimeType = "application/json"
+                    extension = "json"
+                    description = "Section or Picket"
+                }
+            }
+    ]
+}
+
+task packageMacApp(type: PackageTask, dependsOn: build) {
+    generateInstaller = false
+    macConfig {
+        icnsFile = file("src/main/resources/img/gem.icns")
+        generateDmg = false
+        generatePkg = false
+    }
+}
+
+task packageWindowsExe(type: PackageTask, dependsOn: build) {
+    generateInstaller = false
+    winConfig {
+        generateSetup = false
+        generateMsi = false
+        exeCreationTool = WindowsExeCreationTool.launch4j
+        icoFile = file("src/main/resources/img/gem.ico")
+        setupMode = SetupMode.askTheUser
+        removeOldLibs = true
+        disableDirPage = false
+        disableFinishedPage = false
+        disableWelcomePage = false
+        createDesktopIconTask = false
+    }
+}
+
+task packageLinuxApplication(type: PackageTask, dependsOn: build) {
+    generateInstaller = true
+    linuxConfig {
+        generateDeb = true
+        generateRpm = true
+        wrapJar = true
+        pngFile = file("src/main/resources/img/gem.png")
+    }
+}
