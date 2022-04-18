@@ -63,7 +63,7 @@ public class CrossSectionController extends AbstractController {
                 String layerColor = getRGBColor(resistance);
 
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                        .setStyle("-fx-stroke: rgba(" + layerColor + ", 1.0);"
+                        .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
                         + "-fx-fill: rgba(" + layerColor + ", 1.0);");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
                 //count++;
