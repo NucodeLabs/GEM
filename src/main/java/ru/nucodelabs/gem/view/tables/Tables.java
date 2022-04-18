@@ -30,23 +30,11 @@ final class Tables {
 
     private static final Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> INDEX_CELL_FACTORY = col -> {
         TableCell<Object, Integer> cell = new TableCell<>();
-//        cell.textProperty().bind(Bindings.when(cell.emptyProperty())
-//                .then("")
-//                .otherwise(cell.indexProperty().asString()));
 
-        cell.tableViewProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null && !cell.textProperty().isBound()) {
-                        cell.textProperty().bind(Bindings.createStringBinding(
-                                        () -> cell.isEmpty() ? "" : String.valueOf(cell.getIndex()),
-                                        cell.getTableView().getItems(),
-                                        cell.getTableView().itemsProperty(),
-                                        cell.emptyProperty(),
-                                        cell.indexProperty()
-                                )
-                        );
-                    }
-                }
-        );
+        cell.textProperty().bind(Bindings.when(cell.emptyProperty())
+                .then("")
+                .otherwise(cell.indexProperty().asString()));
+
         return cell;
     };
 
