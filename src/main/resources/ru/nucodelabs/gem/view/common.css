@@ -1,0 +1,192 @@
+.root {
+    -fx-accent: ForestGreen;
+    -fx-focus-color: ForestGreen;
+}
+
+.button {
+    -fx-border-color: LightGray;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-background-color: white;
+    -fx-text-fill: DarkSlateGray;
+}
+
+.button:default {
+    -fx-text-fill: White;
+    -fx-background-color: ForestGreen;
+    -fx-border-color: DarkGreen;
+}
+
+.button:default:hover {
+    -fx-background-color: Green;
+}
+
+.button:default:pressed {
+    -fx-background-color: DarkGreen;
+}
+
+.button:hover {
+    -fx-background-color: WhiteSmoke;
+}
+
+.button:pressed {
+    -fx-background-color: GainsBoro;
+}
+
+.menu-button:focused, .menu-button:showing,
+.menu-item:showing, .menu-item:focused, .menu-button:pressed,
+.menu-button:hover, .menu-item:hover {
+    -fx-background-color: ForestGreen;
+}
+
+.menu-bar, .menu, .menu-item, .menu-button, .context-menu {
+    -fx-background-color: WhiteSmoke;
+    -fx-background-radius: 5px;
+}
+
+.context-menu {
+    -fx-border-color: GainsBoro;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    /*-fx-effect: null;*/
+    -fx-background-radius: 5px;
+    -fx-padding: 2px;
+}
+
+.split-pane {
+    -fx-background-color: white;
+}
+
+.split-pane-divider {
+    -fx-background-color: GainsBoro;
+    -fx-max-width: 1px;
+    -fx-pref-width: 5px;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+}
+
+.split-pane-divider:hover {
+    -fx-background-color: Gray;
+    -fx-border-width: 1px;
+}
+
+.split-pane-divider:pressed {
+    -fx-background-color: LightGreen;
+}
+
+.chart-legend {
+    -fx-background-color: WhiteSmoke;
+    -fx-background-radius: 5px;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
+}
+
+.table-view {
+    -fx-font-size: 16;
+    -fx-background-color: WhiteSmoke;
+}
+
+.list-view {
+    -fx-background-color: WhiteSmoke;
+}
+
+.table-view:focused {
+    -fx-border-color: none;
+}
+
+.table-view .column-header-background .filler,
+.table-view .column-header,
+.table-view .corner {
+    -fx-background-color: WhiteSmoke;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:vertical .track,
+.scroll-bar:vertical .track-background,
+.scroll-bar:horizontal,
+.scroll-bar:horizontal .track,
+.scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: LightGray;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: LightGray;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: white;
+}
+
+.tab-header-area {
+    -fx-padding: 5;
+    -fx-background-radius: 5;
+}
+
+.tab-pane .tab-content-area, .table-view {
+    -fx-border-color: none;
+}
+
+.tab-pane .tab {
+    -fx-pref-height: 25;
+    -fx-background-color: WhiteSmoke;
+    -fx-background-radius: 5;
+    -fx-border-color: none;
+    -fx-border-radius: 5;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: GainsBoro;
+    -fx-border-color: GainsBoro;
+}
+
+.tab-pane .tab:selected,
+.tab-pane .tab:showing,
+.tab-pane .tab:focused {
+    -fx-background-color: LightGray;
+}
+
+.uclabel {
+    -fx-text-fill: Gray;
+    -fx-font-size: 12;
+    -fx-padding: 5;
+}
+
+.tooltip {
+    -fx-effect: none;
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-text-fill: Gray;
+    -fx-border-width: 1;
+    -fx-border-color: Gray;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.centered-column {
+    -fx-alignment: center;
+}
+
+.text-field {
+    -fx-background-radius: 5;
+    -fx-background-color: WhiteSmoke;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: WhiteSmoke;
+}
+
+.text-field:focused {
+    -fx-border-color: LightGray;
+}
+
+.wrong-input {
+    -fx-background-color: LightPink;
+}

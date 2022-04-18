@@ -1,3 +1,5 @@
+#ifndef FORWARDSOLVER_VES_H
+#define FORWARDSOLVER_VES_H
 #define _FPREC double         /* Определение плавающего типа        */
 
 #ifndef PI
@@ -20,3 +22,5 @@
 
 void Ves( _FPREC *Rom, _FPREC *Hm, int Nlay, _FPREC *Raz, int Nraz,
           _FPREC *Roker);
+
+#endif //FORWARDSOLVER_VES_H

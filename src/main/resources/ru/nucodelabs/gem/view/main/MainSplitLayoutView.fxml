@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
+<Stage xmlns="http://javafx.com/javafx"
+       xmlns:fx="http://javafx.com/fxml"
+       maxWidth="Infinity" maxHeight="Infinity"
+       fx:controller="ru.nucodelabs.gem.view.main.MainViewController"
+       fx:id="root"
+       width="1280"
+       height="720"
+       title="GEM">
+    <icons>
+        <Image url="@../../../../../img/gem.png"/>
+    </icons>
+    <scene>
+        <Scene stylesheets="@../common.css, @Main.css">
+            <VBox maxWidth="Infinity" maxHeight="Infinity">
+                <MenuBar fx:id="menuBar">
+                    <Menu text="%file">
+                        <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
+                        <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
+                                  accelerator="Shortcut+O"/>
+                        <Menu text="%import">
+                            <Menu text="%picket">
+                                <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
+                                <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
+                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
+                            </Menu>
+                        </Menu>
+                        <MenuItem text="%saveSection" onAction="#saveSection" disable="${controller.noFileOpened}"
+                                  accelerator="Shortcut+S"/>
+                        <MenuItem text="%saveSectionAs" onAction="#saveSectionAs" disable="${controller.noFileOpened}"
+                                  accelerator="Shift+Shortcut+S"/>
+                        <Menu text="%export">
+                            <MenuItem text="%picket" onAction="#exportJsonPicket"/>
+                        </Menu>
+                        <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"/>
+                    </Menu>
+                    <Menu text="%edit">
+                        <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
+                        <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
+                    </Menu>
+                    <Menu fx:id="menuView" text="%view">
+                        <Menu text="%legend">
+                            <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%ves"/>
+                        </Menu>
+                    </Menu>
+                    <Menu text="%help">
+                        <MenuItem text="%about"/>
+                    </Menu>
+                </MenuBar>
+                <StackPane maxWidth="Infinity" maxHeight="Infinity">
+                    <VBox maxWidth="Infinity" maxHeight="Infinity">
+                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml"/>
+                        <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
+                            <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
+                                <Placeholder text="%pseudoSection"/>
+                                <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
+                            </SplitPane>
+
+                            <VBox maxWidth="Infinity"
+                                  maxHeight="Infinity"
+                                  VBox.vgrow="ALWAYS">
+
+                                <HBox alignment="CENTER_LEFT" maxWidth="Infinity"
+                                      style="-fx-background-color: WhiteSmoke; -fx-padding: 5" spacing="5">
+                                    <Button styleClass="lr_btns"
+                                            onAction="#switchToPrevPicket"
+                                            contentDisplay="GRAPHIC_ONLY">
+                                        <graphic>
+                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                                <Image url="@../../../../../img/ui_icons/arrow_left/2x/round_chevron_left_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button styleClass="lr_btns"
+                                            onAction="#switchToNextPicket"
+                                            contentDisplay="GRAPHIC_ONLY">
+                                        <graphic>
+                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                                <Image url="@../../../../../img/ui_icons/arrow_right/2x/round_chevron_right_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
+                                    <Label text="${controller.vesTitle}"/>
+                                    <HBox HBox.hgrow="ALWAYS"/>
+                                    <Button text="%inverse" onAction="#inverseSolve" contentDisplay="LEFT">
+                                        <graphic>
+                                            <ImageView fitWidth="15" fitHeight="15">
+                                                <Image url="@../../../../../img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                </HBox>
+                                <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
+                                           VBox.vgrow="ALWAYS">
+
+                                    <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
+                                               VBox.vgrow="ALWAYS">
+                                        <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"/>
+                                        <fx:include fx:id="vesCurves" source="../charts/VESCurves.fxml"/>
+                                    </SplitPane>
+                                    <TabPane VBox.vgrow="ALWAYS">
+                                        <Tab text="%experimentalTable" closable="false">
+                                            <fx:include fx:id="experimentalTable"
+                                                        source="../tables/ExperimentalTable.fxml"/>
+                                        </Tab>
+                                        <Tab text="%modelTable" closable="false">
+                                            <fx:include fx:id="modelTable" source="../tables/ModelTable.fxml"/>
+                                        </Tab>
+                                    </TabPane>
+                                </SplitPane>
+                            </VBox>
+                        </SplitPane>
+                    </VBox>
+
+                    <fx:include fx:id="noFileScreen" source="NoFileScreen.fxml"/>
+                </StackPane>
+            </VBox>
+        </Scene>
+    </scene>
+</Stage>
