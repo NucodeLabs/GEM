@@ -130,6 +130,11 @@ public class ExperimentalTableController extends AbstractEditableTableController
         requiredForAdd.forEach(this::addDataInputCheckListener);
         requiredForAdd.forEach(this::addEnterKeyHandler);
         addIndexInputCheckListener(indexTextField);
+
+        table.itemsProperty().addListener((observable, oldValue, newValue) -> {
+            newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
+            table.refresh();
+        });
     }
 
     @Override
@@ -139,7 +144,6 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     protected void update() {
         table.itemsProperty().setValue(FXCollections.observableList(picket.get().getExperimentalData()));
-        table.refresh();
     }
 
 
