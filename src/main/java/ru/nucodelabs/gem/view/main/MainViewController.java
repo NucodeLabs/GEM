@@ -45,6 +45,8 @@ public class MainViewController extends AbstractController {
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
+    private Section currentSection;
+
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -277,6 +279,7 @@ public class MainViewController extends AbstractController {
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
+
     }
 
     @FXML

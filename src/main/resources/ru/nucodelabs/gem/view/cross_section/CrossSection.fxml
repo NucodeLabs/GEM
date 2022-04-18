@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.SplitPane?>
+<?import ru.nucodelabs.gem.view.usercontrols.placeholder.Placeholder?>
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.cross_section.CrossSectionController" stylesheets="@CrossSection.css">
+
+    <SplitPane dividerPositions="0.05">
+        <Placeholder ></Placeholder>
+
+        <AreaChart fx:id="sectionAreaChart" maxWidth="Infinity"
+                   maxHeight="Infinity" animated="false" legendVisible="false">
+            <xAxis>
+                <NumberAxis fx:id="sectionX" label="Пикеты" side="TOP" prefWidth="-Infinity"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="sectionY" label="Слои" side="LEFT" prefHeight="500" maxHeight="-Infinity"/>
+            </yAxis>
+        </AreaChart>
+    </SplitPane>
+
+</VBox>
