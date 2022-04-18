@@ -12,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
 import ru.nucodelabs.algorithms.charts.Point;
-import ru.nucodelabs.algorithms.charts.PointsFactory;
+import ru.nucodelabs.algorithms.charts.VesChartsConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.log10;
 
 public class MisfitStacksController extends AbstractController {
 
@@ -40,6 +41,8 @@ public class MisfitStacksController extends AbstractController {
     @FXML
     private NumberAxis lineChartYAxis;
 
+    @Inject
+    private VesChartsConverter vesChartsConverter;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -64,12 +67,16 @@ public class MisfitStacksController extends AbstractController {
         List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
 
         try {
-            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().experimentalData(), picket.get().modelData());
-            List<Point> expPoints = PointsFactory.experimentalCurvePointsFactory(picket.get().experimentalData()).log10Points();
+            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().getExperimentalData(), picket.get().getModelData());
+            List<Point> expPoints = vesChartsConverter.experimentalCurveOf(picket.get().getExperimentalData())
+                    .stream()
+                    .map(point -> new Point(log10(point.x()), log10(point.y())))
+                    .toList();
+
             misfitStacksSeriesList = FXCollections.observableList(new ArrayList<>());
 
-            if (picket.get().experimentalData().size() != 0
-                    && picket.get().modelData().size() != 0) {
+            if (picket.get().getExperimentalData().size() != 0
+                    && picket.get().getModelData().size() != 0) {
                 if (values.size() != expPoints.size()) {
                     throw new IllegalStateException();
                 } else {

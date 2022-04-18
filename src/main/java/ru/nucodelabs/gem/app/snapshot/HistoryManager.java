@@ -1,7 +1,7 @@
-package ru.nucodelabs.gem.app;
+package ru.nucodelabs.gem.app.snapshot;
+
 
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.model.SectionManager;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -13,20 +13,20 @@ import static java.lang.Math.min;
 
 public class HistoryManager {
 
-    private final SectionManager sectionManager;
-    private List<Section> history = new ArrayList<>();
+    private final Snapshot.Originator<Section> originator;
+    private List<Snapshot<Section>> history = new ArrayList<>();
     private int position = 0;
 
     @Inject
-    public HistoryManager(SectionManager sectionManager) {
-        this.sectionManager = sectionManager;
+    public HistoryManager(Snapshot.Originator<Section> originator) {
+        this.originator = originator;
     }
 
     public void snapshot() {
         if (position < history.size() - 1) {
             history = history.subList(0, max(0, position + 1));
         }
-        history.add(sectionManager.getSnapshot());
+        history.add(originator.getSnapshot());
         position = history.size() - 1;
     }
 
@@ -36,15 +36,15 @@ public class HistoryManager {
     }
 
     public void redo() {
-        getRedo().ifPresent(sectionManager::setSection);
+        getRedo().ifPresent(originator::restoreFromSnapshot);
     }
 
 
     public void undo() {
-        getUndo().ifPresent(sectionManager::setSection);
+        getUndo().ifPresent(originator::restoreFromSnapshot);
     }
 
-    private Optional<Section> getUndo() {
+    private Optional<Snapshot<Section>> getUndo() {
         if (position == 0 || history.isEmpty()) {
             return Optional.empty();
         }
@@ -52,7 +52,7 @@ public class HistoryManager {
         return Optional.of(history.get(position));
     }
 
-    private Optional<Section> getRedo() {
+    private Optional<Snapshot<Section>> getRedo() {
         if (position == history.size() - 1 || history.isEmpty()) {
             return Optional.empty();
         }

@@ -34,8 +34,8 @@ public class ObservableDataModule extends AbstractModule {
             @Override
             public void onNext(Section item) {
                 Platform.runLater(() -> {
-                    if (!item.pickets().equals(pickets)) {
-                        pickets.setAll(item.pickets());
+                    if (!item.getPickets().equals(pickets)) {
+                        pickets.setAll(item.getPickets());
                     }
                 });
             }
