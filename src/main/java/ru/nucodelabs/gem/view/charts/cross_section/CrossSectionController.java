@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.cross_section;
+package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
