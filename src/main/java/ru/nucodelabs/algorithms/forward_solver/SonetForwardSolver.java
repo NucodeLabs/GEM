@@ -12,12 +12,7 @@ final class SonetForwardSolver implements ForwardSolver {
         System.loadLibrary("forwardsolver");
     }
 
-    private final List<ExperimentalData> experimentalData;
-    private final List<ModelLayer> modelData;
-
-    SonetForwardSolver(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
-        this.experimentalData = experimentalData;
-        this.modelData = modelData;
+    SonetForwardSolver() {
     }
 
     private static native double[] ves(
@@ -28,7 +23,7 @@ final class SonetForwardSolver implements ForwardSolver {
             int distCnt);
 
     @Override
-    public List<Double> solve() {
+    public List<Double> solve(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
         List<Double> res = new ArrayList<>();
         double[] doubleArr = ves(
                 modelData.stream().map(ModelLayer::getResistance).mapToDouble(d -> d).toArray(),

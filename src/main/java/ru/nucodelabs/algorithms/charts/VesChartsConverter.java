@@ -73,9 +73,9 @@ public class VesChartsConverter {
             return new ArrayList<>();
         }
 
-        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.getDefaultImpl();
 
-        List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve());
+        List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve(experimentalData, modelData));
 
         List<Point> points = new ArrayList<>();
         for (int i = 0; i < experimentalData.size(); i++) {
