@@ -58,9 +58,13 @@
                     <VBox maxWidth="Infinity" maxHeight="Infinity">
                         <fx:include fx:id="picketsBar" source="PicketsBar.fxml"/>
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
-                            <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
-                                <Placeholder text="%pseudoSection"/>
-                                <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
+
+                            <SplitPane orientation="HORIZONTAL" dividerPositions="0.01">
+                                <Placeholder text="%resColors"/>
+                                <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
+                                    <Placeholder text="%pseudoSection"/>
+                                    <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
+                                </SplitPane>
                             </SplitPane>
 
                             <VBox maxWidth="Infinity"
