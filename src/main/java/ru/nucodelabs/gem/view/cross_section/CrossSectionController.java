@@ -49,7 +49,7 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(picketObservableList);
+        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(picketObservableList, 0.0);
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
@@ -66,7 +66,6 @@ public class CrossSectionController extends AbstractController {
                         .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
                         + "-fx-fill: rgba(" + layerColor + ", 1.0);");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
-                //count++;
             }
         }
     }
@@ -106,11 +105,18 @@ public class CrossSectionController extends AbstractController {
             color = Color.BLACK;
         }
 
+        //color = resistanceToColor(resistance);
+
         return String.format("%d, %d, %d",
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
     }
+
+    /*private Color resistanceToColor(double resistance) {
+        Color newColor = Color.rgb(resistance % 255);
+        return newColor;
+    }*/
 
     protected Stage getStage() {
         return (Stage) sectionAreaChart.getScene().getWindow();
