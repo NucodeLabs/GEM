@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
@@ -26,7 +25,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import static java.lang.Math.min;
 
@@ -40,8 +42,6 @@ public class ModelTableController extends AbstractEditableTableController {
     private TableColumn<ModelLayer, Double> powerCol;
     @FXML
     private TableColumn<ModelLayer, Double> resistanceCol;
-    @FXML
-    private VBox dragDropPlaceholder;
     @FXML
     private TextField powerTextField;
     @FXML
@@ -126,6 +126,7 @@ public class ModelTableController extends AbstractEditableTableController {
     protected void update() {
         ObservableList<ModelLayer> modelDataRows = FXCollections.observableList(picket.get().getModelData());
         table.itemsProperty().setValue(modelDataRows);
+        table.refresh();
     }
 
     @FXML
@@ -139,7 +140,7 @@ public class ModelTableController extends AbstractEditableTableController {
         if (column == powerCol) {
             newValue = ModelLayer.create(newInputValue, oldValue.getResistance());
         } else if (column == resistanceCol) {
-            newValue = ModelLayer.create(oldValue.getResistance(), newInputValue);
+            newValue = ModelLayer.create(oldValue.getPower(), newInputValue);
         } else {
             throw new RuntimeException("Something went wrong!");
         }
@@ -181,17 +182,9 @@ public class ModelTableController extends AbstractEditableTableController {
 
     @FXML
     private void deleteSelected() {
-        List<ModelLayer> selectedRows = table.getSelectionModel().getSelectedItems();
-
-        List<Integer> indicesToRemove = selectedRows.stream()
-                .map(modelLayer -> picket.get().getModelData().indexOf(modelLayer))
-                .sorted(Collections.reverseOrder())
-                .toList();
-
-        List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
-
-        indicesToRemove.forEach(i -> newModelData.remove(i.intValue()));
-
+        List<ModelLayer> newModelData = deleteIndices(
+                table.getSelectionModel().getSelectedIndices(),
+                picket.get().getModelData());
         setIfValidElseAlert(newModelData);
     }
 
