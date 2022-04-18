@@ -5,7 +5,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.chart.*;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
@@ -19,7 +21,6 @@ import java.util.ResourceBundle;
 public class CrossSectionController extends AbstractController {
 
     private final ObservableList<Picket> picketObservableList;
-    public int picketCount;
     @FXML
     public NumberAxis sectionX;
     @FXML
@@ -58,13 +59,13 @@ public class CrossSectionController extends AbstractController {
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
         int count = 0;
         for (Picket picket : picketObservableList) {
-            for (int i = 0; i < picket.modelData().getRows().size(); i++) {
-                double resistance = picket.modelData().getRows().get(i).resistance();
+            for (int i = 0; i < picket.getModelData().size(); i++) {
+                double resistance = picket.getModelData().get(i).getResistance();
                 String layerColor = getRGBColor(resistance);
 
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
-                        + "-fx-fill: rgba(" + layerColor + ", 1.0);");
+                                + "-fx-fill: rgba(" + layerColor + ", 1.0);");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
             }
         }
@@ -120,9 +121,5 @@ public class CrossSectionController extends AbstractController {
 
     protected Stage getStage() {
         return (Stage) sectionAreaChart.getScene().getWindow();
-    }
-
-    public int getPicketCount() {
-        return picketCount;
     }
 }
