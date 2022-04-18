@@ -15,6 +15,7 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -63,7 +64,7 @@ public class ModelTableController extends AbstractEditableTableController {
     @Inject
     private SectionManager sectionManager;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
     @Inject
     private IntegerProperty picketIndex;
     private List<TextField> requiredForAdd;

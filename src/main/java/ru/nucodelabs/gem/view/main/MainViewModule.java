@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
@@ -38,7 +39,12 @@ public class MainViewModule extends AbstractModule {
         bind(CrossSectionController.class).in(SINGLETON);
         bind(StorageManager.class).in(SINGLETON);
         bind(SectionManager.class).in(SINGLETON);
-        bind(HistoryManager.class).in(SINGLETON);
+    }
+
+    @Provides
+    @Singleton
+    private HistoryManager<Section> sectionHistoryManager(Snapshot.Originator<Section> sectionOriginator) {
+        return new HistoryManager<>(sectionOriginator);
     }
 
     @Provides
