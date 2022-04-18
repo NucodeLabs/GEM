@@ -1,12 +1,10 @@
 package ru.nucodelabs;
 
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelData;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.sonet.*;
+import ru.nucodelabs.gem.app.io.SonetImportManager;
 
 import java.io.File;
-import java.util.Objects;
+import java.util.Collections;
 
 public class ShiraPicket {
     private ShiraPicket() {
@@ -18,37 +16,17 @@ public class ShiraPicket {
      *
      * @return Пикет Shira
      */
-    public static Picket getPicket() {
+    public static Picket getPicket() throws Exception {
         File file_stt = new File("data/SHIRA.STT");
-        STTFile sttFile = null;
-        try {
-            sttFile = new STTFileParser(file_stt).parse();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         File file_exp = new File("data/SHIRA.EXP");
-        EXPFile expFile = null;
-        try {
-            expFile = new EXPFileParser(file_exp).parse();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ExperimentalData experimentalData =
-                ExperimentalData.from(Objects.requireNonNull(sttFile), Objects.requireNonNull(expFile));
 
         File file_mod = new File("data/SHIRA_M2.mod");
-        MODFile modFile = null;
-        try {
-            modFile = new MODFileParser(file_mod).parse();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        ModelData modelData =
-                ModelData.from(Objects.requireNonNull(modFile));
-
-        return new Picket("testPicket", experimentalData, modelData);
+        var picket = Picket.create("", Collections.emptyList(), Collections.emptyList());
+        SonetImportManager sonetImportManager = SonetImportManager.create();
+        picket = sonetImportManager.loadNameAndExperimentalDataFromEXPFile(file_exp, picket);
+        picket = sonetImportManager.loadModelDataFromMODFile(file_mod, picket);
+        return picket;
     }
 }

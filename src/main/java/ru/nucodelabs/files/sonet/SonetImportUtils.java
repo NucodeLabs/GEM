@@ -99,7 +99,7 @@ final class SonetImportUtils {
                 if (strSc.hasNext()) {
                     numList.add(strSc.nextDouble());
                 } else {
-                    numList.add(null);
+                    numList.add(0d);
                 }
             }
             res.add(numList);
