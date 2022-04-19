@@ -21,6 +21,10 @@ public interface Picket extends Serializable {
 
     Picket EMPTY = Picket.create("", Collections.emptyList(), Collections.emptyList());
 
+    static Class<? extends Picket> implClass() {
+        return PicketImpl.class;
+    }
+
     static Picket create(
             String name,
             List<ExperimentalData> experimentalData,

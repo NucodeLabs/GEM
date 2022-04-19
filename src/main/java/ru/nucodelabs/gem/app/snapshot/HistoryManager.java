@@ -4,6 +4,7 @@ package ru.nucodelabs.gem.app.snapshot;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.Math.max;
@@ -21,11 +22,14 @@ public class HistoryManager<T> {
     }
 
     public void snapshot() {
-        if (position < history.size() - 1) {
-            history = history.subList(0, max(0, position + 1));
+        Snapshot<T> snapshot = originator.getSnapshot();
+        if (history.isEmpty() || !Objects.equals(history.get(position), snapshot)) {
+            if (position < history.size() - 1) {
+                history = history.subList(0, max(0, position + 1));
+            }
+            history.add(snapshot);
+            position = history.size() - 1;
         }
-        history.add(originator.getSnapshot());
-        position = history.size() - 1;
     }
 
     public void performThenSnapshot(Runnable operation) {
