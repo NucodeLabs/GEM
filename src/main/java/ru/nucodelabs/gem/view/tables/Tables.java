@@ -8,6 +8,8 @@ import javafx.util.StringConverter;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 
 final class Tables {
 
@@ -25,8 +27,8 @@ final class Tables {
         @Override
         public Double fromString(String string) {
             try {
-                return Double.parseDouble(string);
-            } catch (NumberFormatException e) {
+                return decimalFormat().parse(string).doubleValue();
+            } catch (ParseException e) {
                 return Double.NaN;
             }
         }
@@ -47,8 +49,14 @@ final class Tables {
     }
 
     static {
-        DECIMAL_FORMAT = new DecimalFormat("#.##");
+        DECIMAL_FORMAT = new DecimalFormat();
         DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT.setMaximumFractionDigits(2);
+        DECIMAL_FORMAT.setGroupingSize(3);
+        var dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator(',');
+        dfs.setGroupingSeparator(' ');
+        DECIMAL_FORMAT.setDecimalFormatSymbols(dfs);
     }
 
     /**
@@ -96,9 +104,9 @@ final class Tables {
             return true;
         }
         try {
-            Double.parseDouble(s);
+            decimalFormat().parse(s).doubleValue();
             return true;
-        } catch (NumberFormatException e) {
+        } catch (ParseException e) {
             return false;
         }
     }

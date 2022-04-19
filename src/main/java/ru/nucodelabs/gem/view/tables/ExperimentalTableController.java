@@ -20,6 +20,7 @@ import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -160,12 +161,22 @@ public class ExperimentalTableController extends AbstractEditableTableController
     private void add() {
         if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
 
-            double newAb2Value = Double.parseDouble(ab2TextField.getText());
-            double newMn2Value = Double.parseDouble(mn2TextField.getText());
-            double newResAppValue = Double.parseDouble(resAppTextField.getText());
-            double newErrResAppValue = Double.parseDouble(errResAppTextField.getText());
-            double newAmperageValue = Double.parseDouble(amperageTextField.getText());
-            double newVoltageValue = Double.parseDouble(voltageTextField.getText());
+            double newAb2Value;
+            double newMn2Value;
+            double newResAppValue;
+            double newErrResAppValue;
+            double newAmperageValue;
+            double newVoltageValue;
+            try {
+                newAb2Value = Tables.decimalFormat().parse(ab2TextField.getText()).doubleValue();
+                newMn2Value = Tables.decimalFormat().parse(mn2TextField.getText()).doubleValue();
+                newResAppValue = Tables.decimalFormat().parse(resAppTextField.getText()).doubleValue();
+                newErrResAppValue = Tables.decimalFormat().parse(errResAppTextField.getText()).doubleValue();
+                newAmperageValue = Tables.decimalFormat().parse(amperageTextField.getText()).doubleValue();
+                newVoltageValue = Tables.decimalFormat().parse(voltageTextField.getText()).doubleValue();
+            } catch (ParseException e) {
+                return;
+            }
 
             int index = picket.get().getExperimentalData().size();
 

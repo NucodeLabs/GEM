@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -163,8 +164,14 @@ public class ModelTableController extends AbstractEditableTableController {
     private void addLayer() {
         if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
 
-            double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
-            double newPowerValue = Double.parseDouble(powerTextField.getText());
+            double newPowerValue;
+            double newResistanceValue;
+            try {
+                newResistanceValue = Tables.decimalFormat().parse(resistanceTextField.getText()).doubleValue();
+                newPowerValue = Tables.decimalFormat().parse(powerTextField.getText()).doubleValue();
+            } catch (ParseException e) {
+                return;
+            }
 
             int index = picket.get().getModelData().size();
 
