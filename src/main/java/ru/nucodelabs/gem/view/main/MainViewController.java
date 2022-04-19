@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.name.Named;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -32,7 +31,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
@@ -475,21 +477,20 @@ public class MainViewController extends AbstractController {
             return;
         }
 
-        Set<? extends ConstraintViolation<? extends Picket>> violationsX = validator.validateValue(Picket.implClass(), "x", x);
-        Set<? extends ConstraintViolation<? extends Picket>> violationsZ = validator.validateValue(Picket.implClass(), "z", z);
-
+        var violationsX = validator.validateValue(Picket.implClass(), "x", x);
         if (!violationsX.isEmpty()) {
             alertsFactory.violationsAlert(violationsX, getStage()).show();
             picketX.setText(String.valueOf(picket.get().getX()));
-        } else if (!violationsZ.isEmpty()) {
+        } else {
+            historyManager.performThenSnapshot(() -> sectionManager.updateX(picketIndex.get(), x));
+        }
+
+        var violationsZ = validator.validateValue(Picket.implClass(), "z", z);
+        if (!violationsZ.isEmpty()) {
             alertsFactory.violationsAlert(violationsZ, getStage()).show();
             picketZ.setText(String.valueOf(picket.get().getZ()));
         } else {
-            historyManager.performThenSnapshot(() -> {
-                        sectionManager.updateX(picketIndex.get(), Double.parseDouble(picketX.getText()));
-                        sectionManager.updateZ(picketIndex.get(), Double.parseDouble(picketZ.getText()));
-                    }
-            );
+            historyManager.performThenSnapshot(() -> sectionManager.updateZ(picketIndex.get(), z));
         }
     }
 
