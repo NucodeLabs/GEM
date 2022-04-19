@@ -128,7 +128,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
-        requiredForAdd.forEach(textField -> addValidationListener(textField, Tables::validateDataInput));
+        requiredForAdd.forEach(textField -> addValidationListener(textField, Tables::validateDoubleInput));
         requiredForAdd.forEach(this::addEnterKeyHandler);
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
@@ -153,7 +153,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
         List<ExperimentalData> newExpData = deleteIndices(
                 table.getSelectionModel().getSelectedIndices(),
                 picket.get().getExperimentalData());
-        setIfValidElseAlert(newExpData);
+        updateIfValidElseAlert(newExpData);
     }
 
     @FXML
@@ -182,12 +182,12 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     newAb2Value, newMn2Value, newResAppValue, newErrResAppValue, newAmperageValue, newVoltageValue
             ));
 
-            setIfValidElseAlert(experimentalData);
+            updateIfValidElseAlert(experimentalData);
         }
     }
 
 
-    private void setIfValidElseAlert(List<ExperimentalData> newExpData) {
+    private void updateIfValidElseAlert(List<ExperimentalData> newExpData) {
         Picket test = Picket.create(picket.get().getName(), newExpData, picket.get().getModelData());
 
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
@@ -282,7 +282,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
         newExpData.set(index, newValue);
 
         if (!event.getNewValue().isNaN()) {
-            setIfValidElseAlert(newExpData);
+            updateIfValidElseAlert(newExpData);
         } else {
             table.refresh();
         }

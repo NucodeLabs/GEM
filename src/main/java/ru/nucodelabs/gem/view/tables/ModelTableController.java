@@ -110,8 +110,8 @@ public class ModelTableController extends AbstractEditableTableController {
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
         requiredForAdd = List.of(powerTextField, resistanceTextField);
-        addValidationListener(resistanceTextField, Tables::validateDataInput);
-        addValidationListener(powerTextField, Tables::validateDataInput);
+        addValidationListener(resistanceTextField, Tables::validateDoubleInput);
+        addValidationListener(powerTextField, Tables::validateDoubleInput);
 
         addEnterKeyHandler(indexTextField);
         addEnterKeyHandler(resistanceTextField);
@@ -153,7 +153,7 @@ public class ModelTableController extends AbstractEditableTableController {
         newModelData.set(index, newValue);
 
         if (!event.getNewValue().isNaN()) {
-            setIfValidElseAlert(newModelData);
+            updateIfValidElseAlert(newModelData);
         } else {
             table.refresh();
         }
@@ -179,7 +179,7 @@ public class ModelTableController extends AbstractEditableTableController {
             List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
             newModelData.add(index, ModelLayer.create(newPowerValue, newResistanceValue));
 
-            setIfValidElseAlert(newModelData);
+            updateIfValidElseAlert(newModelData);
         }
     }
 
@@ -188,10 +188,10 @@ public class ModelTableController extends AbstractEditableTableController {
         List<ModelLayer> newModelData = deleteIndices(
                 table.getSelectionModel().getSelectedIndices(),
                 picket.get().getModelData());
-        setIfValidElseAlert(newModelData);
+        updateIfValidElseAlert(newModelData);
     }
 
-    private void setIfValidElseAlert(List<ModelLayer> newModelData) {
+    private void updateIfValidElseAlert(List<ModelLayer> newModelData) {
         Picket test = Picket.create(picket.get().getName(), picket.get().getExperimentalData(), newModelData);
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
 
