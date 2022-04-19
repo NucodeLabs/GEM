@@ -107,11 +107,11 @@ public class ModelTableController extends AbstractEditableTableController {
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
-        addIndexInputCheckListener(indexTextField);
+        addValidationListener(indexTextField, Tables::validateIndexInput);
 
         requiredForAdd = List.of(powerTextField, resistanceTextField);
-        addDataInputCheckListener(resistanceTextField);
-        addDataInputCheckListener(powerTextField);
+        addValidationListener(resistanceTextField, Tables::validateDataInput);
+        addValidationListener(powerTextField, Tables::validateDataInput);
 
         addEnterKeyHandler(indexTextField);
         addEnterKeyHandler(resistanceTextField);

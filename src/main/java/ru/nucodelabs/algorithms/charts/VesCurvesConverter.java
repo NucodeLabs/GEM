@@ -10,14 +10,14 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-public class VesChartsConverter {
+public class VesCurvesConverter {
 
-    private static final VesChartsConverter INSTANCE = new VesChartsConverter();
+    private static final VesCurvesConverter INSTANCE = new VesCurvesConverter();
 
-    private VesChartsConverter() {
+    private VesCurvesConverter() {
     }
 
-    public static VesChartsConverter getInstance() {
+    public static VesCurvesConverter getInstance() {
         return INSTANCE;
     }
 
