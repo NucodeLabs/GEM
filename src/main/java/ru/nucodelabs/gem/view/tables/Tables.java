@@ -15,7 +15,11 @@ final class Tables {
     private final static StringConverter<Double> CONVERTER = new StringConverter<>() {
         @Override
         public String toString(Double object) {
-            return decimalFormat().format(object);
+            try {
+                return decimalFormat().format(object);
+            } catch (IllegalArgumentException e) {
+                return "";
+            }
         }
 
         @Override
