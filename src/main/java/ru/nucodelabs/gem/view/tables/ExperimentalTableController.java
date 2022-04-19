@@ -128,9 +128,9 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
         }
 
-        requiredForAdd.forEach(this::addDataInputCheckListener);
+        requiredForAdd.forEach(textField -> addValidationListener(textField, Tables::validateDataInput));
         requiredForAdd.forEach(this::addEnterKeyHandler);
-        addIndexInputCheckListener(indexTextField);
+        addValidationListener(indexTextField, Tables::validateIndexInput);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());

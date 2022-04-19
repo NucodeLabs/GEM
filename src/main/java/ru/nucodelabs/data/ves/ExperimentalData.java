@@ -2,6 +2,7 @@ package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 
 import java.io.Serializable;
 
@@ -26,7 +27,7 @@ public interface ExperimentalData extends Serializable {
     /**
      * AB/2, м
      */
-    @Min(0) double getAb2();
+    @Positive @Min(0) double getAb2();
 
     /**
      * MN/2, м

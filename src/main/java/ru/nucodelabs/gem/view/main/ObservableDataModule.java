@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.main;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import javafx.application.Platform;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -33,11 +32,9 @@ public class ObservableDataModule extends AbstractModule {
         sectionManager.subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                Platform.runLater(() -> {
-                    if (!item.getPickets().equals(pickets)) {
-                        pickets.setAll(item.getPickets());
-                    }
-                });
+                if (!item.getPickets().equals(pickets)) {
+                    pickets.setAll(item.getPickets());
+                }
             }
         });
         return pickets;

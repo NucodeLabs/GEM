@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.utils;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -10,8 +11,10 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 /**
  * Static methods for initializing user controls and view
@@ -68,5 +71,29 @@ public class FXUtils {
                     }
             );
         }
+    }
+
+    public static void addValidationListener(
+            TextField textField,
+            Predicate<String> validateInput,
+            Runnable doIfValid,
+            Runnable doIfInvalid,
+            String styleIfInvalid,
+            List<TextField> required) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            textField.setStyle("");
+            doIfValid.run();
+            if (!validateInput.test(newValue)) {
+                textField.setStyle(styleIfInvalid);
+                doIfInvalid.run();
+            } else {
+                if (!required.stream()
+                        .allMatch(textField1 ->
+                                !textField1.getText().isBlank()
+                                        && validateInput.test(textField1.getText()))) {
+                    doIfInvalid.run();
+                }
+            }
+        });
     }
 }

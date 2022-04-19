@@ -21,6 +21,7 @@ import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -45,8 +46,12 @@ public class MainViewController extends AbstractController {
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
-    private Section currentSection;
-
+    @FXML
+    private Button submitCoodsBtn;
+    @FXML
+    private TextField picketZ;
+    @FXML
+    private TextField picketX;
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -123,6 +128,38 @@ public class MainViewController extends AbstractController {
 
         bind();
         initConfig(preferences);
+
+        FXUtils.addValidationListener(
+                picketX,
+                s -> {
+                    try {
+                        Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                    return true;
+                },
+                () -> submitCoodsBtn.setDisable(false),
+                () -> submitCoodsBtn.setDisable(true),
+                "-fx-background-color: LightPink",
+                Collections.emptyList()
+        );
+
+        FXUtils.addValidationListener(
+                picketZ,
+                s -> {
+                    try {
+                        Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                    return true;
+                },
+                () -> submitCoodsBtn.setDisable(false),
+                () -> submitCoodsBtn.setDisable(true),
+                "-fx-background-color: LightPink",
+                Collections.emptyList()
+        );
     }
 
     private void initConfig(Preferences preferences) {
@@ -168,17 +205,22 @@ public class MainViewController extends AbstractController {
         sectionManager.subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                Platform.runLater(() -> {
-                    if (!storageManager.compareWithSavedState(item)) {
-                        dirtyAsterisk.set("*");
-                    } else {
-                        dirtyAsterisk.set("");
-                    }
-                });
+                if (!storageManager.compareWithSavedState(item)) {
+                    dirtyAsterisk.set("*");
+                } else {
+                    dirtyAsterisk.set("");
+                }
             }
         });
 
         getStage().titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
+
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                picketX.setText(String.valueOf(newValue.getX()));
+                picketZ.setText(String.valueOf(newValue.getZ()));
+            }
+        });
     }
 
     @Override
@@ -229,8 +271,7 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file,
-                    Picket.create("", Collections.emptyList(), Collections.emptyList()));
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.EMPTY);
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -423,6 +464,14 @@ public class MainViewController extends AbstractController {
         }
     }
 
+    @FXML
+    private void submitCoords() {
+        historyManager.performThenSnapshot(() -> {
+                    sectionManager.updateX(picketIndex.get(), Double.parseDouble(picketX.getText()));
+                    sectionManager.updateZ(picketIndex.get(), Double.parseDouble(picketZ.getText()));
+                }
+        );
+    }
 
     @FXML
     private void undo() {

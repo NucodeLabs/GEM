@@ -37,7 +37,7 @@ public class ModelCurveDragger {
 
     /**
      * Adds drag-n-drop functionality for model step chart.
-     * Modifies values of given property and ModelData if initialized.
+     * Modifies values of given property and handle ModelData.
      *
      * @param coordinatesInSceneToValue line chart node dependent function to convert X and Y to values for axis
      * @param chartData                 data property of line chart or bound
@@ -116,39 +116,50 @@ public class ModelCurveDragger {
      * @param modelData  model data
      */
     public List<ModelLayer> dragHandler(MouseEvent mouseEvent, List<ModelLayer> modelData) {
-        modelData = new ArrayList<>(modelData);
-        mapModelData(modelData);
-        var valuesForAxis = coordinatesToValues(mouseEvent);
-        Double mouseX = valuesForAxis.getXValue();
-        Double mouseY = valuesForAxis.getYValue();
+        Objects.requireNonNull(modelData);
 
-        Double mouseXLeftBound = coordinatesToValues(
-                new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY())
-        ).getXValue();
-        Double mouseXRightBound = coordinatesToValues(
-                new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY())
-        ).getXValue();
+        mapModelData(modelData);
+
+        modelData = new ArrayList<>(modelData);
+
+        var valuesForAxis = coordinatesToValues(mouseEvent);
+        double mouseX = valuesForAxis.getXValue();
+        double mouseY = valuesForAxis.getYValue();
+
+        double mouseXLeftBound
+                = coordinatesToValues(new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY()))
+                .getXValue();
+        double mouseXRightBound
+                = coordinatesToValues(new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY()))
+                .getXValue();
 
 
         if (point1 != null && point2 != null) {
-            if (Objects.equals(point1.getXValue(), point2.getXValue())
+            if (Objects.equals(point1.getXValue(), point2.getXValue()) // вертикальная линия
                     && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX) {
+
                 double diff = pow(10, mouseX) - pow(10, point1.getXValue());
+
                 point1.setXValue(mouseX);
                 point2.setXValue(mouseX);
+
                 int index1 = pointPowerMap.get(point1);
                 int index2 = index1 + 1; // neighbor
+
                 double initialValue1 = modelData.get(index1).getPower();
-                double initialValue2 = modelData.get(index2).getPower();
                 double newValue1 = initialValue1 + diff;
-                double newValue2 = initialValue2 - diff;
-                ModelLayer old = modelData.get(index1);
-                modelData.set(index1, ModelLayer.create(newValue1, old.getResistance()));
-                if (index2 != modelData.size() - 1) {
-                    old = modelData.get(index2);
-                    modelData.set(index2, ModelLayer.create(newValue2, old.getResistance()));
+
+                ModelLayer old1 = modelData.get(index1);
+                modelData.set(index1, ModelLayer.create(newValue1, old1.getResistance()));
+
+                if (index2 < modelData.size() - 1) {
+                    double initialValue2 = modelData.get(index2).getPower();
+                    double newValue2 = initialValue2 - diff;
+                    ModelLayer old2 = modelData.get(index2);
+                    modelData.set(index2, ModelLayer.create(newValue2, old2.getResistance()));
                 }
-            } else if (Objects.equals(point1.getYValue(), point2.getYValue())) {
+
+            } else if (Objects.equals(point1.getYValue(), point2.getYValue())) { // горизонтальная линия
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 int index = pointResistanceMap.get(point1);
