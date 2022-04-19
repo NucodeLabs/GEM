@@ -87,7 +87,7 @@ public class FXUtils {
                 textField.setStyle(styleIfInvalid);
                 doIfInvalid.run();
             } else {
-                if (!required.stream()
+                if (required.stream()
                         .allMatch(textField1 ->
                                 !textField1.getText().isBlank()
                                         && validateInput.test(textField1.getText()))) {

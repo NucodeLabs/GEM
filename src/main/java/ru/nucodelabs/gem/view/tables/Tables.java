@@ -86,18 +86,18 @@ final class Tables {
     }
 
     /**
-     * Validating string containing non-negative double value
+     * Validating string containing double value
      *
      * @param s string
-     * @return true if string represents valid non-negative double value
+     * @return true if string represents valid double value
      */
-    static boolean validateDataInput(String s) {
+    static boolean validateDoubleInput(String s) {
         if (s.isBlank()) {
             return true;
         }
         try {
-            double val = Double.parseDouble(s);
-            return !(val < 0);
+            Double.parseDouble(s);
+            return true;
         } catch (NumberFormatException e) {
             return false;
         }
