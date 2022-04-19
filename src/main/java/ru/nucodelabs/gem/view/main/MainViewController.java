@@ -477,7 +477,7 @@ public class MainViewController extends AbstractController {
             return;
         }
 
-        var violationsX = validator.validateValue(Picket.implClass(), "x", x);
+        var violationsX = validator.validateValue(Picket.IMPL_CLASS, "x", x);
         if (!violationsX.isEmpty()) {
             alertsFactory.violationsAlert(violationsX, getStage()).show();
             picketX.setText(String.valueOf(picket.get().getX()));
@@ -485,7 +485,7 @@ public class MainViewController extends AbstractController {
             historyManager.performThenSnapshot(() -> sectionManager.updateX(picketIndex.get(), x));
         }
 
-        var violationsZ = validator.validateValue(Picket.implClass(), "z", z);
+        var violationsZ = validator.validateValue(Picket.IMPL_CLASS, "z", z);
         if (!violationsZ.isEmpty()) {
             alertsFactory.violationsAlert(violationsZ, getStage()).show();
             picketZ.setText(String.valueOf(picket.get().getZ()));

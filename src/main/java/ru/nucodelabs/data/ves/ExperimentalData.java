@@ -27,17 +27,17 @@ public interface ExperimentalData extends Serializable {
     /**
      * AB/2, м
      */
-    @Positive @Min(0) double getAb2();
+    @Positive double getAb2();
 
     /**
      * MN/2, м
      */
-    @Min(0) double getMn2();
+    @Positive double getMn2();
 
     /**
      * Сопротивление кажущееся, Ом * м
      */
-    @Min(0) double getResistanceApparent();
+    @Positive double getResistanceApparent();
 
     /**
      * Погрешность, %
