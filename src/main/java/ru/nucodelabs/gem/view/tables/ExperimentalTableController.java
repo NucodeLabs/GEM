@@ -138,6 +138,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
         requiredForAdd.forEach(textField -> addValidationListener(textField, s -> Tables.validateDoubleInput(s, decimalFormat)));
         requiredForAdd.forEach(this::addEnterKeyHandler);
+        addEnterKeyHandler(indexTextField);
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
