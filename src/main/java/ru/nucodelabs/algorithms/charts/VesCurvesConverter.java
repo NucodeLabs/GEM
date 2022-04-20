@@ -10,14 +10,14 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-public class VesChartsConverter {
+public class VesCurvesConverter {
 
-    private static final VesChartsConverter INSTANCE = new VesChartsConverter();
+    private static final VesCurvesConverter INSTANCE = new VesCurvesConverter();
 
-    private VesChartsConverter() {
+    private VesCurvesConverter() {
     }
 
-    public static VesChartsConverter getInstance() {
+    public static VesCurvesConverter getInstance() {
         return INSTANCE;
     }
 
@@ -73,9 +73,9 @@ public class VesChartsConverter {
             return new ArrayList<>();
         }
 
-        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.getDefaultImpl();
 
-        List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve());
+        List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve(experimentalData, modelData));
 
         List<Point> points = new ArrayList<>();
         for (int i = 0; i < experimentalData.size(); i++) {

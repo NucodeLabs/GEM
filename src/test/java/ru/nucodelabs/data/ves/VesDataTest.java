@@ -3,6 +3,7 @@ package ru.nucodelabs.data.ves;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class VesDataTest {
 
@@ -52,5 +54,19 @@ public class VesDataTest {
 
         Assertions.assertEquals(vesModelData.get(0), ModelLayer.create(12, 12));
 
+    }
+
+    @Test
+    void validator() {
+        Picket picket = Picket.create(
+                "test", vesExperimentalData, vesModelData, -1, 0);
+
+        Set<ConstraintViolation<Picket>> violations = validator.validate(picket);
+        Assertions.assertFalse(violations.isEmpty());
+        violations.forEach(System.out::println);
+
+        System.out.println("=========");
+        double x = -1;
+        validator.validateValue(Picket.IMPL_CLASS, "offsetX", x).forEach(System.out::println);
     }
 }

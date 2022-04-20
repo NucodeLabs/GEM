@@ -24,7 +24,7 @@ public class CrossSectionConverters {
 
         int count = 0;
         for (Picket picket : pickets) {
-            var height = VesUtils.powersToHeights(picket.getModelData());
+            var height = VesUtils.zOfPower(picket.getModelData(), picket.getZ());
             for (Double hValue : height) {
 
                 XYChart.Data<Number, Number> leftLineDot = new XYChart.Data<>(

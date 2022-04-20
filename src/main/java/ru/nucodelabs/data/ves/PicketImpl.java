@@ -6,7 +6,9 @@ import java.util.List;
 record PicketImpl(
         String name,
         List<ExperimentalData> experimentalData,
-        List<ModelLayer> modelData
+        List<ModelLayer> modelData,
+        double offsetX,
+        double z
 ) implements Picket, Serializable {
     @Override
     public String getName() {
@@ -21,5 +23,15 @@ record PicketImpl(
     @Override
     public List<ModelLayer> getModelData() {
         return modelData();
+    }
+
+    @Override
+    public double getOffsetX() {
+        return offsetX();
+    }
+
+    @Override
+    public double getZ() {
+        return z();
     }
 }

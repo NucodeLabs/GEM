@@ -1,7 +1,10 @@
 package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 
 import java.io.Serializable;
 
@@ -26,5 +29,5 @@ public interface ModelLayer extends Serializable {
     /**
      * Сопротивление, Ом * м
      */
-    @Min(0) double getResistance();
+    @Positive @Max(100000) @DecimalMin("0.1") double getResistance();
 }

@@ -2,6 +2,8 @@ package ru.nucodelabs.gem.view.tables;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -13,10 +15,15 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.utils.FXUtils;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
@@ -24,6 +31,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -31,10 +40,12 @@ import java.util.Set;
 
 import static java.lang.Math.min;
 
-public class ModelTableController extends AbstractEditableTableController {
+public class ModelTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
 
+    @FXML
+    private TableColumn<ModelLayer, Double> zCol;
     @FXML
     private TableColumn<Object, Integer> indexCol;
     @FXML
@@ -63,10 +74,13 @@ public class ModelTableController extends AbstractEditableTableController {
     @Inject
     private SectionManager sectionManager;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
     @Inject
     private IntegerProperty picketIndex;
-    private List<TextField> requiredForAdd;
+    @Inject
+    private StringConverter<Double> doubleStringConverter;
+    @Inject
+    private DecimalFormat decimalFormat;
 
     @Inject
     public ModelTableController(ObservableObjectValue<Picket> picket) {
@@ -100,21 +114,43 @@ public class ModelTableController extends AbstractEditableTableController {
         powerCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getPower()));
         resistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistance()));
 
-        for (int i = 1; i < table.getColumns().size(); i++) {
+        zCol.setCellFactory(col -> {
+            TableCell<ModelLayer, Double> cell = new TableCell<>();
+
+            cell.textProperty().bind(
+                    Bindings.createStringBinding(
+                            () -> !cell.isEmpty() && cell.getIndex() >= 0
+                                    && picket.get() != null
+                                    && cell.getIndex() < picket.get().getModelData().size() ?
+                                    decimalFormat.format(
+                                            VesUtils.zOfPower(
+                                                    picket.get().getModelData(), picket.get().getZ()
+                                            ).get(cell.getIndex())) : "",
+                            cell.emptyProperty(), cell.indexProperty(), picket
+                    )
+            );
+
+            return cell;
+        });
+
+        for (int i = 1; i < table.getColumns().size() - 1; i++) {
             // safe cast
             ((TableColumn<ModelLayer, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
         }
 
-        addIndexInputCheckListener(indexTextField);
+        BooleanBinding validInput
+                = Tables.setupInputValidation(indexTextField, Tables::validateIndexInput)
+                .and(Tables.setupInputValidation(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat)))
+                .and(Tables.setupInputValidation(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat)));
 
-        requiredForAdd = List.of(powerTextField, resistanceTextField);
-        addDataInputCheckListener(resistanceTextField);
-        addDataInputCheckListener(powerTextField);
+        BooleanBinding allRequiredNotBlank
+                = FXUtils.isNotBlank(powerTextField.textProperty())
+                .and(FXUtils.isNotBlank(resistanceTextField.textProperty()));
 
-        addEnterKeyHandler(indexTextField);
-        addEnterKeyHandler(resistanceTextField);
-        addEnterKeyHandler(powerTextField);
+        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
+
+        FXUtils.addSubmitOnEnter(addBtn, indexTextField, powerTextField, resistanceTextField);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
@@ -129,6 +165,7 @@ public class ModelTableController extends AbstractEditableTableController {
 
     protected void update() {
         table.itemsProperty().setValue(FXCollections.observableList(picket.get().getModelData()));
+        table.refresh();
     }
 
     @FXML
@@ -152,7 +189,7 @@ public class ModelTableController extends AbstractEditableTableController {
         newModelData.set(index, newValue);
 
         if (!event.getNewValue().isNaN()) {
-            setIfValidElseAlert(newModelData);
+            updateIfValidElseAlert(newModelData);
         } else {
             table.refresh();
         }
@@ -160,10 +197,16 @@ public class ModelTableController extends AbstractEditableTableController {
 
     @FXML
     private void addLayer() {
-        if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
+        if (!addBtn.isDisable()) {
 
-            double newResistanceValue = Double.parseDouble(resistanceTextField.getText());
-            double newPowerValue = Double.parseDouble(powerTextField.getText());
+            double newPowerValue;
+            double newResistanceValue;
+            try {
+                newResistanceValue = decimalFormat.parse(resistanceTextField.getText()).doubleValue();
+                newPowerValue = decimalFormat.parse(powerTextField.getText()).doubleValue();
+            } catch (ParseException e) {
+                return;
+            }
 
             int index = picket.get().getModelData().size();
 
@@ -178,19 +221,19 @@ public class ModelTableController extends AbstractEditableTableController {
             List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
             newModelData.add(index, ModelLayer.create(newPowerValue, newResistanceValue));
 
-            setIfValidElseAlert(newModelData);
+            updateIfValidElseAlert(newModelData);
         }
     }
 
     @FXML
     private void deleteSelected() {
-        List<ModelLayer> newModelData = deleteIndices(
+        List<ModelLayer> newModelData = Tables.deleteIndices(
                 table.getSelectionModel().getSelectedIndices(),
                 picket.get().getModelData());
-        setIfValidElseAlert(newModelData);
+        updateIfValidElseAlert(newModelData);
     }
 
-    private void setIfValidElseAlert(List<ModelLayer> newModelData) {
+    private void updateIfValidElseAlert(List<ModelLayer> newModelData) {
         Picket test = Picket.create(picket.get().getName(), picket.get().getExperimentalData(), newModelData);
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
 
@@ -233,15 +276,5 @@ public class ModelTableController extends AbstractEditableTableController {
                 }
             }
         }
-    }
-
-    @Override
-    protected List<TextField> getRequiredForAdd() {
-        return requiredForAdd;
-    }
-
-    @Override
-    protected Button getAddButton() {
-        return addBtn;
     }
 }
