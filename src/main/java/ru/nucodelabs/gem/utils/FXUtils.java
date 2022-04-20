@@ -15,7 +15,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -152,7 +151,6 @@ public class FXUtils {
             return valid;
         }
 
-        @NotNull
         private BooleanProperty initProperty() {
             BooleanProperty valid = new SimpleBooleanProperty();
             String initialValue = textField.getText();
