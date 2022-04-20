@@ -123,7 +123,7 @@ public class ModelTableController extends AbstractEditableTableController {
                                             VesUtils.zOfPower(
                                                     picket.get().getModelData(), picket.get().getZ()
                                             ).get(cell.getIndex())) : "",
-                            cell.emptyProperty(), cell.indexProperty()
+                            cell.emptyProperty(), cell.indexProperty(), picket
                     )
             );
 
