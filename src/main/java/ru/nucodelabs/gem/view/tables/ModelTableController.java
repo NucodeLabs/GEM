@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.tables;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -17,6 +18,7 @@ import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -39,6 +41,8 @@ public class ModelTableController extends AbstractEditableTableController {
 
     private final ObservableObjectValue<Picket> picket;
 
+    @FXML
+    private TableColumn<ModelLayer, Double> zCol;
     @FXML
     private TableColumn<Object, Integer> indexCol;
     @FXML
@@ -109,7 +113,24 @@ public class ModelTableController extends AbstractEditableTableController {
         powerCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getPower()));
         resistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistance()));
 
-        for (int i = 1; i < table.getColumns().size(); i++) {
+        zCol.setCellFactory(col -> {
+            TableCell<ModelLayer, Double> cell = new TableCell<>();
+
+            cell.textProperty().bind(
+                    Bindings.createStringBinding(
+                            () -> !cell.isEmpty() && cell.getIndex() >= 0 ?
+                                    decimalFormat.format(
+                                            VesUtils.zOfPower(
+                                                    picket.get().getModelData(), picket.get().getZ()
+                                            ).get(cell.getIndex())) : "",
+                            cell.emptyProperty(), cell.indexProperty()
+                    )
+            );
+
+            return cell;
+        });
+
+        for (int i = 1; i < table.getColumns().size() - 1; i++) {
             // safe cast
             ((TableColumn<ModelLayer, Double>) table.getColumns().get(i))
                     .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
