@@ -23,6 +23,7 @@ import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -245,7 +246,7 @@ public class MainViewController extends AbstractController {
             return;
         }
         storageManager.clearSavedState();
-        sectionManager.restoreFromSnapshot(() -> Section.create(Collections.emptyList()));
+        sectionManager.restoreFromSnapshot(Snapshot.create(Section.create(Collections.emptyList())));
         historyManager.clear();
         resetWindowTitle();
     }
@@ -323,7 +324,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            sectionManager.restoreFromSnapshot(() -> loadedSection);
+            sectionManager.restoreFromSnapshot(Snapshot.create(loadedSection));
             picketIndex.set(0);
             historyManager.clear();
             historyManager.snapshot();
