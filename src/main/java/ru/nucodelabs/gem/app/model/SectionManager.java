@@ -38,7 +38,7 @@ public class SectionManager extends SubmissionPublisher<Section> implements Snap
     public void updateModelData(int index, List<ModelLayer> modelData) {
         Picket old = section.getPickets().get(index);
         Picket picket = Picket.create(
-                old.getName(), old.getExperimentalData(), modelData, old.getX(), old.getZ());
+                old.getName(), old.getExperimentalData(), modelData, old.getOffsetX(), old.getZ());
         section.getPickets().set(index, picket);
         submit(section);
     }
@@ -46,7 +46,7 @@ public class SectionManager extends SubmissionPublisher<Section> implements Snap
     public void updateExperimentalData(int index, List<ExperimentalData> experimentalData) {
         Picket old = section.getPickets().get(index);
         Picket picket = Picket.create(
-                old.getName(), experimentalData, old.getModelData(), old.getX(), old.getZ());
+                old.getName(), experimentalData, old.getModelData(), old.getOffsetX(), old.getZ());
         section.getPickets().set(index, picket);
         submit(section);
     }
@@ -54,7 +54,7 @@ public class SectionManager extends SubmissionPublisher<Section> implements Snap
     public void updateName(int index, String name) {
         Picket old = section.getPickets().get(index);
         Picket picket = Picket.create(
-                name, old.getExperimentalData(), old.getModelData(), old.getX(), old.getZ());
+                name, old.getExperimentalData(), old.getModelData(), old.getOffsetX(), old.getZ());
         section.getPickets().set(index, picket);
         submit(section);
     }
@@ -88,7 +88,7 @@ public class SectionManager extends SubmissionPublisher<Section> implements Snap
 
     public void updateZ(int index, double z) {
         Picket old = section.getPickets().get(index);
-        Picket newP = Picket.create(old.getName(), old.getExperimentalData(), old.getModelData(), old.getX(), z);
+        Picket newP = Picket.create(old.getName(), old.getExperimentalData(), old.getModelData(), old.getOffsetX(), z);
         section.getPickets().set(index, newP);
         submit(section);
     }
