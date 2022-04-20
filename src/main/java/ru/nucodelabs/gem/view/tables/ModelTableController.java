@@ -118,7 +118,9 @@ public class ModelTableController extends AbstractEditableTableController {
 
             cell.textProperty().bind(
                     Bindings.createStringBinding(
-                            () -> !cell.isEmpty() && cell.getIndex() >= 0 && !picket.get().getModelData().isEmpty() ?
+                            () -> !cell.isEmpty() && cell.getIndex() >= 0
+                                    && picket.get() != null
+                                    && cell.getIndex() < picket.get().getModelData().size() ?
                                     decimalFormat.format(
                                             VesUtils.zOfPower(
                                                     picket.get().getModelData(), picket.get().getZ()
@@ -159,6 +161,7 @@ public class ModelTableController extends AbstractEditableTableController {
 
     protected void update() {
         table.itemsProperty().setValue(FXCollections.observableList(picket.get().getModelData()));
+        table.refresh();
     }
 
     @FXML
