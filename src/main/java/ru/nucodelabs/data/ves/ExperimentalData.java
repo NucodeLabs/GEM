@@ -1,6 +1,7 @@
 package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
@@ -42,7 +43,7 @@ public interface ExperimentalData extends Serializable {
     /**
      * Погрешность, %
      */
-    @Min(0) double getErrorResistanceApparent();
+    @Min(0) @Max(100) double getErrorResistanceApparent();
 
     /**
      * Ток, мА

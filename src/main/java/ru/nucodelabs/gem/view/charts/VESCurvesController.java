@@ -98,7 +98,8 @@ public class VESCurvesController extends AbstractController {
                         )
                 ),
                 dataProperty,
-                MOD_CURVE_SERIES_INDEX
+                MOD_CURVE_SERIES_INDEX,
+                0.1
         );
     }
 
