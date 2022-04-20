@@ -144,6 +144,8 @@ public class MainViewController extends AbstractController {
         BooleanBinding picketXZValid
                 = Bindings.and(setupValidationOnPicketXZ(picketX), setupValidationOnPicketXZ(picketZ));
         submitCoodsBtn.disableProperty().bind(picketXZValid.not());
+
+        FXUtils.addSubmitOnEnter(submitCoodsBtn, picketX, picketZ);
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {

@@ -150,9 +150,7 @@ public class ModelTableController extends AbstractController {
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
 
-        FXUtils.addSubmitOnEnter(indexTextField, addBtn);
-        FXUtils.addSubmitOnEnter(resistanceTextField, addBtn);
-        FXUtils.addSubmitOnEnter(powerTextField, addBtn);
+        FXUtils.addSubmitOnEnter(addBtn, indexTextField, powerTextField, resistanceTextField);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
