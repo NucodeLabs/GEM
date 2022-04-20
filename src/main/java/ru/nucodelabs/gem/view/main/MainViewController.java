@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
@@ -31,6 +32,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -98,6 +101,10 @@ public class MainViewController extends AbstractController {
     private Validator validator;
     @Inject
     private Preferences preferences;
+    @Inject
+    private DecimalFormat decimalFormat;
+    @Inject
+    private StringConverter<Double> doubleStringConverter;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -133,8 +140,8 @@ public class MainViewController extends AbstractController {
                 picketX,
                 s -> {
                     try {
-                        Double.parseDouble(s);
-                    } catch (NumberFormatException e) {
+                        decimalFormat.parse(s);
+                    } catch (ParseException e) {
                         return false;
                     }
                     return true;
@@ -149,8 +156,8 @@ public class MainViewController extends AbstractController {
                 picketZ,
                 s -> {
                     try {
-                        Double.parseDouble(s);
-                    } catch (NumberFormatException e) {
+                        decimalFormat.parse(s);
+                    } catch (ParseException e) {
                         return false;
                     }
                     return true;
@@ -217,8 +224,8 @@ public class MainViewController extends AbstractController {
 
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                picketX.setText(String.valueOf(newValue.getX()));
-                picketZ.setText(String.valueOf(newValue.getZ()));
+                picketX.setText(decimalFormat.format(newValue.getX()));
+                picketZ.setText(decimalFormat.format(newValue.getZ()));
             }
         });
     }
@@ -470,9 +477,9 @@ public class MainViewController extends AbstractController {
         double z;
 
         try {
-            x = Double.parseDouble(picketX.getText());
-            z = Double.parseDouble(picketZ.getText());
-        } catch (NumberFormatException e) {
+            x = decimalFormat.parse(picketX.getText()).doubleValue();
+            z = decimalFormat.parse(picketZ.getText()).doubleValue();
+        } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
             return;
         }

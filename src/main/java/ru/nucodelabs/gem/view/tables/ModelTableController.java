@@ -13,6 +13,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,11 @@ public class ModelTableController extends AbstractEditableTableController {
     private HistoryManager<Section> historyManager;
     @Inject
     private IntegerProperty picketIndex;
+    @Inject
+    private StringConverter<Double> doubleStringConverter;
+    @Inject
+    private DecimalFormat decimalFormat;
+
     private List<TextField> requiredForAdd;
 
     @Inject
@@ -105,14 +112,14 @@ public class ModelTableController extends AbstractEditableTableController {
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ModelLayer, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
         }
 
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
         requiredForAdd = List.of(powerTextField, resistanceTextField);
-        addValidationListener(resistanceTextField, Tables::validateDoubleInput);
-        addValidationListener(powerTextField, Tables::validateDoubleInput);
+        addValidationListener(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
+        addValidationListener(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
 
         addEnterKeyHandler(indexTextField);
         addEnterKeyHandler(resistanceTextField);
@@ -167,8 +174,8 @@ public class ModelTableController extends AbstractEditableTableController {
             double newPowerValue;
             double newResistanceValue;
             try {
-                newResistanceValue = Tables.decimalFormat().parse(resistanceTextField.getText()).doubleValue();
-                newPowerValue = Tables.decimalFormat().parse(powerTextField.getText()).doubleValue();
+                newResistanceValue = decimalFormat.parse(resistanceTextField.getText()).doubleValue();
+                newPowerValue = decimalFormat.parse(powerTextField.getText()).doubleValue();
             } catch (ParseException e) {
                 return;
             }

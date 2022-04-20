@@ -9,6 +9,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
@@ -16,7 +17,11 @@ import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -84,5 +89,44 @@ public class AppModule extends AbstractModule {
     @Provides
     private Preferences preferences() {
         return Preferences.userNodeForPackage(GemApplication.class);
+    }
+
+    @Provides
+    @Singleton
+    private DecimalFormat decimalFormat() {
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+        decimalFormat.setMaximumFractionDigits(2);
+        decimalFormat.setGroupingSize(3);
+        var dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator(',');
+        dfs.setGroupingSeparator(' ');
+        decimalFormat.setDecimalFormatSymbols(dfs);
+
+        return decimalFormat;
+    }
+
+    @Provides
+    @Singleton
+    private StringConverter<Double> doubleStringConverter(DecimalFormat decimalFormat) {
+        return new StringConverter<>() {
+            @Override
+            public String toString(Double object) {
+                try {
+                    return decimalFormat.format(object);
+                } catch (IllegalArgumentException e) {
+                    return "";
+                }
+            }
+
+            @Override
+            public Double fromString(String string) {
+                try {
+                    return decimalFormat.parse(string).doubleValue();
+                } catch (ParseException e) {
+                    return Double.NaN;
+                }
+            }
+        };
     }
 }
