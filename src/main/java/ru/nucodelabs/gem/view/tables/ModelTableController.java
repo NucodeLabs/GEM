@@ -79,7 +79,7 @@ public class ModelTableController extends AbstractEditableTableController {
     @Inject
     private DecimalFormat decimalFormat;
 
-    private List<TextField> requiredForAdd;
+    private final List<TextField> requiredForAdd = new ArrayList<>();
 
     @Inject
     public ModelTableController(ObservableObjectValue<Picket> picket) {
@@ -100,6 +100,8 @@ public class ModelTableController extends AbstractEditableTableController {
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
+        requiredForAdd.addAll(List.of(powerTextField, resistanceTextField));
+
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<? super ModelLayer>) c -> {
@@ -140,7 +142,6 @@ public class ModelTableController extends AbstractEditableTableController {
 
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
-        requiredForAdd = List.of(powerTextField, resistanceTextField);
         addValidationListener(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
         addValidationListener(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
 
