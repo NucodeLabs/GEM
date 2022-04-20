@@ -184,15 +184,16 @@
 }
 
 .text-field {
-    -fx-background-radius: 5;
-    -fx-background-color: WhiteSmoke;
-    -fx-border-radius: 5;
+    -fx-background-radius: 2;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: 2;
     -fx-border-width: 1;
-    -fx-border-color: WhiteSmoke;
+    -fx-border-color: LightGray;
 }
 
 .text-field:focused {
-    -fx-border-color: LightGray;
+    -fx-border-color: DarkGray;
+    -fx-background-color: White;
 }
 
 .wrong-input {

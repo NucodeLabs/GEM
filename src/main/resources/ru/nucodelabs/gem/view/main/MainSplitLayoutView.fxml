@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -73,7 +74,7 @@
 
                                 <HBox alignment="CENTER_LEFT" maxWidth="Infinity"
                                       style="-fx-background-color: WhiteSmoke; -fx-padding: 5" spacing="5">
-                                    <Button styleClass="lr_btns"
+                                    <Button styleClass="small-btns"
                                             onAction="#switchToPrevPicket"
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
@@ -82,7 +83,7 @@
                                             </ImageView>
                                         </graphic>
                                     </Button>
-                                    <Button styleClass="lr_btns"
+                                    <Button styleClass="small-btns"
                                             onAction="#switchToNextPicket"
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
@@ -93,7 +94,36 @@
                                     </Button>
                                     <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
                                     <Label text="${controller.vesTitle}"/>
+                                    <HBox HBox.hgrow="NEVER" prefWidth="2"
+                                          style="-fx-background-color: rgba(0, 0, 0, 0.05);">
+                                        <HBox.margin>
+                                            <Insets left="5" right="5"/>
+                                        </HBox.margin>
+                                    </HBox>
+                                    <Label text="X"/>
+                                    <Label text="="/>
+                                    <Label fx:id="xCoordLbl" text="-"/>
                                     <HBox HBox.hgrow="ALWAYS"/>
+                                    <Label text="Z"/>
+                                    <Label text="="/>
+                                    <TextField promptText="Z" fx:id="picketZ" prefWidth="50"/>
+                                    <Label text="%offset"/>
+                                    <Label text="="/>
+                                    <TextField promptText="%offset" fx:id="picketX" prefWidth="50"/>
+                                    <Button contentDisplay="GRAPHIC_ONLY" styleClass="small-btns" fx:id="submitCoodsBtn"
+                                            onAction="#submitCoords">
+                                        <graphic>
+                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                                <Image url="@../../../../../img/ui_icons/done/2x/round_done_black_24dp.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <HBox HBox.hgrow="NEVER" prefWidth="2"
+                                          style="-fx-background-color: rgba(0, 0, 0, 0.05);">
+                                        <HBox.margin>
+                                            <Insets left="5" right="5"/>
+                                        </HBox.margin>
+                                    </HBox>
                                     <Button text="%inverse" onAction="#inverseSolve">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">

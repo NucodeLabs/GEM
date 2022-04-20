@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.name.Named;
+import com.google.inject.Singleton;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.SectionManager;
@@ -15,8 +15,6 @@ import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionController;
 import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionModule;
 import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
 import ru.nucodelabs.gem.view.tables.ModelTableController;
-
-import java.util.ArrayList;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -38,13 +36,12 @@ public class MainViewModule extends AbstractModule {
         bind(CrossSectionController.class).in(SINGLETON);
         bind(StorageManager.class).in(SINGLETON);
         bind(SectionManager.class).in(SINGLETON);
-        bind(HistoryManager.class).in(SINGLETON);
     }
 
     @Provides
-    @Named("Initial")
-    private Section provideInitialSection() {
-        return Section.create(new ArrayList<>());
+    @Singleton
+    private HistoryManager<Section> sectionHistoryManager(Snapshot.Originator<Section> sectionOriginator) {
+        return new HistoryManager<>(sectionOriginator);
     }
 
     @Provides
