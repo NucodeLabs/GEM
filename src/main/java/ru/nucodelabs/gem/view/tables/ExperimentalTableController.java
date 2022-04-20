@@ -70,7 +70,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @FXML
     private TableView<ExperimentalData> table;
 
-    private List<TextField> requiredForAdd;
+    private final List<TextField> requiredForAdd = new ArrayList<>();
 
     @Inject
     private Validator validator;
@@ -105,13 +105,14 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        requiredForAdd = List.of(
+        requiredForAdd.addAll(List.of(
                 ab2TextField,
                 mn2TextField,
                 resAppTextField,
                 errResAppTextField,
                 amperageTextField,
-                voltageTextField);
+                voltageTextField));
+
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<? super ExperimentalData>) c -> {
@@ -152,6 +153,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     protected void update() {
         table.itemsProperty().setValue(FXCollections.observableList(picket.get().getExperimentalData()));
+        table.refresh();
     }
 
 
