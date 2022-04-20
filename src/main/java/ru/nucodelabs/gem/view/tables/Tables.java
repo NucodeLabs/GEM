@@ -13,9 +13,10 @@ final class Tables {
     private static final Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> INDEX_CELL_FACTORY = col -> {
         TableCell<Object, Integer> cell = new TableCell<>();
 
-        cell.textProperty().bind(Bindings.when(cell.emptyProperty())
-                .then("")
-                .otherwise(cell.indexProperty().asString()));
+        cell.textProperty().bind(
+                Bindings.when(cell.emptyProperty())
+                        .then("")
+                        .otherwise(cell.indexProperty().asString()));
 
         return cell;
     };
