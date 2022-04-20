@@ -43,7 +43,7 @@
                          text="%modelPower" sortable="false" onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
                          text="%modelResistanceApparent" sortable="false" onEditCommit="#onEditCommit"/>
-            <TableColumn fx:id="zCol" text="Глубина (m)" maxWidth="Infinity" minWidth="20.0"
+            <TableColumn fx:id="zCol" text="Z (m)" maxWidth="Infinity" minWidth="20.0"
                          sortable="false" editable="false" prefWidth="100"/>
         </columns>
     </TableView>
