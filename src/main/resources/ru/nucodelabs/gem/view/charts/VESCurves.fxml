@@ -17,17 +17,28 @@
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
-            <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false" label="AB/2 (m)"
-                        side="BOTTOM" tickUnit="1.0" autoRanging="false" lowerBound="-1" upperBound="4">
+            <NumberAxis fx:id="lineChartXAxis"
+                        forceZeroInRange="false"
+                        label="AB/2 (m)"
+                        side="BOTTOM"
+                        tickUnit="1"
+                        autoRanging="false"
+                        lowerBound="-1" upperBound="4"
+                        minorTickVisible="false">
                 <tickLabelFormatter>
                     <PowerOf10Formatter/>
                 </tickLabelFormatter>
             </NumberAxis>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="lineChartYAxis" forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)" side="LEFT" tickUnit="1.0" autoRanging="false" lowerBound="0"
-                        upperBound="4">
+            <NumberAxis fx:id="lineChartYAxis"
+                        forceZeroInRange="false"
+                        label="ρₐ (Ohm‧m)"
+                        side="LEFT"
+                        tickUnit="1"
+                        autoRanging="false"
+                        lowerBound="0" upperBound="4"
+                        minorTickVisible="false">
                 <tickLabelFormatter>
                     <PowerOf10Formatter/>
                 </tickLabelFormatter>

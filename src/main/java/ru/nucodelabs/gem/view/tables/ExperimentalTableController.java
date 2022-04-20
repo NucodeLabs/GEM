@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -20,6 +21,7 @@ import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +82,10 @@ public class ExperimentalTableController extends AbstractEditableTableController
     private HistoryManager<Section> historyManager;
     @Inject
     private AlertsFactory alertsFactory;
+    @Inject
+    private StringConverter<Double> doubleStringConverter;
+    @Inject
+    private DecimalFormat decimalFormat;
 
     @Inject
     public ExperimentalTableController(ObservableObjectValue<Picket> picket) {
@@ -126,10 +132,10 @@ public class ExperimentalTableController extends AbstractEditableTableController
         for (int i = 1; i < table.getColumns().size(); i++) {
             // safe cast
             ((TableColumn<ExperimentalData, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(Tables.doubleStringConverter()));
+                    .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
         }
 
-        requiredForAdd.forEach(textField -> addValidationListener(textField, Tables::validateDoubleInput));
+        requiredForAdd.forEach(textField -> addValidationListener(textField, s -> Tables.validateDoubleInput(s, decimalFormat)));
         requiredForAdd.forEach(this::addEnterKeyHandler);
         addValidationListener(indexTextField, Tables::validateIndexInput);
 
@@ -168,12 +174,12 @@ public class ExperimentalTableController extends AbstractEditableTableController
             double newAmperageValue;
             double newVoltageValue;
             try {
-                newAb2Value = Tables.decimalFormat().parse(ab2TextField.getText()).doubleValue();
-                newMn2Value = Tables.decimalFormat().parse(mn2TextField.getText()).doubleValue();
-                newResAppValue = Tables.decimalFormat().parse(resAppTextField.getText()).doubleValue();
-                newErrResAppValue = Tables.decimalFormat().parse(errResAppTextField.getText()).doubleValue();
-                newAmperageValue = Tables.decimalFormat().parse(amperageTextField.getText()).doubleValue();
-                newVoltageValue = Tables.decimalFormat().parse(voltageTextField.getText()).doubleValue();
+                newAb2Value = decimalFormat.parse(ab2TextField.getText()).doubleValue();
+                newMn2Value = decimalFormat.parse(mn2TextField.getText()).doubleValue();
+                newResAppValue = decimalFormat.parse(resAppTextField.getText()).doubleValue();
+                newErrResAppValue = decimalFormat.parse(errResAppTextField.getText()).doubleValue();
+                newAmperageValue = decimalFormat.parse(amperageTextField.getText()).doubleValue();
+                newVoltageValue = decimalFormat.parse(voltageTextField.getText()).doubleValue();
             } catch (ParseException e) {
                 return;
             }
