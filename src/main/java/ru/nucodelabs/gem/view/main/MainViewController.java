@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
@@ -49,6 +50,8 @@ public class MainViewController extends AbstractController {
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
+    @FXML
+    private Label xCoordLbl;
     @FXML
     private Button submitCoodsBtn;
     @FXML
@@ -224,8 +227,9 @@ public class MainViewController extends AbstractController {
 
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                picketX.setText(decimalFormat.format(newValue.getX()));
+                picketX.setText(decimalFormat.format(newValue.getOffsetX()));
                 picketZ.setText(decimalFormat.format(newValue.getZ()));
+                xCoordLbl.setText(decimalFormat.format(VesUtils.xOfPicket(sectionManager.getSnapshot().get(), picketIndex.get())));
             }
         });
     }
@@ -315,6 +319,7 @@ public class MainViewController extends AbstractController {
 
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
+                storageManager.clearSavedState();
                 return;
             }
 
@@ -484,10 +489,10 @@ public class MainViewController extends AbstractController {
             return;
         }
 
-        var violationsX = validator.validateValue(Picket.IMPL_CLASS, "x", x);
+        var violationsX = validator.validateValue(Picket.IMPL_CLASS, "offsetX", x);
         if (!violationsX.isEmpty()) {
             alertsFactory.violationsAlert(violationsX, getStage()).show();
-            picketX.setText(String.valueOf(picket.get().getX()));
+            picketX.setText(String.valueOf(picket.get().getOffsetX()));
         } else {
             historyManager.performThenSnapshot(() -> sectionManager.updateX(picketIndex.get(), x));
         }

@@ -7,7 +7,7 @@ record PicketImpl(
         String name,
         List<ExperimentalData> experimentalData,
         List<ModelLayer> modelData,
-        double x,
+        double offsetX,
         double z
 ) implements Picket, Serializable {
     @Override
@@ -26,8 +26,8 @@ record PicketImpl(
     }
 
     @Override
-    public double getX() {
-        return x();
+    public double getOffsetX() {
+        return offsetX();
     }
 
     @Override

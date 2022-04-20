@@ -118,7 +118,7 @@ public class ModelTableController extends AbstractEditableTableController {
 
             cell.textProperty().bind(
                     Bindings.createStringBinding(
-                            () -> !cell.isEmpty() && cell.getIndex() >= 0 ?
+                            () -> !cell.isEmpty() && cell.getIndex() >= 0 && !picket.get().getModelData().isEmpty() ?
                                     decimalFormat.format(
                                             VesUtils.zOfPower(
                                                     picket.get().getModelData(), picket.get().getZ()

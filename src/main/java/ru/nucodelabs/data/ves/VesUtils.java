@@ -20,4 +20,14 @@ public class VesUtils {
         // последняя уходит в бесконечность
         return heightList;
     }
+
+    public static double xOfPicket(Section section, int index) {
+
+        double x = 0;
+        for (int i = 0; i <= index; i++) {
+            x += section.getPickets().get(i).getOffsetX();
+        }
+
+        return x;
+    }
 }

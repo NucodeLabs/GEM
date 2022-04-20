@@ -2,8 +2,8 @@ package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
@@ -16,7 +16,7 @@ import java.util.List;
 )
 public interface Picket extends Serializable {
 
-    double DEFAULT_X = 0;
+    double DEFAULT_X_OFFSET = 100;
     double DEFAULT_Z = 0;
 
     Picket EMPTY = Picket.create("", Collections.emptyList(), Collections.emptyList());
@@ -28,17 +28,17 @@ public interface Picket extends Serializable {
             List<ExperimentalData> experimentalData,
             List<ModelLayer> modelData
     ) {
-        return new PicketImpl(name, experimentalData, modelData, Picket.DEFAULT_X, Picket.DEFAULT_Z);
+        return new PicketImpl(name, experimentalData, modelData, Picket.DEFAULT_X_OFFSET, Picket.DEFAULT_Z);
     }
 
     static Picket create(
             String name,
             List<ExperimentalData> experimentalData,
             List<ModelLayer> modelData,
-            double x,
+            double xOffset,
             double z
     ) {
-        return new PicketImpl(name, experimentalData, modelData, x, z);
+        return new PicketImpl(name, experimentalData, modelData, xOffset, z);
     }
 
     /**
@@ -57,9 +57,9 @@ public interface Picket extends Serializable {
     @NotNull @Valid @Size(max = 40) List<ModelLayer> getModelData();
 
     /**
-     * Относительное смещение от начала разреза
+     * Смещение относительно пикета слева, или начала разреза в случае первого пикета
      */
-    @Min(0) double getX();
+    @Positive double getOffsetX();
 
     /**
      * Глубина
