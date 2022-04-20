@@ -83,13 +83,19 @@ public class FXUtils {
         return new TextFieldValidationSetup(textField);
     }
 
-    public static void addSubmitOnEnter(TextField textField, Button submitButton) {
+    private static void addSubmitOnEnter(TextField textField, Button submitButton) {
         textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
             if (event.getCode() == KeyCode.ENTER
                     && !submitButton.isDisabled()) {
                 submitButton.fire();
             }
         });
+    }
+
+    public static void addSubmitOnEnter(Button submitButton, TextField... textFields) {
+        for (var tf : textFields) {
+            addSubmitOnEnter(tf, submitButton);
+        }
     }
 
     public static BooleanBinding isBlank(StringProperty stringProperty) {

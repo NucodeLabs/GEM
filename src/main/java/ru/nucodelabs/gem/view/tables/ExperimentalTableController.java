@@ -157,8 +157,8 @@ public class ExperimentalTableController extends AbstractController {
                 .and(FXUtils.isNotBlank(amperageTextField.textProperty()));
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
-        dataTextFields.forEach(textField -> FXUtils.addSubmitOnEnter(textField, addBtn));
-        FXUtils.addSubmitOnEnter(indexTextField, addBtn);
+        dataTextFields.forEach(textField -> FXUtils.addSubmitOnEnter(addBtn, textField));
+        FXUtils.addSubmitOnEnter(addBtn, indexTextField);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
