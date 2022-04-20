@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.tables;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -17,6 +18,8 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.utils.FXUtils;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 
 import javax.inject.Inject;
@@ -27,10 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static java.lang.Math.min;
 
-public class ExperimentalTableController extends AbstractEditableTableController {
+public class ExperimentalTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
 
@@ -70,8 +74,6 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @FXML
     private TableView<ExperimentalData> table;
 
-    private final List<TextField> requiredForAdd = new ArrayList<>();
-
     @Inject
     private Validator validator;
     @Inject
@@ -105,13 +107,13 @@ public class ExperimentalTableController extends AbstractEditableTableController
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        requiredForAdd.addAll(List.of(
+        var dataTextFields = List.of(
                 ab2TextField,
                 mn2TextField,
                 resAppTextField,
                 errResAppTextField,
                 amperageTextField,
-                voltageTextField));
+                voltageTextField);
 
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
@@ -136,10 +138,27 @@ public class ExperimentalTableController extends AbstractEditableTableController
                     .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
         }
 
-        requiredForAdd.forEach(textField -> addValidationListener(textField, s -> Tables.validateDoubleInput(s, decimalFormat)));
-        requiredForAdd.forEach(this::addEnterKeyHandler);
-        addEnterKeyHandler(indexTextField);
-        addValidationListener(indexTextField, Tables::validateIndexInput);
+        Predicate<String> validateDataInput = s -> Tables.validateDoubleInput(s, decimalFormat);
+        BooleanBinding validInput
+                = Tables.setupInputValidation(ab2TextField, validateDataInput)
+                .and(Tables.setupInputValidation(mn2TextField, validateDataInput))
+                .and(Tables.setupInputValidation(resAppTextField, validateDataInput))
+                .and(Tables.setupInputValidation(errResAppTextField, validateDataInput))
+                .and(Tables.setupInputValidation(voltageTextField, validateDataInput))
+                .and(Tables.setupInputValidation(amperageTextField, validateDataInput))
+                .and(Tables.setupInputValidation(indexTextField, Tables::validateIndexInput));
+
+        BooleanBinding allRequiredNotBlank
+                = FXUtils.isNotBlank(ab2TextField.textProperty())
+                .and(FXUtils.isNotBlank(mn2TextField.textProperty()))
+                .and(FXUtils.isNotBlank(resAppTextField.textProperty()))
+                .and(FXUtils.isNotBlank(errResAppTextField.textProperty()))
+                .and(FXUtils.isNotBlank(voltageTextField.textProperty()))
+                .and(FXUtils.isNotBlank(amperageTextField.textProperty()));
+
+        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
+        dataTextFields.forEach(textField -> FXUtils.addSubmitOnEnter(textField, addBtn));
+        FXUtils.addSubmitOnEnter(indexTextField, addBtn);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
@@ -160,7 +179,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     @FXML
     private void deleteSelected() {
-        List<ExperimentalData> newExpData = deleteIndices(
+        List<ExperimentalData> newExpData = Tables.deleteIndices(
                 table.getSelectionModel().getSelectedIndices(),
                 picket.get().getExperimentalData());
         updateIfValidElseAlert(newExpData);
@@ -168,7 +187,7 @@ public class ExperimentalTableController extends AbstractEditableTableController
 
     @FXML
     private void add() {
-        if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
+        if (!addBtn.isDisable()) {
 
             double newAb2Value;
             double newMn2Value;
@@ -219,16 +238,6 @@ public class ExperimentalTableController extends AbstractEditableTableController
             historyManager.performThenSnapshot(
                     () -> sectionManager.updateExperimentalData(picketIndex.get(), newExpData));
         }
-    }
-
-    @Override
-    protected List<TextField> getRequiredForAdd() {
-        return requiredForAdd;
-    }
-
-    @Override
-    protected Button getAddButton() {
-        return addBtn;
     }
 
     @FXML

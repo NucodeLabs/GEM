@@ -1,12 +1,19 @@
 package ru.nucodelabs.gem.view.tables;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.util.Callback;
+import ru.nucodelabs.gem.utils.FXUtils;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 final class Tables {
 
@@ -62,5 +69,21 @@ final class Tables {
         } catch (ParseException e) {
             return false;
         }
+    }
+
+    static <T> List<T> deleteIndices(List<Integer> indicesToRemove, List<T> removeFrom) {
+        indicesToRemove = indicesToRemove.stream().sorted(Comparator.reverseOrder()).toList();
+        List<T> list = new ArrayList<>(removeFrom);
+        indicesToRemove.forEach(i -> list.remove(i.intValue()));
+        return list;
+    }
+
+    static BooleanProperty setupInputValidation(
+            TextField textField,
+            Predicate<String> validateInput) {
+        return FXUtils.setupValidation(textField)
+                .validateWith(validateInput)
+                .applyStyleIfInvalid("-fx-background-color: LightPink")
+                .done();
     }
 }

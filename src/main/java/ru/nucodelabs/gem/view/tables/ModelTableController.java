@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.tables;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -21,6 +22,8 @@ import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.utils.FXUtils;
+import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
@@ -37,7 +40,7 @@ import java.util.Set;
 
 import static java.lang.Math.min;
 
-public class ModelTableController extends AbstractEditableTableController {
+public class ModelTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
 
@@ -79,8 +82,6 @@ public class ModelTableController extends AbstractEditableTableController {
     @Inject
     private DecimalFormat decimalFormat;
 
-    private final List<TextField> requiredForAdd = new ArrayList<>();
-
     @Inject
     public ModelTableController(ObservableObjectValue<Picket> picket) {
         this.picket = picket;
@@ -100,8 +101,6 @@ public class ModelTableController extends AbstractEditableTableController {
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        requiredForAdd.addAll(List.of(powerTextField, resistanceTextField));
-
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<? super ModelLayer>) c -> {
@@ -140,14 +139,20 @@ public class ModelTableController extends AbstractEditableTableController {
                     .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
         }
 
-        addValidationListener(indexTextField, Tables::validateIndexInput);
+        BooleanBinding validInput
+                = Tables.setupInputValidation(indexTextField, Tables::validateIndexInput)
+                .and(Tables.setupInputValidation(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat)))
+                .and(Tables.setupInputValidation(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat)));
 
-        addValidationListener(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
-        addValidationListener(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat));
+        BooleanBinding allRequiredNotBlank
+                = FXUtils.isNotBlank(powerTextField.textProperty())
+                .and(FXUtils.isNotBlank(resistanceTextField.textProperty()));
 
-        addEnterKeyHandler(indexTextField);
-        addEnterKeyHandler(resistanceTextField);
-        addEnterKeyHandler(powerTextField);
+        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
+
+        FXUtils.addSubmitOnEnter(indexTextField, addBtn);
+        FXUtils.addSubmitOnEnter(resistanceTextField, addBtn);
+        FXUtils.addSubmitOnEnter(powerTextField, addBtn);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
@@ -194,7 +199,7 @@ public class ModelTableController extends AbstractEditableTableController {
 
     @FXML
     private void addLayer() {
-        if (requiredForAdd.stream().noneMatch(textField -> textField.getText().isBlank())) {
+        if (!addBtn.isDisable()) {
 
             double newPowerValue;
             double newResistanceValue;
@@ -224,7 +229,7 @@ public class ModelTableController extends AbstractEditableTableController {
 
     @FXML
     private void deleteSelected() {
-        List<ModelLayer> newModelData = deleteIndices(
+        List<ModelLayer> newModelData = Tables.deleteIndices(
                 table.getSelectionModel().getSelectedIndices(),
                 picket.get().getModelData());
         updateIfValidElseAlert(newModelData);
@@ -273,15 +278,5 @@ public class ModelTableController extends AbstractEditableTableController {
                 }
             }
         }
-    }
-
-    @Override
-    protected List<TextField> getRequiredForAdd() {
-        return requiredForAdd;
-    }
-
-    @Override
-    protected Button getAddButton() {
-        return addBtn;
     }
 }

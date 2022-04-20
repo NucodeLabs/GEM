@@ -4,6 +4,7 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
@@ -140,37 +141,25 @@ public class MainViewController extends AbstractController {
         bind();
         initConfig(preferences);
 
-        FXUtils.addValidationListener(
-                picketX,
-                s -> {
-                    try {
-                        decimalFormat.parse(s);
-                    } catch (ParseException e) {
-                        return false;
-                    }
-                    return true;
-                },
-                () -> submitCoodsBtn.setDisable(false),
-                () -> submitCoodsBtn.setDisable(true),
-                "-fx-background-color: LightPink",
-                Collections.emptyList()
-        );
+        BooleanBinding picketXZValid
+                = Bindings.and(setupValidationOnPicketXZ(picketX), setupValidationOnPicketXZ(picketZ));
+        submitCoodsBtn.disableProperty().bind(picketXZValid.not());
+    }
 
-        FXUtils.addValidationListener(
-                picketZ,
-                s -> {
-                    try {
-                        decimalFormat.parse(s);
-                    } catch (ParseException e) {
-                        return false;
-                    }
-                    return true;
-                },
-                () -> submitCoodsBtn.setDisable(false),
-                () -> submitCoodsBtn.setDisable(true),
-                "-fx-background-color: LightPink",
-                Collections.emptyList()
-        );
+    private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
+        return FXUtils.setupValidation(picketX)
+                .validateWith(
+                        s -> {
+                            try {
+                                decimalFormat.parse(s);
+                            } catch (ParseException e) {
+                                return false;
+                            }
+                            return true;
+                        }
+                )
+                .applyStyleIfInvalid("-fx-background-color: LightPink")
+                .done();
     }
 
     private void initConfig(Preferences preferences) {
