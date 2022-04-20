@@ -10,6 +10,7 @@ import ru.nucodelabs.data.ves.ModelLayer;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 
 /**
@@ -31,9 +32,10 @@ public class ModelCurveDragger {
     private XYChart.Data<Double, Double> point1;
     private XYChart.Data<Double, Double> point2;
 
+    private final double lowerLimitY;
     // for vertical line dragging
-    private Double leftLimitX;
-    private Double rightLimitX;
+    private double leftLimitX;
+    private double rightLimitX;
 
     /**
      * Adds drag-n-drop functionality for model step chart.
@@ -46,10 +48,12 @@ public class ModelCurveDragger {
     public ModelCurveDragger(
             Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue,
             ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> chartData,
-            int modelCurveIndex) {
+            int modelCurveIndex,
+            double lowerLimitY) {
         this.coordinatesInSceneToValue = coordinatesInSceneToValue;
         this.vesCurvesData = chartData;
         MOD_CURVE_SERIES_INDEX = modelCurveIndex;
+        this.lowerLimitY = lowerLimitY;
     }
 
     /**
@@ -159,7 +163,8 @@ public class ModelCurveDragger {
                     modelData.set(index2, ModelLayer.create(newValue2, old2.getResistance()));
                 }
 
-            } else if (Objects.equals(point1.getYValue(), point2.getYValue())) { // горизонтальная линия
+            } else if (Objects.equals(point1.getYValue(), point2.getYValue()) // горизонтальная линия
+                    && mouseY > log10(lowerLimitY)) {
                 point1.setYValue(mouseY);
                 point2.setYValue(mouseY);
                 int index = pointResistanceMap.get(point1);

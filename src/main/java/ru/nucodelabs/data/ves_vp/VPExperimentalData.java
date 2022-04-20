@@ -1,6 +1,7 @@
 package ru.nucodelabs.data.ves_vp;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import ru.nucodelabs.data.ves.ExperimentalData;
 
@@ -33,5 +34,5 @@ public interface VPExperimentalData extends ExperimentalData {
     /**
      * Погрешность, %
      */
-    @Min(0) double getErrorPolarizationApparent();
+    @Min(0) @Max(100) double getErrorPolarizationApparent();
 }
