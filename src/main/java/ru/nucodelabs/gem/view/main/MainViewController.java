@@ -274,7 +274,7 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.defaultValue());
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createWithDefaultValues());
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -419,7 +419,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                storageManager.saveToJson(file, sectionManager.getById(picket.get().getId()).orElse(Picket.defaultValue()));
+                storageManager.saveToJson(file, sectionManager.getById(picket.get().getId()).orElse(Picket.createWithDefaultValues()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
