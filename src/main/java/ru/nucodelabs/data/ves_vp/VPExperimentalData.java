@@ -37,10 +37,18 @@ public interface VPExperimentalData extends ExperimentalData {
     @Min(0) @Max(100) double getErrorPolarizationApparent();
 
     default VPExperimentalData withPolarizationApparent(double polarizationApparent) {
-        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), polarizationApparent, getErrorPolarizationApparent());
+        if (polarizationApparent == getPolarizationApparent()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), polarizationApparent, getErrorPolarizationApparent());
+        }
     }
 
     default VPExperimentalData withErrorPolarizationApparent(double errorPolarizationApparent) {
-        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), getPolarizationApparent(), errorPolarizationApparent);
+        if (errorPolarizationApparent == getErrorPolarizationApparent()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), getPolarizationApparent(), errorPolarizationApparent);
+        }
     }
 }

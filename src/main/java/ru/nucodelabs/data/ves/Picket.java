@@ -74,22 +74,42 @@ public interface Picket extends Serializable {
     double getZ();
 
     default Picket withName(String name) {
-        return create(getId(), name, getExperimentalData(), getModelData(), getOffsetX(), getZ());
+        if (name.equals(getName())) {
+            return this;
+        } else {
+            return create(getId(), name, getExperimentalData(), getModelData(), getOffsetX(), getZ());
+        }
     }
 
     default Picket withExperimentalData(List<ExperimentalData> experimentalData) {
-        return create(getId(), getName(), experimentalData, getModelData(), getOffsetX(), getZ());
+        if (experimentalData.equals(getExperimentalData())) {
+            return this;
+        } else {
+            return create(getId(), getName(), experimentalData, getModelData(), getOffsetX(), getZ());
+        }
     }
 
     default Picket withModelData(List<ModelLayer> modelData) {
-        return create(getId(), getName(), getExperimentalData(), modelData, getOffsetX(), getZ());
+        if (modelData.equals(getModelData())) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), modelData, getOffsetX(), getZ());
+        }
     }
 
     default Picket withOffsetX(double offsetX) {
-        return create(getId(), getName(), getExperimentalData(), getModelData(), offsetX, getZ());
+        if (offsetX == getOffsetX()) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), getModelData(), offsetX, getZ());
+        }
     }
 
     default Picket withZ(double z) {
-        return create(getId(), getName(), getExperimentalData(), getModelData(), getOffsetX(), z);
+        if (z == getZ()) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), getModelData(), getOffsetX(), z);
+        }
     }
 }
