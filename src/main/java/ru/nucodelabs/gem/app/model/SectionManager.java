@@ -67,6 +67,10 @@ public class SectionManager implements Snapshot.Originator<Section> {
         return mutableSection.getPickets().stream().filter(picket -> picket.getId().equals(uuid)).findFirst();
     }
 
+    public Picket getByIndex(int index) {
+        return mutableSection.getPickets().get(index);
+    }
+
     public Optional<Integer> indexById(UUID uuid) {
         var picket = getById(uuid);
         return picket.map(value -> mutableSection.getPickets().indexOf(value));
