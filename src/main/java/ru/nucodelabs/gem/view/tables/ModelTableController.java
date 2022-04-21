@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
@@ -75,8 +74,6 @@ public class ModelTableController extends AbstractController {
     private SectionManager sectionManager;
     @Inject
     private HistoryManager<Section> historyManager;
-    @Inject
-    private IntegerProperty picketIndex;
     @Inject
     private StringConverter<Double> doubleStringConverter;
     @Inject
@@ -177,9 +174,9 @@ public class ModelTableController extends AbstractController {
         double newInputValue = event.getNewValue();
 
         if (column == powerCol) {
-            newValue = ModelLayer.create(newInputValue, oldValue.getResistance());
+            newValue = oldValue.withPower(newInputValue);
         } else if (column == resistanceCol) {
-            newValue = ModelLayer.create(oldValue.getPower(), newInputValue);
+            newValue = oldValue.withResistance(newInputValue);
         } else {
             throw new RuntimeException("Something went wrong!");
         }
@@ -234,7 +231,7 @@ public class ModelTableController extends AbstractController {
     }
 
     private void updateIfValidElseAlert(List<ModelLayer> newModelData) {
-        Picket test = Picket.create(picket.get().getName(), picket.get().getExperimentalData(), newModelData);
+        Picket test = picket.get().withModelData(newModelData);
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
 
         if (!violations.isEmpty()) {
@@ -242,7 +239,7 @@ public class ModelTableController extends AbstractController {
             table.refresh();
         } else {
             historyManager.performThenSnapshot(
-                    () -> sectionManager.updateModelData(picketIndex.get(), newModelData));
+                    () -> sectionManager.update(picket.get().withModelData(newModelData)));
         }
     }
 

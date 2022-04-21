@@ -54,4 +54,28 @@ public interface ExperimentalData extends Serializable {
      * Напряжение, мВ
      */
     @Min(0) double getVoltage();
+
+    default ExperimentalData withAb2(double ab2) {
+        return create(ab2, getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage());
+    }
+
+    default ExperimentalData withMn2(double mn2) {
+        return create(getAb2(), mn2, getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage());
+    }
+
+    default ExperimentalData withResistanceApparent(double resistanceApparent) {
+        return create(getAb2(), getMn2(), resistanceApparent, getErrorResistanceApparent(), getAmperage(), getVoltage());
+    }
+
+    default ExperimentalData withErrorResistanceApparent(double errorResistanceApparent) {
+        return create(getAb2(), getMn2(), getResistanceApparent(), errorResistanceApparent, getAmperage(), getVoltage());
+    }
+
+    default ExperimentalData withAmperage(double amperage) {
+        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), amperage, getVoltage());
+    }
+
+    default ExperimentalData withVoltage(double voltage) {
+        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), voltage);
+    }
 }

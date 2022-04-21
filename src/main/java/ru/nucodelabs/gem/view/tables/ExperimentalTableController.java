@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.tables;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
@@ -76,8 +75,6 @@ public class ExperimentalTableController extends AbstractController {
 
     @Inject
     private Validator validator;
-    @Inject
-    private IntegerProperty picketIndex;
     @Inject
     private SectionManager sectionManager;
     @Inject
@@ -227,7 +224,7 @@ public class ExperimentalTableController extends AbstractController {
 
 
     private void updateIfValidElseAlert(List<ExperimentalData> newExpData) {
-        Picket test = Picket.create(picket.get().getName(), newExpData, picket.get().getModelData());
+        Picket test = picket.get().withExperimentalData(newExpData);
 
         Set<ConstraintViolation<Picket>> violations = validator.validate(test);
 
@@ -236,7 +233,7 @@ public class ExperimentalTableController extends AbstractController {
             table.refresh();
         } else {
             historyManager.performThenSnapshot(
-                    () -> sectionManager.updateExperimentalData(picketIndex.get(), newExpData));
+                    () -> sectionManager.update(picket.get().withExperimentalData(newExpData)));
         }
     }
 
@@ -249,59 +246,17 @@ public class ExperimentalTableController extends AbstractController {
         ExperimentalData newValue;
         var column = event.getTableColumn();
         if (column == ab2Col) {
-            newValue = ExperimentalData.create(
-                    newInputValue,
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withAb2(newInputValue);
         } else if (column == mn2Col) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    newInputValue,
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withMn2(newInputValue);
         } else if (column == resistanceApparentCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    newInputValue,
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withResistanceApparent(newInputValue);
         } else if (column == errorResistanceCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    newInputValue,
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withErrorResistanceApparent(newInputValue);
         } else if (column == amperageCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    newInputValue,
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withAmperage(newInputValue);
         } else if (column == voltageCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    newInputValue
-            );
+            newValue = oldValue.withVoltage(newInputValue);
         } else {
             throw new RuntimeException("Something went wrong!");
         }

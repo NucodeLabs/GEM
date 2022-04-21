@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class VesDataTest {
 
@@ -36,7 +33,7 @@ public class VesDataTest {
     @Test
     void picket() throws JsonProcessingException {
         Picket picket
-                = Picket.create("test", vesExperimentalData, vesModelData);
+                = Picket.create(UUID.randomUUID(), "test", vesExperimentalData, vesModelData, Picket.DEFAULT_X_OFFSET, Picket.DEFAULT_Z);
 
         var violations = validator.validate(picket);
         Assertions.assertFalse(violations.isEmpty());
@@ -59,7 +56,7 @@ public class VesDataTest {
     @Test
     void validator() {
         Picket picket = Picket.create(
-                "test", vesExperimentalData, vesModelData, -1, 0);
+                UUID.randomUUID(), "test", vesExperimentalData, vesModelData, -1, 0);
 
         Set<ConstraintViolation<Picket>> violations = validator.validate(picket);
         Assertions.assertFalse(violations.isEmpty());

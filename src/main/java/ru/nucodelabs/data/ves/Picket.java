@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
@@ -18,26 +19,24 @@ public interface Picket extends Serializable {
 
     double DEFAULT_X_OFFSET = 100;
     double DEFAULT_Z = 0;
+    String DEFAULT_NAME = "Пикет";
 
-    Picket EMPTY = Picket.create("", Collections.emptyList(), Collections.emptyList());
-
-    static Picket create(
-            String name,
-            List<ExperimentalData> experimentalData,
-            List<ModelLayer> modelData
-    ) {
-        return new PicketImpl(name, experimentalData, modelData, Picket.DEFAULT_X_OFFSET, Picket.DEFAULT_Z);
+    static Picket defaultValue() {
+        return Picket.create(UUID.randomUUID(), DEFAULT_NAME, Collections.emptyList(), Collections.emptyList(), DEFAULT_X_OFFSET, DEFAULT_Z);
     }
 
     static Picket create(
+            UUID id,
             String name,
             List<ExperimentalData> experimentalData,
             List<ModelLayer> modelData,
-            double xOffset,
+            double offsetX,
             double z
     ) {
-        return new PicketImpl(name, experimentalData, modelData, xOffset, z);
+        return new PicketImpl(id, name, List.copyOf(experimentalData), List.copyOf(modelData), offsetX, z);
     }
+
+    @NotNull UUID getId();
 
     /**
      * Наименование пикета
@@ -63,4 +62,24 @@ public interface Picket extends Serializable {
      * Глубина
      */
     double getZ();
+
+    default Picket withName(String name) {
+        return create(getId(), name, getExperimentalData(), getModelData(), getOffsetX(), getZ());
+    }
+
+    default Picket withExperimentalData(List<ExperimentalData> experimentalData) {
+        return create(getId(), getName(), experimentalData, getModelData(), getOffsetX(), getZ());
+    }
+
+    default Picket withModelData(List<ModelLayer> modelData) {
+        return create(getId(), getName(), getExperimentalData(), modelData, getOffsetX(), getZ());
+    }
+
+    default Picket withOffsetX(double offsetX) {
+        return create(getId(), getName(), getExperimentalData(), getModelData(), offsetX, getZ());
+    }
+
+    default Picket withZ(double z) {
+        return create(getId(), getName(), getExperimentalData(), getModelData(), getOffsetX(), z);
+    }
 }

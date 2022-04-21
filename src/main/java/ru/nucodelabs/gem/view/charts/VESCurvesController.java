@@ -164,8 +164,9 @@ public class VESCurvesController extends AbstractController {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             isDragging = true;
-            sectionManager.updateModelData(
-                    picketIndex.get(), modelCurveDragger.dragHandler(e, picket.get().getModelData()));
+            sectionManager.update(
+                    picket.get().withModelData(
+                            modelCurveDragger.dragHandler(e, picket.get().getModelData())));
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
             historyManager.snapshot();

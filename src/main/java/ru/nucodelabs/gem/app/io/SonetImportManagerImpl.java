@@ -24,11 +24,8 @@ class SonetImportManagerImpl implements SonetImportManager {
             picketName = fileName;
         }
 
-        return Picket.create(
-                picketName,
-                loadExperimentalDataFromEXPFile(expFile, target).getExperimentalData(),
-                target.getModelData()
-        );
+        return loadExperimentalDataFromEXPFile(expFile, target)
+                .withName(picketName);
     }
 
     private STTFile getSTTFile(File expFile) throws Exception {
@@ -72,7 +69,7 @@ class SonetImportManagerImpl implements SonetImportManager {
             ));
         }
 
-        return Picket.create(target.getName(), expData, target.getModelData());
+        return target.withExperimentalData(expData);
     }
 
     @Override
@@ -92,6 +89,6 @@ class SonetImportManagerImpl implements SonetImportManager {
                     modFile1.getResistance().get(i)));
         }
 
-        return Picket.create(target.getName(), target.getExperimentalData(), modelData);
+        return target.withModelData(modelData);
     }
 }

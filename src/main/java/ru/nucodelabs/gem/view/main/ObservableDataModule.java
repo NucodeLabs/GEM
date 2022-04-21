@@ -29,7 +29,7 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableList<Picket> providePicketsObservableList(SectionManager sectionManager) {
         ObservableList<Picket> pickets = FXCollections.observableList(new ArrayList<>());
-        sectionManager.subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
                 if (!item.getPickets().equals(pickets)) {

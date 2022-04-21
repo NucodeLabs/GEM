@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Загружает файлы и хранит копию сохраненного на диске состояния разреза
@@ -47,7 +48,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     public boolean compareWithSavedState(Section toCompare) {
-        return getSavedState().equals(toCompare);
+        return Objects.equals(toCompare, getSavedState());
     }
 
     public void clearSavedState() {

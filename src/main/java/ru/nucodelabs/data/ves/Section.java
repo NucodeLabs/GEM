@@ -16,7 +16,7 @@ public interface Section extends Serializable {
     static Section create(
             List<Picket> pickets
     ) {
-        return new SectionImpl(pickets);
+        return new SectionImpl(List.copyOf(pickets));
     }
 
     @NotNull List<@Valid @NotNull Picket> getPickets();
