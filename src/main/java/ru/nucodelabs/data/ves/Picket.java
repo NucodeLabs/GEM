@@ -21,8 +21,8 @@ public interface Picket extends Serializable {
     double DEFAULT_Z = 0;
     String DEFAULT_NAME = "Пикет";
 
-    static Picket createWithDefaultValues() {
-        return Picket.create(UUID.randomUUID(), DEFAULT_NAME, Collections.emptyList(), Collections.emptyList(), DEFAULT_X_OFFSET, DEFAULT_Z);
+    static Picket createDefaultWithNewId() {
+        return createWithNewId(DEFAULT_NAME, Collections.emptyList(), Collections.emptyList(), DEFAULT_X_OFFSET, DEFAULT_Z);
     }
 
     static Picket create(
@@ -34,6 +34,16 @@ public interface Picket extends Serializable {
             double z
     ) {
         return new PicketImpl(id, name, List.copyOf(experimentalData), List.copyOf(modelData), offsetX, z);
+    }
+
+    static Picket createWithNewId(
+            String name,
+            List<ExperimentalData> experimentalData,
+            List<ModelLayer> modelData,
+            double offsetX,
+            double z
+    ) {
+        return create(UUID.randomUUID(), name, experimentalData, modelData, offsetX, z);
     }
 
     @NotNull UUID getId();
