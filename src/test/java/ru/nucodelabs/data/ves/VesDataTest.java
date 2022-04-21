@@ -64,9 +64,5 @@ public class VesDataTest {
         Set<ConstraintViolation<Picket>> violations = validator.validate(picket);
         Assertions.assertFalse(violations.isEmpty());
         violations.forEach(System.out::println);
-
-        System.out.println("=========");
-        double x = -1;
-        validator.validateValue(Picket.IMPL_CLASS, "offsetX", x).forEach(System.out::println);
     }
 }
