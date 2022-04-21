@@ -21,7 +21,7 @@ public interface Picket extends Serializable {
     double DEFAULT_Z = 0;
     String DEFAULT_NAME = "Пикет";
 
-    static Picket defaultValue() {
+    static Picket createWithDefaultValues() {
         return Picket.create(UUID.randomUUID(), DEFAULT_NAME, Collections.emptyList(), Collections.emptyList(), DEFAULT_X_OFFSET, DEFAULT_Z);
     }
 

@@ -22,7 +22,7 @@ public class ShiraPicket {
 
         File file_mod = new File("data/SHIRA_M2.mod");
 
-        var picket = Picket.defaultValue();
+        var picket = Picket.createWithDefaultValues();
         SonetImportManager sonetImportManager = SonetImportManager.create();
         picket = sonetImportManager.loadNameAndExperimentalDataFromEXPFile(file_exp, picket);
         picket = sonetImportManager.loadModelDataFromMODFile(file_mod, picket);
