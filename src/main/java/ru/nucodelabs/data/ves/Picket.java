@@ -21,8 +21,6 @@ public interface Picket extends Serializable {
 
     Picket EMPTY = Picket.create("", Collections.emptyList(), Collections.emptyList());
 
-    Class<? extends Picket> IMPL_CLASS = PicketImpl.class;
-
     static Picket create(
             String name,
             List<ExperimentalData> experimentalData,
@@ -49,12 +47,12 @@ public interface Picket extends Serializable {
     /**
      * Полевые данные
      */
-    @NotNull @Valid List<ExperimentalData> getExperimentalData();
+    @NotNull List<@Valid @NotNull ExperimentalData> getExperimentalData();
 
     /**
      * Модельные данные
      */
-    @NotNull @Valid @Size(max = 40) List<ModelLayer> getModelData();
+    @NotNull @Size(max = 40) List<@Valid @NotNull ModelLayer> getModelData();
 
     /**
      * Смещение относительно пикета слева, или начала разреза в случае первого пикета

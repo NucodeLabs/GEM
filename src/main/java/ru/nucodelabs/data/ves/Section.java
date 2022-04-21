@@ -19,5 +19,5 @@ public interface Section extends Serializable {
         return new SectionImpl(pickets);
     }
 
-    @NotNull @Valid List<Picket> getPickets();
+    @NotNull List<@Valid @NotNull Picket> getPickets();
 }
