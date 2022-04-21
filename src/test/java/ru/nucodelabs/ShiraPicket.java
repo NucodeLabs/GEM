@@ -4,7 +4,6 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 
 import java.io.File;
-import java.util.Collections;
 
 public class ShiraPicket {
     private ShiraPicket() {
@@ -23,7 +22,7 @@ public class ShiraPicket {
 
         File file_mod = new File("data/SHIRA_M2.mod");
 
-        var picket = Picket.create("", Collections.emptyList(), Collections.emptyList());
+        var picket = Picket.defaultValue();
         SonetImportManager sonetImportManager = SonetImportManager.create();
         picket = sonetImportManager.loadNameAndExperimentalDataFromEXPFile(file_exp, picket);
         picket = sonetImportManager.loadModelDataFromMODFile(file_mod, picket);

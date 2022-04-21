@@ -11,7 +11,7 @@ import ru.nucodelabs.data.ves.ExperimentalData;
 )
 public interface VPExperimentalData extends ExperimentalData {
 
-    static ExperimentalData create(
+    static VPExperimentalData create(
             double ab2,
             double mn2,
             double resistanceApparent,
@@ -35,4 +35,12 @@ public interface VPExperimentalData extends ExperimentalData {
      * Погрешность, %
      */
     @Min(0) @Max(100) double getErrorPolarizationApparent();
+
+    default VPExperimentalData withPolarizationApparent(double polarizationApparent) {
+        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), polarizationApparent, getErrorPolarizationApparent());
+    }
+
+    default VPExperimentalData withErrorPolarizationApparent(double errorPolarizationApparent) {
+        return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage(), getPolarizationApparent(), errorPolarizationApparent);
+    }
 }

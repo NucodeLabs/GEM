@@ -204,7 +204,7 @@ public class MainViewController extends AbstractController {
                 picketObservableList
         ));
 
-        sectionManager.subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
                 if (!storageManager.compareWithSavedState(item)) {
@@ -274,7 +274,7 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.EMPTY);
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.defaultValue());
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -369,7 +369,7 @@ public class MainViewController extends AbstractController {
 
     public void importMOD(File file) {
         try {
-            Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+            Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
             var violations = validator.validate(newPicket);
 
@@ -378,7 +378,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+            historyManager.performThenSnapshot(() -> sectionManager.update(newPicket));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -419,7 +419,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                storageManager.saveToJson(file, sectionManager.get(picketIndex.get()));
+                storageManager.saveToJson(file, sectionManager.getById(picket.get().getId()).orElse(Picket.defaultValue()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
@@ -445,7 +445,7 @@ public class MainViewController extends AbstractController {
     @FXML
     private void inverseSolve() {
         try {
-            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
+            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picket.get()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
@@ -481,34 +481,24 @@ public class MainViewController extends AbstractController {
             return;
         }
 
-        Picket test = Picket.create(
-                picket.get().getName(),
-                picket.get().getExperimentalData(),
-                picket.get().getModelData(),
-                x,
-                picket.get().getZ()
-        );
+        Picket test = picket.get().withOffsetX(x);
         var violationsX = validator.validate(test);
         if (!violationsX.isEmpty()) {
             alertsFactory.violationsAlert(violationsX, getStage()).show();
             picketX.setText(String.valueOf(picket.get().getOffsetX()));
         } else {
-            historyManager.performThenSnapshot(() -> sectionManager.updateX(picketIndex.get(), x));
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(picket.get().withOffsetX(x)));
         }
 
-        test = Picket.create(
-                picket.get().getName(),
-                picket.get().getExperimentalData(),
-                picket.get().getModelData(),
-                picket.get().getOffsetX(),
-                z
-        );
+        test = picket.get().withZ(z);
         var violationsZ = validator.validate(test);
         if (!violationsZ.isEmpty()) {
             alertsFactory.violationsAlert(violationsZ, getStage()).show();
             picketZ.setText(String.valueOf(picket.get().getZ()));
         } else {
-            historyManager.performThenSnapshot(() -> sectionManager.updateZ(picketIndex.get(), z));
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(picket.get().withZ(z)));
         }
     }
 
