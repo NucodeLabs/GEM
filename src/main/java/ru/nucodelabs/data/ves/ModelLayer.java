@@ -32,10 +32,18 @@ public interface ModelLayer extends Serializable {
     @Positive @Max(100000) @DecimalMin("0.1") double getResistance();
 
     default ModelLayer withPower(double power) {
-        return create(power, getResistance());
+        if (power == getPower()) {
+            return this;
+        } else {
+            return create(power, getResistance());
+        }
     }
 
     default ModelLayer withResistance(double resistance) {
-        return create(getPower(), resistance);
+        if (resistance == getResistance()) {
+            return this;
+        } else {
+            return create(getPower(), resistance);
+        }
     }
 }

@@ -18,7 +18,7 @@ record PicketImpl(
 ) implements Picket, Serializable {
 
     @JsonCreator
-    static PicketImpl autoID(
+    static PicketImpl createWithNewID(
             @JsonProperty("name") String name,
             @JsonProperty("experimentalData") List<ExperimentalData> experimentalData,
             @JsonProperty("modelData") List<ModelLayer> modelData,
