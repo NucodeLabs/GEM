@@ -521,6 +521,12 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
+    public void addPicket() {
+        historyManager.performThenSnapshot(() -> sectionManager.add(Picket.createDefaultWithNewId()));
+        picketIndex.set(sectionManager.size() - 1);
+    }
+
+    @FXML
     private void undo() {
         historyManager.undo();
     }
