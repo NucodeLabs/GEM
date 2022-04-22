@@ -45,7 +45,6 @@ import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
 
-    private final StringProperty vesTitle = new SimpleStringProperty("");
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
@@ -53,9 +52,15 @@ public class MainViewController extends AbstractController {
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @FXML
+    private Button submitPicketName;
+    @FXML
+    private Button submitZButton;
+    @FXML
+    private TextField picketName;
+    @FXML
     private Label xCoordLbl;
     @FXML
-    private Button submitCoodsBtn;
+    private Button submitOffsetXButton;
     @FXML
     private TextField picketZ;
     @FXML
@@ -143,9 +148,10 @@ public class MainViewController extends AbstractController {
 
         BooleanBinding picketXZValid
                 = Bindings.and(setupValidationOnPicketXZ(picketX), setupValidationOnPicketXZ(picketZ));
-        submitCoodsBtn.disableProperty().bind(picketXZValid.not());
+        submitOffsetXButton.disableProperty().bind(picketXZValid.not());
 
-        FXUtils.addSubmitOnEnter(submitCoodsBtn, picketX, picketZ);
+        FXUtils.addSubmitOnEnter(submitOffsetXButton, picketX, picketZ);
+        FXUtils.addSubmitOnEnter(submitPicketName, picketName);
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
@@ -194,10 +200,13 @@ public class MainViewController extends AbstractController {
                 picketIndex, picketObservableList
         ));
 
-        vesTitle.bind(Bindings.createStringBinding(
-                () -> picket.get() != null ? picket.get().getName() : "-",
-                picket
-        ));
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                picketName.setText(newValue.getName());
+            } else {
+                picketName.setText("-");
+            }
+        });
 
         noFileOpened.bind(Bindings.createBooleanBinding(
                 () -> picketObservableList.isEmpty(),
@@ -469,13 +478,11 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
-    private void submitCoords() {
+    private void submitOffsetX() {
         double x;
-        double z;
 
         try {
             x = decimalFormat.parse(picketX.getText()).doubleValue();
-            z = decimalFormat.parse(picketZ.getText()).doubleValue();
         } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
             return;
@@ -490,8 +497,25 @@ public class MainViewController extends AbstractController {
             historyManager.performThenSnapshot(() ->
                     sectionManager.update(picket.get().withOffsetX(x)));
         }
+    }
 
-        test = picket.get().withZ(z);
+    @FXML
+    private void submitPicketName() {
+        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
+    }
+
+    @FXML
+    private void submitZ() {
+        double z;
+
+        try {
+            z = decimalFormat.parse(picketZ.getText()).doubleValue();
+        } catch (ParseException e) {
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            return;
+        }
+
+        Picket test = picket.get().withZ(z);
         var violationsZ = validator.validate(test);
         if (!violationsZ.isEmpty()) {
             alertsFactory.violationsAlert(violationsZ, getStage()).show();
@@ -518,14 +542,6 @@ public class MainViewController extends AbstractController {
 
     private void resetWindowTitle() {
         windowTitle.set("GEM");
-    }
-
-    public String getVesTitle() {
-        return vesTitle.get();
-    }
-
-    public StringProperty vesTitleProperty() {
-        return vesTitle;
     }
 
     public boolean getNoFileOpened() {
