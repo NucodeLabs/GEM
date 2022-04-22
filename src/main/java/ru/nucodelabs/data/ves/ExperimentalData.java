@@ -38,7 +38,7 @@ public interface ExperimentalData extends Serializable {
     /**
      * Сопротивление кажущееся, Ом * м
      */
-    @Positive double getResistanceApparent();
+    @Min(1) double getResistanceApparent();
 
     /**
      * Погрешность, %

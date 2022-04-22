@@ -147,8 +147,6 @@ public class ModelTableController extends AbstractController {
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
 
-        FXUtils.addSubmitOnEnter(addBtn, indexTextField, powerTextField, resistanceTextField);
-
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
             table.refresh();
@@ -231,15 +229,15 @@ public class ModelTableController extends AbstractController {
     }
 
     private void updateIfValidElseAlert(List<ModelLayer> newModelData) {
-        Picket test = picket.get().withModelData(newModelData);
-        Set<ConstraintViolation<Picket>> violations = validator.validate(test);
+        Picket modified = picket.get().withModelData(newModelData);
+        Set<ConstraintViolation<Picket>> violations = validator.validate(modified);
 
         if (!violations.isEmpty()) {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
             historyManager.performThenSnapshot(
-                    () -> sectionManager.update(picket.get().withModelData(newModelData)));
+                    () -> sectionManager.update(modified));
         }
     }
 

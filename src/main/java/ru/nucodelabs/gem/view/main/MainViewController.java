@@ -4,7 +4,6 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
@@ -52,19 +51,13 @@ public class MainViewController extends AbstractController {
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @FXML
-    private Button submitPicketName;
-    @FXML
-    private Button submitZButton;
-    @FXML
     private TextField picketName;
     @FXML
     private Label xCoordLbl;
     @FXML
-    private Button submitOffsetXButton;
-    @FXML
     private TextField picketZ;
     @FXML
-    private TextField picketX;
+    private TextField picketOffsetX;
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -146,12 +139,8 @@ public class MainViewController extends AbstractController {
         bind();
         initConfig(preferences);
 
-        BooleanBinding picketXZValid
-                = Bindings.and(setupValidationOnPicketXZ(picketX), setupValidationOnPicketXZ(picketZ));
-        submitOffsetXButton.disableProperty().bind(picketXZValid.not());
-
-        FXUtils.addSubmitOnEnter(submitOffsetXButton, picketX, picketZ);
-        FXUtils.addSubmitOnEnter(submitPicketName, picketName);
+        setupValidationOnPicketXZ(picketOffsetX);
+        setupValidationOnPicketXZ(picketZ);
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
@@ -228,7 +217,7 @@ public class MainViewController extends AbstractController {
 
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                picketX.setText(decimalFormat.format(newValue.getOffsetX()));
+                picketOffsetX.setText(decimalFormat.format(newValue.getOffsetX()));
                 picketZ.setText(decimalFormat.format(newValue.getZ()));
                 xCoordLbl.setText(decimalFormat.format(VesUtils.xOfPicket(sectionManager.getSnapshot().get(), picketIndex.get())));
             }
@@ -482,26 +471,29 @@ public class MainViewController extends AbstractController {
         double x;
 
         try {
-            x = decimalFormat.parse(picketX.getText()).doubleValue();
+            x = decimalFormat.parse(picketOffsetX.getText()).doubleValue();
         } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketOffsetX.selectAll();
             return;
         }
 
-        Picket test = picket.get().withOffsetX(x);
-        var violationsX = validator.validate(test);
+        Picket modified = picket.get().withOffsetX(x);
+        var violationsX = validator.validate(modified);
         if (!violationsX.isEmpty()) {
             alertsFactory.violationsAlert(violationsX, getStage()).show();
-            picketX.setText(String.valueOf(picket.get().getOffsetX()));
+            picketOffsetX.selectAll();
         } else {
             historyManager.performThenSnapshot(() ->
-                    sectionManager.update(picket.get().withOffsetX(x)));
+                    sectionManager.update(modified));
+            requestFocusOnScene();
         }
     }
 
     @FXML
     private void submitPicketName() {
         historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
+        requestFocusOnScene();
     }
 
     @FXML
@@ -512,17 +504,19 @@ public class MainViewController extends AbstractController {
             z = decimalFormat.parse(picketZ.getText()).doubleValue();
         } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketZ.selectAll();
             return;
         }
 
-        Picket test = picket.get().withZ(z);
-        var violationsZ = validator.validate(test);
+        Picket modified = picket.get().withZ(z);
+        var violationsZ = validator.validate(modified);
         if (!violationsZ.isEmpty()) {
             alertsFactory.violationsAlert(violationsZ, getStage()).show();
-            picketZ.setText(String.valueOf(picket.get().getZ()));
+            picketZ.selectAll();
         } else {
             historyManager.performThenSnapshot(() ->
-                    sectionManager.update(picket.get().withZ(z)));
+                    sectionManager.update(modified));
+            requestFocusOnScene();
         }
     }
 
