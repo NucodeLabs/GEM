@@ -22,6 +22,7 @@
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
+                        <MenuItem text="%addPicket" onAction="#addPicket"/>
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>

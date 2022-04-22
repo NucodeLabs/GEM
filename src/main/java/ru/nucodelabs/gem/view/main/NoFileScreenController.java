@@ -38,6 +38,11 @@ public class NoFileScreenController extends AbstractController {
     private Preferences preferences;
 
     @FXML
+    private void addPicket() {
+        mainViewControllerProvider.get().addPicket();
+    }
+
+    @FXML
     private void importEXP() {
         mainViewControllerProvider.get().importEXP();
     }
