@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 @JsonTypeInfo(
@@ -18,6 +19,8 @@ public interface Section extends Serializable {
     ) {
         return new SectionImpl(List.copyOf(pickets));
     }
+
+    Section DEFAULT = Section.create(Collections.emptyList());
 
     @NotNull List<@Valid @NotNull Picket> getPickets();
 }
