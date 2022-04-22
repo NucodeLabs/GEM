@@ -238,6 +238,7 @@ public class ModelTableController extends AbstractController {
         } else {
             historyManager.performThenSnapshot(
                     () -> sectionManager.update(modified));
+            FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField);
         }
     }
 

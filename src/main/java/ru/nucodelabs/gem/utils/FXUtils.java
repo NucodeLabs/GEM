@@ -77,8 +77,12 @@ public class FXUtils {
         }
     }
 
-    public static TextFieldValidationSetup setupValidation(TextField textField) {
-        return new TextFieldValidationSetup(textField);
+    public static void unfocus(Node... nodes) {
+        for (var node : nodes) {
+            if (node.isFocused()) {
+                node.getParent().requestFocus();
+            }
+        }
     }
 
     public static BooleanBinding isBlank(StringProperty stringProperty) {
@@ -104,6 +108,10 @@ public class FXUtils {
 
         private TextFieldValidationSetup(TextField textField) {
             this.textField = textField;
+        }
+
+        public static TextFieldValidationSetup of(TextField textField) {
+            return new TextFieldValidationSetup(textField);
         }
 
         public TextFieldValidationSetup doIfValid(Runnable ifValid) {

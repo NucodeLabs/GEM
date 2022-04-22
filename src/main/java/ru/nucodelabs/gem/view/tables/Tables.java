@@ -81,7 +81,7 @@ final class Tables {
     static BooleanProperty setupInputValidation(
             TextField textField,
             Predicate<String> validateInput) {
-        return FXUtils.setupValidation(textField)
+        return FXUtils.TextFieldValidationSetup.of(textField)
                 .validateWith(validateInput)
                 .applyStyleIfInvalid("-fx-background-color: LightPink")
                 .done();

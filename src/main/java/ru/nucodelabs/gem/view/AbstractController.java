@@ -8,8 +8,4 @@ import javafx.stage.Stage;
  */
 public abstract class AbstractController implements Initializable {
     protected abstract Stage getStage();
-
-    protected void requestFocusOnScene() {
-        getStage().getScene().getRoot().requestFocus();
-    }
 }
