@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +24,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     public StorageManager(JsonFileManager jsonFileManagerDelegate, SonetImportManager sonetImportManagerDelegate) {
         this.jsonFileManagerDelegate = jsonFileManagerDelegate;
         this.sonetImportManagerDelegate = sonetImportManagerDelegate;
-        savedState = Section.create(Collections.emptyList());
+        savedState = Section.DEFAULT;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     public Section getSavedState() {
-        return Section.create(List.copyOf(savedState.getPickets()));
+        return savedState;
     }
 
     public boolean compareWithSavedState(Section toCompare) {
@@ -52,7 +51,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     public void clearSavedState() {
-        savedState = Section.create(Collections.emptyList());
+        savedState = Section.DEFAULT;
     }
 
     @Nullable
