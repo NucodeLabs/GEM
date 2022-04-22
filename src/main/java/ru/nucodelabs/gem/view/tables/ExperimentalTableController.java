@@ -225,6 +225,14 @@ public class ExperimentalTableController extends AbstractController {
         } else {
             historyManager.performThenSnapshot(
                     () -> sectionManager.update(modified));
+            FXUtils.unfocus(
+                    indexTextField,
+                    ab2TextField,
+                    mn2TextField,
+                    resAppTextField,
+                    errResAppTextField,
+                    amperageTextField,
+                    voltageTextField);
         }
     }
 

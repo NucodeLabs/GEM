@@ -144,7 +144,7 @@ public class MainViewController extends AbstractController {
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
-        return FXUtils.setupValidation(picketX)
+        return FXUtils.TextFieldValidationSetup.of(picketX)
                 .validateWith(this::validateDoubleInput)
                 .applyStyleIfInvalid("-fx-background-color: LightPink")
                 .done();
@@ -468,32 +468,32 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void submitOffsetX() {
-        double x;
+        double offsetX;
 
         try {
-            x = decimalFormat.parse(picketOffsetX.getText()).doubleValue();
+            offsetX = decimalFormat.parse(picketOffsetX.getText()).doubleValue();
         } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
             picketOffsetX.selectAll();
             return;
         }
 
-        Picket modified = picket.get().withOffsetX(x);
-        var violationsX = validator.validate(modified);
-        if (!violationsX.isEmpty()) {
-            alertsFactory.violationsAlert(violationsX, getStage()).show();
+        Picket modified = picket.get().withOffsetX(offsetX);
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
             picketOffsetX.selectAll();
         } else {
             historyManager.performThenSnapshot(() ->
                     sectionManager.update(modified));
-            requestFocusOnScene();
+            FXUtils.unfocus(picketOffsetX);
         }
     }
 
     @FXML
     private void submitPicketName() {
         historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
-        requestFocusOnScene();
+        FXUtils.unfocus(picketName);
     }
 
     @FXML
@@ -509,14 +509,14 @@ public class MainViewController extends AbstractController {
         }
 
         Picket modified = picket.get().withZ(z);
-        var violationsZ = validator.validate(modified);
-        if (!violationsZ.isEmpty()) {
-            alertsFactory.violationsAlert(violationsZ, getStage()).show();
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
             picketZ.selectAll();
         } else {
             historyManager.performThenSnapshot(() ->
                     sectionManager.update(modified));
-            requestFocusOnScene();
+            FXUtils.unfocus(picketZ);
         }
     }
 
