@@ -104,13 +104,6 @@ public class ExperimentalTableController extends AbstractController {
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        var dataTextFields = List.of(
-                ab2TextField,
-                mn2TextField,
-                resAppTextField,
-                errResAppTextField,
-                amperageTextField,
-                voltageTextField);
 
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
@@ -154,8 +147,6 @@ public class ExperimentalTableController extends AbstractController {
                 .and(FXUtils.isNotBlank(amperageTextField.textProperty()));
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
-        dataTextFields.forEach(textField -> FXUtils.addSubmitOnEnter(addBtn, textField));
-        FXUtils.addSubmitOnEnter(addBtn, indexTextField);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
@@ -224,16 +215,16 @@ public class ExperimentalTableController extends AbstractController {
 
 
     private void updateIfValidElseAlert(List<ExperimentalData> newExpData) {
-        Picket test = picket.get().withExperimentalData(newExpData);
+        Picket modified = picket.get().withExperimentalData(newExpData);
 
-        Set<ConstraintViolation<Picket>> violations = validator.validate(test);
+        Set<ConstraintViolation<Picket>> violations = validator.validate(modified);
 
         if (!violations.isEmpty()) {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
             historyManager.performThenSnapshot(
-                    () -> sectionManager.update(picket.get().withExperimentalData(newExpData)));
+                    () -> sectionManager.update(modified));
         }
     }
 

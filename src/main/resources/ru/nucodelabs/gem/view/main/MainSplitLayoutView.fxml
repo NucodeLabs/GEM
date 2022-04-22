@@ -92,16 +92,7 @@
                                         </graphic>
                                     </Button>
                                     <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
-                                    <TextField fx:id="picketName" text="-"/>
-                                    <Button contentDisplay="GRAPHIC_ONLY" styleClass="small-btns"
-                                            fx:id="submitPicketName"
-                                            onAction="#submitPicketName">
-                                        <graphic>
-                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                                <Image url="@../../../../../img/ui_icons/done/2x/round_done_black_24dp.png"/>
-                                            </ImageView>
-                                        </graphic>
-                                    </Button>
+                                    <TextField fx:id="picketName" text="-" onAction="#submitPicketName"/>
                                     <fx:include source="SmallDivider.fxml"/>
                                     <Label text="X"/>
                                     <Label text="="/>
@@ -109,28 +100,12 @@
                                     <HBox HBox.hgrow="ALWAYS"/>
                                     <Label text="Z"/>
                                     <Label text="="/>
-                                    <TextField promptText="Z" fx:id="picketZ" prefWidth="50"/>
-                                    <Button contentDisplay="GRAPHIC_ONLY" styleClass="small-btns" fx:id="submitZButton"
-                                            onAction="#submitZ">
-                                        <graphic>
-                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                                <Image url="@../../../../../img/ui_icons/done/2x/round_done_black_24dp.png"/>
-                                            </ImageView>
-                                        </graphic>
-                                    </Button>
+                                    <TextField promptText="Z" fx:id="picketZ" prefWidth="50" onAction="#submitZ"/>
                                     <fx:include source="SmallDivider.fxml"/>
                                     <Label text="%offset"/>
                                     <Label text="="/>
-                                    <TextField promptText="%offset" fx:id="picketX" prefWidth="50"/>
-                                    <Button contentDisplay="GRAPHIC_ONLY" styleClass="small-btns"
-                                            fx:id="submitOffsetXButton"
-                                            onAction="#submitOffsetX">
-                                        <graphic>
-                                            <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                                <Image url="@../../../../../img/ui_icons/done/2x/round_done_black_24dp.png"/>
-                                            </ImageView>
-                                        </graphic>
-                                    </Button>
+                                    <TextField promptText="%offset" fx:id="picketOffsetX" prefWidth="50"
+                                               onAction="#submitOffsetX"/>
                                     <fx:include source="SmallDivider.fxml"/>
                                     <Button text="%inverse" onAction="#inverseSolve">
                                         <graphic>
