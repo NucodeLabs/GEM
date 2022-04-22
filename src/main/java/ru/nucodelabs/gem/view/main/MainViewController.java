@@ -4,7 +4,6 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
@@ -45,7 +44,6 @@ import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
 
-    private final StringProperty vesTitle = new SimpleStringProperty("");
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
@@ -53,13 +51,13 @@ public class MainViewController extends AbstractController {
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @FXML
-    private Label xCoordLbl;
+    private TextField picketName;
     @FXML
-    private Button submitCoodsBtn;
+    private Label xCoordLbl;
     @FXML
     private TextField picketZ;
     @FXML
-    private TextField picketX;
+    private TextField picketOffsetX;
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -141,27 +139,24 @@ public class MainViewController extends AbstractController {
         bind();
         initConfig(preferences);
 
-        BooleanBinding picketXZValid
-                = Bindings.and(setupValidationOnPicketXZ(picketX), setupValidationOnPicketXZ(picketZ));
-        submitCoodsBtn.disableProperty().bind(picketXZValid.not());
-
-        FXUtils.addSubmitOnEnter(submitCoodsBtn, picketX, picketZ);
+        setupValidationOnPicketXZ(picketOffsetX);
+        setupValidationOnPicketXZ(picketZ);
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
-        return FXUtils.setupValidation(picketX)
-                .validateWith(
-                        s -> {
-                            try {
-                                decimalFormat.parse(s);
-                            } catch (ParseException e) {
-                                return false;
-                            }
-                            return true;
-                        }
-                )
+        return FXUtils.TextFieldValidationSetup.of(picketX)
+                .validateWith(this::validateDoubleInput)
                 .applyStyleIfInvalid("-fx-background-color: LightPink")
                 .done();
+    }
+
+    private boolean validateDoubleInput(String s) {
+        try {
+            decimalFormat.parse(s);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 
     private void initConfig(Preferences preferences) {
@@ -194,17 +189,20 @@ public class MainViewController extends AbstractController {
                 picketIndex, picketObservableList
         ));
 
-        vesTitle.bind(Bindings.createStringBinding(
-                () -> picket.get() != null ? picket.get().getName() : "-",
-                picket
-        ));
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                picketName.setText(newValue.getName());
+            } else {
+                picketName.setText("-");
+            }
+        });
 
         noFileOpened.bind(Bindings.createBooleanBinding(
                 () -> picketObservableList.isEmpty(),
                 picketObservableList
         ));
 
-        sectionManager.subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
                 if (!storageManager.compareWithSavedState(item)) {
@@ -219,7 +217,7 @@ public class MainViewController extends AbstractController {
 
         picket.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                picketX.setText(decimalFormat.format(newValue.getOffsetX()));
+                picketOffsetX.setText(decimalFormat.format(newValue.getOffsetX()));
                 picketZ.setText(decimalFormat.format(newValue.getZ()));
                 xCoordLbl.setText(decimalFormat.format(VesUtils.xOfPicket(sectionManager.getSnapshot().get(), picketIndex.get())));
             }
@@ -274,7 +272,7 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.EMPTY);
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createDefaultWithNewId());
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -369,7 +367,7 @@ public class MainViewController extends AbstractController {
 
     public void importMOD(File file) {
         try {
-            Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+            Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
             var violations = validator.validate(newPicket);
 
@@ -378,7 +376,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+            historyManager.performThenSnapshot(() -> sectionManager.update(newPicket));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -419,7 +417,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                storageManager.saveToJson(file, sectionManager.get(picketIndex.get()));
+                storageManager.saveToJson(file, sectionManager.getById(picket.get().getId()).orElse(Picket.createDefaultWithNewId()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
@@ -445,7 +443,7 @@ public class MainViewController extends AbstractController {
     @FXML
     private void inverseSolve() {
         try {
-            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
+            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picket.get()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
@@ -469,33 +467,63 @@ public class MainViewController extends AbstractController {
     }
 
     @FXML
-    private void submitCoords() {
-        double x;
-        double z;
+    private void submitOffsetX() {
+        double offsetX;
 
         try {
-            x = decimalFormat.parse(picketX.getText()).doubleValue();
-            z = decimalFormat.parse(picketZ.getText()).doubleValue();
+            offsetX = decimalFormat.parse(picketOffsetX.getText()).doubleValue();
         } catch (ParseException e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketOffsetX.selectAll();
             return;
         }
 
-        var violationsX = validator.validateValue(Picket.IMPL_CLASS, "offsetX", x);
-        if (!violationsX.isEmpty()) {
-            alertsFactory.violationsAlert(violationsX, getStage()).show();
-            picketX.setText(String.valueOf(picket.get().getOffsetX()));
+        Picket modified = picket.get().withOffsetX(offsetX);
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
+            picketOffsetX.selectAll();
         } else {
-            historyManager.performThenSnapshot(() -> sectionManager.updateX(picketIndex.get(), x));
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(modified));
+            FXUtils.unfocus(picketOffsetX);
+        }
+    }
+
+    @FXML
+    private void submitPicketName() {
+        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
+        FXUtils.unfocus(picketName);
+    }
+
+    @FXML
+    private void submitZ() {
+        double z;
+
+        try {
+            z = decimalFormat.parse(picketZ.getText()).doubleValue();
+        } catch (ParseException e) {
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketZ.selectAll();
+            return;
         }
 
-        var violationsZ = validator.validateValue(Picket.IMPL_CLASS, "z", z);
-        if (!violationsZ.isEmpty()) {
-            alertsFactory.violationsAlert(violationsZ, getStage()).show();
-            picketZ.setText(String.valueOf(picket.get().getZ()));
+        Picket modified = picket.get().withZ(z);
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
+            picketZ.selectAll();
         } else {
-            historyManager.performThenSnapshot(() -> sectionManager.updateZ(picketIndex.get(), z));
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(modified));
+            FXUtils.unfocus(picketZ);
         }
+    }
+
+    @FXML
+    public void addPicket() {
+        historyManager.performThenSnapshot(() -> sectionManager.add(Picket.createDefaultWithNewId()));
+        picketIndex.set(sectionManager.size() - 1);
     }
 
     @FXML
@@ -514,14 +542,6 @@ public class MainViewController extends AbstractController {
 
     private void resetWindowTitle() {
         windowTitle.set("GEM");
-    }
-
-    public String getVesTitle() {
-        return vesTitle.get();
-    }
-
-    public StringProperty vesTitleProperty() {
-        return vesTitle;
     }
 
     public boolean getNoFileOpened() {

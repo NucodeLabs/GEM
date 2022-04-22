@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -78,22 +77,11 @@ public class FXUtils {
         }
     }
 
-    public static TextFieldValidationSetup setupValidation(TextField textField) {
-        return new TextFieldValidationSetup(textField);
-    }
-
-    private static void addSubmitOnEnter(TextField textField, Button submitButton) {
-        textField.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode() == KeyCode.ENTER
-                    && !submitButton.isDisabled()) {
-                submitButton.fire();
+    public static void unfocus(Node... nodes) {
+        for (var node : nodes) {
+            if (node.isFocused()) {
+                node.getParent().requestFocus();
             }
-        });
-    }
-
-    public static void addSubmitOnEnter(Button submitButton, TextField... textFields) {
-        for (var tf : textFields) {
-            addSubmitOnEnter(tf, submitButton);
         }
     }
 
@@ -120,6 +108,10 @@ public class FXUtils {
 
         private TextFieldValidationSetup(TextField textField) {
             this.textField = textField;
+        }
+
+        public static TextFieldValidationSetup of(TextField textField) {
+            return new TextFieldValidationSetup(textField);
         }
 
         public TextFieldValidationSetup doIfValid(Runnable ifValid) {

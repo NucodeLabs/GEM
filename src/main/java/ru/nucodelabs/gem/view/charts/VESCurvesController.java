@@ -1,9 +1,7 @@
 package ru.nucodelabs.gem.view.charts;
 
 import com.google.inject.name.Named;
-import jakarta.validation.Validator;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
@@ -64,11 +62,7 @@ public class VESCurvesController extends AbstractController {
     @Inject
     private HistoryManager<Section> historyManager;
     @Inject
-    private IntegerProperty picketIndex;
-    @Inject
     private VesCurvesConverter vesCurvesConverter;
-    @Inject
-    private Validator validator;
 
     @Inject
     public VESCurvesController(ObservableObjectValue<Picket> picket) {
@@ -99,7 +93,7 @@ public class VESCurvesController extends AbstractController {
                 ),
                 dataProperty,
                 MOD_CURVE_SERIES_INDEX,
-                0.1
+                1
         );
     }
 
@@ -156,6 +150,7 @@ public class VESCurvesController extends AbstractController {
     private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
         modelCurveSeries.getNode().setCursor(Cursor.HAND);
         modelCurveSeries.getNode().setOnMousePressed(e -> {
+            modelCurveSeries.getNode().requestFocus();
             isDragging = true;
             lineChart.setAnimated(false);
             lineChartYAxis.setAutoRanging(false);
@@ -164,8 +159,9 @@ public class VESCurvesController extends AbstractController {
         });
         modelCurveSeries.getNode().setOnMouseDragged(e -> {
             isDragging = true;
-            sectionManager.updateModelData(
-                    picketIndex.get(), modelCurveDragger.dragHandler(e, picket.get().getModelData()));
+            sectionManager.update(
+                    picket.get().withModelData(
+                            modelCurveDragger.dragHandler(e, picket.get().getModelData())));
         });
         modelCurveSeries.getNode().setOnMouseReleased(e -> {
             historyManager.snapshot();

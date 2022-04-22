@@ -36,7 +36,7 @@ public class VesDataTest {
     @Test
     void picket() throws JsonProcessingException {
         Picket picket
-                = Picket.create("test", vesExperimentalData, vesModelData);
+                = Picket.createWithNewId("test", vesExperimentalData, vesModelData, Picket.DEFAULT_X_OFFSET, Picket.DEFAULT_Z);
 
         var violations = validator.validate(picket);
         Assertions.assertFalse(violations.isEmpty());
@@ -52,21 +52,33 @@ public class VesDataTest {
         Picket picket1 = objectMapper.readValue(json, Picket.class);
         Assertions.assertEquals(picket, picket1);
 
-        Assertions.assertEquals(vesModelData.get(0), ModelLayer.create(12, 12));
+        Picket picket2
+                = objectMapper.readValue(
+                """
+                        {
+                            "name" : "Пикет",
+                            "experimentalData" : [],
+                            "modelData" : [],
+                            "z" : 0,
+                            "offsetX" : 100
+                        }
+                        """,
+                Picket.class
+        );
+        Assertions.assertNotNull(picket2.getId());
+        Assertions.assertEquals(Collections.emptyList(), picket2.getExperimentalData());
+        Assertions.assertEquals("Пикет", picket2.getName());
+        Assertions.assertEquals(0, picket2.getZ());
 
+        Assertions.assertEquals(vesModelData.get(0), ModelLayer.create(12, 12));
     }
 
     @Test
     void validator() {
-        Picket picket = Picket.create(
-                "test", vesExperimentalData, vesModelData, -1, 0);
+        Picket picket = Picket.createWithNewId("test", vesExperimentalData, vesModelData, -1, 0);
 
         Set<ConstraintViolation<Picket>> violations = validator.validate(picket);
         Assertions.assertFalse(violations.isEmpty());
         violations.forEach(System.out::println);
-
-        System.out.println("=========");
-        double x = -1;
-        validator.validateValue(Picket.IMPL_CLASS, "offsetX", x).forEach(System.out::println);
     }
 }

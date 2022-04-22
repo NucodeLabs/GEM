@@ -38,7 +38,7 @@ public interface ExperimentalData extends Serializable {
     /**
      * Сопротивление кажущееся, Ом * м
      */
-    @Positive double getResistanceApparent();
+    @Min(1) double getResistanceApparent();
 
     /**
      * Погрешность, %
@@ -54,4 +54,52 @@ public interface ExperimentalData extends Serializable {
      * Напряжение, мВ
      */
     @Min(0) double getVoltage();
+
+    default ExperimentalData withAb2(double ab2) {
+        if (ab2 == getAb2()) {
+            return this;
+        } else {
+            return create(ab2, getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage());
+        }
+    }
+
+    default ExperimentalData withMn2(double mn2) {
+        if (mn2 == getMn2()) {
+            return this;
+        } else {
+            return create(getAb2(), mn2, getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), getVoltage());
+        }
+    }
+
+    default ExperimentalData withResistanceApparent(double resistanceApparent) {
+        if (resistanceApparent == getResistanceApparent()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), resistanceApparent, getErrorResistanceApparent(), getAmperage(), getVoltage());
+        }
+    }
+
+    default ExperimentalData withErrorResistanceApparent(double errorResistanceApparent) {
+        if (errorResistanceApparent == getErrorResistanceApparent()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), getResistanceApparent(), errorResistanceApparent, getAmperage(), getVoltage());
+        }
+    }
+
+    default ExperimentalData withAmperage(double amperage) {
+        if (amperage == getAmperage()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), amperage, getVoltage());
+        }
+    }
+
+    default ExperimentalData withVoltage(double voltage) {
+        if (voltage == getVoltage()) {
+            return this;
+        } else {
+            return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), voltage);
+        }
+    }
 }
