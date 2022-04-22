@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,13 +32,13 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     @Override
-    public Picket loadExperimentalDataFromEXPFile(File expFile, Picket picket) throws Exception {
-        return sonetImportManagerDelegate.loadExperimentalDataFromEXPFile(expFile, picket);
+    public Picket loadExperimentalDataFromEXPFile(File expFile, Picket target) throws Exception {
+        return sonetImportManagerDelegate.loadExperimentalDataFromEXPFile(expFile, target);
     }
 
     @Override
-    public Picket loadModelDataFromMODFile(File modFile, Picket picket) throws Exception {
-        return sonetImportManagerDelegate.loadModelDataFromMODFile(modFile, picket);
+    public Picket loadModelDataFromMODFile(File modFile, Picket target) throws Exception {
+        return sonetImportManagerDelegate.loadModelDataFromMODFile(modFile, target);
     }
 
     public Section getSavedState() {
@@ -62,8 +61,8 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     @Override
     public <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
         T loaded = jsonFileManagerDelegate.loadFromJson(jsonFile, type);
-        if (loaded instanceof Section) {
-            savedState = Section.create(List.copyOf(((Section) loaded).getPickets()));
+        if (loaded instanceof Section section) {
+            savedState = section;
             savedStateFile = jsonFile;
         }
         return loaded;
@@ -72,8 +71,8 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     @Override
     public <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception {
         jsonFileManagerDelegate.saveToJson(jsonFile, object);
-        if (object instanceof Section) {
-            savedState = Section.create(List.copyOf(((Section) object).getPickets()));
+        if (object instanceof Section section) {
+            savedState = section;
             savedStateFile = jsonFile;
         }
     }
