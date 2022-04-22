@@ -50,7 +50,9 @@ public class VesDataTest {
         power.forEach(System.out::println);
 
         Picket picket1 = objectMapper.readValue(json, Picket.class);
-        Assertions.assertEquals(picket, picket1);
+        Assertions.assertNotEquals(picket.getId(), picket1.getId());
+        Assertions.assertEquals(picket.getModelData(), picket1.getModelData());
+        Assertions.assertEquals(picket.getExperimentalData(), picket1.getExperimentalData());
 
         Assertions.assertEquals(vesModelData.get(0), ModelLayer.create(12, 12));
 
