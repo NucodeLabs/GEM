@@ -145,18 +145,18 @@ public class MainViewController extends AbstractController {
 
     private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
         return FXUtils.setupValidation(picketX)
-                .validateWith(
-                        s -> {
-                            try {
-                                decimalFormat.parse(s);
-                            } catch (ParseException e) {
-                                return false;
-                            }
-                            return true;
-                        }
-                )
+                .validateWith(this::validateDoubleInput)
                 .applyStyleIfInvalid("-fx-background-color: LightPink")
                 .done();
+    }
+
+    private boolean validateDoubleInput(String s) {
+        try {
+            decimalFormat.parse(s);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 
     private void initConfig(Preferences preferences) {
