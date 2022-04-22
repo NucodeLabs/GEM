@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<HBox HBox.hgrow="NEVER" prefWidth="2"
+      style="-fx-background-color: rgba(0, 0, 0, 0.05);">
+    <HBox.margin>
+        <Insets left="5" right="5"/>
+    </HBox.margin>
+</HBox>
