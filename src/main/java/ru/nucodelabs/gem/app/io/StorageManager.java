@@ -51,6 +51,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
 
     public void clearSavedState() {
         savedState = Section.DEFAULT;
+        savedStateFile = null;
     }
 
     @Nullable
