@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
@@ -18,28 +19,34 @@ public interface Picket extends Serializable {
 
     double DEFAULT_X_OFFSET = 100;
     double DEFAULT_Z = 0;
+    String DEFAULT_NAME = "Пикет";
 
-    Picket EMPTY = Picket.create("", Collections.emptyList(), Collections.emptyList());
-
-    Class<? extends Picket> IMPL_CLASS = PicketImpl.class;
-
-    static Picket create(
-            String name,
-            List<ExperimentalData> experimentalData,
-            List<ModelLayer> modelData
-    ) {
-        return new PicketImpl(name, experimentalData, modelData, Picket.DEFAULT_X_OFFSET, Picket.DEFAULT_Z);
+    static Picket createDefaultWithNewId() {
+        return createWithNewId(DEFAULT_NAME, Collections.emptyList(), Collections.emptyList(), DEFAULT_X_OFFSET, DEFAULT_Z);
     }
 
     static Picket create(
+            UUID id,
             String name,
             List<ExperimentalData> experimentalData,
             List<ModelLayer> modelData,
-            double xOffset,
+            double offsetX,
             double z
     ) {
-        return new PicketImpl(name, experimentalData, modelData, xOffset, z);
+        return new PicketImpl(id, name, List.copyOf(experimentalData), List.copyOf(modelData), offsetX, z);
     }
+
+    static Picket createWithNewId(
+            String name,
+            List<ExperimentalData> experimentalData,
+            List<ModelLayer> modelData,
+            double offsetX,
+            double z
+    ) {
+        return create(UUID.randomUUID(), name, experimentalData, modelData, offsetX, z);
+    }
+
+    @NotNull UUID getId();
 
     /**
      * Наименование пикета
@@ -49,12 +56,12 @@ public interface Picket extends Serializable {
     /**
      * Полевые данные
      */
-    @NotNull @Valid List<ExperimentalData> getExperimentalData();
+    @NotNull List<@Valid @NotNull ExperimentalData> getExperimentalData();
 
     /**
      * Модельные данные
      */
-    @NotNull @Valid @Size(max = 40) List<ModelLayer> getModelData();
+    @NotNull @Size(max = 40) List<@Valid @NotNull ModelLayer> getModelData();
 
     /**
      * Смещение относительно пикета слева, или начала разреза в случае первого пикета
@@ -65,4 +72,44 @@ public interface Picket extends Serializable {
      * Глубина
      */
     double getZ();
+
+    default Picket withName(String name) {
+        if (name.equals(getName())) {
+            return this;
+        } else {
+            return create(getId(), name, getExperimentalData(), getModelData(), getOffsetX(), getZ());
+        }
+    }
+
+    default Picket withExperimentalData(List<ExperimentalData> experimentalData) {
+        if (experimentalData.equals(getExperimentalData())) {
+            return this;
+        } else {
+            return create(getId(), getName(), experimentalData, getModelData(), getOffsetX(), getZ());
+        }
+    }
+
+    default Picket withModelData(List<ModelLayer> modelData) {
+        if (modelData.equals(getModelData())) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), modelData, getOffsetX(), getZ());
+        }
+    }
+
+    default Picket withOffsetX(double offsetX) {
+        if (offsetX == getOffsetX()) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), getModelData(), offsetX, getZ());
+        }
+    }
+
+    default Picket withZ(double z) {
+        if (z == getZ()) {
+            return this;
+        } else {
+            return create(getId(), getName(), getExperimentalData(), getModelData(), getOffsetX(), z);
+        }
+    }
 }

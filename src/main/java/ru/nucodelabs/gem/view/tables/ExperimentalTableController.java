@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.tables;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
@@ -77,8 +76,6 @@ public class ExperimentalTableController extends AbstractController {
     @Inject
     private Validator validator;
     @Inject
-    private IntegerProperty picketIndex;
-    @Inject
     private SectionManager sectionManager;
     @Inject
     private HistoryManager<Section> historyManager;
@@ -107,13 +104,6 @@ public class ExperimentalTableController extends AbstractController {
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        var dataTextFields = List.of(
-                ab2TextField,
-                mn2TextField,
-                resAppTextField,
-                errResAppTextField,
-                amperageTextField,
-                voltageTextField);
 
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         table.getSelectionModel().getSelectedItems()
@@ -157,8 +147,6 @@ public class ExperimentalTableController extends AbstractController {
                 .and(FXUtils.isNotBlank(amperageTextField.textProperty()));
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
-        dataTextFields.forEach(textField -> FXUtils.addSubmitOnEnter(addBtn, textField));
-        FXUtils.addSubmitOnEnter(addBtn, indexTextField);
 
         table.itemsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
@@ -227,16 +215,24 @@ public class ExperimentalTableController extends AbstractController {
 
 
     private void updateIfValidElseAlert(List<ExperimentalData> newExpData) {
-        Picket test = Picket.create(picket.get().getName(), newExpData, picket.get().getModelData());
+        Picket modified = picket.get().withExperimentalData(newExpData);
 
-        Set<ConstraintViolation<Picket>> violations = validator.validate(test);
+        Set<ConstraintViolation<Picket>> violations = validator.validate(modified);
 
         if (!violations.isEmpty()) {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
             historyManager.performThenSnapshot(
-                    () -> sectionManager.updateExperimentalData(picketIndex.get(), newExpData));
+                    () -> sectionManager.update(modified));
+            FXUtils.unfocus(
+                    indexTextField,
+                    ab2TextField,
+                    mn2TextField,
+                    resAppTextField,
+                    errResAppTextField,
+                    amperageTextField,
+                    voltageTextField);
         }
     }
 
@@ -249,59 +245,17 @@ public class ExperimentalTableController extends AbstractController {
         ExperimentalData newValue;
         var column = event.getTableColumn();
         if (column == ab2Col) {
-            newValue = ExperimentalData.create(
-                    newInputValue,
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withAb2(newInputValue);
         } else if (column == mn2Col) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    newInputValue,
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withMn2(newInputValue);
         } else if (column == resistanceApparentCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    newInputValue,
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withResistanceApparent(newInputValue);
         } else if (column == errorResistanceCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    newInputValue,
-                    oldValue.getAmperage(),
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withErrorResistanceApparent(newInputValue);
         } else if (column == amperageCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    newInputValue,
-                    oldValue.getVoltage()
-            );
+            newValue = oldValue.withAmperage(newInputValue);
         } else if (column == voltageCol) {
-            newValue = ExperimentalData.create(
-                    oldValue.getAb2(),
-                    oldValue.getMn2(),
-                    oldValue.getResistanceApparent(),
-                    oldValue.getErrorResistanceApparent(),
-                    oldValue.getAmperage(),
-                    newInputValue
-            );
+            newValue = oldValue.withVoltage(newInputValue);
         } else {
             throw new RuntimeException("Something went wrong!");
         }
