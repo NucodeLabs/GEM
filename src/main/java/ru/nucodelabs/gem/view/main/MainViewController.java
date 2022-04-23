@@ -205,7 +205,7 @@ public class MainViewController extends AbstractController {
         sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.compareWithSavedState(item)) {
+                if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
                     dirtyAsterisk.set("*");
                 } else {
                     dirtyAsterisk.set("");
@@ -241,7 +241,7 @@ public class MainViewController extends AbstractController {
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot().get())) {
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -328,10 +328,10 @@ public class MainViewController extends AbstractController {
     @FXML
     private void saveSection() {
         File file;
-        if (storageManager.getSavedStateFile() == null) {
+        if (storageManager.getSavedStateFile().isEmpty()) {
             file = jsonFileChooser.showSaveDialog(getStage());
         } else {
-            file = storageManager.getSavedStateFile();
+            file = storageManager.getSavedStateFile().get();
         }
         saveSection(file);
     }
