@@ -1,96 +1,118 @@
 package ru.nucodelabs.gem.app.model;
 
-import com.google.inject.name.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
-public class SectionManager extends SubmissionPublisher<Section> implements Snapshot.Originator<ru.nucodelabs.data.ves.Section> {
+public class SectionManager implements Snapshot.Originator<Section> {
 
-    private Section section;
+    private final SubmissionPublisher<Section> sectionPublisher
+            = new SubmissionPublisher<>(Runnable::run, Flow.defaultBufferSize());
+
+    private final MutableSection mutableSection = new MutableSection();
 
     @Inject
-    public SectionManager(@Named("Initial") Section section) {
-//        super(Runnable::run, Flow.defaultBufferSize()); // single threaded
-        this.section = section;
-        submit(section);
+    public SectionManager() {
+        sectionPublisher.submit(mutableSection.toImmutable());
     }
 
     @Override
-    public synchronized Snapshot<Section> getSnapshot() {
-        return Snapshot.create(Section.create(new ArrayList<>(section.getPickets())));
+    public Snapshot<Section> getSnapshot() {
+        return Snapshot.create(mutableSection.toImmutable());
     }
 
     @Override
-    public synchronized void restoreFromSnapshot(Snapshot<Section> snapshot) {
-        this.section = Section.create(new ArrayList<>(snapshot.get().getPickets()));
-        submit(section);
+    public void restoreFromSnapshot(Snapshot<Section> snapshot) {
+        mutableSection.getPickets().clear();
+        mutableSection.getPickets().addAll(snapshot.get().getPickets());
+        sectionPublisher.submit(mutableSection.toImmutable());
     }
 
-    public synchronized void updateModelData(int index, List<ModelLayer> modelData) {
-        Picket old = section.getPickets().get(index);
-        Picket picket = Picket.create(old.getName(), old.getExperimentalData(), modelData);
-        section.getPickets().set(index, picket);
-        submit(section);
+    public boolean update(Picket picket) {
+        var picketToUpdate = getById(picket.getId());
+        if (picketToUpdate.isPresent()) {
+            int index = mutableSection.getPickets().indexOf(picketToUpdate.get());
+            mutableSection.getPickets().set(index, picket);
+            sectionPublisher.submit(mutableSection.toImmutable());
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public synchronized void updateExperimentalData(int index, List<ExperimentalData> experimentalData) {
-        Picket old = section.getPickets().get(index);
-        Picket picket = Picket.create(old.getName(), experimentalData, old.getModelData());
-        section.getPickets().set(index, picket);
-        submit(section);
+    public void add(Picket picket) {
+        mutableSection.getPickets().add(picket);
+        sectionPublisher.submit(mutableSection.toImmutable());
     }
 
-    public synchronized void updateName(int index, String name) {
-        Picket old = section.getPickets().get(index);
-        Picket picket = Picket.create(name, old.getExperimentalData(), old.getModelData());
-        section.getPickets().set(index, picket);
-        submit(section);
+    public void swap(int index1, int index2) {
+        Collections.swap(mutableSection.getPickets(), index1, index2);
+        sectionPublisher.submit(mutableSection.toImmutable());
     }
 
-    public synchronized void updatePicket(int index, Picket picket) {
-        section.getPickets().set(index, picket);
-        submit(section);
+    public void remove(int index) {
+        mutableSection.getPickets().remove(index);
+        sectionPublisher.submit(mutableSection.toImmutable());
     }
 
-    public synchronized void add(Picket picket) {
-        section.getPickets().add(picket);
-        submit(section);
+    public Optional<Picket> getById(UUID uuid) {
+        return mutableSection.getPickets().stream().filter(picket -> picket.getId().equals(uuid)).findFirst();
     }
 
-    public synchronized void swap(int index1, int index2) {
-        Collections.swap(section.getPickets(), index1, index2);
-        submit(section);
+    public Picket getByIndex(int index) {
+        return mutableSection.getPickets().get(index);
     }
 
-    public synchronized void remove(int index) {
-        section.getPickets().remove(index);
-        submit(section);
+    public Optional<Integer> indexById(UUID uuid) {
+        var picket = getById(uuid);
+        return picket.map(value -> mutableSection.getPickets().indexOf(value));
     }
 
-    public synchronized Picket get(int index) {
-        return section.getPickets().get(index);
+    public int size() {
+        return mutableSection.getPickets().size();
     }
 
-    public synchronized int size() {
-        return section.getPickets().size();
+    public void inverseSolve(Picket picket) {
+        var id = picket.getId();
+        var picketToSolve = getById(id);
+        if (picketToSolve.isPresent()) {
+            InverseSolver inverseSolver = new InverseSolver(picketToSolve.get());
+            update(picketToSolve.get().withModelData(inverseSolver.getOptimizedModelData()));
+        }
     }
 
-    public synchronized void inverseSolve(int index) {
-        InverseSolver inverseSolver = new InverseSolver(get(index));
-        updateModelData(index, inverseSolver.getOptimizedModelData());
+    public Flow.Publisher<Section> getSectionPublisher() {
+        return sectionPublisher;
     }
 
-    public synchronized void forceSubmitUpdate() {
-        submit(section);
+    private static class MutableSection implements Section {
+
+        private final List<Picket> pickets = new ArrayList<>();
+
+        @Override
+        public List<@Valid @NotNull Picket> getPickets() {
+            return pickets;
+        }
+
+        public Section toImmutable() {
+            return Section.create(getPickets());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Section section) {
+                return section.getPickets().equals(this.getPickets());
+            } else {
+                return false;
+            }
+        }
     }
 }

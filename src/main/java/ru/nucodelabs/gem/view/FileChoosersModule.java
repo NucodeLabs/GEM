@@ -37,7 +37,7 @@ public class FileChoosersModule extends AbstractModule {
     private FileChooser provideJSONFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json, *.JSON"),
+                new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json", "*.JSON"),
                 allFilesFilter
         );
         File initDir = new File(preferences.get("JSON_FC_INIT_DIR", defaultInitDir));

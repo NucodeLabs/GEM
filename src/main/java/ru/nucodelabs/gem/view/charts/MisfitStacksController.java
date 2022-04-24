@@ -12,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
 import ru.nucodelabs.algorithms.charts.Point;
-import ru.nucodelabs.algorithms.charts.VesChartsConverter;
+import ru.nucodelabs.algorithms.charts.VesCurvesConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -42,7 +42,7 @@ public class MisfitStacksController extends AbstractController {
     private NumberAxis lineChartYAxis;
 
     @Inject
-    private VesChartsConverter vesChartsConverter;
+    private VesCurvesConverter vesCurvesConverter;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -68,7 +68,7 @@ public class MisfitStacksController extends AbstractController {
 
         try {
             List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().getExperimentalData(), picket.get().getModelData());
-            List<Point> expPoints = vesChartsConverter.experimentalCurveOf(picket.get().getExperimentalData())
+            List<Point> expPoints = vesCurvesConverter.experimentalCurveOf(picket.get().getExperimentalData())
                     .stream()
                     .map(point -> new Point(log10(point.x()), log10(point.y())))
                     .toList();

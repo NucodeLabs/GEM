@@ -26,5 +26,21 @@ public interface ModelLayer extends Serializable {
     /**
      * Сопротивление, Ом * м
      */
-    @Min(0) double getResistance();
+    @Min(1) double getResistance();
+
+    default ModelLayer withPower(double power) {
+        if (power == getPower()) {
+            return this;
+        } else {
+            return create(power, getResistance());
+        }
+    }
+
+    default ModelLayer withResistance(double resistance) {
+        if (resistance == getResistance()) {
+            return this;
+        } else {
+            return create(getPower(), resistance);
+        }
+    }
 }

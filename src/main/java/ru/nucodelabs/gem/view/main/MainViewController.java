@@ -15,12 +15,16 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
+import ru.nucodelabs.gem.app.snapshot.Snapshot;
+import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OSDetect;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
@@ -30,6 +34,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +44,20 @@ import java.util.prefs.Preferences;
 
 public class MainViewController extends AbstractController {
 
-    private final StringProperty vesTitle = new SimpleStringProperty("");
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
 
     private final StringProperty windowTitle = new SimpleStringProperty("GEM");
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
-    private Section currentSection;
-
+    @FXML
+    private TextField picketName;
+    @FXML
+    private Label xCoordLbl;
+    @FXML
+    private TextField picketZ;
+    @FXML
+    private TextField picketOffsetX;
     @FXML
     private CheckMenuItem menuViewVESCurvesLegend;
     @FXML
@@ -72,7 +83,7 @@ public class MainViewController extends AbstractController {
     @Named("MainView")
     private Provider<Stage> mainViewProvider;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
     @Inject
     private AlertsFactory alertsFactory;
     @Inject
@@ -93,6 +104,10 @@ public class MainViewController extends AbstractController {
     private Validator validator;
     @Inject
     private Preferences preferences;
+    @Inject
+    private DecimalFormat decimalFormat;
+    @Inject
+    private StringConverter<Double> doubleStringConverter;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -123,6 +138,25 @@ public class MainViewController extends AbstractController {
 
         bind();
         initConfig(preferences);
+
+        setupValidationOnPicketXZ(picketOffsetX);
+        setupValidationOnPicketXZ(picketZ);
+    }
+
+    private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
+        return FXUtils.TextFieldValidationSetup.of(picketX)
+                .validateWith(this::validateDoubleInput)
+                .applyStyleIfInvalid("-fx-background-color: LightPink")
+                .done();
+    }
+
+    private boolean validateDoubleInput(String s) {
+        try {
+            decimalFormat.parse(s);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 
     private void initConfig(Preferences preferences) {
@@ -155,30 +189,39 @@ public class MainViewController extends AbstractController {
                 picketIndex, picketObservableList
         ));
 
-        vesTitle.bind(Bindings.createStringBinding(
-                () -> picket.get() != null ? picket.get().getName() : "-",
-                picket
-        ));
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                picketName.setText(newValue.getName());
+            } else {
+                picketName.setText("-");
+            }
+        });
 
         noFileOpened.bind(Bindings.createBooleanBinding(
                 () -> picketObservableList.isEmpty(),
                 picketObservableList
         ));
 
-        sectionManager.subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                Platform.runLater(() -> {
-                    if (!storageManager.compareWithSavedState(item)) {
-                        dirtyAsterisk.set("*");
-                    } else {
-                        dirtyAsterisk.set("");
-                    }
-                });
+                if (!storageManager.compareWithSavedState(item)) {
+                    dirtyAsterisk.set("*");
+                } else {
+                    dirtyAsterisk.set("");
+                }
             }
         });
 
         getStage().titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle));
+
+        picket.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                picketOffsetX.setText(decimalFormat.format(newValue.getOffsetX()));
+                picketZ.setText(decimalFormat.format(newValue.getZ()));
+                xCoordLbl.setText(decimalFormat.format(VesUtils.xOfPicket(sectionManager.getSnapshot().get(), picketIndex.get())));
+            }
+        });
     }
 
     @Override
@@ -192,7 +235,7 @@ public class MainViewController extends AbstractController {
             return;
         }
         storageManager.clearSavedState();
-        sectionManager.restoreFromSnapshot(() -> Section.create(Collections.emptyList()));
+        sectionManager.restoreFromSnapshot(Snapshot.create(Section.create(Collections.emptyList())));
         historyManager.clear();
         resetWindowTitle();
     }
@@ -229,8 +272,7 @@ public class MainViewController extends AbstractController {
 
     public void addEXP(File file) {
         try {
-            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file,
-                    Picket.create("", Collections.emptyList(), Collections.emptyList()));
+            Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createDefaultWithNewId());
             var violations = validator.validate(picketFromEXPFile);
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
@@ -267,10 +309,11 @@ public class MainViewController extends AbstractController {
 
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
+                storageManager.clearSavedState();
                 return;
             }
 
-            sectionManager.restoreFromSnapshot(() -> loadedSection);
+            sectionManager.restoreFromSnapshot(Snapshot.create(loadedSection));
             picketIndex.set(0);
             historyManager.clear();
             historyManager.snapshot();
@@ -324,7 +367,7 @@ public class MainViewController extends AbstractController {
 
     public void importMOD(File file) {
         try {
-            Picket newPicket = storageManager.loadModelDataFromMODFile(file, sectionManager.get(picketIndex.get()));
+            Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
             var violations = validator.validate(newPicket);
 
@@ -333,7 +376,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            historyManager.performThenSnapshot(() -> sectionManager.updatePicket(picketIndex.get(), newPicket));
+            historyManager.performThenSnapshot(() -> sectionManager.update(newPicket));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -374,7 +417,7 @@ public class MainViewController extends AbstractController {
             }
 
             try {
-                storageManager.saveToJson(file, sectionManager.get(picketIndex.get()));
+                storageManager.saveToJson(file, sectionManager.getById(picket.get().getId()).orElse(Picket.createDefaultWithNewId()));
             } catch (Exception e) {
                 alertsFactory.simpleExceptionAlert(e, getStage()).show();
             }
@@ -400,7 +443,7 @@ public class MainViewController extends AbstractController {
     @FXML
     private void inverseSolve() {
         try {
-            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picketIndex.get()));
+            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picket.get()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
@@ -423,6 +466,65 @@ public class MainViewController extends AbstractController {
         }
     }
 
+    @FXML
+    private void submitOffsetX() {
+        double offsetX;
+
+        try {
+            offsetX = decimalFormat.parse(picketOffsetX.getText()).doubleValue();
+        } catch (ParseException e) {
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketOffsetX.selectAll();
+            return;
+        }
+
+        Picket modified = picket.get().withOffsetX(offsetX);
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
+            picketOffsetX.selectAll();
+        } else {
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(modified));
+            FXUtils.unfocus(picketOffsetX);
+        }
+    }
+
+    @FXML
+    private void submitPicketName() {
+        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
+        FXUtils.unfocus(picketName);
+    }
+
+    @FXML
+    private void submitZ() {
+        double z;
+
+        try {
+            z = decimalFormat.parse(picketZ.getText()).doubleValue();
+        } catch (ParseException e) {
+            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            picketZ.selectAll();
+            return;
+        }
+
+        Picket modified = picket.get().withZ(z);
+        var violations = validator.validate(modified);
+        if (!violations.isEmpty()) {
+            alertsFactory.violationsAlert(violations, getStage()).show();
+            picketZ.selectAll();
+        } else {
+            historyManager.performThenSnapshot(() ->
+                    sectionManager.update(modified));
+            FXUtils.unfocus(picketZ);
+        }
+    }
+
+    @FXML
+    public void addPicket() {
+        historyManager.performThenSnapshot(() -> sectionManager.add(Picket.createDefaultWithNewId()));
+        picketIndex.set(sectionManager.size() - 1);
+    }
 
     @FXML
     private void undo() {
@@ -440,14 +542,6 @@ public class MainViewController extends AbstractController {
 
     private void resetWindowTitle() {
         windowTitle.set("GEM");
-    }
-
-    public String getVesTitle() {
-        return vesTitle.get();
-    }
-
-    public StringProperty vesTitleProperty() {
-        return vesTitle;
     }
 
     public boolean getNoFileOpened() {

@@ -21,9 +21,9 @@ final class MisfitValuesFactoryNative implements MisfitValuesFactory {
             return new ArrayList<>();
         }
 
-        ForwardSolver forwardSolver = ForwardSolver.createDefaultForwardSolver(experimentalData, modelData);
+        ForwardSolver forwardSolver = ForwardSolver.getDefaultImpl();
 
-        List<Double> solvedResistance = forwardSolver.solve();
+        List<Double> solvedResistance = forwardSolver.solve(experimentalData, modelData);
 
         List<Double> res = new ArrayList<>();
 

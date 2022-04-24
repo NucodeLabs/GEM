@@ -22,6 +22,7 @@
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
+                        <MenuItem text="%addPicket" onAction="#addPicket"/>
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
@@ -56,7 +57,20 @@
                 </MenuBar>
                 <StackPane maxWidth="Infinity" maxHeight="Infinity">
                     <VBox maxWidth="Infinity" maxHeight="Infinity">
-                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml"/>
+                        <HBox>
+                            <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
+                            <HBox>
+                                <Button fx:id="addPicketBtn" prefWidth="50" minWidth="50" maxWidth="50"
+                                        onAction="#addPicket" stylesheets="@PicketsBar.css"
+                                        HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
+                                    <graphic>
+                                        <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
+                                            <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </HBox>
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
                             <HBox maxWidth="Infinity" maxHeight="Infinity">
                                 <Placeholder prefWidth="150" maxWidth="150" text="Палитра"/>
@@ -73,7 +87,7 @@
 
                                 <HBox alignment="CENTER_LEFT" maxWidth="Infinity"
                                       style="-fx-background-color: WhiteSmoke; -fx-padding: 5" spacing="5">
-                                    <Button styleClass="lr_btns"
+                                    <Button styleClass="small-btns"
                                             onAction="#switchToPrevPicket"
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
@@ -82,7 +96,7 @@
                                             </ImageView>
                                         </graphic>
                                     </Button>
-                                    <Button styleClass="lr_btns"
+                                    <Button styleClass="small-btns"
                                             onAction="#switchToNextPicket"
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
@@ -92,8 +106,21 @@
                                         </graphic>
                                     </Button>
                                     <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
-                                    <Label text="${controller.vesTitle}"/>
+                                    <TextField fx:id="picketName" text="-" onAction="#submitPicketName"/>
+                                    <fx:include source="SmallDivider.fxml"/>
+                                    <Label text="X"/>
+                                    <Label text="="/>
+                                    <Label fx:id="xCoordLbl" text="-"/>
                                     <HBox HBox.hgrow="ALWAYS"/>
+                                    <Label text="Z"/>
+                                    <Label text="="/>
+                                    <TextField promptText="Z" fx:id="picketZ" prefWidth="50" onAction="#submitZ"/>
+                                    <fx:include source="SmallDivider.fxml"/>
+                                    <Label text="%offset"/>
+                                    <Label text="="/>
+                                    <TextField promptText="%offset" fx:id="picketOffsetX" prefWidth="50"
+                                               onAction="#submitOffsetX"/>
+                                    <fx:include source="SmallDivider.fxml"/>
                                     <Button text="%inverse" onAction="#inverseSolve">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">
