@@ -10,6 +10,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.view.AbstractController;
@@ -31,7 +32,7 @@ public class PicketsBarController extends AbstractController {
     @Inject
     private SectionManager sectionManager;
     @Inject
-    private HistoryManager historyManager;
+    private HistoryManager<Section> historyManager;
 
     @Inject
     public PicketsBarController(

@@ -52,7 +52,7 @@ public class AlertsFactory {
         return alert;
     }
 
-    public <T> Alert violationsAlert(Set<ConstraintViolation<T>> violations, Stage owner) {
+    public Alert violationsAlert(Set<? extends ConstraintViolation<?>> violations, Stage owner) {
         String message = violations.stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("\n"));

@@ -1,39 +1,29 @@
 package ru.nucodelabs.gem.view.tables;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
+import ru.nucodelabs.gem.utils.FXUtils;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 final class Tables {
-
-    private final static DecimalFormat DECIMAL_FORMAT;
-    private final static StringConverter<Double> CONVERTER = new StringConverter<>() {
-        @Override
-        public String toString(Double object) {
-            return decimalFormat().format(object);
-        }
-
-        @Override
-        public Double fromString(String string) {
-            try {
-                return Double.parseDouble(string);
-            } catch (NumberFormatException e) {
-                return Double.NaN;
-            }
-        }
-    };
 
     private static final Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> INDEX_CELL_FACTORY = col -> {
         TableCell<Object, Integer> cell = new TableCell<>();
 
-        cell.textProperty().bind(Bindings.when(cell.emptyProperty())
-                .then("")
-                .otherwise(cell.indexProperty().asString()));
+        cell.textProperty().bind(
+                Bindings.when(cell.emptyProperty())
+                        .then("")
+                        .otherwise(cell.indexProperty().asString()));
 
         return cell;
     };
@@ -41,24 +31,6 @@ final class Tables {
     public static Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> indexCellFactory() {
         return INDEX_CELL_FACTORY;
     }
-
-    static {
-        DECIMAL_FORMAT = new DecimalFormat("#.##");
-        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Returns {@code Double::parseDouble} or {@code NaN} if catch {@code NumberFormatException}
-     * Rounds to 2 decimal places
-     */
-    static StringConverter<Double> doubleStringConverter() {
-        return CONVERTER;
-    }
-
-    static DecimalFormat decimalFormat() {
-        return DECIMAL_FORMAT;
-    }
-
 
     private Tables() {
     }
@@ -82,20 +54,36 @@ final class Tables {
     }
 
     /**
-     * Validating string containing non-negative double value
+     * Validating string containing double value
      *
      * @param s string
-     * @return true if string represents valid non-negative double value
+     * @return true if string represents valid double value
      */
-    static boolean validateDataInput(String s) {
+    static boolean validateDoubleInput(String s, DecimalFormat decimalFormat) {
         if (s.isBlank()) {
             return true;
         }
         try {
-            double val = Double.parseDouble(s);
-            return !(val < 0);
-        } catch (NumberFormatException e) {
+            decimalFormat.parse(s).doubleValue();
+            return true;
+        } catch (ParseException e) {
             return false;
         }
+    }
+
+    static <T> List<T> deleteIndices(List<Integer> indicesToRemove, List<T> removeFrom) {
+        indicesToRemove = indicesToRemove.stream().sorted(Comparator.reverseOrder()).toList();
+        List<T> list = new ArrayList<>(removeFrom);
+        indicesToRemove.forEach(i -> list.remove(i.intValue()));
+        return list;
+    }
+
+    static BooleanProperty setupInputValidation(
+            TextField textField,
+            Predicate<String> validateInput) {
+        return FXUtils.TextFieldValidationSetup.of(textField)
+                .validateWith(validateInput)
+                .applyStyleIfInvalid("-fx-background-color: LightPink")
+                .done();
     }
 }

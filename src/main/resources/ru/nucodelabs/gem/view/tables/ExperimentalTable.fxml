@@ -43,14 +43,15 @@
         </columns>
     </TableView>
     <HBox spacing="5" style="-fx-padding: 5">
-        <TextField fx:id="indexTextField" promptText="N"
-                   prefWidth="45" minWidth="45"/>
-        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%experimentalAB_2"/>
-        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%experimentalMN_2"/>
-        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%experimentalResistanceApparent"/>
-        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%experimentalErrorResistanceApparent"/>
-        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%experimentalAmperage"/>
-        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%experimentalVoltage"/>
+        <TextField fx:id="indexTextField" promptText="N" prefWidth="45" minWidth="45" onAction="#add"/>
+        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%experimentalAB_2" onAction="#add"/>
+        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%experimentalMN_2" onAction="#add"/>
+        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%experimentalResistanceApparent"
+                   onAction="#add"/>
+        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%experimentalErrorResistanceApparent"
+                   onAction="#add"/>
+        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%experimentalAmperage" onAction="#add"/>
+        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%experimentalVoltage" onAction="#add"/>
         <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
             <graphic>
                 <ImageView fitWidth="15" fitHeight="15">

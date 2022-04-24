@@ -27,7 +27,7 @@
                 <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importModel"/>
-                        <Label text="(*.MOD)"  style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
+                        <Label text="(*.MOD)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
                     </VBox>
                 </HBox>
                 <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
@@ -43,21 +43,23 @@
                          text="%modelPower" sortable="false" onEditCommit="#onEditCommit"/>
             <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
                          text="%modelResistanceApparent" sortable="false" onEditCommit="#onEditCommit"/>
+            <TableColumn fx:id="zCol" text="Z (m)" maxWidth="Infinity" minWidth="20.0"
+                         sortable="false" editable="false" prefWidth="100"/>
         </columns>
     </TableView>
     <HBox spacing="5" style="-fx-padding: 5">
         <TextField fx:id="indexTextField" promptText="N"
-                   prefWidth="45" minWidth="45"/>
+                   prefWidth="45" minWidth="45" onAction="#addLayer"/>
         <TextField fx:id="powerTextField" promptText="%modelPower"
-                   maxWidth="Infinity"/>
+                   maxWidth="Infinity" onAction="#addLayer"/>
         <TextField fx:id="resistanceTextField" promptText="%modelResistanceApparent"
-                   maxWidth="Infinity"/>
+                   maxWidth="Infinity" onAction="#addLayer"/>
         <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
             <graphic>
-                    <ImageView fitWidth="15" fitHeight="15">
-                        <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
-                    </ImageView>
-                </graphic>
-            </Button>
+                <ImageView fitWidth="15" fitHeight="15">
+                    <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
     </HBox>
 </VBox>

@@ -22,4 +22,12 @@ public interface VPModelLayer extends ModelLayer {
      * Поляризация, %
      */
     @Min(0) double getPolarization();
+
+    default VPModelLayer withPolarization(double polarization) {
+        if (polarization == getPolarization()) {
+            return this;
+        } else {
+            return create(getPower(), getPower(), polarization);
+        }
+    }
 }
