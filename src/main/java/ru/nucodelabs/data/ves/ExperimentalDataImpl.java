@@ -18,8 +18,8 @@ record ExperimentalDataImpl(
 
     @JsonCreator
     static ExperimentalDataImpl create(
-            @JsonProperty("ab2") double ab2,
-            @JsonProperty("mn2") double mn2,
+            @JsonProperty("ab2") Double ab2,
+            @JsonProperty("mn2") Double mn2,
             @JsonProperty("resistanceApparent") Double resistanceApparent,
             @JsonProperty("errorResistanceApparent") Double errorResistanceApparent,
             @JsonProperty("amperage") Double amperage,
@@ -28,12 +28,13 @@ record ExperimentalDataImpl(
         return new ExperimentalDataImpl(
                 ab2,
                 mn2,
-                Objects.requireNonNullElseGet(resistanceApparent, () -> VesUtils.resistanceApparent(ab2, mn2, amperage, voltage)),
-                Objects.requireNonNullElse(errorResistanceApparent, 5d),
-                Objects.requireNonNullElse(amperage, 0d),
-                Objects.requireNonNullElse(voltage, 0d)
+                Objects.requireNonNullElse(resistanceApparent, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage)),
+                Objects.requireNonNullElse(errorResistanceApparent, DEFAULT_ERROR),
+                Objects.requireNonNull(amperage),
+                Objects.requireNonNull(voltage)
         );
     }
+
 
     @JsonAlias({"ab2", "AB2", "AB/2"})
     @Override
@@ -75,5 +76,4 @@ record ExperimentalDataImpl(
     public ExperimentalData recalculateResistanceApparent() {
         return new ExperimentalDataImpl(ab2, mn2, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage), errorResistanceApparent, amperage, voltage);
     }
-
 }
