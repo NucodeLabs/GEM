@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.VesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class CrossSectionConverters {
 
         int count = 0;
         for (Picket picket : pickets) {
-            var height = VesUtils.zOfPower(picket.getModelData(), picket.getZ());
+            var height = picket.zOfLayers();
             for (Double hValue : height) {
 
                 XYChart.Data<Number, Number> leftLineDot = new XYChart.Data<>(

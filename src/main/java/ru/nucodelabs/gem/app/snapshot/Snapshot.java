@@ -2,11 +2,11 @@ package ru.nucodelabs.gem.app.snapshot;
 
 public interface Snapshot<T> {
 
-    static <T> Snapshot<T> create(T data) {
-        return new SnapshotImpl<>(data);
+    static <T> Snapshot<T> of(T value) {
+        return new SnapshotImpl<>(value);
     }
 
-    T get();
+    T value();
 
     interface Originator<T> {
         Snapshot<T> getSnapshot();

@@ -4,7 +4,7 @@ record SnapshotImpl<T>(
         T data
 ) implements Snapshot<T> {
     @Override
-    public T get() {
+    public T value() {
         return data();
     }
 }

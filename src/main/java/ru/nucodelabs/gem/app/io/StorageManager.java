@@ -17,7 +17,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
 
     private final JsonFileManager jsonFileManagerDelegate;
     private final SonetImportManager sonetImportManagerDelegate;
-    private Snapshot<Section> savedState = Snapshot.create(Section.DEFAULT);
+    private Snapshot<Section> savedState = Snapshot.of(Section.DEFAULT);
     private File savedStateFile = null;
 
     @Inject
@@ -50,7 +50,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     }
 
     public void clearSavedState() {
-        savedState = Snapshot.create(Section.DEFAULT);
+        savedState = Snapshot.of(Section.DEFAULT);
         savedStateFile = null;
     }
 
@@ -62,7 +62,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     public <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
         T loaded = jsonFileManagerDelegate.loadFromJson(jsonFile, type);
         if (loaded instanceof Section section) {
-            savedState = Snapshot.create(section);
+            savedState = Snapshot.of(section);
             savedStateFile = jsonFile;
         }
         return loaded;
@@ -72,7 +72,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     public <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception {
         jsonFileManagerDelegate.saveToJson(jsonFile, object);
         if (object instanceof Section section) {
-            savedState = Snapshot.create(section);
+            savedState = Snapshot.of(section);
             savedStateFile = jsonFile;
         }
     }
