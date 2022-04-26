@@ -102,4 +102,6 @@ public interface ExperimentalData extends Serializable {
             return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), voltage);
         }
     }
+
+    ExperimentalData recalculateResistanceApparent();
 }

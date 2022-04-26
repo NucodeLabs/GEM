@@ -43,6 +43,11 @@ record VPExperimentalDataImpl(
     }
 
     @Override
+    public VPExperimentalData recalculateResistanceApparent() {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public double getPolarizationApparent() {
         return polarizationApparent();
     }
