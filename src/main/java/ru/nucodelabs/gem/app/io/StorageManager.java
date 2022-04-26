@@ -2,12 +2,13 @@ package ru.nucodelabs.gem.app.io;
 
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.snapshot.Snapshot;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Загружает файлы и хранит копию сохраненного на диске состояния разреза
@@ -16,14 +17,13 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
 
     private final JsonFileManager jsonFileManagerDelegate;
     private final SonetImportManager sonetImportManagerDelegate;
-    private Section savedState;
-    private File savedStateFile;
+    private Snapshot<Section> savedState = Snapshot.of(Section.DEFAULT);
+    private File savedStateFile = null;
 
     @Inject
     public StorageManager(JsonFileManager jsonFileManagerDelegate, SonetImportManager sonetImportManagerDelegate) {
         this.jsonFileManagerDelegate = jsonFileManagerDelegate;
         this.sonetImportManagerDelegate = sonetImportManagerDelegate;
-        savedState = Section.DEFAULT;
     }
 
     @Override
@@ -41,29 +41,28 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
         return sonetImportManagerDelegate.loadModelDataFromMODFile(modFile, target);
     }
 
-    public Section getSavedState() {
+    public Snapshot<Section> getSavedState() {
         return savedState;
     }
 
-    public boolean compareWithSavedState(Section toCompare) {
+    public boolean compareWithSavedState(Snapshot<Section> toCompare) {
         return Objects.equals(toCompare, getSavedState());
     }
 
     public void clearSavedState() {
-        savedState = Section.DEFAULT;
+        savedState = Snapshot.of(Section.DEFAULT);
         savedStateFile = null;
     }
 
-    @Nullable
-    public File getSavedStateFile() {
-        return savedStateFile;
+    public Optional<File> getSavedStateFile() {
+        return Optional.ofNullable(savedStateFile);
     }
 
     @Override
     public <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
         T loaded = jsonFileManagerDelegate.loadFromJson(jsonFile, type);
         if (loaded instanceof Section section) {
-            savedState = section;
+            savedState = Snapshot.of(section);
             savedStateFile = jsonFile;
         }
         return loaded;
@@ -73,7 +72,7 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
     public <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception {
         jsonFileManagerDelegate.saveToJson(jsonFile, object);
         if (object instanceof Section section) {
-            savedState = section;
+            savedState = Snapshot.of(section);
             savedStateFile = jsonFile;
         }
     }

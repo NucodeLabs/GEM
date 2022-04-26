@@ -18,7 +18,6 @@ import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.utils.FXUtils;
@@ -120,9 +119,7 @@ public class ModelTableController extends AbstractController {
                                     && picket.get() != null
                                     && cell.getIndex() < picket.get().getModelData().size() ?
                                     decimalFormat.format(
-                                            VesUtils.zOfPower(
-                                                    picket.get().getModelData(), picket.get().getZ()
-                                            ).get(cell.getIndex())) : "",
+                                            picket.get().zOfLayers().get(cell.getIndex())) : "",
                             cell.emptyProperty(), cell.indexProperty(), picket
                     )
             );

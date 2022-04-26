@@ -1,8 +1,7 @@
 package ru.nucodelabs.gem.view.main;
 
 import javafx.beans.property.IntegerProperty;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -23,7 +22,7 @@ import java.util.ResourceBundle;
 
 public class PicketsBarController extends AbstractController {
 
-    private final ObservableList<Picket> picketObservableList;
+    private final ObservableObjectValue<Section> section;
     private final IntegerProperty picketIndex;
 
     @FXML
@@ -36,16 +35,14 @@ public class PicketsBarController extends AbstractController {
 
     @Inject
     public PicketsBarController(
-            ObservableList<Picket> picketObservableList,
+            ObservableObjectValue<Section> section,
             IntegerProperty picketIndex) {
 
-        this.picketObservableList = picketObservableList;
+        this.section = section;
         this.picketIndex = picketIndex;
-        picketObservableList.addListener((ListChangeListener<? super Picket>) c -> {
-            if (c.next()) {
-                if (c.getAddedSize() > 0 || c.getRemovedSize() > 0 || c.wasAdded()) {
-                    update();
-                }
+        section.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                update();
             }
         });
         picketIndex.addListener((observable, oldValue, newValue) -> update());
@@ -62,10 +59,10 @@ public class PicketsBarController extends AbstractController {
 
     protected void update() {
         List<Button> buttons = new ArrayList<>();
-
-        for (int i = 0; i < picketObservableList.size(); i++) {
+        List<Picket> pickets = section.get().getPickets();
+        for (int i = 0; i < pickets.size(); i++) {
             final int picketNumber = i;
-            Button button = new Button(picketObservableList.get(picketNumber).getName());
+            Button button = new Button(pickets.get(picketNumber).getName());
 
             if (i == picketIndex.get()) {
                 button.setStyle(
@@ -83,7 +80,7 @@ public class PicketsBarController extends AbstractController {
             MenuItem moveRight = new MenuItem("Переместить вправо");
             moveRight.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber + 1)));
 
-            if (picketObservableList.size() == 1) {
+            if (pickets.size() == 1) {
                 delete.setDisable(true);
                 moveLeft.setDisable(true);
                 moveRight.setDisable(true);
@@ -91,7 +88,7 @@ public class PicketsBarController extends AbstractController {
             if (picketNumber == 0) {
                 moveLeft.setDisable(true);
             }
-            if (picketNumber == picketObservableList.size() - 1) {
+            if (picketNumber == pickets.size() - 1) {
                 moveRight.setDisable(true);
             }
 
