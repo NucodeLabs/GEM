@@ -11,7 +11,9 @@ import java.io.Serializable;
         use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = ExperimentalDataImpl.class
 )
-public interface ExperimentalData extends Serializable {
+public sealed interface ExperimentalData extends Serializable permits ExperimentalDataImpl, VPExperimentalData {
+
+    double DEFAULT_ERROR = 5;
 
     static ExperimentalData create(
             double ab2,
@@ -23,6 +25,15 @@ public interface ExperimentalData extends Serializable {
     ) {
         return new ExperimentalDataImpl(
                 ab2, mn2, resistanceApparent, errorResistanceApparent, amperage, voltage);
+    }
+
+    static ExperimentalData withAutoResistanceApparentAndDefaultError(
+            double ab2,
+            double mn2,
+            double amperage,
+            double voltage
+    ) {
+        return create(ab2, mn2, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage), DEFAULT_ERROR, amperage, voltage);
     }
 
     /**
@@ -102,4 +113,6 @@ public interface ExperimentalData extends Serializable {
             return create(getAb2(), getMn2(), getResistanceApparent(), getErrorResistanceApparent(), getAmperage(), voltage);
         }
     }
+
+    ExperimentalData recalculateResistanceApparent();
 }

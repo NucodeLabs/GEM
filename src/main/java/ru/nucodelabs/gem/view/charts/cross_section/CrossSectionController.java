@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
@@ -11,6 +11,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class CrossSectionController extends AbstractController {
 
-    private final ObservableList<Picket> picketObservableList;
+    private final ObservableObjectValue<Section> section;
     @FXML
     public NumberAxis sectionX;
     @FXML
@@ -32,11 +33,11 @@ public class CrossSectionController extends AbstractController {
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
 
     @Inject
-    public CrossSectionController(ObservableList<Picket> picketObservableList) {
-        this.picketObservableList = picketObservableList;
+    public CrossSectionController(ObservableObjectValue<Section> section) {
+        this.section = section;
 
-        this.picketObservableList.addListener((ListChangeListener<Picket>) c -> {
-            if (c.next()) {
+        this.section.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
                 update();
             }
         });
@@ -50,7 +51,7 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(picketObservableList, 0.0);
+        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(section.get().getPickets(), 0.0);
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
@@ -58,7 +59,7 @@ public class CrossSectionController extends AbstractController {
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
         int count = 0;
-        for (Picket picket : picketObservableList) {
+        for (Picket picket : section.get().getPickets()) {
             for (int i = 0; i < picket.getModelData().size(); i++) {
                 double resistance = picket.getModelData().get(i).getResistance();
                 String layerColor = getRGBColor(resistance);

@@ -1,4 +1,4 @@
-package ru.nucodelabs.data.ves_vp;
+package ru.nucodelabs.data.ves;
 
 import java.io.Serializable;
 
@@ -40,6 +40,11 @@ record VPExperimentalDataImpl(
     @Override
     public double getVoltage() {
         return voltage();
+    }
+
+    @Override
+    public VPExperimentalData recalculateResistanceApparent() {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override

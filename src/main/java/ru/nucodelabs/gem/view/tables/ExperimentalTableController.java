@@ -36,6 +36,8 @@ import static java.lang.Math.min;
 public class ExperimentalTableController extends AbstractController {
 
     private final ObservableObjectValue<Picket> picket;
+    @FXML
+    private Button recalculateBtn;
 
     @FXML
     private TableColumn<Object, Integer> indexCol;
@@ -110,6 +112,7 @@ public class ExperimentalTableController extends AbstractController {
                 .addListener((ListChangeListener<? super ExperimentalData>) c -> {
                     if (c.next()) {
                         deleteBtn.setDisable(c.getList().isEmpty());
+                        recalculateBtn.setDisable(c.getList().isEmpty());
                     }
                 });
 
@@ -269,5 +272,20 @@ public class ExperimentalTableController extends AbstractController {
         } else {
             table.refresh();
         }
+    }
+
+    @FXML
+    private void recalculateSelected() {
+        List<ExperimentalData> experimentalData = new ArrayList<>(picket.get().getExperimentalData());
+
+        List<Integer> ind = table.getSelectionModel().getSelectedIndices();
+
+        for (int i = 0; i < experimentalData.size(); i++) {
+            if (ind.contains(i)) {
+                experimentalData.set(i, experimentalData.get(i).recalculateResistanceApparent());
+            }
+        }
+
+        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withExperimentalData(experimentalData)));
     }
 }

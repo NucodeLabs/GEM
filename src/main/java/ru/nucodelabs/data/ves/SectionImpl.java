@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 
-public record SectionImpl(
+record SectionImpl(
         List<Picket> pickets
 ) implements Serializable, Section {
 
