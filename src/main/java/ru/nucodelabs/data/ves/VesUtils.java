@@ -30,4 +30,20 @@ class VesUtils {
 
         return x;
     }
+
+    static double resistanceApparent(double ab2, double mn2, double amperage, double voltage) {
+        return k(ab2, mn2) * (voltage / amperage);
+    }
+
+    private static double k(double ab2, double mn2) {
+        double am = ab2 - mn2;
+        double bm = ab2 + mn2;
+        double an = bm;
+        double bn = am;
+        return (2 * Math.PI)
+                / (1 / am
+                - 1 / bm
+                - 1 / an
+                + 1 / bn);
+    }
 }
