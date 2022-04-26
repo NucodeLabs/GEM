@@ -1,4 +1,4 @@
-package ru.nucodelabs.data.ves_vp;
+package ru.nucodelabs.data.ves;
 
 import java.io.Serializable;
 

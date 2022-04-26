@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -11,11 +10,18 @@
       stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ExperimentalTableController">
-    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">
+    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS" spacing="5">
         <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">
             <graphic>
                 <ImageView fitHeight="15" fitWidth="15">
                     <Image url="@../../../../../img/ui_icons/backspace/2x/round_backspace_black_24dp.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="recalculateBtn" text="Пересчитать ρₐ" onAction="#recalculateSelected" disable="true">
+            <graphic>
+                <ImageView fitHeight="15" fitWidth="15">
+                    <Image url="@../../../../../img/ui_icons/refresh.png"/>
                 </ImageView>
             </graphic>
         </Button>
