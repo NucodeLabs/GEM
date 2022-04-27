@@ -140,8 +140,8 @@ public class MainViewController extends AbstractController {
         setupValidationOnPicketXZ(picketZ);
     }
 
-    private BooleanProperty setupValidationOnPicketXZ(TextField picketX) {
-        return FXUtils.TextFieldValidationSetup.of(picketX)
+    private BooleanProperty setupValidationOnPicketXZ(TextField tf) {
+        return FXUtils.TextFieldValidationSetup.of(tf)
                 .validateWith(this::validateDoubleInput)
                 .applyStyleIfInvalid("-fx-background-color: LightPink")
                 .done();
