@@ -25,13 +25,17 @@ record ExperimentalDataImpl(
             @JsonProperty("amperage") Double amperage,
             @JsonProperty("voltage") Double voltage
     ) {
+        amperage = Objects.requireNonNullElse(amperage, 0d);
+        voltage = Objects.requireNonNullElse(voltage, 0d);
+        resistanceApparent = Objects.requireNonNullElse(resistanceApparent, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage));
+        errorResistanceApparent = Objects.requireNonNullElse(errorResistanceApparent, DEFAULT_ERROR);
         return new ExperimentalDataImpl(
                 ab2,
                 mn2,
-                Objects.requireNonNullElse(resistanceApparent, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage)),
-                Objects.requireNonNullElse(errorResistanceApparent, DEFAULT_ERROR),
-                Objects.requireNonNull(amperage),
-                Objects.requireNonNull(voltage)
+                resistanceApparent,
+                errorResistanceApparent,
+                amperage,
+                voltage
         );
     }
 
