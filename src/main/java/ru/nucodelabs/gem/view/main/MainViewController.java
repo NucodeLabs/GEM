@@ -324,13 +324,15 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void saveSection() {
-        File file;
-        if (storageManager.getSavedStateFile().isEmpty()) {
-            file = jsonFileChooser.showSaveDialog(getStage());
-        } else {
-            file = storageManager.getSavedStateFile().get();
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+            File file;
+            if (storageManager.getSavedStateFile().isEmpty()) {
+                file = jsonFileChooser.showSaveDialog(getStage());
+            } else {
+                file = storageManager.getSavedStateFile().get();
+            }
+            saveSection(file);
         }
-        saveSection(file);
     }
 
     @FXML
