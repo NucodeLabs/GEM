@@ -14,9 +14,9 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.gem.app.PropertyConfigManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
@@ -104,7 +104,7 @@ public class MainViewController extends AbstractController {
     @Inject
     private DecimalFormat decimalFormat;
     @Inject
-    private StringConverter<Double> doubleStringConverter;
+    private PropertyConfigManager propertyConfigManager;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -134,7 +134,7 @@ public class MainViewController extends AbstractController {
         }
 
         bind();
-        initConfig(preferences);
+        initConfig();
 
         setupValidationOnPicketXZ(picketOffsetX);
         setupValidationOnPicketXZ(picketZ);
@@ -156,25 +156,12 @@ public class MainViewController extends AbstractController {
         return true;
     }
 
-    private void initConfig(Preferences preferences) {
-        getStage().setWidth(preferences.getDouble("WINDOW_WIDTH", 1280));
-        getStage().setHeight(preferences.getDouble("WINDOW_HEIGHT", 720));
-        getStage().setX(preferences.getDouble("WINDOW_X", 100));
-        getStage().setY(preferences.getDouble("WINDOW_Y", 100));
-
-        getStage().xProperty().addListener((observable, oldValue, newValue) ->
-                preferences.putDouble("WINDOW_X", newValue.doubleValue()));
-        getStage().yProperty().addListener((observable, oldValue, newValue) ->
-                preferences.putDouble("WINDOW_Y", newValue.doubleValue()));
-
-        getStage().widthProperty().addListener((observable, oldValue, newValue) ->
-                preferences.putDouble("WINDOW_WIDTH", newValue.doubleValue()));
-        getStage().heightProperty().addListener((observable, oldValue, newValue) ->
-                preferences.putDouble("WINDOW_HEIGHT", newValue.doubleValue()));
-
-        menuViewVESCurvesLegend.setSelected(preferences.getBoolean("VES_CURVES_LEGEND_VISIBLE", false));
-        menuViewVESCurvesLegend.selectedProperty().addListener((observable, oldValue, newValue) ->
-                preferences.putBoolean("VES_CURVES_LEGEND_VISIBLE", newValue));
+    private void initConfig() {
+        propertyConfigManager.bind(getStage().widthProperty(), "WINDOW_W", 1280, getStage()::setWidth);
+        propertyConfigManager.bind(getStage().heightProperty(), "WINDOW_H", 720, getStage()::setHeight);
+        propertyConfigManager.bind(getStage().xProperty(), "WINDOW_X", 720, getStage()::setX);
+        propertyConfigManager.bind(getStage().yProperty(), "WINDOW_Y", 720, getStage()::setY);
+        propertyConfigManager.bind(menuViewVESCurvesLegend.selectedProperty(), "VES_CURVES_LEGEND", false);
     }
 
     private void bind() {
