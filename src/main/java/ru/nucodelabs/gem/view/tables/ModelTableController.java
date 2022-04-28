@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -15,6 +16,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import ru.nucodelabs.algorithms.primaryModel.PrimaryModel;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -269,5 +271,12 @@ public class ModelTableController extends AbstractController {
                 }
             }
         }
+    }
+
+    @FXML
+    public void makePrimaryModel(ActionEvent actionEvent) {
+        PrimaryModel primaryModel = new PrimaryModel(picket.get().getExperimentalData());
+        List<ModelLayer> newModelData = primaryModel.get3LayersPrimaryModel();
+        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withModelData(newModelData)));
     }
 }
