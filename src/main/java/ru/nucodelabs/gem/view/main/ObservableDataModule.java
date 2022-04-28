@@ -9,35 +9,27 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 
-import java.util.ArrayList;
-
 /**
  * Используются для коммуникации между контроллерами и удобного отслеживания изменений в данных.
  */
 public class ObservableDataModule extends AbstractModule {
-    /**
-     * Observable список отображаемых пикетов - разрез
-     */
     @Provides
     @Singleton
-    private ObservableList<Picket> providePicketsObservableList(SectionManager sectionManager) {
-        ObservableList<Picket> pickets = FXCollections.observableList(new ArrayList<>());
+    private ObservableObjectValue<Section> sectionObservableObjectValue(SectionManager sectionManager) {
+        ObjectProperty<Section> sectionObjectProperty = new SimpleObjectProperty<>(sectionManager.getSnapshot().value());
         sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!item.getPickets().equals(pickets)) {
-                    pickets.setAll(item.getPickets());
-                }
+                sectionObjectProperty.set(item);
             }
         });
-        return pickets;
+
+        return sectionObjectProperty;
     }
 
     /**
@@ -57,23 +49,23 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableObjectValue<Picket> provideBoundCurrentPicket(
             IntegerProperty picketIndex,
-            ObservableList<Picket> picketObservableList) {
+            ObservableObjectValue<Section> section) {
 
         ObjectProperty<Picket> picket = new SimpleObjectProperty<>();
         picket.bind(new ObjectBinding<>() {
             {
-                super.bind(picketIndex, picketObservableList);
+                super.bind(picketIndex, section);
             }
 
             @Override
             protected Picket computeValue() {
-                if (picketObservableList.isEmpty()) {
+                if (section.get().getPickets().isEmpty()) {
                     return null;
                 } else {
-                    if (picketIndex.get() >= picketObservableList.size()) {
-                        picketIndex.set(picketObservableList.size() - 1);
+                    if (picketIndex.get() >= section.get().getPickets().size()) {
+                        picketIndex.set(section.get().getPickets().size() - 1);
                     }
-                    return picketObservableList.get(picketIndex.get());
+                    return section.get().getPickets().get(picketIndex.get());
                 }
             }
         });
