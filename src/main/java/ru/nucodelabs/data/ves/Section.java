@@ -23,4 +23,12 @@ public interface Section extends Serializable {
     Section DEFAULT = Section.create(Collections.emptyList());
 
     @NotNull List<@Valid @NotNull Picket> getPickets();
+
+    default double xOfPicket(Picket picket) {
+        int index = getPickets().indexOf(picket);
+        if (index < 0) {
+            throw new IllegalArgumentException();
+        }
+        return VesUtils.xOfPicket(this, index);
+    }
 }

@@ -1,15 +1,14 @@
-package ru.nucodelabs.data.ves_vp;
+package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import ru.nucodelabs.data.ves.ExperimentalData;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = VPExperimentalDataImpl.class
 )
-public interface VPExperimentalData extends ExperimentalData {
+public sealed interface VPExperimentalData extends ExperimentalData permits VPExperimentalDataImpl {
 
     static VPExperimentalData create(
             double ab2,

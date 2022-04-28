@@ -26,13 +26,13 @@ public class SectionManager implements Snapshot.Originator<Section> {
 
     @Override
     public Snapshot<Section> getSnapshot() {
-        return Snapshot.create(mutableSection.toImmutable());
+        return Snapshot.of(mutableSection.toImmutable());
     }
 
     @Override
     public void restoreFromSnapshot(Snapshot<Section> snapshot) {
         mutableSection.getPickets().clear();
-        mutableSection.getPickets().addAll(snapshot.get().getPickets());
+        mutableSection.getPickets().addAll(snapshot.value().getPickets());
         sectionPublisher.submit(mutableSection.toImmutable());
     }
 

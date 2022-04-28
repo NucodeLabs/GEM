@@ -112,4 +112,8 @@ public interface Picket extends Serializable {
             return create(getId(), getName(), getExperimentalData(), getModelData(), getOffsetX(), z);
         }
     }
+
+    default List<Double> zOfLayers() {
+        return VesUtils.zOfPower(getModelData(), getZ());
+    }
 }

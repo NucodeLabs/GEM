@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,7 +17,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.data.ves.VesUtils;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
@@ -36,7 +34,6 @@ import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -76,7 +73,7 @@ public class MainViewController extends AbstractController {
     @Inject
     private IntegerProperty picketIndex;
     @Inject
-    private ObservableList<Picket> picketObservableList;
+    private ObservableObjectValue<Section> section;
     @Inject
     private SectionManager sectionManager;
     @Inject
@@ -185,8 +182,8 @@ public class MainViewController extends AbstractController {
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty());
 
         vesNumber.bind(Bindings.createStringBinding(
-                () -> (picketIndex.get() + 1) + "/" + picketObservableList.size(),
-                picketIndex, picketObservableList
+                () -> (picketIndex.get() + 1) + "/" + section.get().getPickets().size(),
+                picketIndex, section
         ));
 
         picket.addListener((observable, oldValue, newValue) -> {
@@ -198,14 +195,14 @@ public class MainViewController extends AbstractController {
         });
 
         noFileOpened.bind(Bindings.createBooleanBinding(
-                () -> picketObservableList.isEmpty(),
-                picketObservableList
+                () -> section.get().getPickets().isEmpty(),
+                section
         ));
 
         sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.compareWithSavedState(item)) {
+                if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
                     dirtyAsterisk.set("*");
                 } else {
                     dirtyAsterisk.set("");
@@ -219,7 +216,7 @@ public class MainViewController extends AbstractController {
             if (newValue != null) {
                 picketOffsetX.setText(decimalFormat.format(newValue.getOffsetX()));
                 picketZ.setText(decimalFormat.format(newValue.getZ()));
-                xCoordLbl.setText(decimalFormat.format(VesUtils.xOfPicket(sectionManager.getSnapshot().get(), picketIndex.get())));
+                xCoordLbl.setText(decimalFormat.format(section.get().xOfPicket(picket.get())));
             }
         });
     }
@@ -235,13 +232,13 @@ public class MainViewController extends AbstractController {
             return;
         }
         storageManager.clearSavedState();
-        sectionManager.restoreFromSnapshot(Snapshot.create(Section.create(Collections.emptyList())));
+        sectionManager.restoreFromSnapshot(Snapshot.of(Section.DEFAULT));
         historyManager.clear();
         resetWindowTitle();
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot().get())) {
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -313,7 +310,7 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            sectionManager.restoreFromSnapshot(Snapshot.create(loadedSection));
+            sectionManager.restoreFromSnapshot(Snapshot.of(loadedSection));
             picketIndex.set(0);
             historyManager.clear();
             historyManager.snapshot();
@@ -327,13 +324,10 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void saveSection() {
-        File file;
-        if (storageManager.getSavedStateFile() == null) {
-            file = jsonFileChooser.showSaveDialog(getStage());
-        } else {
-            file = storageManager.getSavedStateFile();
+        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+            saveSection(storageManager.getSavedStateFile()
+                    .orElseGet(() -> jsonFileChooser.showSaveDialog(getStage())));
         }
-        saveSection(file);
     }
 
     @FXML
@@ -426,8 +420,8 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void switchToNextPicket() {
-        if (picketIndex.get() + 1 <= picketObservableList.size() - 1
-                && !picketObservableList.isEmpty()) {
+        if (picketIndex.get() + 1 <= section.get().getPickets().size() - 1
+                && !section.get().getPickets().isEmpty()) {
             picketIndex.set(picketIndex.get() + 1);
         }
     }
@@ -435,7 +429,7 @@ public class MainViewController extends AbstractController {
     @FXML
     private void switchToPrevPicket() {
         if (picketIndex.get() >= 1
-                && !picketObservableList.isEmpty()) {
+                && !section.get().getPickets().isEmpty()) {
             picketIndex.set(picketIndex.get() - 1);
         }
     }
@@ -457,7 +451,7 @@ public class MainViewController extends AbstractController {
                 preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
             }
             try {
-                storageManager.saveToJson(file, sectionManager.getSnapshot().get());
+                storageManager.saveToJson(file, sectionManager.getSnapshot().value());
                 setWindowFileTitle(file);
                 dirtyAsterisk.set("");
             } catch (Exception e) {
