@@ -41,20 +41,20 @@ public class StorageManager implements JsonFileManager, SonetImportManager {
         return sonetImportManagerDelegate.loadModelDataFromMODFile(modFile, target);
     }
 
-    public Snapshot<Section> getSavedState() {
+    public Snapshot<Section> getSavedSnapshot() {
         return savedState;
     }
 
-    public boolean compareWithSavedState(Snapshot<Section> toCompare) {
-        return Objects.equals(toCompare, getSavedState());
+    public boolean equalsToSavedSnapshot(Snapshot<Section> toCompare) {
+        return Objects.equals(toCompare, getSavedSnapshot());
     }
 
-    public void clearSavedState() {
+    public void resetSavedSnapshot() {
         savedState = Snapshot.of(Section.DEFAULT);
         savedStateFile = null;
     }
 
-    public Optional<File> getSavedStateFile() {
+    public Optional<File> getSavedSnapshotFile() {
         return Optional.ofNullable(savedStateFile);
     }
 
