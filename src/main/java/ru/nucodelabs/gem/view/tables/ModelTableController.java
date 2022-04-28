@@ -119,7 +119,7 @@ public class ModelTableController extends AbstractController {
                                     && picket.get() != null
                                     && cell.getIndex() < picket.get().getModelData().size() ?
                                     decimalFormat.format(
-                                            picket.get().zOfLayers().get(cell.getIndex())) : "",
+                                            picket.get().zOfModelLayers().get(cell.getIndex())) : "",
                             cell.emptyProperty(), cell.indexProperty(), picket
                     )
             );

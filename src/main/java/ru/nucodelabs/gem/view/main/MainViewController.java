@@ -186,7 +186,7 @@ public class MainViewController extends AbstractController {
                 section
         ));
 
-        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
                 if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
