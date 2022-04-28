@@ -189,7 +189,7 @@ public class MainViewController extends AbstractController {
         sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+                if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
                     dirtyAsterisk.set("*");
                 } else {
                     dirtyAsterisk.set("");
@@ -218,14 +218,14 @@ public class MainViewController extends AbstractController {
         if (askToSave(event).isConsumed()) {
             return;
         }
-        storageManager.clearSavedState();
+        storageManager.resetSavedSnapshot();
         sectionManager.restoreFromSnapshot(Snapshot.of(Section.DEFAULT));
         historyManager.clear();
         resetWindowTitle();
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
+        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -293,7 +293,7 @@ public class MainViewController extends AbstractController {
 
             if (!violations.isEmpty()) {
                 alertsFactory.violationsAlert(violations, getStage()).show();
-                storageManager.clearSavedState();
+                storageManager.resetSavedSnapshot();
                 return;
             }
 
@@ -311,8 +311,8 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void saveSection() {
-        if (!storageManager.compareWithSavedState(sectionManager.getSnapshot())) {
-            saveSection(storageManager.getSavedStateFile()
+        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
+            saveSection(storageManager.getSavedSnapshotFile()
                     .orElseGet(() -> jsonFileChooser.showSaveDialog(getStage())));
         }
     }
