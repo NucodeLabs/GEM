@@ -75,9 +75,4 @@ record ExperimentalDataImpl(
     public double getVoltage() {
         return voltage();
     }
-
-    @Override
-    public ExperimentalData recalculateResistanceApparent() {
-        return new ExperimentalDataImpl(ab2, mn2, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage), errorResistanceApparent, amperage, voltage);
-    }
 }

@@ -23,7 +23,7 @@ public class CrossSectionConverters {
 
         int count = 0;
         for (Picket picket : pickets) {
-            var height = picket.zOfLayers();
+            var height = picket.zOfModelLayers();
             for (Double hValue : height) {
 
                 XYChart.Data<Number, Number> leftLineDot = new XYChart.Data<>(

@@ -9,7 +9,7 @@ import java.io.Serializable;
         use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = ModelLayerImpl.class
 )
-public sealed interface ModelLayer extends Serializable permits ModelLayerImpl, VPModelLayer {
+public interface ModelLayer extends Serializable {
 
     static ModelLayer create(
             double power,

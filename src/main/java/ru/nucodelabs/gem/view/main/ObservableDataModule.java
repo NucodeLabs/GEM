@@ -22,7 +22,7 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableObjectValue<Section> sectionObservableObjectValue(SectionManager sectionManager) {
         ObjectProperty<Section> sectionObjectProperty = new SimpleObjectProperty<>(sectionManager.getSnapshot().value());
-        sectionManager.getSectionPublisher().subscribe(new AbstractSectionObserver() {
+        sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
                 sectionObjectProperty.set(item);

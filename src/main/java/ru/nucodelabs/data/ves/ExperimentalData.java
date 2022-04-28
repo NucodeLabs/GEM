@@ -11,7 +11,7 @@ import java.io.Serializable;
         use = JsonTypeInfo.Id.DEDUCTION,
         defaultImpl = ExperimentalDataImpl.class
 )
-public sealed interface ExperimentalData extends Serializable permits ExperimentalDataImpl, VPExperimentalData {
+public interface ExperimentalData extends Serializable {
 
     double DEFAULT_ERROR = 5;
 
@@ -114,5 +114,7 @@ public sealed interface ExperimentalData extends Serializable permits Experiment
         }
     }
 
-    ExperimentalData recalculateResistanceApparent();
+    default ExperimentalData recalculateResistanceApparent() {
+        return this.withResistanceApparent(VesUtils.resistanceApparent(getAb2(), getMn2(), getAmperage(), getVoltage()));
+    }
 }

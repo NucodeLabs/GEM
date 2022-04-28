@@ -14,14 +14,14 @@ import java.util.concurrent.SubmissionPublisher;
 
 public class SectionManager implements Snapshot.Originator<Section> {
 
-    private final SubmissionPublisher<Section> sectionPublisher
+    private final SubmissionPublisher<Section> sectionObservable
             = new SubmissionPublisher<>(Runnable::run, Flow.defaultBufferSize());
 
     private final MutableSection mutableSection = new MutableSection();
 
     @Inject
     public SectionManager() {
-        sectionPublisher.submit(mutableSection.toImmutable());
+        sectionObservable.submit(mutableSection.toImmutable());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SectionManager implements Snapshot.Originator<Section> {
     public void restoreFromSnapshot(Snapshot<Section> snapshot) {
         mutableSection.getPickets().clear();
         mutableSection.getPickets().addAll(snapshot.value().getPickets());
-        sectionPublisher.submit(mutableSection.toImmutable());
+        sectionObservable.submit(mutableSection.toImmutable());
     }
 
     public boolean update(Picket picket) {
@@ -41,7 +41,7 @@ public class SectionManager implements Snapshot.Originator<Section> {
         if (picketToUpdate.isPresent()) {
             int index = mutableSection.getPickets().indexOf(picketToUpdate.get());
             mutableSection.getPickets().set(index, picket);
-            sectionPublisher.submit(mutableSection.toImmutable());
+            sectionObservable.submit(mutableSection.toImmutable());
             return true;
         } else {
             return false;
@@ -50,17 +50,17 @@ public class SectionManager implements Snapshot.Originator<Section> {
 
     public void add(Picket picket) {
         mutableSection.getPickets().add(picket);
-        sectionPublisher.submit(mutableSection.toImmutable());
+        sectionObservable.submit(mutableSection.toImmutable());
     }
 
     public void swap(int index1, int index2) {
         Collections.swap(mutableSection.getPickets(), index1, index2);
-        sectionPublisher.submit(mutableSection.toImmutable());
+        sectionObservable.submit(mutableSection.toImmutable());
     }
 
     public void remove(int index) {
         mutableSection.getPickets().remove(index);
-        sectionPublisher.submit(mutableSection.toImmutable());
+        sectionObservable.submit(mutableSection.toImmutable());
     }
 
     public Optional<Picket> getById(UUID uuid) {
@@ -89,8 +89,8 @@ public class SectionManager implements Snapshot.Originator<Section> {
         }
     }
 
-    public Flow.Publisher<Section> getSectionPublisher() {
-        return sectionPublisher;
+    public Flow.Publisher<Section> getSectionObservable() {
+        return sectionObservable;
     }
 
     private static class MutableSection implements Section {
