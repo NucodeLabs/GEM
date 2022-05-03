@@ -55,6 +55,7 @@ public class CrossSectionController extends AbstractController {
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
+        //updateViewOrder();
     }
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
@@ -67,8 +68,20 @@ public class CrossSectionController extends AbstractController {
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
                                 + "-fx-fill: rgba(" + layerColor + ", 1.0);");
+
+                seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() - i);
+
+                seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                        .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
+                                + "-fx-fill: rgba(" + layerColor + ", 1.0);");
+
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
             }
+            seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                    .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
+                            + "-fx-fill: rgba(255, 255, 255, 1.0);");
+
+            seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
         }
     }
 
