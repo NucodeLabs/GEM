@@ -81,7 +81,12 @@ public class CrossSectionController extends AbstractController {
                     .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
                             + "-fx-fill: rgba(255, 255, 255, 1.0);");
 
-            seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
+            if ((picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
+                    (picket.zOfLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
+                seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
+            } else {
+                seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
+            }
         }
     }
 

@@ -89,9 +89,10 @@ public class CrossSectionConverters {
     }
 
     private static double shiftLayerLine(Picket picket) {
-        if (Math.abs(picket.zOfLayers().get(0)) - picket.getModelData().get(0).getPower() > 0 &
-                Math.abs(picket.zOfLayers().get(picket.zOfLayers().size())) - picket.getModelData().get(0).getPower() > 0) {
+        if (picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) {
             return picket.getZ();
+        } else if (picket.zOfLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0){
+            return picket.getZ() - picket.zOfLayers().get(0);
         } else {
             return 0;
         }
