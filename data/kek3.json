@@ -1,0 +1,248 @@
+{
+  "pickets" : [ {
+    "id" : "afbfac8c-2a82-4375-ad63-34f9a3c8dad2",
+    "name" : "BURM1",
+    "experimentalData" : [ {
+      "ab2" : 1.5,
+      "mn2" : 0.5,
+      "resistanceApparent" : 135.01,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 2148.8
+    }, {
+      "ab2" : 2.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 130.3,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 1106.0
+    }, {
+      "ab2" : 3.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 151.19,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 550.0
+    }, {
+      "ab2" : 4.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 158.34,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 320.0
+    }, {
+      "ab2" : 5.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 169.54,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 218.04
+    }, {
+      "ab2" : 7.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 159.71,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 104.28
+    }, {
+      "ab2" : 9.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 142.06,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 56.0
+    }, {
+      "ab2" : 12.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 142.71,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 31.6
+    }, {
+      "ab2" : 15.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 124.9,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 17.69
+    }, {
+      "ab2" : 15.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 125.4,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 107.44
+    }, {
+      "ab2" : 20.0,
+      "mn2" : 0.5,
+      "resistanceApparent" : 142.92,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 11.38
+    }, {
+      "ab2" : 20.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 128.77,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 61.0
+    }, {
+      "ab2" : 25.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 116.78,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 35.0
+    }, {
+      "ab2" : 32.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 116.4,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 21.17
+    }, {
+      "ab2" : 40.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 106.52,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 12.32
+    }, {
+      "ab2" : 50.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 103.02,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 7.6
+    }, {
+      "ab2" : 65.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 103.23,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 4.5
+    }, {
+      "ab2" : 65.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 96.156,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 18.0
+    }, {
+      "ab2" : 80.0,
+      "mn2" : 3.0,
+      "resistanceApparent" : 107.29,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 3.09
+    }, {
+      "ab2" : 80.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 100.73,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 12.3
+    }, {
+      "ab2" : 100.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 113.53,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 8.8
+    }, {
+      "ab2" : 123.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 125.54,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 6.4
+    }, {
+      "ab2" : 150.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 143.39,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 4.9
+    }, {
+      "ab2" : 180.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 164.67,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 3.9
+    }, {
+      "ab2" : 180.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 164.67,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 9.9
+    }, {
+      "ab2" : 220.0,
+      "mn2" : 12.0,
+      "resistanceApparent" : 189.5,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 3.0
+    }, {
+      "ab2" : 220.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 193.8,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 7.7
+    }, {
+      "ab2" : 275.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 226.33,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 5.7
+    }, {
+      "ab2" : 340.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 268.94,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 4.4
+    }, {
+      "ab2" : 410.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 312.53,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 3.5
+    }, {
+      "ab2" : 480.0,
+      "mn2" : 29.0,
+      "resistanceApparent" : 357.27,
+      "errorResistanceApparent" : 5.0,
+      "amperage" : 100.0,
+      "voltage" : 2.91
+    } ],
+    "modelData" : [ {
+      "resistance" : 50.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 100.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 150.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 200.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 250.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 300.0,
+      "power" : 50.0
+    }, {
+      "resistance" : 1414.69,
+      "power" : 0.0
+    } ],
+    "offsetX" : 100.0,
+    "z" : 500.0
+  } ]
+}

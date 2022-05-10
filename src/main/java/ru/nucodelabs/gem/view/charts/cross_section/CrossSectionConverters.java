@@ -9,64 +9,95 @@ import java.util.List;
 public class CrossSectionConverters {
 
     @SuppressWarnings("unchecked")
-    public static List<XYChart.Series<Number, Number>> makeResistanceSeries(List<Picket> pickets, double currentCoordinate) {
+    public static List<XYChart.Series<Number, Number>> makeSectionSeries(List<Picket> pickets) {
         List<XYChart.Series<Number, Number>> picketSeries = new ArrayList<>();
-        double picketWidth = 100.0;
+        double maxDepth = 0;
 
         for (Picket picket : pickets) {
-            for (int i = 0; i < picket.getModelData().size() * 2 + pickets.size(); i++) {
-                picketSeries.add(new XYChart.Series<>());
-                String seriesName = picket.getName() + " - " + i;
-                picketSeries.get(i).setName(seriesName);
+            if (picket.getModelData().size() > 0) {
+                for (int i = 0; i < (picket.getModelData().size() + pickets.size()) * 2; i++) {
+                    picketSeries.add(new XYChart.Series<>());
+                    String seriesName = picket.getName() + " - " + i;
+                    picketSeries.get(i).setName(seriesName);
+                }
+            }
+            if (picket.zOfLayers().size() > 0) {
+                if (picket.zOfLayers().get(picket.zOfLayers().size() - 1) <= maxDepth) {
+                    maxDepth = picket.zOfLayers().get(picket.zOfLayers().size() - 1);
+                }
             }
         }
+
+        double lowBorder = computeLowBorder(maxDepth);
 
         int count = 0;
+        double leftCoordinate = 0;
+        double rightCoordinate = 0;
 
         for (Picket picket : pickets) {
-            List<Double> height = picket.zOfLayers();
-            int i = 0;
-            for (Double hValue : height) {
-                double[] sides = layerSides(hValue, picket.getModelData().get(i).getPower());
+            if (picket.getModelData().size() > 0) {
+                List<Double> height = picket.zOfLayers();
+                int i = 0;
+                rightCoordinate = leftCoordinate + 2 * picket.getOffsetX();
+                for (Double hValue : height) {
 
-                XYChart.Data<Number, Number> leftPositiveLineDot = new XYChart.Data<>(
-                        currentCoordinate,
-                        sides[0]);
-                XYChart.Data<Number, Number> rightPositiveLineDot = new XYChart.Data<>(
-                        currentCoordinate + picketWidth,
-                        sides[0]);
+                    double[] sides = layerSides(hValue, picket.getModelData().get(i).getPower());
 
-                XYChart.Data<Number, Number> leftNegativeLineDot = new XYChart.Data<>(
-                        currentCoordinate,
-                        sides[1]);
-                XYChart.Data<Number, Number> rightNegativeLineDot = new XYChart.Data<>(
-                        currentCoordinate + picketWidth,
-                        sides[1]);
+                    //Layer positive part
+                    XYChart.Data<Number, Number> leftPositiveLineDot = new XYChart.Data<>(
+                            leftCoordinate,
+                            sides[0]);
+                    XYChart.Data<Number, Number> rightPositiveLineDot = new XYChart.Data<>(
+                            rightCoordinate,
+                            sides[0]);
+
+                    //Layer negative part
+                    XYChart.Data<Number, Number> leftNegativeLineDot = new XYChart.Data<>(
+                            leftCoordinate,
+                            sides[1]);
+                    XYChart.Data<Number, Number> rightNegativeLineDot = new XYChart.Data<>(
+                            rightCoordinate,
+                            sides[1]);
+
+
+                    picketSeries.get(count++).getData().addAll(
+                            leftPositiveLineDot,
+                            rightPositiveLineDot);
+                    picketSeries.get(count++).getData().addAll(
+                            leftNegativeLineDot,
+                            rightNegativeLineDot
+                    );
+                    i++;
+                }
+
+                //White shifting layer
+                XYChart.Data<Number, Number> leftShiftLineDot = new XYChart.Data<>(
+                        leftCoordinate,
+                        shiftLayerLine(picket));
+                XYChart.Data<Number, Number> rightShiftLineDot = new XYChart.Data<>(
+                        rightCoordinate,
+                        shiftLayerLine(picket));
 
                 picketSeries.get(count++).getData().addAll(
-                        leftPositiveLineDot,
-                        rightPositiveLineDot);
+                        leftShiftLineDot,
+                        rightShiftLineDot);
+
+                //Gray infinite resistance
+                XYChart.Data<Number, Number> leftInfinityLineDot = new XYChart.Data<>(
+                        leftCoordinate,
+                        lowBorder);
+                XYChart.Data<Number, Number> rightInfinityLineDot = new XYChart.Data<>(
+                        rightCoordinate,
+                        lowBorder);
+
                 picketSeries.get(count++).getData().addAll(
-                        leftNegativeLineDot,
-                        rightNegativeLineDot
-                );
-                i++;
+                        leftInfinityLineDot,
+                        rightInfinityLineDot);
+
             }
 
-            XYChart.Data<Number, Number> leftShiftLineDot = new XYChart.Data<>(
-                    currentCoordinate,
-                    shiftLayerLine(picket));
-            XYChart.Data<Number, Number> rightShiftLineDot = new XYChart.Data<>(
-                    currentCoordinate + picketWidth,
-                    shiftLayerLine(picket));
-
-            picketSeries.get(count++).getData().addAll(
-                    leftShiftLineDot,
-                    rightShiftLineDot
-            );
-            currentCoordinate += picketWidth;
+            leftCoordinate = rightCoordinate;
         }
-
 
         return picketSeries;
     }
@@ -91,17 +122,22 @@ public class CrossSectionConverters {
     private static double shiftLayerLine(Picket picket) {
         if (picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) {
             return picket.getZ();
-        } else if (picket.zOfLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0){
-            return picket.getZ() - picket.zOfLayers().get(0);
         } else {
             return 0;
         }
     }
+
+    private static double computeLowBorder(double maxDepth) {
+        double roundNum = Math.ceil(maxDepth);
+        double floor100Mult = Math.signum(maxDepth) * Math.floor(Math.abs(roundNum / 100));
+        double floor10Mult = Math.signum(maxDepth) * Math.floor(Math.abs((roundNum - floor100Mult * 100) / 10));
+
+        if (Math.abs(roundNum) < 10) {
+            return roundNum;
+        } else if (Math.abs(roundNum) < 100) {
+            return (floor10Mult + 1 * Math.signum(maxDepth)) * 10;
+        } else {
+            return (floor100Mult + 1 * Math.signum(maxDepth)) * 100;
+        }
+    }
 }
-/*
-if (picket.zOfLayers().get(0) < 0) {
-                return picket.getZ();
-            } else {
-                return -picket.getZ();
-            }
- */
