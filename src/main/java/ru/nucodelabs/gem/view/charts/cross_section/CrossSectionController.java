@@ -51,7 +51,7 @@ public class CrossSectionController extends AbstractController {
     }
 
     public void update() {
-        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeResistanceSeries(section.get().getPickets(), 0.0);
+        List<XYChart.Series<Number, Number>> seriesList = CrossSectionConverters.makeSectionSeries(section.get().getPickets());
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
@@ -60,14 +60,35 @@ public class CrossSectionController extends AbstractController {
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
         int count = 0;
         for (Picket picket : section.get().getPickets()) {
-            for (int i = 0; i < picket.getModelData().size(); i++) {
-                double resistance = picket.getModelData().get(i).getResistance();
-                String layerColor = getRGBColor(resistance);
+            if (picket.getModelData().size() > 0) {
+                for (int i = 0; i < picket.getModelData().size(); i++) {
+                    double resistance = picket.getModelData().get(i).getResistance();
+                    String layerColor = getRGBColor(resistance);
+
+                    seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);" +
+                                    "-fx-text-overrun: " + seriesList.get(count).getName() + ";");
+
+                    seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() - i);
+
+                    seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
+
+                    seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
+                }
+                seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                        .setStyle("-fx-fill: rgba(255, 255, 255, 1.0);");
+
+                if ((picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
+                        (picket.zOfLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
+                    seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
+                } else {
+                    seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
+                }
 
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                        .setStyle("-fx-stroke: rgba(0, 0, 0, 1.0);"
-                                + "-fx-fill: rgba(" + layerColor + ", 1.0);");
-                seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
+                        .setStyle("-fx-fill: DARKGRAY");
+                seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
             }
         }
     }
@@ -101,24 +122,15 @@ public class CrossSectionController extends AbstractController {
             color = Color.RED;
         } else if (750 <= resistance & resistance < 1000) {
             color = Color.DARKRED;
-        } else if (1000 <= resistance & resistance < 2500) {
-            color = Color.GRAY;
-        } else if (2500 <= resistance) {
-            color = Color.BLACK;
+        } else if (1000 <= resistance) {
+            color = Color.DARKGRAY;
         }
-
-        //color = resistanceToColor(resistance);
 
         return String.format("%d, %d, %d",
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
     }
-
-    /*private Color resistanceToColor(double resistance) {
-        Color newColor = Color.rgb(resistance % 255);
-        return newColor;
-    }*/
 
     protected Stage getStage() {
         return (Stage) sectionAreaChart.getScene().getWindow();
