@@ -4,5 +4,5 @@
 }
 
 .chart-series-area-line {
-    -fx-stroke: rgba(0, 0, 0, 1.0);
+    -fx-stroke: BLACK;
 }
