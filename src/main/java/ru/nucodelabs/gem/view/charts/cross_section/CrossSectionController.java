@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -57,6 +57,7 @@ public class CrossSectionController extends AbstractController {
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
+        //createPicketTooltips(dataProperty.get());
     }
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
@@ -104,6 +105,17 @@ public class CrossSectionController extends AbstractController {
                 //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill").setStyle("-fx-fill: DARKGRAY");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
+            }
+        }
+    }
+
+    private void createPicketTooltips(List<XYChart.Series<Number, Number>> seriesList) {
+        for (XYChart.Series<Number, Number> series : seriesList) {
+            for (XYChart.Data<Number, Number> data : series.getData()) {
+                Tooltip.install(data.getNode(), new Tooltip(series.getName()));
+
+                data.getNode().setOnMouseEntered(event -> data.getNode().setStyle("-fx-background-color: ORANGE"));
+                data.getNode().setOnMouseExited(event -> data.getNode().setStyle("-fx-background-color: transparent"));
             }
         }
     }
