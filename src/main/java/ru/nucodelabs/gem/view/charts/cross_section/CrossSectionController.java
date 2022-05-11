@@ -95,15 +95,14 @@ public class CrossSectionController extends AbstractController {
                 //Set shifting layers orderView in such way, that it will be showed only if picket is shifted completely below X axis
                 if ((picket.zOfModelLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
                         (picket.zOfModelLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
-                    seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
+                    seriesList.get(count).getNode().viewOrderProperty().setValue(-1);
                     seriesList.get(count++).getNode().setVisible(true);
                 } else {
                     seriesList.get(count++).getNode().setVisible(false);
                 }
 
                 //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
-                seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                        .setStyle("-fx-fill: DARKGRAY");
+                seriesList.get(count).getNode().lookup(".chart-series-area-fill").setStyle("-fx-fill: DARKGRAY");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
             }
         }
