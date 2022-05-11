@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static ru.nucodelabs.gem.view.color_pallete.ColorPalette.getRGBColor;
+
 public class CrossSectionController extends AbstractController {
 
     private final ObservableObjectValue<Section> section;
@@ -63,73 +65,48 @@ public class CrossSectionController extends AbstractController {
             if (picket.getModelData().size() > 0) {
                 for (int i = 0; i < picket.getModelData().size(); i++) {
                     double resistance = picket.getModelData().get(i).getResistance();
+
+                    //Assign color according to resistance value
                     String layerColor = getRGBColor(resistance);
 
-                    seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);" +
-                                    "-fx-text-overrun: " + seriesList.get(count).getName() + ";");
-
-                    seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() - i);
-
+                    //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                             .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
 
+                    //Set viewOrder of positive part more to background,
+                    // because it is intended to be a higher area of the picket
+                    // and should not overlap on lower layers
+                    seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() - i);
+
+                    //Find positive part and color it
+                    seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
+
+                    //Set viewOrder of positive part more to foreground,
+                    // because it is intended to be a lower area of the picket
+                    // and should not overlap on higher layers
                     seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
                 }
+
+                //Color shifting layer
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-fill: rgba(255, 255, 255, 1.0);");
 
+                //Set shifting layers orderView in such way, that it will be showed only if picket is shifted completely below X axis
                 if ((picket.zOfModelLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
                         (picket.zOfModelLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
                     seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
+                    seriesList.get(count++).getNode().setVisible(true);
                 } else {
-                    seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
+                    seriesList.get(count++).getNode().setVisible(false);
                 }
 
+                //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-fill: DARKGRAY");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
             }
         }
-    }
-
-    public String getRGBColor(double resistance) {
-        Color color = Color.WHITESMOKE;
-
-        if (0 < resistance & resistance < 20) {
-            color = Color.LIGHTGREEN;
-        } else if (20 <= resistance & resistance < 50) {
-            color = Color.GREEN;
-        } else if (50 <= resistance & resistance < 100) {
-            color = Color.OLIVE;
-        } else if (100 <= resistance & resistance < 150) {
-            color = Color.DARKGREEN;
-        } else if (150 <= resistance & resistance < 200) {
-            color = Color.GREENYELLOW;
-        } else if (200 <= resistance & resistance < 250) {
-            color = Color.LIGHTYELLOW;
-        } else if (250 <= resistance & resistance < 300) {
-            color = Color.YELLOW;
-        } else if (300 <= resistance & resistance < 350) {
-            color = Color.DARKGOLDENROD;
-        } else if (350 <= resistance & resistance < 400) {
-            color = Color.ORANGE;
-        } else if (400 <= resistance & resistance < 450) {
-            color = Color.DARKORANGE;
-        } else if (450 <= resistance & resistance < 500) {
-            color = Color.ORANGERED;
-        } else if (500 <= resistance & resistance < 750) {
-            color = Color.RED;
-        } else if (750 <= resistance & resistance < 1000) {
-            color = Color.DARKRED;
-        } else if (1000 <= resistance) {
-            color = Color.DARKGRAY;
-        }
-
-        return String.format("%d, %d, %d",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
     }
 
     protected Stage getStage() {
