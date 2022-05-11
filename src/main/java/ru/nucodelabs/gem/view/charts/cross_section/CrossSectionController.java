@@ -79,8 +79,8 @@ public class CrossSectionController extends AbstractController {
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-fill: rgba(255, 255, 255, 1.0);");
 
-                if ((picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
-                        (picket.zOfLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
+                if ((picket.zOfModelLayers().get(0) + picket.getModelData().get(0).getPower() < 0) ||
+                        (picket.zOfModelLayers().get(picket.getModelData().size() - 1) - picket.getModelData().get(picket.getModelData().size() - 1).getPower() > 0)) {
                     seriesList.get(count++).getNode().viewOrderProperty().setValue(-1);
                 } else {
                     seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);

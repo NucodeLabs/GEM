@@ -21,9 +21,9 @@ public class CrossSectionConverters {
                     picketSeries.get(i).setName(seriesName);
                 }
             }
-            if (picket.zOfLayers().size() > 0) {
-                if (picket.zOfLayers().get(picket.zOfLayers().size() - 1) <= maxDepth) {
-                    maxDepth = picket.zOfLayers().get(picket.zOfLayers().size() - 1);
+            if (picket.zOfModelLayers().size() > 0) {
+                if (picket.zOfModelLayers().get(picket.zOfModelLayers().size() - 1) <= maxDepth) {
+                    maxDepth = picket.zOfModelLayers().get(picket.zOfModelLayers().size() - 1);
                 }
             }
         }
@@ -31,14 +31,33 @@ public class CrossSectionConverters {
         double lowBorder = computeLowBorder(maxDepth);
 
         int count = 0;
-        double leftCoordinate = 0;
-        double rightCoordinate = 0;
+        double centerCoordinate = 0;
+        double leftCoordinate;
+        double rightCoordinate;
 
         for (Picket picket : pickets) {
             if (picket.getModelData().size() > 0) {
-                List<Double> height = picket.zOfLayers();
+                List<Double> height = picket.zOfModelLayers();
                 int i = 0;
-                rightCoordinate = leftCoordinate + 2 * picket.getOffsetX();
+                if (pickets.size() == 1) {
+                    leftCoordinate = centerCoordinate - 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
+                    rightCoordinate = centerCoordinate + 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
+                } else {
+                    if (pickets.indexOf(picket) == 0) {
+                        centerCoordinate = 0;
+                        picket.withOffsetX(0);
+                    } else {
+                        centerCoordinate += picket.getOffsetX();
+                    }
+
+                    leftCoordinate = centerCoordinate - 0.5 * picket.getOffsetX();
+
+                    if (pickets.indexOf(picket) + 1 < pickets.size()) {
+                        rightCoordinate = centerCoordinate + 0.5 * pickets.get(pickets.indexOf(picket) + 1).getOffsetX();
+                    } else {
+                        rightCoordinate = centerCoordinate + 0.5 * picket.getOffsetX();
+                    }
+                }
                 for (Double hValue : height) {
 
                     double[] sides = layerSides(hValue, picket.getModelData().get(i).getPower());
@@ -95,8 +114,6 @@ public class CrossSectionConverters {
                         rightInfinityLineDot);
 
             }
-
-            leftCoordinate = rightCoordinate;
         }
 
         return picketSeries;
@@ -120,7 +137,7 @@ public class CrossSectionConverters {
     }
 
     private static double shiftLayerLine(Picket picket) {
-        if (picket.zOfLayers().get(0) + picket.getModelData().get(0).getPower() < 0) {
+        if (picket.zOfModelLayers().get(0) + picket.getModelData().get(0).getPower() < 0) {
             return picket.getZ();
         } else {
             return 0;
