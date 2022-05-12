@@ -5,6 +5,8 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -13,13 +15,12 @@ import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.color_pallete.ColorPalette;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import static ru.nucodelabs.gem.view.color_pallete.ColorPalette.getRGBColor;
 
 public class CrossSectionController extends AbstractController {
 
@@ -68,7 +69,7 @@ public class CrossSectionController extends AbstractController {
                     double resistance = picket.getModelData().get(i).getResistance();
 
                     //Assign color according to resistance value
-                    String layerColor = getRGBColor(resistance);
+                    String layerColor = new ColorPalette(null).getRGBColor(resistance);
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
@@ -105,17 +106,6 @@ public class CrossSectionController extends AbstractController {
                 //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill").setStyle("-fx-fill: DARKGRAY");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
-            }
-        }
-    }
-
-    private void createPicketTooltips(List<XYChart.Series<Number, Number>> seriesList) {
-        for (XYChart.Series<Number, Number> series : seriesList) {
-            for (XYChart.Data<Number, Number> data : series.getData()) {
-                Tooltip.install(data.getNode(), new Tooltip(series.getName()));
-
-                data.getNode().setOnMouseEntered(event -> data.getNode().setStyle("-fx-background-color: ORANGE"));
-                data.getNode().setOnMouseExited(event -> data.getNode().setStyle("-fx-background-color: transparent"));
             }
         }
     }

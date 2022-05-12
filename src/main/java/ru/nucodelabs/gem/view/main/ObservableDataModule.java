@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 
