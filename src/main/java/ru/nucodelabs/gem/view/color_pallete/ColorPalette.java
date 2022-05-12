@@ -1,9 +1,51 @@
 package ru.nucodelabs.gem.view.color_pallete;
 
 import javafx.scene.paint.Color;
+import ru.nucodelabs.files.color_palette.CLRData;
 
 public class ColorPalette {
-    public static String getRGBColor(double resistance) {
+
+    private CLRData clrData;
+
+    public ColorPalette(CLRData clrData) {
+        this.clrData = clrData;
+    }
+
+    public String getCLRColor(double resistance, double maxResistance) {
+        double percent = (resistance / maxResistance) * 100;
+        double lowerPoint = getNearestLowerPoint(percent);
+        double upperPoint = getNearestUpperPoint(percent);
+
+        double difference = upperPoint - lowerPoint;
+        if (difference <= 0) {
+            return String.format("%d, %d, %d %d",
+                    clrData.colorMap.get(100.0).red(),
+                    clrData.colorMap.get(100.0).green(),
+                    clrData.colorMap.get(100.0).blue(),
+                    clrData.colorMap.get(100.0).opacity());
+        }
+
+        double partition = (percent - lowerPoint) / (difference);
+        int[] rgbo = getColors(partition, lowerPoint, upperPoint);
+
+        return String.format("%d, %d, %d %d",
+                rgbo[0],
+                rgbo[1],
+                rgbo[2],
+                rgbo[3]);
+    }
+
+    private int[] getColors(double partition, double lowerPoint, double upperPoint) {
+        int[] rgbo = new int[4];
+        rgbo[0] = clrData.colorMap.get(lowerPoint).red() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).red() - clrData.colorMap.get(lowerPoint).red()));
+        rgbo[1] = clrData.colorMap.get(lowerPoint).green() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).green() - clrData.colorMap.get(lowerPoint).green()));
+        rgbo[2] = clrData.colorMap.get(lowerPoint).blue() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).blue() - clrData.colorMap.get(lowerPoint).blue()));
+        rgbo[3] = clrData.colorMap.get(lowerPoint).opacity() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).opacity() - clrData.colorMap.get(lowerPoint).opacity()));
+
+        return rgbo;
+    }
+
+    public String getRGBColor(double resistance) {
         Color color = Color.WHITESMOKE;
 
         if (0 < resistance & resistance < 20) {
@@ -40,5 +82,33 @@ public class ColorPalette {
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
+    }
+
+    private Double getNearestLowerPoint(double percent) {
+        double prevKey = 0.0;
+        for (double key : clrData.colorMap.keySet()) {
+            if (percent < key) {
+                return prevKey;
+            } else if (percent == key) {
+                return key;
+            } else if (percent > key) {
+                prevKey = key;
+            }
+        }
+
+        return prevKey;
+    }
+
+    private Double getNearestUpperPoint(double percent) {
+        double nextKey = 0.0;
+        for (double key : clrData.colorMap.keySet()) {
+            if (percent < key) {
+                nextKey = key;
+            } else if (percent >= key) {
+                return nextKey;
+            }
+        }
+
+        return nextKey;
     }
 }
