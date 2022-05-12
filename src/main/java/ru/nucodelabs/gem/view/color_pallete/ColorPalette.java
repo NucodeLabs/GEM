@@ -5,7 +5,7 @@ import ru.nucodelabs.files.color_palette.CLRData;
 
 public class ColorPalette {
 
-    private CLRData clrData;
+    private final CLRData clrData;
 
     public ColorPalette(CLRData clrData) {
         this.clrData = clrData;
@@ -18,21 +18,21 @@ public class ColorPalette {
 
         double difference = upperPoint - lowerPoint;
         if (difference <= 0) {
-            return String.format("%d, %d, %d %d",
+            return String.format("%d, %d, %d, %f",
                     clrData.colorMap.get(100.0).red(),
                     clrData.colorMap.get(100.0).green(),
                     clrData.colorMap.get(100.0).blue(),
-                    clrData.colorMap.get(100.0).opacity());
+                    1.0);
         }
 
         double partition = (percent - lowerPoint) / (difference);
         int[] rgbo = getColors(partition, lowerPoint, upperPoint);
 
-        return String.format("%d, %d, %d %d",
+        return String.format("%d, %d, %d, %f",
                 rgbo[0],
                 rgbo[1],
                 rgbo[2],
-                rgbo[3]);
+                (double) rgbo[3] / 255);
     }
 
     private int[] getColors(double partition, double lowerPoint, double upperPoint) {
@@ -78,10 +78,11 @@ public class ColorPalette {
             color = Color.DARKGRAY;
         }
 
-        return String.format("%d, %d, %d",
+        return String.format("%d, %d, %d, %f",
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
+                (int) (color.getBlue() * 255),
+                1.0);
     }
 
     private Double getNearestLowerPoint(double percent) {
@@ -100,12 +101,10 @@ public class ColorPalette {
     }
 
     private Double getNearestUpperPoint(double percent) {
-        double nextKey = 0.0;
+        double nextKey = percent;
         for (double key : clrData.colorMap.keySet()) {
-            if (percent < key) {
-                nextKey = key;
-            } else if (percent >= key) {
-                return nextKey;
+            if (percent <= key) {
+                return key;
             }
         }
 

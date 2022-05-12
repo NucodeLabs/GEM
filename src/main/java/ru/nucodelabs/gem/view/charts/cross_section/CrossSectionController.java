@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -14,6 +13,7 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
+import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.color_pallete.ColorPalette;
 
@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 public class CrossSectionController extends AbstractController {
 
     private final ObservableObjectValue<Section> section;
+    private ColorPalette colorPalette;
     @FXML
     public NumberAxis sectionX;
     @FXML
@@ -34,6 +35,9 @@ public class CrossSectionController extends AbstractController {
 
     @Inject
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
+
+    @Inject
+    private ObjectProperty<CLRData> clrDataProperty;
 
     @Inject
     public CrossSectionController(ObservableObjectValue<Section> section) {
@@ -50,7 +54,7 @@ public class CrossSectionController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         //uiProperties = resources;
         sectionAreaChart.dataProperty().bind(dataProperty);
-
+        colorPalette = new ColorPalette(clrDataProperty.get());
     }
 
     public void update() {
@@ -58,7 +62,7 @@ public class CrossSectionController extends AbstractController {
 
         dataProperty.get().setAll(FXCollections.observableArrayList(seriesList));
         updateSeriesColors(dataProperty.get());
-        //createPicketTooltips(dataProperty.get());
+        //updatePicketTooltips(dataProperty.get());
     }
 
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
@@ -69,11 +73,12 @@ public class CrossSectionController extends AbstractController {
                     double resistance = picket.getModelData().get(i).getResistance();
 
                     //Assign color according to resistance value
-                    String layerColor = new ColorPalette(null).getRGBColor(resistance);
+                    //String layerColor = colorPalette.getRGBColor(resistance);
+                    String layerColor = colorPalette.getCLRColor(resistance, 1500);
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
+                            .setStyle("-fx-fill: rgba(" + layerColor + ");");
 
                     //Set viewOrder of positive part more to background,
                     // because it is intended to be a higher area of the picket
@@ -82,7 +87,7 @@ public class CrossSectionController extends AbstractController {
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                            .setStyle("-fx-fill: rgba(" + layerColor + ", 1.0);");
+                            .setStyle("-fx-fill: rgba(" + layerColor + ");");
 
                     //Set viewOrder of positive part more to foreground,
                     // because it is intended to be a lower area of the picket
@@ -106,6 +111,30 @@ public class CrossSectionController extends AbstractController {
                 //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill").setStyle("-fx-fill: DARKGRAY");
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
+            }
+        }
+    }
+
+    private void updatePicketTooltips(List<XYChart.Series<Number, Number>> seriesList) {
+
+        for (XYChart.Series<Number, Number> series : seriesList) {
+            for (XYChart.Data<Number, Number> data : series.getData()) {
+                Tooltip tooltip = new Tooltip(series.getName());
+                Tooltip.install(data.getNode(), tooltip);
+
+                Point2D localPoint = data.getNode().localToScene(0, 0);
+
+                tooltip.setX(localPoint.getX());
+                tooltip.setY(localPoint.getY());
+
+                data.getNode().setOnMouseEntered(event -> {
+                    data.getNode().setStyle("-fx-background-color: ORANGE");
+                    tooltip.show(getStage());
+                });
+                data.getNode().setOnMouseExited(event -> {
+                    data.getNode().setStyle("-fx-background-color: transparent");
+                    //tooltip.re;
+                });
             }
         }
     }
