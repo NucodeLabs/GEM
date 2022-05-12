@@ -3,7 +3,9 @@ package ru.nucodelabs.files.color_palette;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class CLRFileParser {
     private final File clrFile;
@@ -14,7 +16,7 @@ public class CLRFileParser {
 
     public CLRData parse() throws Exception {
         CLRData clrData = new CLRData();
-        Scanner scanner = new Scanner(clrFile);
+        Scanner scanner = new Scanner(clrFile).useLocale(Locale.US);
         int version = 0;
 
         double key;
@@ -36,21 +38,22 @@ public class CLRFileParser {
             } else if (str.contains("ColorMap 3")) {
                 throw new Exception("Wrong CLR file type!");
             } else {
-                List<String> lineList = Arrays.stream(str.split(" ")).toList();
-                key = Double.parseDouble(lineList.get(0));
-                red = Integer.parseInt(lineList.get(1));
-                green = Integer.parseInt(lineList.get(2));
-                blue = Integer.parseInt(lineList.get(3));
+                List<String> lineList = Arrays.stream(str.split("\\s+", 0)).toList();
+                key = Double.parseDouble(lineList.get(1));
+                red = Integer.parseInt(lineList.get(2));
+                green = Integer.parseInt(lineList.get(3));
+                blue = Integer.parseInt(lineList.get(4));
 
                 if (version == 1) {
                     opacity = 255;
                 } else if (version == 2) {
-                    opacity = Integer.parseInt(lineList.get(4));
+                    opacity = Integer.parseInt(lineList.get(5));
                 }
 
                 clrData.colorMap.put(key, new CLRData.ColorSettings(red, green, blue, opacity));
             }
         } while (scanner.hasNextLine());
+
 
         return clrData;
     }

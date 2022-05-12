@@ -1,12 +1,14 @@
 package ru.nucodelabs.files.color_palette;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CLRData {
-    public HashMap<Double, ColorSettings> colorMap;
+    public Map<Double, ColorSettings> colorMap;
 
     public CLRData() {
-        colorMap = new HashMap<>();
+        colorMap = new LinkedHashMap<>();
     }
 
     public record ColorSettings(int red, int green, int blue, int opacity) {
