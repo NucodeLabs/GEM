@@ -68,6 +68,7 @@ public class CrossSectionController extends AbstractController {
     private void updateSeriesColors(List<XYChart.Series<Number, Number>> seriesList) {
         int count = 0;
         for (Picket picket : section.get().getPickets()) {
+            String lastLayerStyle;
             if (picket.getModelData().size() > 0) {
                 for (int i = 0; i < picket.getModelData().size(); i++) {
                     double resistance = picket.getModelData().get(i).getResistance();
@@ -95,6 +96,9 @@ public class CrossSectionController extends AbstractController {
                     seriesList.get(count++).getNode().viewOrderProperty().setValue(i);
                 }
 
+                //Extract infinite layer color
+                lastLayerStyle = seriesList.get(count - 1).getNode().lookup(".chart-series-area-fill").getStyle();
+
                 //Color shifting layer
                 seriesList.get(count).getNode().lookup(".chart-series-area-fill")
                         .setStyle("-fx-fill: rgba(255, 255, 255, 1.0);");
@@ -109,7 +113,8 @@ public class CrossSectionController extends AbstractController {
                 }
 
                 //Color the negative part of bottom layer. Positive part is drawn automatically using picket data.
-                seriesList.get(count).getNode().lookup(".chart-series-area-fill").setStyle("-fx-fill: DARKGRAY");
+                seriesList.get(count).getNode().lookup(".chart-series-area-fill")
+                        .setStyle(lastLayerStyle);
                 seriesList.get(count++).getNode().viewOrderProperty().setValue(picket.getModelData().size() + 1);
             }
         }
