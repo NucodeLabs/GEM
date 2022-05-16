@@ -17,7 +17,7 @@ public class ColorPalette {
         double upperPoint = getNearestUpperPoint(percent);
 
         double difference = upperPoint - lowerPoint;
-        if (difference <= 0) {
+        if (difference <= 0 || percent > 100) {
             return String.format("%d, %d, %d, %f",
                     clrData.colorMap.get(100.0).red(),
                     clrData.colorMap.get(100.0).green(),
