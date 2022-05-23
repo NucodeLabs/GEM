@@ -15,7 +15,7 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.color_pallete.ColorPalette;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
 import javax.inject.Inject;
 import java.net.URL;
