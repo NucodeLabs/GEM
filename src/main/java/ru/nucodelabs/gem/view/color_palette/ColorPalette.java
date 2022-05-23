@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.color_pallete;
+package ru.nucodelabs.gem.view.color_palette;
 
 import javafx.scene.paint.Color;
 import ru.nucodelabs.files.color_palette.CLRData;

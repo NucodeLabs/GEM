@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ru.nucodelabs.gem.view.color_palette.ColorPaletteController"
+      prefHeight="-Infinity"
+      prefWidth="-Infinity">
+    <VBox alignment="CENTER">
+        <padding>
+            <Insets left="10" right="10" top="10" bottom="10"/>
+        </padding>
+        <HBox VBox.vgrow="ALWAYS">
+            <Canvas fx:id="palette" height="-Infinity" width="-Infinity"/>
+            <Label text="placeholder_text"/>
+        </HBox>
+        <VBox VBox.vgrow="NEVER">
+            <VBox VBox.vgrow="ALWAYS">
+                <Label text="%paletteMinRes"/>
+                <TextField fx:id="minResistance"/>
+            </VBox>
+            <VBox VBox.vgrow="ALWAYS">
+                <Label text="%paletteMaxRes"/>
+                <TextField fx:id="maxResistance"/>
+            </VBox>
+        </VBox>
+    </VBox>
+
+</HBox>
