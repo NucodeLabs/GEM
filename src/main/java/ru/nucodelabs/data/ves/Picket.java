@@ -2,8 +2,8 @@ package ru.nucodelabs.data.ves;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
@@ -66,7 +66,7 @@ public interface Picket extends Serializable {
     /**
      * Смещение относительно пикета слева, или начала разреза в случае первого пикета
      */
-    @Positive double getOffsetX();
+    @Min(0) double getOffsetX();
 
     /**
      * Глубина
