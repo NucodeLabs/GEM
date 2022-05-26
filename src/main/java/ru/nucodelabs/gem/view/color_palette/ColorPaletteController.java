@@ -4,7 +4,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -58,8 +57,8 @@ public class ColorPaletteController extends AbstractController {
         minResistanceProperty = new SimpleDoubleProperty(0.0);
         maxResistanceProperty = new SimpleDoubleProperty(1500.0);
 
-        colorPaletteProperty.get().minResistanceProperty.bind(minResistanceProperty);
-        colorPaletteProperty.get().maxResistanceProperty.bind(maxResistanceProperty);
+        colorPaletteProperty.get().minValueProperty().bind(minResistanceProperty);
+        colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
 
         clrData = colorPaletteProperty.get().getClrData();
         rectangleList = new ArrayList<>();

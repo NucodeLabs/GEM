@@ -2,25 +2,26 @@ package ru.nucodelabs.gem.view.color_palette;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.paint.Color;
 import ru.nucodelabs.files.color_palette.CLRData;
 
 public class ColorPalette {
 
     private final CLRData clrData;
 
-    public DoubleProperty minResistanceProperty;
+    private final DoubleProperty minValue;
 
-    public DoubleProperty maxResistanceProperty;
+    private final DoubleProperty maxValue;
 
     public ColorPalette(CLRData clrData) {
         this.clrData = clrData;
-        minResistanceProperty = new SimpleDoubleProperty(0.0);
-        maxResistanceProperty = new SimpleDoubleProperty(1500.0);
+        minValue = new SimpleDoubleProperty(0.0);
+        maxValue = new SimpleDoubleProperty(1500.0);
     }
 
-    public String getCLRColor(double currentResistance) {
-        double resistance = currentResistance - minResistanceProperty.get();
-        double topBorder = maxResistanceProperty.get() - minResistanceProperty.get();
+    public Color colorForValue(double value) {
+        double resistance = value - minValue.get();
+        double topBorder = maxValue.get() - minValue.get();
 
         double percent = (resistance / topBorder) * 100;
         double lowerPoint = getNearestLowerPoint(percent);
@@ -28,23 +29,21 @@ public class ColorPalette {
 
         double difference = upperPoint - lowerPoint;
         if (difference < 0) {
-            return String.format("%d, %d, %d, %f",
+            return Color.rgb(
                     clrData.colorMap.get(0.0).red(),
                     clrData.colorMap.get(0.0).green(),
-                    clrData.colorMap.get(0.0).blue(),
-                    1.0);
+                    clrData.colorMap.get(0.0).blue());
         } else if (percent >= 100) {
-            return String.format("%d, %d, %d, %f",
+            return Color.rgb(
                     clrData.colorMap.get(100.0).red(),
                     clrData.colorMap.get(100.0).green(),
-                    clrData.colorMap.get(100.0).blue(),
-                    1.0);
+                    clrData.colorMap.get(100.0).blue());
         }
 
         double partition = (percent - lowerPoint) / (difference);
         int[] rgbo = getColors(partition, lowerPoint, upperPoint);
 
-        return String.format("%d, %d, %d, %f",
+        return Color.rgb(
                 rgbo[0],
                 rgbo[1],
                 rgbo[2],
@@ -89,5 +88,29 @@ public class ColorPalette {
 
     public CLRData getClrData() {
         return clrData;
+    }
+
+    public double getMinValue() {
+        return minValue.get();
+    }
+
+    public void setMinValue(double minValue) {
+        this.minValue.set(minValue);
+    }
+
+    public DoubleProperty minValueProperty() {
+        return minValue;
+    }
+
+    public double getMaxValue() {
+        return maxValue.get();
+    }
+
+    public void setMaxValue(double maxValue) {
+        this.maxValue.set(maxValue);
+    }
+
+    public DoubleProperty maxValueProperty() {
+        return maxValue;
     }
 }
