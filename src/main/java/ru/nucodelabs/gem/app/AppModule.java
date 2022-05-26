@@ -1,21 +1,25 @@
 package ru.nucodelabs.gem.app;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.google.inject.name.Named;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import ru.nucodelabs.files.color_palette.CLRData;
+import ru.nucodelabs.files.color_palette.CLRFileParser;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color_palette.ColorPaletteController;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -129,4 +133,17 @@ public class AppModule extends AbstractModule {
             }
         };
     }
+
+    @Provides
+    @Inject
+    @Singleton
+    public ObjectProperty<ColorPalette> provideColorPalette() throws Exception {
+        return new SimpleObjectProperty<>(new ColorPalette(
+                new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse()));
+    }
+    /*@Provides
+    ObjectProperty<CLRData> provideCLRPallete() throws Exception {
+        return new SimpleObjectProperty<>(
+                new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse());
+    }*/
 }

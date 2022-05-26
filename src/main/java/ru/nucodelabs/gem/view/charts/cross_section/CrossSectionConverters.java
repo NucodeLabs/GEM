@@ -59,8 +59,15 @@ public class CrossSectionConverters {
 
                 //If there is only one picket, then its width is AB (AB/2 in both sides of center)
                 if (pickets.size() == 1) {
-                    leftCoordinate = centerCoordinate - 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
-                    rightCoordinate = centerCoordinate + 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
+                    if (picket.getExperimentalData().size() > 0) {
+                        leftCoordinate = centerCoordinate - 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
+                        rightCoordinate = centerCoordinate + 0.5 * picket.getExperimentalData().get(picket.getExperimentalData().size() - 1).getAb2();
+                    } else {
+                        //If there is picket with no experimental data. Causes SIGSEGV in forwardsolver, when pressing inverse task
+                        centerCoordinate = 0;
+                        leftCoordinate = centerCoordinate - 0.5 * picket.getOffsetX();
+                        rightCoordinate = centerCoordinate + 0.5 * picket.getOffsetX();
+                    }
                 } else {
                     //Auto setting of center coordinate of the first picket to zero
                     if (pickets.indexOf(picket) == 0) {

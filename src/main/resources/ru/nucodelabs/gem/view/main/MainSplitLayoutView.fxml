@@ -72,19 +72,15 @@
                             </HBox>
                         </HBox>
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
-                            <!--<HBox maxWidth="Infinity" maxHeight="Infinity">-->
-                                <SplitPane prefWidth="-Infinity" prefHeight="-Infinity" dividerPositions="0.2">
-                                    <!--<TitledPane alignment="TOP_LEFT">-->
-                                        <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette" VBox.vgrow="ALWAYS"/>
-                                    <!--</TitledPane>-->
-                                    <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
-                                        <Placeholder text="%pseudoSection"/>
-                                        <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
-                                    </SplitPane>
+                            <SplitPane prefWidth="-Infinity" prefHeight="-Infinity" dividerPositions="0.2"
+                                       maxHeight="Infinity" maxWidth="Infinity">
+                                <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette"/>
+                                <dividers/>
+                                <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
+                                    <Placeholder text="%pseudoSection"/>
+                                    <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
                                 </SplitPane>
-
-                            <!--</HBox>-->
-
+                            </SplitPane>
                             <VBox maxWidth="Infinity"
                                   maxHeight="Infinity"
                                   VBox.vgrow="ALWAYS">
