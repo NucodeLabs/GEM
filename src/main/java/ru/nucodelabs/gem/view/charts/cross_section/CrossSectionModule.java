@@ -19,8 +19,4 @@ public class CrossSectionModule extends AbstractModule {
         return new SimpleObjectProperty<>(
                 FXCollections.observableArrayList(new ArrayList<>()));
     }
-    @Provides ObjectProperty<CLRData> provideCLRPallete() throws Exception {
-        return new SimpleObjectProperty<>(
-                new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse());
-    }
 }

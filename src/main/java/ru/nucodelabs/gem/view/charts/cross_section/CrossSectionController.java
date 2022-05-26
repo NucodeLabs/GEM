@@ -1,7 +1,9 @@
 package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,7 +27,6 @@ import java.util.ResourceBundle;
 public class CrossSectionController extends AbstractController {
 
     private final ObservableObjectValue<Section> section;
-    private ColorPalette colorPalette;
     @FXML
     public NumberAxis sectionX;
     @FXML
@@ -37,7 +38,7 @@ public class CrossSectionController extends AbstractController {
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
 
     @Inject
-    private ObjectProperty<CLRData> clrDataProperty;
+    private ObjectProperty<ColorPalette> colorPaletteProperty;
 
     @Inject
     public CrossSectionController(ObservableObjectValue<Section> section) {
@@ -54,7 +55,8 @@ public class CrossSectionController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         //uiProperties = resources;
         sectionAreaChart.dataProperty().bind(dataProperty);
-        colorPalette = new ColorPalette(clrDataProperty.get());
+        colorPaletteProperty.get().minResistanceProperty.addListener((observableValue, number, t1) -> update());
+        colorPaletteProperty.get().maxResistanceProperty.addListener((observableValue, number, t1) -> update());
     }
 
     public void update() {
@@ -75,7 +77,7 @@ public class CrossSectionController extends AbstractController {
 
                     //Assign color according to resistance value
                     //String layerColor = colorPalette.getRGBColor(resistance);
-                    String layerColor = colorPalette.getCLRColor(resistance, 1500);
+                    String layerColor = colorPaletteProperty.get().getCLRColor(resistance);
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
