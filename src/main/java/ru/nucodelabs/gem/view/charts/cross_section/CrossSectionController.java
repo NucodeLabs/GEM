@@ -1,9 +1,7 @@
 package ru.nucodelabs.gem.view.charts.cross_section;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,7 +13,7 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.files.color_palette.CLRData;
+import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
@@ -55,8 +53,8 @@ public class CrossSectionController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         //uiProperties = resources;
         sectionAreaChart.dataProperty().bind(dataProperty);
-        colorPaletteProperty.get().minResistanceProperty.addListener((observableValue, number, t1) -> update());
-        colorPaletteProperty.get().maxResistanceProperty.addListener((observableValue, number, t1) -> update());
+        colorPaletteProperty.get().minValueProperty().addListener((observableValue, number, t1) -> update());
+        colorPaletteProperty.get().maxValueProperty().addListener((observableValue, number, t1) -> update());
     }
 
     public void update() {
@@ -77,11 +75,11 @@ public class CrossSectionController extends AbstractController {
 
                     //Assign color according to resistance value
                     //String layerColor = colorPalette.getRGBColor(resistance);
-                    String layerColor = colorPaletteProperty.get().getCLRColor(resistance);
+                    String layerColor = FXUtils.toWeb(colorPaletteProperty.get().colorForValue(resistance));
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                            .setStyle("-fx-fill: rgba(" + layerColor + ");");
+                            .setStyle("-fx-fill: " + layerColor + ";");
 
                     //Set viewOrder of positive part more to background,
                     // because it is intended to be a higher area of the picket
@@ -90,7 +88,7 @@ public class CrossSectionController extends AbstractController {
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
-                            .setStyle("-fx-fill: rgba(" + layerColor + ");");
+                            .setStyle("-fx-fill: " + layerColor + ";");
 
                     //Set viewOrder of positive part more to foreground,
                     // because it is intended to be a lower area of the picket

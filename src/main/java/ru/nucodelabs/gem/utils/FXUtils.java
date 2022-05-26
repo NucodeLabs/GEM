@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -162,5 +163,16 @@ public class FXUtils {
                 ifValid.run();
             }
         }
+    }
+
+    /**
+     * @return "rgba(%d, %d, %d, %f)"
+     */
+    public static String toWeb(Color color) {
+        return String.format("rgba(%d, %d, %d, %f)",
+                (int) Math.ceil(color.getRed() * 255),
+                (int) Math.ceil(color.getGreen() * 255),
+                (int) Math.ceil(color.getBlue() * 255),
+                color.getOpacity());
     }
 }
