@@ -4,16 +4,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <Pane fx:id="rootPane" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.view.color_palette.ColorPaletteController">
    <children>
         <VBox fx:id="rootVBox" fillWidth="false" spacing="5.0">
              <VBox fillWidth="false" spacing="5.0" VBox.vgrow="NEVER">
-                 <Label alignment="CENTER" text="%paletteLabel" />
-            <HBox spacing="10.0">
+                 <Label alignment="CENTER" text="%paletteLabel">
+               <padding>
+                  <Insets bottom="15.0" />
+               </padding></Label>
+            <HBox spacing="1.0">
                <children>
                        <Pane fx:id="palettePane" />
-                  <Pane fx:id="labelsPane" />
+                  <Pane fx:id="labelsPane">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></Pane>
                </children>
                <VBox.margin>
                   <Insets />
