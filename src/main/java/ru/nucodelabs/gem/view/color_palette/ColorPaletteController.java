@@ -9,8 +9,10 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ru.nucodelabs.files.color_palette.CLRData;
+import ru.nucodelabs.gem.utils.NumbersUtils;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
@@ -75,11 +77,14 @@ public class ColorPaletteController extends AbstractController {
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
 
-        palettePane.setPrefWidth(200);
-        palettePane.setPrefHeight(300);
+        //rootPane.setPrefWidth(320);
+        rootPane.setPrefHeight(400);
 
-        labelsPane.setPrefWidth(100);
-        labelsPane.setPrefHeight(300);
+        palettePane.setPrefWidth(100);
+        palettePane.setPrefHeight(200);
+
+        //labelsPane.setPrefWidth(100);
+        labelsPane.setPrefHeight(200);
 
         drawPalette();
         updatePaletteView();
@@ -91,7 +96,9 @@ public class ColorPaletteController extends AbstractController {
             double key = i * coeff.get();
             Label label = new Label(String.valueOf(computeResistance(key)));
             label.setLayoutX(labelsPane.getLayoutX());
-            label.setLayoutY(labelsPane.getPrefHeight() * key);
+            label.setLayoutY(labelsPane.getPrefHeight() * (key - 0.6 * coeff.get()));
+            label.setUnderline(true);
+            label.fontProperty().set(new Font(10));
             labelList.add(label);
 
             if (i == 0) {
@@ -116,7 +123,9 @@ public class ColorPaletteController extends AbstractController {
 
         for (int i = 0; i <= precisionProperty.get(); i++) {
             double key = i * coeff.get();
-            labelList.get(i).setText(String.valueOf(computeResistance(key)));
+            labelList.get(i).setText(
+                    String.valueOf(
+                            NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
                 Stop[] stops = {
                         new Stop(0, colorPaletteProperty.get().colorForValue(computeResistance(key))),
