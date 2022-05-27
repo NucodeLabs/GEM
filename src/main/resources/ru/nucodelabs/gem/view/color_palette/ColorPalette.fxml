@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<HBox fx:id="rootHBox" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nucodelabs.gem.view.color_palette.ColorPaletteController">
-    <VBox alignment="CENTER" maxWidth="200.0" prefHeight="300.0" prefWidth="150.0" spacing="10.0">
-        <padding>
-            <Insets bottom="10" left="10" right="10" top="10" />
-        </padding>
-        <VBox alignment="TOP_CENTER" maxHeight="450.0" maxWidth="200.0" prefHeight="400.0" VBox.vgrow="ALWAYS">
-            <Label alignment="CENTER" text="%paletteLabel" />
-            <Pane fx:id="palettePane" maxHeight="400.0" maxWidth="150.0" prefHeight="300.0" prefWidth="150.0" />
+<HBox fx:id="rootHBox" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.nucodelabs.gem.view.color_palette.ColorPaletteController">
+    <Pane>
+        <VBox alignment="CENTER" maxWidth="200.0" prefHeight="300.0" prefWidth="150.0" spacing="0.0">
+            <Pane>
+                <VBox alignment="TOP_CENTER" maxHeight="450.0" maxWidth="200.0" prefHeight="400.0" VBox.vgrow="ALWAYS">
+                    <Label alignment="CENTER" text="%paletteLabel"/>
+                    <Pane fx:id="palettePane" maxHeight="400.0" maxWidth="150.0" prefHeight="300.0" prefWidth="150.0"/>
+                </VBox>
+            </Pane>
+            <Pane>
+                <VBox spacing="10.0" VBox.vgrow="NEVER">
+                    <Pane>
+                        <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+                            <Label text="%paletteMinRes"/>
+                            <TextField fx:id="minResistanceTF" onKeyTyped="#onMinResistanceEdit"/>
+                        </VBox>
+                    </Pane>
+                    <Pane>
+                        <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+                            <Label text="%paletteMaxRes"/>
+                            <TextField fx:id="maxResistanceTF" onKeyTyped="#onMaxResistanceEdit"/>
+                        </VBox>
+                    </Pane>
+                </VBox>
+            </Pane>
         </VBox>
-        <VBox spacing="10.0" VBox.vgrow="NEVER">
-            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-                <Label text="%paletteMinRes" />
-                <TextField fx:id="minResistanceTF" onKeyTyped="#onMinResistanceEdit" />
-            </VBox>
-            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-                <Label text="%paletteMaxRes" />
-                <TextField fx:id="maxResistanceTF" onKeyTyped="#onMaxResistanceEdit" />
-            </VBox>
-        </VBox>
-    </VBox>
+    </Pane>
 
 </HBox>

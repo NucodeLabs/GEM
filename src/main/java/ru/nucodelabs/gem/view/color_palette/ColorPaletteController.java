@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -42,11 +41,13 @@ public class ColorPaletteController extends AbstractController {
 
     private CLRData clrData;
 
+    private List<Double> keyList;
+
     private List<Rectangle> rectangleList;
 
     @Override
     protected Stage getStage() {
-        return (Stage)rootHBox.getScene().getWindow();
+        return (Stage) rootHBox.getScene().getWindow();
     }
 
     @Override
@@ -61,6 +62,7 @@ public class ColorPaletteController extends AbstractController {
         colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
 
         clrData = colorPaletteProperty.get().getClrData();
+        keyList = clrData.colorMap.keySet().stream().toList();
         rectangleList = new ArrayList<>();
 
         palettePane.setPrefWidth(rootHBox.getWidth());
@@ -71,14 +73,13 @@ public class ColorPaletteController extends AbstractController {
     }
 
     private void drawPalette() {
-        List<Double> keyList = clrData.colorMap.keySet().stream().toList();
         double prevKey = 0.0;
         for (int i = 0; i < clrData.colorMap.keySet().size(); i++) {
             double key = keyList.get(i);
             if (i == 0) {
                 continue;
             } else {
-                rectangleList.add(          //AAAAAAAA
+                rectangleList.add(
                         new Rectangle(
                                 0.0,
                                 300 * prevKey / 100,
@@ -93,12 +94,18 @@ public class ColorPaletteController extends AbstractController {
     }
 
     private void updatePaletteView() {
-        palettePane.getChildren().forEach(rect -> {
-            Stop[] stops = {new Stop(0, Color.BLACK), new Stop(1, Color.RED)};
-            LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-            ((Rectangle) rect).setFill(linearGradient);
-            rect.setStyle("-fx-stroke: BLACK");
-        });
+
+        for (int i = 0; i < keyList.size(); i++) {
+            if (i < keyList.size() - 1) {
+                Stop[] stops = {
+                        new Stop(0, colorPaletteProperty.get().colorForValue(keyList.get(i) * (maxResistanceProperty.get() - minResistanceProperty.get()) / 100 + minResistanceProperty.get())),
+                        new Stop(1, colorPaletteProperty.get().colorForValue(keyList.get(i + 1) * (maxResistanceProperty.get() - minResistanceProperty.get()) / 100 + minResistanceProperty.get()))};
+                LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
+
+                ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
+                palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
+            }
+        }
     }
 
     @FXML
@@ -119,12 +126,10 @@ public class ColorPaletteController extends AbstractController {
             num = Double.parseDouble(input);
             if (num < 0) {
                 textField.setText(Double.toString(resistanceProperty.get()));
-                System.out.println("Wrong input! < 0");
                 return resistanceProperty.get();
             }
         } catch (NumberFormatException exc) {
             textField.setText(Double.toString(resistanceProperty.get()));
-            System.out.println("Wrong input! Not number");
             return resistanceProperty.get();
         }
 

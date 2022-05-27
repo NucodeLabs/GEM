@@ -15,19 +15,26 @@ public class ColorPalette {
 
     public ColorPalette(CLRData clrData) {
         this.clrData = clrData;
-        minValue = new SimpleDoubleProperty(0.0);
-        maxValue = new SimpleDoubleProperty(1500.0);
+        minValue = new SimpleDoubleProperty();
+        maxValue = new SimpleDoubleProperty();
     }
 
     public Color colorForValue(double value) {
         double resistance = value - minValue.get();
         double topBorder = maxValue.get() - minValue.get();
+        double percent;
 
-        double percent = (resistance / topBorder) * 100;
+        if (Double.isNaN(resistance / topBorder)) {
+            percent = 100.0;
+        } else {
+            percent = (resistance / topBorder) * 100;
+        }
+
         double lowerPoint = getNearestLowerPoint(percent);
         double upperPoint = getNearestUpperPoint(percent);
 
         double difference = upperPoint - lowerPoint;
+
         if (difference < 0) {
             return Color.rgb(
                     clrData.colorMap.get(0.0).red(),
@@ -40,7 +47,7 @@ public class ColorPalette {
                     clrData.colorMap.get(100.0).blue());
         }
 
-        double partition = (percent - lowerPoint) / (difference);
+        double partition = (percent - lowerPoint) / difference;
         int[] rgbo = getColors(partition, lowerPoint, upperPoint);
 
         return Color.rgb(
