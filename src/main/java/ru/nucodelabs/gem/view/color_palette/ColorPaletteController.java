@@ -1,11 +1,9 @@
 package ru.nucodelabs.gem.view.color_palette;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -24,17 +22,25 @@ import java.util.ResourceBundle;
 public class ColorPaletteController extends AbstractController {
 
     @FXML
-    public HBox rootHBox;
+    public Pane rootPane;
     @FXML
     public Pane palettePane;
+    @FXML
+    public Pane labelsPane;
     @FXML
     public TextField minResistanceTF;
     @FXML
     public TextField maxResistanceTF;
+    @FXML
+    public TextField precisionTF;
 
     public DoubleProperty minResistanceProperty;
 
     public DoubleProperty maxResistanceProperty;
+
+    public IntegerProperty precisionProperty;
+
+    private DoubleProperty coeff;
 
     @Inject
     private ObjectProperty<ColorPalette> colorPaletteProperty;
@@ -44,10 +50,11 @@ public class ColorPaletteController extends AbstractController {
     private List<Double> keyList;
 
     private List<Rectangle> rectangleList;
+    private List<Label> labelList;
 
     @Override
     protected Stage getStage() {
-        return (Stage) rootHBox.getScene().getWindow();
+        return (Stage) rootPane.getScene().getWindow();
     }
 
     @Override
@@ -57,6 +64,8 @@ public class ColorPaletteController extends AbstractController {
 
         minResistanceProperty = new SimpleDoubleProperty(0.0);
         maxResistanceProperty = new SimpleDoubleProperty(1500.0);
+        precisionProperty = new SimpleIntegerProperty(10);
+        coeff = new SimpleDoubleProperty(1.0 / precisionProperty.get());
 
         colorPaletteProperty.get().minValueProperty().bind(minResistanceProperty);
         colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
@@ -64,9 +73,13 @@ public class ColorPaletteController extends AbstractController {
         clrData = colorPaletteProperty.get().getClrData();
         keyList = clrData.colorMap.keySet().stream().toList();
         rectangleList = new ArrayList<>();
+        labelList = new ArrayList<>();
 
-        palettePane.setPrefWidth(rootHBox.getWidth());
-        palettePane.setPrefHeight(rootHBox.getHeight());
+        palettePane.setPrefWidth(200);
+        palettePane.setPrefHeight(300);
+
+        labelsPane.setPrefWidth(100);
+        labelsPane.setPrefHeight(300);
 
         drawPalette();
         updatePaletteView();
@@ -74,63 +87,102 @@ public class ColorPaletteController extends AbstractController {
 
     private void drawPalette() {
         double prevKey = 0.0;
-        for (int i = 0; i < clrData.colorMap.keySet().size(); i++) {
-            double key = keyList.get(i);
+        for (int i = 0; i <= precisionProperty.get(); i++) {
+            double key = i * coeff.get();
+            Label label = new Label(String.valueOf(computeResistance(key)));
+            label.setLayoutX(labelsPane.getLayoutX());
+            label.setLayoutY(labelsPane.getPrefHeight() * key);
+            labelList.add(label);
+
             if (i == 0) {
                 continue;
             } else {
                 rectangleList.add(
                         new Rectangle(
-                                0.0,
-                                300 * prevKey / 100,
-                                150,
-                                300 * (key - prevKey) / 100));
+                                palettePane.getLayoutX(),
+                                palettePane.getPrefHeight() * prevKey,
+                                palettePane.getPrefWidth(),
+                                palettePane.getPrefHeight() * (key - prevKey)));
             }
 
             prevKey = key;
         }
 
         palettePane.getChildren().addAll(rectangleList);
+        labelsPane.getChildren().addAll(labelList);
     }
 
     private void updatePaletteView() {
 
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i < keyList.size() - 1) {
+        for (int i = 0; i <= precisionProperty.get(); i++) {
+            double key = i * coeff.get();
+            labelList.get(i).setText(String.valueOf(computeResistance(key)));
+            if (i < precisionProperty.get()) {
                 Stop[] stops = {
-                        new Stop(0, colorPaletteProperty.get().colorForValue(keyList.get(i) * (maxResistanceProperty.get() - minResistanceProperty.get()) / 100 + minResistanceProperty.get())),
-                        new Stop(1, colorPaletteProperty.get().colorForValue(keyList.get(i + 1) * (maxResistanceProperty.get() - minResistanceProperty.get()) / 100 + minResistanceProperty.get()))};
+                        new Stop(0, colorPaletteProperty.get().colorForValue(computeResistance(key))),
+                        new Stop(1, colorPaletteProperty.get().colorForValue(computeResistance(key + coeff.get())))};
                 LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 
                 ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
+                //((Rectangle) palettePane.getChildren().get(i)).setWidth(rootVBox.getParent().getWidth());
             }
         }
     }
 
+    private double computeResistance(double key) {
+        return key * (maxResistanceProperty.get() - minResistanceProperty.get()) + minResistanceProperty.get();
+    }
+
     @FXML
     public void onMinResistanceEdit() {
-        minResistanceProperty.setValue(checkInput(minResistanceTF.getText(), minResistanceTF, minResistanceProperty));
+        minResistanceProperty.setValue(checkInputDouble(minResistanceTF.getText(), minResistanceTF, minResistanceProperty));
         updatePaletteView();
     }
 
     @FXML
     public void onMaxResistanceEdit() {
-        maxResistanceProperty.setValue(checkInput(maxResistanceTF.getText(), maxResistanceTF, maxResistanceProperty));
+        maxResistanceProperty.setValue(checkInputDouble(maxResistanceTF.getText(), maxResistanceTF, maxResistanceProperty));
         updatePaletteView();
     }
 
-    private Double checkInput(String input, TextField textField, DoubleProperty resistanceProperty) {
+    @FXML
+    public void onPrecisionEdit() {
+        precisionProperty.setValue(checkInputInteger(precisionTF.getText(), precisionTF, precisionProperty));
+        coeff.set(1.0 / precisionProperty.get());
+        palettePane.getChildren().clear();
+        labelsPane.getChildren().clear();
+        drawPalette();
+        updatePaletteView();
+    }
+
+    private Double checkInputDouble(String input, TextField textField, DoubleProperty property) {
         double num;
         try {
             num = Double.parseDouble(input);
             if (num < 0) {
-                textField.setText(Double.toString(resistanceProperty.get()));
-                return resistanceProperty.get();
+                textField.setText(Double.toString(property.get()));
+                return property.get();
             }
         } catch (NumberFormatException exc) {
-            textField.setText(Double.toString(resistanceProperty.get()));
-            return resistanceProperty.get();
+            textField.setText(Double.toString(property.get()));
+            return property.get();
+        }
+
+        return num;
+    }
+
+    private Integer checkInputInteger(String input, TextField textField, IntegerProperty property) {
+        int num;
+        try {
+            num = Integer.parseInt(input);
+            if (num < 0) {
+                textField.setText(Integer.toString(property.get()));
+                return property.get();
+            }
+        } catch (NumberFormatException exc) {
+            textField.setText(Integer.toString(property.get()));
+            return property.get();
         }
 
         return num;
