@@ -1,11 +1,10 @@
 package ru.nucodelabs.files.color_palette;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CLRData {
-    public Map<Double, ColorSettings> colorMap;
+    private Map<Double, ColorSettings> colorMap;
 
     public CLRData() {
         colorMap = new LinkedHashMap<>();
@@ -32,5 +31,13 @@ public class CLRData {
         public int opacity() {
             return opacity;
         }
+    }
+
+    public Map<Double, ColorSettings> getColorMap() {
+        return colorMap;
+    }
+
+    public void setColorMap(Map<Double, ColorSettings> colorMap) {
+        this.colorMap = colorMap;
     }
 }
