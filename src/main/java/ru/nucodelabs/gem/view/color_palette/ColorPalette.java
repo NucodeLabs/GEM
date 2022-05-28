@@ -15,8 +15,8 @@ public class ColorPalette {
 
     public ColorPalette(CLRData clrData) {
         this.clrData = clrData;
-        minValue = new SimpleDoubleProperty();
-        maxValue = new SimpleDoubleProperty();
+        minValue = new SimpleDoubleProperty(0.0);
+        maxValue = new SimpleDoubleProperty(1500.0);
     }
 
     public Color colorForValue(double value) {
@@ -37,14 +37,14 @@ public class ColorPalette {
 
         if (difference < 0) {
             return Color.rgb(
-                    clrData.colorMap.get(0.0).red(),
-                    clrData.colorMap.get(0.0).green(),
-                    clrData.colorMap.get(0.0).blue());
+                    clrData.getColorMap().get(0.0).red(),
+                    clrData.getColorMap().get(0.0).green(),
+                    clrData.getColorMap().get(0.0).blue());
         } else if (percent >= 100) {
             return Color.rgb(
-                    clrData.colorMap.get(100.0).red(),
-                    clrData.colorMap.get(100.0).green(),
-                    clrData.colorMap.get(100.0).blue());
+                    clrData.getColorMap().get(100.0).red(),
+                    clrData.getColorMap().get(100.0).green(),
+                    clrData.getColorMap().get(100.0).blue());
         }
 
         double partition = (percent - lowerPoint) / difference;
@@ -59,17 +59,17 @@ public class ColorPalette {
 
     private int[] getColors(double partition, double lowerPoint, double upperPoint) {
         int[] rgbo = new int[4];
-        rgbo[0] = clrData.colorMap.get(lowerPoint).red() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).red() - clrData.colorMap.get(lowerPoint).red()));
-        rgbo[1] = clrData.colorMap.get(lowerPoint).green() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).green() - clrData.colorMap.get(lowerPoint).green()));
-        rgbo[2] = clrData.colorMap.get(lowerPoint).blue() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).blue() - clrData.colorMap.get(lowerPoint).blue()));
-        rgbo[3] = clrData.colorMap.get(lowerPoint).opacity() + (int) Math.floor(partition * (clrData.colorMap.get(upperPoint).opacity() - clrData.colorMap.get(lowerPoint).opacity()));
+        rgbo[0] = clrData.getColorMap().get(lowerPoint).red() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).red() - clrData.getColorMap().get(lowerPoint).red()));
+        rgbo[1] = clrData.getColorMap().get(lowerPoint).green() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).green() - clrData.getColorMap().get(lowerPoint).green()));
+        rgbo[2] = clrData.getColorMap().get(lowerPoint).blue() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).blue() - clrData.getColorMap().get(lowerPoint).blue()));
+        rgbo[3] = clrData.getColorMap().get(lowerPoint).opacity() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).opacity() - clrData.getColorMap().get(lowerPoint).opacity()));
 
         return rgbo;
     }
 
     private Double getNearestLowerPoint(double percent) {
         double prevKey = 0.0;
-        for (double key : clrData.colorMap.keySet()) {
+        for (double key : clrData.getColorMap().keySet()) {
             if (percent < key) {
                 return prevKey;
             } else if (percent == key) {
@@ -83,14 +83,13 @@ public class ColorPalette {
     }
 
     private Double getNearestUpperPoint(double percent) {
-        double nextKey = percent;
-        for (double key : clrData.colorMap.keySet()) {
+        for (double key : clrData.getColorMap().keySet()) {
             if (percent <= key) {
                 return key;
             }
         }
 
-        return nextKey;
+        return percent;
     }
 
     public CLRData getClrData() {

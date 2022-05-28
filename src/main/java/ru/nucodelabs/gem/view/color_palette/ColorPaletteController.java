@@ -66,25 +66,23 @@ public class ColorPaletteController extends AbstractController {
 
         minResistanceProperty = new SimpleDoubleProperty(0.0);
         maxResistanceProperty = new SimpleDoubleProperty(1500.0);
-        precisionProperty = new SimpleIntegerProperty(10);
+        precisionProperty = new SimpleIntegerProperty(20);
         coeff = new SimpleDoubleProperty(1.0 / precisionProperty.get());
 
         colorPaletteProperty.get().minValueProperty().bind(minResistanceProperty);
         colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
 
         clrData = colorPaletteProperty.get().getClrData();
-        keyList = clrData.colorMap.keySet().stream().toList();
+        keyList = clrData.getColorMap().keySet().stream().toList();
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
 
-        //rootPane.setPrefWidth(320);
         rootPane.setPrefHeight(400);
 
         palettePane.setPrefWidth(100);
-        palettePane.setPrefHeight(200);
+        palettePane.setPrefHeight(250);
 
-        //labelsPane.setPrefWidth(100);
-        labelsPane.setPrefHeight(200);
+        labelsPane.setPrefHeight(250);
 
         drawPalette();
         updatePaletteView();
@@ -159,8 +157,10 @@ public class ColorPaletteController extends AbstractController {
     public void onPrecisionEdit() {
         precisionProperty.setValue(checkInputInteger(precisionTF.getText(), precisionTF, precisionProperty));
         coeff.set(1.0 / precisionProperty.get());
+
         palettePane.getChildren().clear();
         labelsPane.getChildren().clear();
+
         drawPalette();
         updatePaletteView();
     }

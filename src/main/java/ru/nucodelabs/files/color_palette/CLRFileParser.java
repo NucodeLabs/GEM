@@ -50,7 +50,7 @@ public class CLRFileParser {
                     opacity = Integer.parseInt(lineList.get(5));
                 }
 
-                clrData.colorMap.put(key, new CLRData.ColorSettings(red, green, blue, opacity));
+                clrData.getColorMap().put(key, new CLRData.ColorSettings(red, green, blue, opacity));
             }
         } while (scanner.hasNextLine());
 
