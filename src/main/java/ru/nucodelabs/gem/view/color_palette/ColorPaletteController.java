@@ -77,12 +77,12 @@ public class ColorPaletteController extends AbstractController {
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
 
-        rootPane.setPrefHeight(400);
+        //rootPane.setPrefHeight(400);
 
-        palettePane.setPrefWidth(100);
-        palettePane.setPrefHeight(250);
+        //palettePane.setPrefWidth(100);
+       // palettePane.setPrefHeight(250);
 
-        labelsPane.setPrefHeight(250);
+       // labelsPane.setPrefHeight(250);
 
         drawPalette();
         updatePaletteView();
@@ -93,7 +93,7 @@ public class ColorPaletteController extends AbstractController {
         for (int i = 0; i <= precisionProperty.get(); i++) {
             double key = i * coeff.get();
             Label label = new Label(String.valueOf(computeResistance(key)));
-            label.setLayoutX(labelsPane.getLayoutX());
+            label.setLayoutX(0);
             label.setLayoutY(labelsPane.getPrefHeight() * (key - 0.6 * coeff.get()));
             label.setUnderline(true);
             label.fontProperty().set(new Font(10));
@@ -104,7 +104,7 @@ public class ColorPaletteController extends AbstractController {
             } else {
                 rectangleList.add(
                         new Rectangle(
-                                palettePane.getLayoutX(),
+                                0,
                                 palettePane.getPrefHeight() * prevKey,
                                 palettePane.getPrefWidth(),
                                 palettePane.getPrefHeight() * (key - prevKey)));
@@ -158,7 +158,10 @@ public class ColorPaletteController extends AbstractController {
         precisionProperty.setValue(checkInputInteger(precisionTF.getText(), precisionTF, precisionProperty));
         coeff.set(1.0 / precisionProperty.get());
 
+        rectangleList.clear();
         palettePane.getChildren().clear();
+
+        labelList.clear();
         labelsPane.getChildren().clear();
 
         drawPalette();
@@ -169,7 +172,7 @@ public class ColorPaletteController extends AbstractController {
         double num;
         try {
             num = Double.parseDouble(input);
-            if (num < 0) {
+            if (num <= 0) {
                 textField.setText(Double.toString(property.get()));
                 return property.get();
             }
@@ -185,7 +188,7 @@ public class ColorPaletteController extends AbstractController {
         int num;
         try {
             num = Integer.parseInt(input);
-            if (num < 0) {
+            if (num <= 0) {
                 textField.setText(Integer.toString(property.get()));
                 return property.get();
             }

@@ -72,8 +72,8 @@
                             </HBox>
                         </HBox>
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
-                            <SplitPane dividerPositions="0.2" orientation="HORIZONTAL">
-                                <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette"/>
+                            <SplitPane>
+                                <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette" VBox.vgrow="NEVER" SplitPane.resizableWithParent="NEVER"/>
                                 <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity">
                                     <Placeholder text="%pseudoSection"/>
                                     <fx:include fx:id="crossSection" source="../cross_section/CrossSection.fxml"/>
