@@ -11,7 +11,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.utils.NumbersUtils;
 import ru.nucodelabs.gem.view.AbstractController;
 
@@ -47,10 +46,6 @@ public class ColorPaletteController extends AbstractController {
     @Inject
     private ObjectProperty<ColorPalette> colorPaletteProperty;
 
-    private CLRData clrData;
-
-    private List<Double> keyList;
-
     private List<Rectangle> rectangleList;
     private List<Label> labelList;
 
@@ -72,17 +67,8 @@ public class ColorPaletteController extends AbstractController {
         colorPaletteProperty.get().minValueProperty().bind(minResistanceProperty);
         colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
 
-        clrData = colorPaletteProperty.get().getClrData();
-        keyList = clrData.getColorMap().keySet().stream().toList();
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
-
-        //rootPane.setPrefHeight(400);
-
-        //palettePane.setPrefWidth(100);
-       // palettePane.setPrefHeight(250);
-
-       // labelsPane.setPrefHeight(250);
 
         drawPalette();
         updatePaletteView();
@@ -132,7 +118,6 @@ public class ColorPaletteController extends AbstractController {
 
                 ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
-                //((Rectangle) palettePane.getChildren().get(i)).setWidth(rootVBox.getParent().getWidth());
             }
         }
     }
