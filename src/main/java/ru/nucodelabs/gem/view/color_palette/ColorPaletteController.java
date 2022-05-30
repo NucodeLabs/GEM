@@ -141,7 +141,11 @@ public class ColorPaletteController extends AbstractController {
     @FXML
     public void onPrecisionEdit() {
         precisionProperty.setValue(checkInputInteger(precisionTF.getText(), precisionTF, precisionProperty));
-        coeff.set(1.0 / precisionProperty.get());
+        if (precisionProperty.get() == 0) {
+            coeff.set(1);
+        } else {
+            coeff.set(1.0 / precisionProperty.get());
+        }
 
         rectangleList.clear();
         palettePane.getChildren().clear();
@@ -173,7 +177,7 @@ public class ColorPaletteController extends AbstractController {
         int num;
         try {
             num = Integer.parseInt(input);
-            if (num <= 0) {
+            if (num < 0) {
                 textField.setText(Integer.toString(property.get()));
                 return property.get();
             }

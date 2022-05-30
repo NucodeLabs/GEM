@@ -19,6 +19,12 @@ public class ColorPalette {
         maxValue = new SimpleDoubleProperty(1500.0);
     }
 
+    public ColorPalette(CLRData clrData, double initMinResistance, double initMaxResistance) {
+        this.clrData = clrData;
+        minValue = new SimpleDoubleProperty(initMinResistance);
+        maxValue = new SimpleDoubleProperty(initMaxResistance);
+    }
+
     public Color colorForValue(double value) {
         double resistance = value - minValue.get();
         double topBorder = maxValue.get() - minValue.get();

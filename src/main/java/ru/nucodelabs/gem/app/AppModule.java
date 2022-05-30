@@ -141,9 +141,4 @@ public class AppModule extends AbstractModule {
         return new SimpleObjectProperty<>(new ColorPalette(
                 new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse()));
     }
-    /*@Provides
-    ObjectProperty<CLRData> provideCLRPallete() throws Exception {
-        return new SimpleObjectProperty<>(
-                new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse());
-    }*/
 }
