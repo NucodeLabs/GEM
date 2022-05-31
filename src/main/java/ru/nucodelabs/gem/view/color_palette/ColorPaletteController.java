@@ -1,20 +1,29 @@
 package ru.nucodelabs.gem.view.color_palette;
 
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import ru.nucodelabs.gem.utils.NumbersUtils;
 import ru.nucodelabs.gem.view.AbstractController;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +32,19 @@ import java.util.ResourceBundle;
 public class ColorPaletteController extends AbstractController {
 
     @FXML
-    public Pane rootPane;
+    private ContextMenu contextMenu;
     @FXML
-    public Pane palettePane;
+    private Stage configWindow;
     @FXML
-    public Pane labelsPane;
+    private Pane palettePane;
     @FXML
-    public TextField minResistanceTF;
+    private VBox labelsPane;
     @FXML
-    public TextField maxResistanceTF;
+    private TextField minResistanceTF;
     @FXML
-    public TextField precisionTF;
+    private TextField maxResistanceTF;
+    @FXML
+    private TextField precisionTF;
 
     public DoubleProperty minResistanceProperty;
 
@@ -44,18 +55,25 @@ public class ColorPaletteController extends AbstractController {
     private DoubleProperty coeff;
 
     @Inject
-    private ObjectProperty<ColorPalette> colorPaletteProperty;
+    private ColorPalette colorPalette;
+
+    @Inject
+    @Named("CSS")
+    private String css;
 
     private List<Rectangle> rectangleList;
     private List<Label> labelList;
 
     @Override
     protected Stage getStage() {
-        return (Stage) rootPane.getScene().getWindow();
+        return (Stage) palettePane.getScene().getWindow();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configWindow.initStyle(StageStyle.UTILITY);
+        configWindow.getScene().getStylesheets().add(css);
+
         minResistanceTF.setText("0.0");
         maxResistanceTF.setText("1500.0");
 
@@ -64,8 +82,8 @@ public class ColorPaletteController extends AbstractController {
         precisionProperty = new SimpleIntegerProperty(20);
         coeff = new SimpleDoubleProperty(1.0 / precisionProperty.get());
 
-        colorPaletteProperty.get().minValueProperty().bind(minResistanceProperty);
-        colorPaletteProperty.get().maxValueProperty().bind(maxResistanceProperty);
+        colorPalette.minValueProperty().bind(minResistanceProperty);
+        colorPalette.maxValueProperty().bind(maxResistanceProperty);
 
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
@@ -88,12 +106,14 @@ public class ColorPaletteController extends AbstractController {
             if (i == 0) {
                 continue;
             } else {
+                final double finalPrevKey = prevKey;
                 rectangleList.add(
-                        new Rectangle(
-                                0,
-                                palettePane.getPrefHeight() * prevKey,
-                                palettePane.getPrefWidth(),
-                                palettePane.getPrefHeight() * (key - prevKey)));
+                        new Rectangle() {{
+                            setX(0);
+                            yProperty().bind(palettePane.heightProperty().multiply(finalPrevKey));
+                            widthProperty().bind(palettePane.widthProperty().subtract(5));
+                            heightProperty().bind(palettePane.heightProperty().multiply(key - finalPrevKey));
+                        }});
             }
 
             prevKey = key;
@@ -112,8 +132,8 @@ public class ColorPaletteController extends AbstractController {
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
                 Stop[] stops = {
-                        new Stop(0, colorPaletteProperty.get().colorForValue(computeResistance(key))),
-                        new Stop(1, colorPaletteProperty.get().colorForValue(computeResistance(key + coeff.get())))};
+                        new Stop(0, colorPalette.colorForValue(computeResistance(key))),
+                        new Stop(1, colorPalette.colorForValue(computeResistance(key + coeff.get())))};
                 LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 
                 ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
@@ -187,5 +207,18 @@ public class ColorPaletteController extends AbstractController {
         }
 
         return num;
+    }
+
+    @FXML
+    public void showContextMenu(ContextMenuEvent contextMenuEvent) {
+        contextMenu.show(getStage(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+    }
+
+    @FXML
+    public void showConfigWindow(ActionEvent actionEvent) {
+        if (configWindow.getOwner() == null) {
+            configWindow.initOwner(getStage());
+        }
+        configWindow.show();
     }
 }

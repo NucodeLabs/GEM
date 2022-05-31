@@ -36,7 +36,7 @@ public class CrossSectionController extends AbstractController {
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
 
     @Inject
-    private ObjectProperty<ColorPalette> colorPaletteProperty;
+    private ColorPalette colorPalette;
 
     @Inject
     public CrossSectionController(ObservableObjectValue<Section> section) {
@@ -53,8 +53,8 @@ public class CrossSectionController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         //uiProperties = resources;
         sectionAreaChart.dataProperty().bind(dataProperty);
-        colorPaletteProperty.get().minValueProperty().addListener((observableValue, number, t1) -> update());
-        colorPaletteProperty.get().maxValueProperty().addListener((observableValue, number, t1) -> update());
+        colorPalette.minValueProperty().addListener((observableValue, number, t1) -> update());
+        colorPalette.maxValueProperty().addListener((observableValue, number, t1) -> update());
     }
 
     public void update() {
@@ -75,7 +75,7 @@ public class CrossSectionController extends AbstractController {
 
                     //Assign color according to resistance value
                     //String layerColor = colorPalette.getRGBColor(resistance);
-                    String layerColor = FXUtils.toWeb(colorPaletteProperty.get().colorForValue(resistance));
+                    String layerColor = FXUtils.toWeb(colorPalette.colorForValue(resistance));
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")
