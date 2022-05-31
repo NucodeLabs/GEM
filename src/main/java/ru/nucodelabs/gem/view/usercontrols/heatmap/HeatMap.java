@@ -35,6 +35,14 @@ public class HeatMap extends VBUserControl {
             }
             repaint();
         });
+
+        colorPalette.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                repaint();
+                newValue.maxValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
+                newValue.minValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
+            }
+        });
     }
 
     private void repaint() {
