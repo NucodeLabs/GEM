@@ -6,6 +6,7 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap;
 
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ public class PseudoSectionController extends AbstractController {
     private HeatMap chart;
     @Inject
     private ObservableObjectValue<Section> sectionObservableObjectValue;
+    @Inject
+    private ColorPalette colorPalette;
 
     @Override
     protected Stage getStage() {
@@ -28,6 +31,7 @@ public class PseudoSectionController extends AbstractController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        chart.setColorPalette(colorPalette);
         sectionObservableObjectValue.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 update();
