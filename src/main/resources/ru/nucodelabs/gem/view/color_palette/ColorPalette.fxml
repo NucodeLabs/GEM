@@ -21,11 +21,15 @@
                styleClass="uclabel"/>
         <HBox spacing="1.0" style="-fx-padding: 5;">
             <Pane fx:id="palettePane"
-                  maxWidth="30"
-                  maxHeight="300"
+                  prefWidth="30"
+                  prefHeight="300"
                   VBox.vgrow="ALWAYS"
                   HBox.hgrow="ALWAYS"/>
-            <VBox fx:id="labelsPane" minWidth="0" maxWidth="Infinity"/>
+            <Pane fx:id="labelsPane"
+                  prefWidth="20"
+                  prefHeight="300"
+                  HBox.hgrow="ALWAYS"
+                  VBox.vgrow="ALWAYS"/>
         </HBox>
     </VBox>
     <fx:define>
