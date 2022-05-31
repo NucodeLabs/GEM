@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
@@ -38,7 +37,7 @@ public class ColorPaletteController extends AbstractController {
     @FXML
     private Pane palettePane;
     @FXML
-    private VBox labelsPane;
+    private Pane labelsPane;
     @FXML
     private TextField minResistanceTF;
     @FXML
@@ -99,7 +98,6 @@ public class ColorPaletteController extends AbstractController {
             Label label = new Label(String.valueOf(computeResistance(key)));
             label.setLayoutX(0);
             label.setLayoutY(labelsPane.getPrefHeight() * (key - 0.6 * coeff.get()));
-            label.setUnderline(true);
             label.fontProperty().set(new Font(10));
             labelList.add(label);
 
