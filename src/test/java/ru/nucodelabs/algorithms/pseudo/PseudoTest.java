@@ -1,15 +1,15 @@
 package ru.nucodelabs.algorithms.pseudo;
 
+import com.google.inject.Guice;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.XYChart;
-import javafx.scene.image.PixelWriter;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.Test;
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
+import ru.nucodelabs.gem.app.AppModule;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,8 @@ public class PseudoTest extends Application {
         list2.add(new XYChart.Data<>(100d, 32d, 33d));
         list2.add(new XYChart.Data<>(100d, 42d, 24d));
 
-        PseudoInterpolator interpolator = new PseudoInterpolator(listList);
+        var injector = Guice.createInjector(new AppModule());
+        PseudoInterpolator interpolator = new PseudoInterpolator(listList, injector.getInstance(ColorPalette.class));
         interpolator.paint(canvas);
 
         root.getChildren().add(canvas);

@@ -11,6 +11,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HeatMap extends VBUserControl {
+
+    private final ObjectProperty<ColorPalette> colorPalette = new SimpleObjectProperty<>();
 
     public HeatMap() {
         canvas.widthProperty().addListener((observable, oldValue, newValue) -> repaint());
@@ -44,7 +47,7 @@ public class HeatMap extends VBUserControl {
 
         if (!lists.isEmpty()) {
             try {
-                new PseudoInterpolator(lists).paint(canvas);
+                new PseudoInterpolator(lists, colorPalette.get()).paint(canvas);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -72,5 +75,17 @@ public class HeatMap extends VBUserControl {
 
     public ObjectProperty<ObservableList<XYChart.Data<Double, Double>>> dataProperty() {
         return data;
+    }
+
+    public ColorPalette getColorPalette() {
+        return colorPalette.get();
+    }
+
+    public void setColorPalette(ColorPalette colorPalette) {
+        this.colorPalette.set(colorPalette);
+    }
+
+    public ObjectProperty<ColorPalette> colorPaletteProperty() {
+        return colorPalette;
     }
 }
