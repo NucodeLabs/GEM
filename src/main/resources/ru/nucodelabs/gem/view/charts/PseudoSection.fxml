@@ -12,5 +12,5 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
     <Label text="%pseudoSection" styleClass="uclabel"/>
-    <HeatMap/>
+    <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0"/>
 </VBox>

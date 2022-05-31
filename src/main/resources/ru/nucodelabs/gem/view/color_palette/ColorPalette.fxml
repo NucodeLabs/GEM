@@ -16,22 +16,20 @@
             </items>
         </ContextMenu>
     </fx:define>
-    <VBox>
-        <Label text="%paletteLabel"
-               styleClass="uclabel"/>
-        <HBox spacing="1.0" style="-fx-padding: 5;">
-            <Pane fx:id="palettePane"
-                  prefWidth="30"
-                  prefHeight="300"
-                  VBox.vgrow="ALWAYS"
-                  HBox.hgrow="ALWAYS"/>
-            <Pane fx:id="labelsPane"
-                  prefWidth="20"
-                  prefHeight="300"
-                  HBox.hgrow="ALWAYS"
-                  VBox.vgrow="ALWAYS"/>
-        </HBox>
-    </VBox>
+    <Label text="%paletteLabel"
+           styleClass="uclabel"/>
+    <HBox spacing="1.0" style="-fx-padding: 5;" VBox.vgrow="ALWAYS">
+        <Pane fx:id="palettePane"
+              prefWidth="30"
+              prefHeight="300"
+              VBox.vgrow="ALWAYS"
+              HBox.hgrow="ALWAYS"/>
+        <Pane fx:id="labelsPane"
+              prefWidth="30"
+              prefHeight="300"
+              HBox.hgrow="ALWAYS"
+              VBox.vgrow="ALWAYS"/>
+    </HBox>
     <fx:define>
         <Stage fx:id="configWindow" height="200" width="200" resizable="false"
                title="Настройка палитры">
@@ -40,7 +38,7 @@
                     <VBox spacing="5.0" style="-fx-padding: 10;">
                         <Label text="%paletteMinRes"/>
                         <TextField fx:id="minResistanceTF" maxWidth="100.0" onAction="#onMinResistanceEdit"/>
-                        <Label text="%paletteMaxRes" VBox.vgrow="NEVER"/>
+                        <Label text="%paletteMaxRes"/>
                         <TextField fx:id="maxResistanceTF" maxWidth="100.0" onAction="#onMaxResistanceEdit"/>
                         <Label text="%palettePrecision"/>
                         <TextField fx:id="precisionTF" maxWidth="100.0" onAction="#onPrecisionEdit"/>
