@@ -13,7 +13,6 @@ import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PseudoCrossInterpolator {
 
@@ -25,7 +24,7 @@ public class PseudoCrossInterpolator {
     private final List<Double> Xs = new ArrayList<>();
 
     //Линии по общим для всех пикетов ab_2
-    private final List<Line> lines = new ArrayList<>();
+    private final List<Line1> line1s = new ArrayList<>();
 
     private Double minRo = 0.0;
     private Double maxRo = 0.0;
@@ -40,14 +39,14 @@ public class PseudoCrossInterpolator {
 
             for (ExperimentalData expData : experimentalData) {
                 Double currentAb_2 = expData.getAb2();
-                Line line = lines.stream().filter(l -> Objects.equals(l.getAb_2(), currentAb_2)).findFirst().orElse(null);
-                if (line == null) {
-                    Line newLine = new Line(currentAb_2);
-                    newLine.addResistance(expData.getResistanceApparent());
-                    lines.add(newLine);
+                Line1 line1 = line1s.stream().filter(l -> Objects.equals(l.getAb_2(), currentAb_2)).findFirst().orElse(null);
+                if (line1 == null) {
+                    Line1 newLine1 = new Line1(currentAb_2);
+                    newLine1.addResistance(expData.getResistanceApparent());
+                    line1s.add(newLine1);
                 } else {
-                    for (Line l : lines) {
-                        if (Objects.equals(l, line)) {
+                    for (Line1 l : line1s) {
+                        if (Objects.equals(l, line1)) {
                             l.addResistance(expData.getResistanceApparent());
                         }
                     }
@@ -59,21 +58,21 @@ public class PseudoCrossInterpolator {
         }
 
         //Оставляет только те ab_2, которые есть во всех пикетах
-        List<Line> newLines = lines.stream().filter(line -> line.getResistances().size() == pickets.size()).toList();
-        lines.clear();
-        lines.addAll(newLines);
-        Collections.sort(lines);
+        List<Line1> newLine1s = line1s.stream().filter(line1 -> line1.getResistances().size() == pickets.size()).toList();
+        line1s.clear();
+        line1s.addAll(newLine1s);
+        Collections.sort(line1s);
     }
 
 
     public BicubicInterpolatingFunction getInterpolationFunction() {
         double[] xval = Xs.stream().mapToDouble(Double::doubleValue).toArray();
-        double[] yval = lines.stream().map(Line::getAb_2).mapToDouble(Double::doubleValue).toArray();
-        double[][] fval = new double[Xs.size()][lines.size()];
+        double[] yval = line1s.stream().map(Line1::getAb_2).mapToDouble(Double::doubleValue).toArray();
+        double[][] fval = new double[Xs.size()][line1s.size()];
 
-        for (int i = 0; i < lines.size(); i++) {
+        for (int i = 0; i < line1s.size(); i++) {
             for (int j = 0; j < pickets.size(); j++) {
-                fval[i][j] = lines.get(i).getResistances().get(j);
+                fval[i][j] = line1s.get(i).getResistances().get(j);
             }
         }
 
@@ -82,7 +81,7 @@ public class PseudoCrossInterpolator {
         return interpolator.interpolate(xval, yval, fval);
     }
 
-    public Canvas paint(Canvas canvas) throws Exception {
+    public void paint(Canvas canvas) throws Exception {
         PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 
         CLRFileParser fileParser = new CLRFileParser(new File(
@@ -93,7 +92,7 @@ public class PseudoCrossInterpolator {
         palette.setMinValue(minRo);
         palette.setMaxValue(maxRo);
 
-        double rangeY = lines.get(lines.size() - 1).getAb_2() - lines.get(0).getAb_2();
+        double rangeY = line1s.get(line1s.size() - 1).getAb_2() - line1s.get(0).getAb_2();
         double stepY = rangeY / canvas.getHeight();
         double rangeX = Xs.get(Xs.size() - 1) - Xs.get(0);
         double stepX = rangeX / canvas.getWidth();
@@ -105,22 +104,21 @@ public class PseudoCrossInterpolator {
             double curX = Xs.get(0); // = 0
             for (int j = 0; j < canvas.getWidth(); j++) {
                 pw.setColor(j, i, palette.colorForValue(function.value(curX, curY)));
+                curX += stepX;
             }
             curY += stepY;
         }
-
-        return canvas;
     }
 
 }
 
 //Линия по общему для всех пикетов ab_2 с сопротивлениями всех пикетов
-class Line implements Comparable<Line> {
+class Line1 implements Comparable<Line1> {
 
     private final Double ab_2;
     private final List<Double> resistances = new ArrayList<>();
 
-    Line(Double ab_2) {
+    Line1(Double ab_2) {
         this.ab_2 = ab_2;
     }
 
@@ -137,10 +135,10 @@ class Line implements Comparable<Line> {
     }
 
     @Override
-    public int compareTo(Line line) {
-        if (this.getAb_2() - line.getAb_2() < 0) {
+    public int compareTo(Line1 line1) {
+        if (this.getAb_2() - line1.getAb_2() < 0) {
             return -1;
-        } else if (this.getAb_2() - line.getAb_2() == 0) {
+        } else if (this.getAb_2() - line1.getAb_2() == 0) {
             return 0;
         } else {
             return 1;
