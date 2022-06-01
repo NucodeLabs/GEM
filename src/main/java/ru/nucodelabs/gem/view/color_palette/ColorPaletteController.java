@@ -179,7 +179,7 @@ public class ColorPaletteController extends AbstractController {
         double num;
         try {
             num = Double.parseDouble(input);
-            if (num <= 0) {
+            if (num < 0) {
                 textField.setText(Double.toString(property.get()));
                 return property.get();
             }
