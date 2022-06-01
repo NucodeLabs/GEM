@@ -45,7 +45,7 @@ public class PseudoSectionController extends AbstractController {
         for (var picket : section.getPickets()) {
             for (var expData : picket.getExperimentalData()) {
                 data.add(new XYChart.Data<>(
-                        section.getPickets().indexOf(picket) == 0 ? 0 : section.xOfPicket(picket),
+                        section.xOfPicket(picket),
                         expData.getAb2(),
                         expData.getResistanceApparent()));
             }

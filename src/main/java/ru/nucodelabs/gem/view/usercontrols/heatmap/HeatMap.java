@@ -14,7 +14,6 @@ import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,12 +48,13 @@ public class HeatMap extends VBUserControl {
         var mapped = data.get().stream()
                 .collect(Collectors.groupingBy(XYChart.Data::getXValue));
 
-        List<List<XYChart.Data<Double, Double>>> lists = new ArrayList<>(mapped.values().stream()
+        List<List<XYChart.Data<Double, Double>>> lists = mapped.values().stream()
                 .sorted(Comparator.comparingDouble(list -> list.get(0).getXValue()))
-                .toList());
+                .collect(Collectors.toList());
 
         if (!lists.isEmpty()) {
             try {
+                lists.get(0).forEach(dt -> dt.setXValue(0d));
                 new PseudoInterpolator(lists, colorPalette.get()).paint(canvas);
             } catch (Exception e) {
                 throw new RuntimeException(e);
