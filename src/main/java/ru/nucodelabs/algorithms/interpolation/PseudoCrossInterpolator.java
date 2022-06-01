@@ -11,8 +11,11 @@ import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.files.color_palette.CLRFileParser;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
-import java.io.File;
-import java.util.*;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class PseudoCrossInterpolator {
 
@@ -84,9 +87,7 @@ public class PseudoCrossInterpolator {
     public void paint(Canvas canvas) throws Exception {
         PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 
-        CLRFileParser fileParser = new CLRFileParser(new File(
-                "data/clr/002_ERT_Rainbow_2.clr")
-        );
+        CLRFileParser fileParser = new CLRFileParser(new FileInputStream("data/clr/002_ERT_Rainbow_2.clr"));
         CLRData clrData = fileParser.parse();
         ColorPalette palette = new ColorPalette(clrData);
         palette.setMinValue(minRo);

@@ -4,6 +4,7 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
+import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
@@ -33,7 +34,9 @@ public class PseudoSectionController extends AbstractController {
     public void initialize(URL location, ResourceBundle resources) {
         chart.setColorPalette(colorPalette);
         sectionObservableObjectValue.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (newValue != null
+                    && !newValue.getPickets().stream().map(Picket::getExperimentalData)
+                    .equals(oldValue.getPickets().stream().map(Picket::getExperimentalData))) {
                 update();
             }
         });
