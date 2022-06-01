@@ -9,6 +9,7 @@ import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PseudoInterpolator {
 
@@ -57,6 +58,16 @@ public class PseudoInterpolator {
                 lines.get(j).addResistance(currentResistance);
                 minRo = Math.min(minRo, currentResistance);
                 maxRo = Math.max(maxRo, currentResistance);
+            }
+        }
+
+//        colorPalette.setMinValue(minRo);
+//        colorPalette.setMaxValue(maxRo);
+
+        for (int i = 1; i < lines.size(); i++) {
+            if (Objects.equals(lines.get(i).getAb_2(), lines.get(i - 1).getAb_2())) {
+                lines.remove(i);
+                i--;
             }
         }
     }
