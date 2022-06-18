@@ -33,7 +33,7 @@ public interface ExperimentalData extends Serializable {
             double amperage,
             double voltage
     ) {
-        return create(ab2, mn2, VesUtils.resistanceApparent(ab2, mn2, amperage, voltage), DEFAULT_ERROR, amperage, voltage);
+        return create(ab2, mn2, VesKt.resistanceApparent(ab2, mn2, amperage, voltage), DEFAULT_ERROR, amperage, voltage);
     }
 
     /**
@@ -115,6 +115,6 @@ public interface ExperimentalData extends Serializable {
     }
 
     default ExperimentalData recalculateResistanceApparent() {
-        return this.withResistanceApparent(VesUtils.resistanceApparent(getAb2(), getMn2(), getAmperage(), getVoltage()));
+        return this.withResistanceApparent(VesKt.resistanceApparent(getAb2(), getMn2(), getAmperage(), getVoltage()));
     }
 }

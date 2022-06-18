@@ -1,49 +1,37 @@
-package ru.nucodelabs.data.ves;
+package ru.nucodelabs.data.ves
 
-import java.util.ArrayList;
-import java.util.List;
+import kotlin.math.PI
 
-class VesUtils {
-    private VesUtils() {
+internal fun zOfPower(modelData: List<ModelLayer>, picketZ: Double): List<Double> {
+    val heightList: MutableList<Double> = mutableListOf()
+    val power = modelData.map { it.power }
+    var sum = picketZ
+
+    for (p in power) {
+        sum += p
+        heightList.add(sum)
     }
 
-    static List<Double> zOfPower(List<ModelLayer> modelData, double picketZ) {
-        List<Double> heightList = new ArrayList<>();
-        List<Double> power = modelData.stream().map(ModelLayer::getPower).toList();
+    // последняя уходит в бесконечность
+    return heightList
+}
 
-        double sum = picketZ;
-        for (var p : power) {
-            sum -= p;
-            heightList.add(sum);
-        }
-
-        // последняя уходит в бесконечность
-        return heightList;
+internal fun xOfPicket(section: Section, index: Int): Double {
+    var x = 0.0
+    for (i in 0..index) {
+        x += section.pickets[i].offsetX
     }
+    return x
+}
 
-    static double xOfPicket(Section section, int index) {
 
-        double x = 0;
-        for (int i = 0; i <= index; i++) {
-            x += section.getPickets().get(i).getOffsetX();
-        }
+internal fun resistanceApparent(ab2: Double, mn2: Double, amperage: Double, voltage: Double) =
+    k(ab2, mn2) * (voltage / amperage)
 
-        return x;
-    }
-
-    static double resistanceApparent(double ab2, double mn2, double amperage, double voltage) {
-        return k(ab2, mn2) * (voltage / amperage);
-    }
-
-    private static double k(double ab2, double mn2) {
-        double am = ab2 - mn2;
-        double bm = ab2 + mn2;
-        double an = bm;
-        double bn = am;
-        return (2 * Math.PI)
-                / (1 / am
-                - 1 / bm
-                - 1 / an
-                + 1 / bn);
-    }
+private fun k(ab2: Double, mn2: Double): Double {
+    val am = ab2 - mn2
+    val bm = ab2 + mn2
+    return (2 * PI
+            / (1 / am - 1 / bm - 1 / bm
+            + 1 / am))
 }

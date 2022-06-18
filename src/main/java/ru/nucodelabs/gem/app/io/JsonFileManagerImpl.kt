@@ -1,22 +1,17 @@
-package ru.nucodelabs.gem.app.io;
+package ru.nucodelabs.gem.app.io
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import java.io.File
+import java.io.Serializable
 
-import java.io.File;
-import java.io.Serializable;
+internal class JsonFileManagerImpl : JsonFileManager {
+    private val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
 
-class JsonFileManagerImpl implements JsonFileManager {
+    @Throws(Exception::class)
+    override fun <T : Serializable> loadFromJson(jsonFile: File, type: Class<T>): T =
+        objectMapper.readValue(jsonFile, type)
 
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-    @Override
-    public <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception {
-        return objectMapper.readValue(jsonFile, type);
-    }
-
-    @Override
-    public <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception {
-        objectMapper.writeValue(jsonFile, object);
-    }
+    @Throws(Exception::class)
+    override fun <T : Serializable> saveToJson(jsonFile: File, obj: T) = objectMapper.writeValue(jsonFile, obj)
 }

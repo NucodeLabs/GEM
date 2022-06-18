@@ -29,6 +29,6 @@ public interface Section extends Serializable {
         if (index < 0) {
             throw new IllegalArgumentException();
         }
-        return VesUtils.xOfPicket(this, index);
+        return VesKt.xOfPicket(this, index);
     }
 }

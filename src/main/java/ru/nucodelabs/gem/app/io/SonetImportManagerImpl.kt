@@ -1,94 +1,86 @@
-package ru.nucodelabs.gem.app.io;
+package ru.nucodelabs.gem.app.io
 
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelLayer;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.files.sonet.*;
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.ModelLayer
+import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.files.sonet.EXPFileParser
+import ru.nucodelabs.files.sonet.MODFileParser
+import ru.nucodelabs.files.sonet.STTFile
+import ru.nucodelabs.files.sonet.STTFileParser
+import java.io.File
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-class SonetImportManagerImpl implements SonetImportManager {
-
-    @Override
-    public Picket loadNameAndExperimentalDataFromEXPFile(File expFile, Picket target) throws Exception {
-        String picketName;
-        String fileName = expFile.getName();
-        if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
-            picketName = fileName.substring(0, fileName.length() - 4);
+internal class SonetImportManagerImpl : SonetImportManager {
+    @Throws(Exception::class)
+    override fun loadNameAndExperimentalDataFromEXPFile(expFile: File, target: Picket): Picket {
+        val picketName: String
+        val fileName = expFile.name
+        picketName = if (fileName.endsWith(".EXP") || fileName.endsWith(".exp")) {
+            fileName.substring(0, fileName.length - ".EXP".length)
         } else {
-            picketName = fileName;
+            fileName
         }
-
-        return loadExperimentalDataFromEXPFile(expFile, target)
-                .withName(picketName);
+        return loadExperimentalDataFromEXPFile(expFile, target).withName(picketName)
     }
 
-    private STTFile getSTTFile(File expFile) throws Exception {
-        EXPFile expFile1 = new EXPFileParser(expFile).parse();
-
-        Path expFilePath = expFile.toPath();
-
-        return new STTFileParser(new File(
-                expFilePath.getParent().toString()
+    @Throws(Exception::class)
+    private fun getSTTFile(expFile: File): STTFile {
+        val expFile1 = EXPFileParser(expFile).parse()
+        val expFilePath = expFile.toPath()
+        return STTFileParser(
+            File(
+                expFilePath.parent.toString()
                         + File.separator
-                        + expFile1.getSTTFileName()))
-                .parse();
+                        + expFile1.sttFileName
+            )
+        ).parse()
     }
 
-    @Override
-    public Picket loadExperimentalDataFromEXPFile(File expFile, Picket target) throws Exception {
-        EXPFile expFile1 = new EXPFileParser(expFile).parse();
-        STTFile sttFile = getSTTFile(expFile);
-
-        List<Integer> sizes =
-                Stream.of(
-                        sttFile.getAB_2(),
-                        sttFile.getMN_2(),
-                        expFile1.getAmperage(),
-                        expFile1.getVoltage(),
-                        expFile1.getResistanceApparent(),
-                        expFile1.getErrorResistanceApparent()
-                ).map(List::size).toList();
-
-        int minSize = Collections.min(sizes);
-
-        List<ExperimentalData> expData = new ArrayList<>();
-        for (int i = 0; i < minSize; i++) {
-            expData.add(ExperimentalData.create(
-                    sttFile.getAB_2().get(i),
-                    sttFile.getMN_2().get(i),
-                    expFile1.getResistanceApparent().get(i),
-                    expFile1.getErrorResistanceApparent().get(i),
-                    expFile1.getAmperage().get(i),
-                    expFile1.getVoltage().get(i)
-            ));
+    @Throws(Exception::class)
+    override fun loadExperimentalDataFromEXPFile(expFile: File, target: Picket): Picket {
+        val expFile1 = EXPFileParser(expFile).parse()
+        val sttFile = getSTTFile(expFile)
+        val sizes = listOf(
+            sttFile.aB_2,
+            sttFile.mN_2,
+            expFile1.amperage,
+            expFile1.voltage,
+            expFile1.resistanceApparent,
+            expFile1.errorResistanceApparent
+        ).map { it.size }
+        val minSize = sizes.min()
+        val expData: MutableList<ExperimentalData> = mutableListOf()
+        for (i in 0 until minSize) {
+            expData.add(
+                ExperimentalData.create(
+                    sttFile.aB_2[i],
+                    sttFile.mN_2[i],
+                    expFile1.resistanceApparent[i],
+                    expFile1.errorResistanceApparent[i],
+                    expFile1.amperage[i],
+                    expFile1.voltage[i]
+                )
+            )
         }
-
-        return target.withExperimentalData(expData);
+        return target.withExperimentalData(expData)
     }
 
-    @Override
-    public Picket loadModelDataFromMODFile(File modFile, Picket target) throws Exception {
-        MODFile modFile1 = new MODFileParser(modFile).parse();
-        List<Integer> sizes = Stream.of(
-                modFile1.getPower(),
-                modFile1.getResistance()
-        ).map(List::size).toList();
-
-        int minSize = Collections.min(sizes);
-
-        List<ModelLayer> modelData = new ArrayList<>();
-        for (int i = 0; i < minSize; i++) {
-            modelData.add(ModelLayer.create(
-                    modFile1.getPower().get(i),
-                    modFile1.getResistance().get(i)));
+    @Throws(Exception::class)
+    override fun loadModelDataFromMODFile(modFile: File, target: Picket): Picket {
+        val modFile1 = MODFileParser(modFile).parse()
+        val sizes = listOf(
+            modFile1.power,
+            modFile1.resistance
+        ).map { it.size }
+        val minSize = sizes.min()
+        val modelData: MutableList<ModelLayer> = mutableListOf()
+        for (i in 0 until minSize) {
+            modelData.add(
+                ModelLayer.create(
+                    modFile1.power[i],
+                    modFile1.resistance[i]
+                )
+            )
         }
-
-        return target.withModelData(modelData);
+        return target.withModelData(modelData)
     }
 }
