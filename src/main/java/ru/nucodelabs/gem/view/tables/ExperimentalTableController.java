@@ -226,7 +226,7 @@ public class ExperimentalTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            historyManager.performThenSnapshot(
+            historyManager.snapshotAfter(
                     () -> sectionManager.update(modified));
             FXUtils.unfocus(
                     indexTextField,
@@ -286,6 +286,6 @@ public class ExperimentalTableController extends AbstractController {
             }
         }
 
-        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withExperimentalData(experimentalData)));
+        historyManager.snapshotAfter(() -> sectionManager.update(picket.get().withExperimentalData(experimentalData)));
     }
 }

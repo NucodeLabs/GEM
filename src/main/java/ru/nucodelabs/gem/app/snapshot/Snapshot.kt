@@ -1,19 +1,21 @@
-package ru.nucodelabs.gem.app.snapshot;
+package ru.nucodelabs.gem.app.snapshot
 
-import java.util.Objects;
-
-public interface Snapshot<T> {
-
-    static <T> Snapshot<T> of(T value) {
-        return new SnapshotImpl<>(
-                Objects.requireNonNull(value));
-    }
-
-    T value();
+interface Snapshot<T> {
+    val value: T
 
     interface Originator<T> {
-        Snapshot<T> getSnapshot();
-
-        void restoreFromSnapshot(Snapshot<T> snapshot);
+        fun snapshot(): Snapshot<T>
+        fun restoreFromSnapshot(snapshot: Snapshot<T>)
     }
+
+    companion object Factory {
+        @JvmStatic
+        fun <T> of(value: T): Snapshot<T> {
+            return SnapshotImpl(value)
+        }
+    }
+
+    private data class SnapshotImpl<T>(override val value: T) : Snapshot<T>
 }
+
+fun <T> snapshotOf(value: T) = Snapshot.of(value)

@@ -1,69 +1,52 @@
-package ru.nucodelabs.gem.app.snapshot;
+package ru.nucodelabs.gem.app.snapshot
 
+import ru.nucodelabs.gem.app.snapshot.Snapshot.Originator
+import javax.inject.Inject
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+class HistoryManager<T> @Inject constructor(private val originator: Originator<T>) {
+    private var history: MutableList<Snapshot<T>> = mutableListOf()
+    private var position = 0
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
-public class HistoryManager<T> {
-
-    private final Snapshot.Originator<T> originator;
-    private List<Snapshot<T>> history = new ArrayList<>();
-    private int position = 0;
-
-    @Inject
-    public HistoryManager(Snapshot.Originator<T> originator) {
-        this.originator = originator;
-    }
-
-    public void snapshot() {
-        Snapshot<T> snapshot = originator.getSnapshot();
-        if (history.isEmpty() || !Objects.equals(history.get(position), snapshot)) {
-            if (position < history.size() - 1) {
-                history = history.subList(0, max(0, position + 1));
+    fun snapshot() {
+        val snapshot = originator.snapshot()
+        if (history.isEmpty() || history[position] != snapshot) {
+            if (position < history.lastIndex) {
+                history = history.subList(0, 0.coerceAtLeast(position + 1))
             }
-            history.add(snapshot);
-            position = history.size() - 1;
+            history += snapshot
+            position = history.lastIndex
         }
     }
 
-    public void performThenSnapshot(Runnable operation) {
-        operation.run();
-        snapshot();
+    // TODO: fun snapshot(() -> Unit = {}) = ...
+    // TODO: () -> Unit instead of Runnable
+    fun snapshotAfter(block: Runnable) {
+        block.run()
+        snapshot()
     }
 
-    public void redo() {
-        getRedo().ifPresent(originator::restoreFromSnapshot);
-    }
+    fun redo() = snapshotToRedo()?.let { originator.restoreFromSnapshot(it) }
 
+    fun undo() = snapshotToUndo()?.let { originator.restoreFromSnapshot(it) }
 
-    public void undo() {
-        getUndo().ifPresent(originator::restoreFromSnapshot);
-    }
-
-    private Optional<Snapshot<T>> getUndo() {
+    private fun snapshotToUndo(): Snapshot<T>? {
         if (position == 0 || history.isEmpty()) {
-            return Optional.empty();
+            return null
         }
-        position = max(0, position - 1);
-        return Optional.of(history.get(position));
+        position = 0.coerceAtLeast(position - 1)
+        return history[position]
     }
 
-    private Optional<Snapshot<T>> getRedo() {
-        if (position == history.size() - 1 || history.isEmpty()) {
-            return Optional.empty();
+    private fun snapshotToRedo(): Snapshot<T>? {
+        if (position == history.lastIndex || history.isEmpty()) {
+            return null
         }
-        position = min(history.size() - 1, position + 1);
-        return Optional.of(history.get(position));
+        position = (history.size - 1).coerceAtMost(position + 1)
+        return history[position]
     }
 
-    public void clear() {
-        history.clear();
-        position = 0;
+    fun clear() {
+        history.clear()
+        position = 0
     }
 }
