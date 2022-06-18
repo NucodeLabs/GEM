@@ -1,123 +1,114 @@
-package ru.nucodelabs.gem.app;
+package ru.nucodelabs.gem.app
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-import ru.nucodelabs.gem.utils.OS;
-import ru.nucodelabs.gem.view.main.MainViewController;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.Key
+import com.google.inject.name.Names
+import javafx.application.Application
+import javafx.fxml.FXMLLoader
+import javafx.stage.Stage
+import javafx.stage.Window
+import javafx.stage.WindowEvent
+import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
+import ru.nucodelabs.gem.utils.macOs
+import ru.nucodelabs.gem.view.main.MainViewController
+import java.io.File
+import java.io.IOException
+import java.util.logging.Logger
+import com.sun.glass.ui.Application as LowLevelApplication
 
 /**
  * Приложение, создает главное окошко
  */
-public class GemApplication extends Application {
+class GemApplication : Application() {
 
-    private final List<String> macOSHandledFiles = new ArrayList<>();
-
-    private final Injector injector = Guice.createInjector(new AppModule());
+    private val macOSHandledFiles: MutableList<String> = mutableListOf()
+    private val injector = Guice.createInjector(AppModule())
 
     @Inject
-    private Logger logger;
+    lateinit var logger: Logger
 
-    {
-        if (OS.isMacOS()) {
-            com.sun.glass.ui.Application macSpecificApp = com.sun.glass.ui.Application.GetApplication();
-            macSpecificApp.setEventHandler(new com.sun.glass.ui.Application.EventHandler() {
-                @Override
-                public void handleOpenFilesAction(com.sun.glass.ui.Application app, long time, String[] files) {
-                    macOSHandledFiles.addAll(List.of(files));
+    init {
+        macOs {
+            LowLevelApplication.GetApplication().eventHandler = object : LowLevelApplication.EventHandler() {
+                override fun handleOpenFilesAction(
+                    app: com.sun.glass.ui.Application,
+                    time: Long,
+                    files: Array<String>
+                ) {
+                    macOSHandledFiles.addAll(listOf(*files))
                 }
 
-                @Override
-                public void handleQuitAction(com.sun.glass.ui.Application app, long time) {
-                    List<Window> windows = new ArrayList<>(Window.getWindows());
-                    Collections.reverse(windows);
-                    for (int i = windows.size() - 1; i >= 0; i--) {
-                        Window window = Window.getWindows().get(i);
-                        window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+                override fun handleQuitAction(app: LowLevelApplication, time: Long) {
+                    val winCnt = Window.getWindows().size
+                    for (i in (0 until winCnt).reversed()) {
+                        val window = Window.getWindows()[i]
+                        window.fireEvent(WindowEvent(window, WINDOW_CLOSE_REQUEST))
                     }
                 }
-            });
-        }
-    }
-
-    @Override
-    public void init() throws Exception {
-        injector.injectMembers(this);
-        logger.log(Level.INFO, "Injected");
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        List<String> params = new ArrayList<>(getParameters().getRaw());
-        params.addAll(macOSHandledFiles);
-
-        if (!params.isEmpty()) {
-            processParams(params);
-        } else {
-            logger.log(Level.INFO, "Starting MainView without parameters");
-            injector.getInstance(Key.get(Stage.class, Names.named("MainView"))).show();
-        }
-    }
-
-    @Override
-    public void stop() throws Exception {
-        logger.log(Level.INFO, "Exiting");
-    }
-
-    private void processParams(List<String> params) {
-        logger.log(Level.INFO, "Parameters are " + params);
-
-        List<File> expFiles = new ArrayList<>();
-
-        for (var param : params) {
-            if (param.endsWith(".EXP") || param.endsWith(".exp")) {
-                logger.log(Level.INFO, "Import EXP, file: " + param);
-                expFiles.add(new File(param));
-            } else if (param.endsWith("json") || param.endsWith(".JSON")) {
-                loadMainViewWithJSONFile(new File(param));
             }
         }
+    }
 
-        if (!expFiles.isEmpty()) {
-            loadMainViewWithEXPFiles(expFiles);
+    @Throws(Exception::class)
+    override fun init() {
+        injector.injectMembers(this)
+        logger.info("Injected")
+    }
+
+    @Throws(Exception::class)
+    override fun start(primaryStage: Stage) {
+        val params: MutableList<String> = parameters.raw.toMutableList()
+        params.addAll(macOSHandledFiles)
+        if (params.isNotEmpty()) {
+            processParams(params)
+        } else {
+            logger.info("Starting MainView without parameters")
+            injector.getInstance(Key.get(Stage::class.java, Names.named("MainView"))).show()
         }
     }
 
-    private void loadMainViewWithJSONFile(File jsonFile) {
-        FXMLLoader fxmlLoader = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
-        try {
-            ((Stage) fxmlLoader.load()).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        MainViewController controller = fxmlLoader.getController();
-        logger.log(Level.INFO, "Open JSON Section, file: " + jsonFile.getAbsolutePath());
-        controller.openJsonSection(jsonFile);
+    @Throws(Exception::class)
+    override fun stop() {
+        logger.info("Exiting")
     }
 
-    private void loadMainViewWithEXPFiles(List<File> expFiles) {
-        FXMLLoader fxmlLoader = injector.getInstance(Key.get(FXMLLoader.class, Names.named("MainView")));
-        try {
-            ((Stage) fxmlLoader.load()).show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private fun processParams(params: List<String>) {
+        logger.info("Parameters are $params")
+        val expFiles = mutableListOf<File>()
+        for (param in params) {
+            if (param.endsWith(".EXP", ignoreCase = true)) {
+                logger.info("Import EXP, file: $param")
+                expFiles += File(param)
+            } else if (param.endsWith("json", ignoreCase = true)) {
+                loadMainViewWithJSONFile(File(param))
+            }
         }
-        MainViewController controller = fxmlLoader.getController();
-        expFiles.forEach(controller::addEXP);
+        if (expFiles.isNotEmpty()) {
+            loadMainViewWithEXPFiles(expFiles)
+        }
+    }
+
+    private fun loadMainViewWithJSONFile(jsonFile: File) {
+        val fxmlLoader = loadFxmlAndShow()
+        val controller = fxmlLoader.getController<MainViewController>()
+        logger.info("Open JSON Section, file: " + jsonFile.absolutePath)
+        controller.openJsonSection(jsonFile)
+    }
+
+    private fun loadMainViewWithEXPFiles(expFiles: List<File>) {
+        val fxmlLoader = loadFxmlAndShow()
+        val controller = fxmlLoader.getController<MainViewController>()
+        expFiles.forEach { controller.addEXP(it) }
+    }
+
+    private fun loadFxmlAndShow(): FXMLLoader {
+        val fxmlLoader = injector.getInstance(Key.get(FXMLLoader::class.java, Names.named("MainView")))
+        try {
+            fxmlLoader.load<Stage>().show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return fxmlLoader
     }
 }
