@@ -1,15 +1,17 @@
-package ru.nucodelabs.gem.app.io;
+package ru.nucodelabs.gem.app.io
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.File
+import java.io.Serializable
 
-public interface JsonFileManager {
+interface JsonFileManager {
+    @Throws(Exception::class)
+    fun <T : Serializable> loadFromJson(jsonFile: File, type: Class<T>): T
 
-    static JsonFileManager createDefault() {
-        return new JsonFileManagerImpl();
+    @Throws(Exception::class)
+    fun <T : Serializable> saveToJson(jsonFile: File, obj: T)
+
+    companion object Factory {
+        @JvmStatic
+        fun createDefault(): JsonFileManager = JsonFileManagerImpl()
     }
-
-    <T extends Serializable> T loadFromJson(File jsonFile, Class<T> type) throws Exception;
-
-    <T extends Serializable> void saveToJson(File jsonFile, T object) throws Exception;
 }

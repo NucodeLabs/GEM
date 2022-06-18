@@ -189,7 +189,7 @@ public class MainViewController extends AbstractController {
         sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
+                if (!storageManager.getSavedSnapshot().equals(sectionManager.getSnapshot())) {
                     dirtyAsterisk.set("*");
                 } else {
                     dirtyAsterisk.set("");
@@ -225,7 +225,7 @@ public class MainViewController extends AbstractController {
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
+        if (!storageManager.getSavedSnapshot().equals(sectionManager.getSnapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -311,9 +311,10 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void saveSection() {
-        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
-            saveSection(storageManager.getSavedSnapshotFile()
-                    .orElseGet(() -> jsonFileChooser.showSaveDialog(getStage())));
+        if (!storageManager.getSavedSnapshot().equals(sectionManager.getSnapshot())) {
+            saveSection(storageManager.getSavedSnapshotFile() != null ?
+                    storageManager.getSavedSnapshotFile() :
+                    jsonFileChooser.showSaveDialog(getStage()));
         }
     }
 
