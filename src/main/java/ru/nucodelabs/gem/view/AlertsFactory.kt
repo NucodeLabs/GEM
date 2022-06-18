@@ -1,63 +1,46 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.view
 
-import jakarta.validation.ConstraintViolation;
-import javafx.scene.control.Alert;
-import javafx.stage.Stage;
+import jakarta.validation.ConstraintViolation
+import javafx.scene.control.Alert
+import javafx.stage.Stage
+import java.util.*
+import javax.inject.Inject
 
-import javax.inject.Inject;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.stream.Collectors;
+class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle) {
 
-public class AlertsFactory {
-    private final ResourceBundle uiProperties;
+    @JvmOverloads
+    fun simpleExceptionAlert(e: Exception, owner: Stage? = null): Alert =
+        Alert(Alert.AlertType.ERROR, e.message).apply {
+            title = uiProperties.getString("error")
+            initOwner(owner)
+        }
 
-    @Inject
-    public AlertsFactory(ResourceBundle uiProperties) {
-        this.uiProperties = uiProperties;
-    }
+    fun unsatisfiedLinkErrorAlert(e: UnsatisfiedLinkError, owner: Stage?): Alert =
+        Alert(Alert.AlertType.ERROR, e.message).apply {
+            title = uiProperties.getString("noLib")
+            headerText = uiProperties.getString("unableToDrawChart")
+            initOwner(owner)
+        }
 
-    public Alert simpleExceptionAlert(Exception e) {
-        return new Alert(Alert.AlertType.ERROR, e.getMessage());
-    }
 
-    public Alert simpleExceptionAlert(Exception e, Stage owner) {
-        Alert alert = simpleExceptionAlert(e);
-        alert.setTitle(uiProperties.getString("error"));
-        alert.initOwner(owner);
-        return alert;
-    }
+    fun incorrectFileAlert(e: Exception, owner: Stage?): Alert =
+        simpleExceptionAlert(e, owner).apply {
+            headerText = uiProperties.getString("fileError")
+        }
 
-    public Alert unsatisfiedLinkErrorAlert(UnsatisfiedLinkError e, Stage owner) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
-        alert.setTitle(uiProperties.getString("noLib"));
-        alert.setHeaderText(uiProperties.getString("unableToDrawChart"));
-        alert.initOwner(owner);
-        return alert;
-    }
 
-    public Alert incorrectFileAlert(Exception e, Stage owner) {
-        Alert alert = simpleExceptionAlert(e);
-        alert.setHeaderText(uiProperties.getString("fileError"));
-        alert.initOwner(owner);
-        return alert;
-    }
+    fun unsafeDataAlert(picketName: String, owner: Stage?): Alert =
+        Alert(Alert.AlertType.WARNING).apply {
+            title = uiProperties.getString("compatibilityMode")
+            headerText = picketName + " - " + uiProperties.getString("EXPSTTMismatch")
+            contentText = uiProperties.getString("minimalDataWillBeDisplayed")
+            initOwner(owner)
+        }
 
-    public Alert unsafeDataAlert(String picketName, Stage owner) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(uiProperties.getString("compatibilityMode"));
-        alert.setHeaderText(picketName + " - " + uiProperties.getString("EXPSTTMismatch"));
-        alert.setContentText(uiProperties.getString("minimalDataWillBeDisplayed"));
-        alert.initOwner(owner);
-        return alert;
-    }
-
-    public Alert violationsAlert(Set<? extends ConstraintViolation<?>> violations, Stage owner) {
-        String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("\n"));
-        Alert alert = new Alert(Alert.AlertType.ERROR, message);
-        alert.initOwner(owner);
-        return alert;
+    fun violationsAlert(violations: Set<ConstraintViolation<*>>, owner: Stage?): Alert {
+        val message = violations.joinToString("\n") { it.message }
+        return Alert(Alert.AlertType.ERROR, message).apply {
+            initOwner(owner)
+        }
     }
 }

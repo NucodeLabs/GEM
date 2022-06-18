@@ -65,7 +65,7 @@ public class FXUtils {
      * @param <N>  class of root node
      */
     public static <N extends Node> void addCloseShortcutMacOS(N root) {
-        if (OSDetect.isMacOS()) {
+        if (OS.isMacOS()) {
             root.addEventFilter(KeyEvent.KEY_PRESSED,
                     e -> {
                         KeyCodeCombination closeShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
