@@ -72,13 +72,13 @@ public class PicketsBarController extends AbstractController {
             button.setOnAction(e -> picketIndex.set(picketNumber));
 
             MenuItem delete = new MenuItem("Удалить"); // TODO использовать UI Properties
-            delete.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.remove(picketNumber)));
+            delete.setOnAction(e -> historyManager.snapshotAfter(() -> sectionManager.remove(picketNumber)));
 
             MenuItem moveLeft = new MenuItem("Переместить влево");
-            moveLeft.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber - 1)));
+            moveLeft.setOnAction(e -> historyManager.snapshotAfter(() -> sectionManager.swap(picketNumber, picketNumber - 1)));
 
             MenuItem moveRight = new MenuItem("Переместить вправо");
-            moveRight.setOnAction(e -> historyManager.performThenSnapshot(() -> sectionManager.swap(picketNumber, picketNumber + 1)));
+            moveRight.setOnAction(e -> historyManager.snapshotAfter(() -> sectionManager.swap(picketNumber, picketNumber + 1)));
 
             if (pickets.size() == 1) {
                 delete.setDisable(true);

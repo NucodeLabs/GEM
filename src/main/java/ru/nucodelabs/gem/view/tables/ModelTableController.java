@@ -233,7 +233,7 @@ public class ModelTableController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             table.refresh();
         } else {
-            historyManager.performThenSnapshot(
+            historyManager.snapshotAfter(
                     () -> sectionManager.update(modified));
             FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField);
         }
