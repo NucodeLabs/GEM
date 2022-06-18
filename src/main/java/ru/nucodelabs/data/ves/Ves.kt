@@ -8,7 +8,7 @@ internal fun zOfPower(modelData: List<ModelLayer>, picketZ: Double): List<Double
     var sum = picketZ
 
     for (p in power) {
-        sum += p
+        sum -= p
         heightList.add(sum)
     }
 
