@@ -10,7 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import ru.nucodelabs.gem.utils.OSDetect;
+import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.main.MainViewController;
 
 import java.io.File;
@@ -34,7 +34,7 @@ public class GemApplication extends Application {
     private Logger logger;
 
     {
-        if (OSDetect.isMacOS()) {
+        if (OS.isMacOS()) {
             com.sun.glass.ui.Application macSpecificApp = com.sun.glass.ui.Application.GetApplication();
             macSpecificApp.setEventHandler(new com.sun.glass.ui.Application.EventHandler() {
                 @Override

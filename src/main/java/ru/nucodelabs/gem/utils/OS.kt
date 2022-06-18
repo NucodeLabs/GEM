@@ -1,31 +1,30 @@
-package ru.nucodelabs.gem.utils;
+package ru.nucodelabs.gem.utils
 
-import java.util.Locale;
+import ru.nucodelabs.gem.utils.OS.isLinuxOrOther
+import ru.nucodelabs.gem.utils.OS.isMacOS
+import ru.nucodelabs.gem.utils.OS.isWindows
 
-public class OSDetect {
-    private final static boolean macOS;
-    private final static boolean windows;
-    private final static boolean linux;
+object OS {
+    private val osNameNormalized = System.getProperty("os.name").lowercase()
 
-    private OSDetect() {
-    }
+    @JvmStatic
+    val isMacOS = osNameNormalized.contains("mac")
 
-    static {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        macOS = osName.contains("mac");
-        windows = osName.contains("windows");
-        linux = !macOS && !windows;
-    }
+    @JvmStatic
+    val isWindows = osNameNormalized.contains("windows")
 
-    public static boolean isMacOS() {
-        return macOS;
-    }
+    @JvmStatic
+    val isLinuxOrOther = !isMacOS && !isWindows
+}
 
-    public static boolean isWindows() {
-        return windows;
-    }
+inline fun macOs(block: () -> Unit) {
+    if (isMacOS) block()
+}
 
-    public static boolean isLinux() {
-        return linux;
-    }
+inline fun linux(block: () -> Unit) {
+    if (isLinuxOrOther) block()
+}
+
+inline fun windows(block: () -> Unit) {
+    if (isWindows) block()
 }

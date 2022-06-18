@@ -23,7 +23,7 @@ import ru.nucodelabs.gem.app.model.SectionManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.utils.FXUtils;
-import ru.nucodelabs.gem.utils.OSDetect;
+import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
@@ -114,7 +114,7 @@ public class MainViewController extends AbstractController {
                 this::redo);
 
 
-        if (OSDetect.isMacOS()) {
+        if (OS.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
