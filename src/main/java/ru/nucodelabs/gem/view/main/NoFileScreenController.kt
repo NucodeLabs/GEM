@@ -1,151 +1,116 @@
-package ru.nucodelabs.gem.view.main;
+package ru.nucodelabs.gem.view.main
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.event.Event;
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import ru.nucodelabs.gem.view.AbstractController;
+import javafx.beans.property.BooleanProperty
+import javafx.event.EventHandler
+import javafx.fxml.FXML
+import javafx.scene.control.ListView
+import javafx.scene.control.SelectionMode
+import javafx.scene.input.DragEvent
+import javafx.scene.input.MouseButton
+import javafx.scene.input.TransferMode
+import javafx.scene.layout.VBox
+import javafx.stage.Stage
+import ru.nucodelabs.gem.utils.emptyBinding
+import ru.nucodelabs.gem.view.AbstractController
+import java.io.File
+import java.net.URL
+import java.util.*
+import java.util.prefs.Preferences
+import javax.inject.Inject
+import javax.inject.Provider
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
-
-public class NoFileScreenController extends AbstractController {
-
-    @FXML
-    private ListView<File> recentFiles;
-    @FXML
-    private VBox recentFilesContainer;
-    @FXML
-    private VBox root;
-
-    @Inject
-    private Provider<FileOpener> fileOpenerProvider;
-
-    @Inject
-    private Provider<FileImporter> fileImporterProvider;
-
-    @Inject
-    private Preferences preferences;
+class NoFileScreenController @Inject constructor(
+    private val fileOpenerProvider: Provider<FileOpener>,
+    private val fileImporterProvider: Provider<FileImporter>,
+    private val preferences: Preferences
+) : AbstractController(), FileOpener by fileOpenerProvider.get(), FileImporter by fileImporterProvider.get() {
 
     @FXML
-    private void addPicket() {
-        fileOpenerProvider.get().addNewPicket();
-    }
+    private lateinit var recentFiles: ListView<File>
 
     @FXML
-    private void importEXP() {
-        fileImporterProvider.get().importEXP();
-    }
+    private lateinit var recentFilesContainer: VBox
 
     @FXML
-    private void openSection(Event event) {
-        fileOpenerProvider.get().openJsonSection(event);
-    }
+    private lateinit var root: VBox
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        recentFiles.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        recentFiles.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                if (recentFiles.getSelectionModel().getSelectedItems().size() == 1) {
-                    fileOpenerProvider.get().openJsonSection(
-                            recentFiles.getSelectionModel().getSelectedItem()
-                    );
+    override val stage: Stage?
+        get() = root.scene.window as Stage?
+
+    fun visibleProperty(): BooleanProperty = root.visibleProperty()
+
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        recentFiles.selectionModel.selectionMode = SelectionMode.SINGLE
+
+        recentFiles.onMouseClicked = EventHandler { event ->
+            if (event.button == MouseButton.PRIMARY) {
+                if (recentFiles.selectionModel.selectedItems.size == 1) {
+                    openJsonSection(recentFiles.selectionModel.selectedItem)
                 }
             }
-        });
+        }
 
-        recentFilesContainer.visibleProperty().bind(Bindings.createBooleanBinding(
-                () -> !recentFiles.getItems().isEmpty(),
-                recentFiles.getItems()
-        ));
+        recentFilesContainer.visibleProperty().bind(recentFiles.items.emptyBinding().not())
+        recentFilesContainer.managedProperty().bind(recentFilesContainer.visibleProperty())
 
-        recentFilesContainer.managedProperty()
-                .bind(recentFilesContainer.visibleProperty());
-
-        initConfig(preferences);
-        visibleProperty().addListener((observable, oldValue, newValue) -> {
+        initConfig(preferences)
+        visibleProperty().addListener { _, _, newValue ->
             if (newValue) {
-                initConfig(preferences);
+                initConfig(preferences)
             }
-        });
+        }
     }
 
-    private void initConfig(Preferences preferences) {
-        String filesString = preferences.get("RECENT_FILES", "");
-        List<String> pathsFromPrefs = List.of(filesString.split(File.pathSeparator));
-        List<String> paths = new ArrayList<>(pathsFromPrefs);
+    private fun initConfig(preferences: Preferences) {
+        val filesString = preferences["RECENT_FILES", ""]
+        val separator = File.pathSeparator
 
-        paths = paths.stream()
-                .filter(s -> new File(s).exists())
-                .distinct()
-                .collect(Collectors.toList());
-
-        preferences.put("RECENT_FILES", String.join(File.pathSeparator, paths));
-
-        List<File> files = paths.stream()
-                .map(File::new)
-                .toList();
-
-        recentFiles.getItems().setAll(files);
-    }
-
-    @Override
-    public Stage getStage() {
-        return (Stage) root.getScene().getWindow();
-    }
-
-    public BooleanProperty visibleProperty() {
-        return root.visibleProperty();
+        filesString.split(separator)
+            .dropLastWhile { it.isEmpty() }
+            .filter { File(it).exists() }
+            .distinct()
+            .also { preferences.put("RECENT_FILES", it.joinToString(separator)) }
+            .map { File(it) }
+            .also { recentFiles.items.setAll(it) }
     }
 
     @FXML
-    private void dragOverHandle(DragEvent dragEvent) {
-        if (dragEvent.getDragboard().hasFiles()) {
-            List<File> files = dragEvent.getDragboard().getFiles();
-            for (var file : files) {
-                if (file.getName().endsWith(".EXP") || file.getName().endsWith(".exp")
-                        || file.getName().endsWith(".json") || file.getName().endsWith(".JSON")) {
-                    dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+    private fun dragOverHandle(dragEvent: DragEvent) {
+        if (dragEvent.dragboard.hasFiles()) {
+            val files = dragEvent.dragboard.files
+            for (file in files) {
+                if (file.name.endsWith(".EXP", ignoreCase = true)
+                    || file.name.endsWith(".json", ignoreCase = true)
+                ) {
+                    dragEvent.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
                 }
             }
         }
-        dragEvent.consume();
+        dragEvent.consume()
     }
 
     @FXML
-    private void dragDropHandle(DragEvent dragEvent) {
-        if (dragEvent.getDragboard().hasFiles()) {
-            List<File> files = dragEvent.getDragboard().getFiles();
-            dragEvent.setDropCompleted(true);
-            dragEvent.consume();
-            for (var file : files) {
-                if (file.getName().endsWith(".EXP") || file.getName().endsWith(".exp")) {
-                    fileImporterProvider.get().addEXP(file);
-                } else if (file.getName().endsWith(".json") || file.getName().endsWith(".JSON")) {
-                    fileOpenerProvider.get().openJsonSection(file);
+    private fun dragDropHandle(dragEvent: DragEvent) {
+        if (dragEvent.dragboard.hasFiles()) {
+            val files = dragEvent.dragboard.files
+            dragEvent.isDropCompleted = true
+            dragEvent.consume()
+            for (file in files) {
+                if (file.name.endsWith(".EXP", ignoreCase = true)) {
+                    importEXP(file)
+                } else if (file.name.endsWith(".json", ignoreCase = true)) {
+                    openJsonSection(file)
                 }
             }
         }
     }
 
     @FXML
-    private void clearRecentFiles() {
-        preferences.put("RECENT_FILES", "");
-        initConfig(preferences);
+    private fun clearRecentFiles() {
+        preferences.apply {
+            put("RECENT_FILES", "")
+        }.also {
+            initConfig(it)
+        }
     }
 }

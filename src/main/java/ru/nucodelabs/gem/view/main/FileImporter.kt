@@ -4,7 +4,7 @@ import java.io.File
 
 interface FileImporter {
     fun importEXP()
-    fun addEXP(file: File)
+    fun importEXP(file: File)
     fun importMOD()
     fun importMOD(file: File)
     fun importJsonPicket()

@@ -97,7 +97,7 @@ class GemApplication : Application() {
         fxmlLoaderAfterShow().getController<MainViewController>().run {
             expFiles.forEach {
                 logger.info("Import EXP, file: ${it.absolutePath}")
-                addEXP(it)
+                importEXP(it)
             }
         }
 
