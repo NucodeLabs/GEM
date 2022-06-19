@@ -26,7 +26,7 @@
                   onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
                 <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
-                        <Button text="%import" onAction="#importModel"/>
+                        <Button text="%import" onAction="#importMOD"/>
                         <Label text="(*.MOD)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
                     </VBox>
                 </HBox>
