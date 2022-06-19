@@ -78,7 +78,7 @@ final class Tables {
         return list;
     }
 
-    static BooleanProperty setupInputValidation(
+    static BooleanProperty valid(
             TextField textField,
             Predicate<String> validateInput) {
         return FXUtils.TextFieldValidationSetup.of(textField)

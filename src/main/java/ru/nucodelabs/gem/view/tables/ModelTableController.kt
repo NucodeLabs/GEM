@@ -1,271 +1,240 @@
-package ru.nucodelabs.gem.view.tables;
+package ru.nucodelabs.gem.view.tables
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.TransferMode;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import ru.nucodelabs.data.ves.ModelLayer;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.model.SectionManager;
-import ru.nucodelabs.gem.app.snapshot.HistoryManager;
-import ru.nucodelabs.gem.utils.FXUtils;
-import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.main.MainViewController;
+import jakarta.validation.Validator
+import javafx.beans.binding.Bindings.createStringBinding
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableObjectValue
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
+import javafx.fxml.FXML
+import javafx.scene.control.*
+import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.input.DragEvent
+import javafx.scene.input.TransferMode
+import javafx.stage.Stage
+import javafx.util.Callback
+import javafx.util.StringConverter
+import ru.nucodelabs.data.ves.ModelLayer
+import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.utils.FXUtils
+import ru.nucodelabs.gem.utils.FXUtils.isNotBlank
+import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.main.MainViewController
+import ru.nucodelabs.gem.view.tables.Tables.*
+import java.net.URL
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.util.*
+import javax.inject.Inject
+import javax.inject.Provider
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.io.File;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import static java.lang.Math.min;
-
-public class ModelTableController extends AbstractController {
-
-    private final ObservableObjectValue<Picket> picket;
+class ModelTableController @Inject constructor(
+    private val picketObservable: ObservableObjectValue<Picket?>,
+    private val mainViewControllerProvider: Provider<MainViewController>,
+    private val alertsFactory: AlertsFactory,
+    private val validator: Validator,
+    private val sectionManager: SectionManager,
+    private val historyManager: HistoryManager<Section>,
+    private val doubleStringConverter: StringConverter<Double>,
+    private val decimalFormat: DecimalFormat
+) : AbstractController() {
 
     @FXML
-    private TableColumn<ModelLayer, Double> zCol;
-    @FXML
-    private TableColumn<Object, Integer> indexCol;
-    @FXML
-    private TableColumn<ModelLayer, Double> powerCol;
-    @FXML
-    private TableColumn<ModelLayer, Double> resistanceCol;
-    @FXML
-    private TextField powerTextField;
-    @FXML
-    private TextField resistanceTextField;
-    @FXML
-    private TextField indexTextField;
-    @FXML
-    private Button deleteBtn;
-    @FXML
-    private Button addBtn;
-    @FXML
-    private TableView<ModelLayer> table;
+    private lateinit var zCol: TableColumn<ModelLayer, Double>
 
-    @Inject
-    private Provider<MainViewController> mainViewControllerProvider;
-    @Inject
-    private AlertsFactory alertsFactory;
-    @Inject
-    private Validator validator;
-    @Inject
-    private SectionManager sectionManager;
-    @Inject
-    private HistoryManager<Section> historyManager;
-    @Inject
-    private StringConverter<Double> doubleStringConverter;
-    @Inject
-    private DecimalFormat decimalFormat;
+    @FXML
+    private lateinit var indexCol: TableColumn<Any, Int>
 
-    @Inject
-    public ModelTableController(ObservableObjectValue<Picket> picket) {
-        this.picket = picket;
+    @FXML
+    private lateinit var powerCol: TableColumn<ModelLayer, Double>
 
-        picket.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+    @FXML
+    private lateinit var resistanceCol: TableColumn<ModelLayer, Double>
+
+    @FXML
+    private lateinit var powerTextField: TextField
+
+    @FXML
+    private lateinit var resistanceTextField: TextField
+
+    @FXML
+    private lateinit var indexTextField: TextField
+
+    @FXML
+    private lateinit var deleteBtn: Button
+
+    @FXML
+    private lateinit var addBtn: Button
+
+    @FXML
+    private lateinit var table: TableView<ModelLayer>
+
+    private val picket: Picket
+        get() = picketObservable.get()!!
+
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        picketObservable.addListener { _, oldValue, newValue ->
+            newValue?.let {
                 if (oldValue != null
-                        && !oldValue.getModelData().equals(newValue.getModelData())) {
-                    update();
+                    && oldValue.modelData != it.modelData
+                ) {
+                    update()
                 } else if (oldValue == null) {
-                    update();
+                    update()
                 }
             }
-        });
-    }
+        }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(URL location, ResourceBundle resources) {
-        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ModelLayer>) c -> {
-                    if (c.next()) {
-                        deleteBtn.setDisable(c.getList().isEmpty());
-                    }
-                });
-
-        indexCol.setCellFactory(Tables.indexCellFactory());
-
-        powerCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getPower()));
-        resistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistance()));
-
-        zCol.setCellFactory(col -> {
-            TableCell<ModelLayer, Double> cell = new TableCell<>();
-
-            cell.textProperty().bind(
-                    Bindings.createStringBinding(
-                            () -> !cell.isEmpty() && cell.getIndex() >= 0
-                                    && picket.get() != null
-                                    && cell.getIndex() < picket.get().getModelData().size() ?
-                                    decimalFormat.format(
-                                            picket.get().zOfModelLayers().get(cell.getIndex())) : "",
-                            cell.emptyProperty(), cell.indexProperty(), picket
+        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+        table.selectionModel.selectedItems.addListener(ListChangeListener {
+            if (it.next()) {
+                deleteBtn.isDisable = it.list.isEmpty()
+            }
+        })
+        indexCol.cellFactory = indexCellFactory()
+        powerCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.power) }
+        resistanceCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.resistance) }
+        zCol.cellFactory = Callback {
+            TableCell<ModelLayer, Double>().apply {
+                textProperty().bind(
+                    createStringBinding(
+                        {
+                            if (!isEmpty && index >= 0
+                                && picketObservable.get() != null
+                                && index < picket.modelData.size
+                            ) {
+                                decimalFormat.format(picket.zOfModelLayers()[index])
+                            } else {
+                                ""
+                            }
+                        },
+                        emptyProperty(), indexProperty(), picketObservable
                     )
-            );
-
-            return cell;
-        });
-
-        for (int i = 1; i < table.getColumns().size() - 1; i++) {
-            // safe cast
-            ((TableColumn<ModelLayer, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
-        }
-
-        BooleanBinding validInput
-                = Tables.setupInputValidation(indexTextField, Tables::validateIndexInput)
-                .and(Tables.setupInputValidation(resistanceTextField, s -> Tables.validateDoubleInput(s, decimalFormat)))
-                .and(Tables.setupInputValidation(powerTextField, s -> Tables.validateDoubleInput(s, decimalFormat)));
-
-        BooleanBinding allRequiredNotBlank
-                = FXUtils.isNotBlank(powerTextField.textProperty())
-                .and(FXUtils.isNotBlank(resistanceTextField.textProperty()));
-
-        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
-
-        table.itemsProperty().addListener((observable, oldValue, newValue) -> {
-            newValue.addListener((ListChangeListener<? super ModelLayer>) c -> table.refresh());
-            table.refresh();
-        });
-    }
-
-    @Override
-    protected Stage getStage() {
-        return (Stage) table.getScene().getWindow();
-    }
-
-    protected void update() {
-        table.itemsProperty().setValue(FXCollections.observableList(picket.get().getModelData()));
-        table.refresh();
-    }
-
-    @FXML
-    private void onEditCommit(TableColumn.CellEditEvent<ModelLayer, Double> event) {
-        int index = event.getTablePosition().getRow();
-        var column = event.getTableColumn();
-        ModelLayer oldValue = event.getRowValue();
-        ModelLayer newValue;
-        double newInputValue = event.getNewValue();
-
-        if (column == powerCol) {
-            newValue = oldValue.withPower(newInputValue);
-        } else if (column == resistanceCol) {
-            newValue = oldValue.withResistance(newInputValue);
-        } else {
-            throw new RuntimeException("Something went wrong!");
-        }
-
-        List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
-
-        newModelData.set(index, newValue);
-
-        if (!event.getNewValue().isNaN()) {
-            updateIfValidElseAlert(newModelData);
-        } else {
-            table.refresh();
-        }
-    }
-
-    @FXML
-    private void addLayer() {
-        if (!addBtn.isDisable()) {
-
-            double newPowerValue;
-            double newResistanceValue;
-            try {
-                newResistanceValue = decimalFormat.parse(resistanceTextField.getText()).doubleValue();
-                newPowerValue = decimalFormat.parse(powerTextField.getText()).doubleValue();
-            } catch (ParseException e) {
-                return;
+                )
             }
+        }
 
-            int index = picket.get().getModelData().size();
+        for (i in 1 until table.columns.size - 1) {
+            table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
+        }
 
-            int inputIndex = index;
-            try {
-                inputIndex = Integer.parseInt(indexTextField.getText());
-            } catch (NumberFormatException ignored) {
-            }
+        val validInput = valid(indexTextField) { validateIndexInput(it) }
+            .and(valid(resistanceTextField) { validateDoubleInput(it, decimalFormat) })
+            .and(valid(powerTextField) { validateDoubleInput(it, decimalFormat) })
 
-            index = min(index, inputIndex);
+        val allRequiredNotBlank = isNotBlank(powerTextField.textProperty())
+            .and(isNotBlank(resistanceTextField.textProperty()))
 
-            List<ModelLayer> newModelData = new ArrayList<>(picket.get().getModelData());
-            newModelData.add(index, ModelLayer.create(newPowerValue, newResistanceValue));
+        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
 
-            updateIfValidElseAlert(newModelData);
+        table.itemsProperty().addListener { _, _, newValue: ObservableList<ModelLayer> ->
+            newValue.addListener(ListChangeListener { table.refresh() })
+            table.refresh()
         }
     }
 
-    @FXML
-    private void deleteSelected() {
-        List<ModelLayer> newModelData = Tables.deleteIndices(
-                table.getSelectionModel().getSelectedIndices(),
-                picket.get().getModelData());
-        updateIfValidElseAlert(newModelData);
+    override val stage: Stage?
+        get() = table.scene.window as Stage?
+
+    private fun update() {
+        table.items = FXCollections.observableList(picket.modelData)
+        table.refresh()
     }
 
-    private void updateIfValidElseAlert(List<ModelLayer> newModelData) {
-        Picket modified = picket.get().withModelData(newModelData);
-        Set<ConstraintViolation<Picket>> violations = validator.validate(modified);
-
-        if (!violations.isEmpty()) {
-            alertsFactory.violationsAlert(violations, getStage()).show();
-            table.refresh();
+    @FXML
+    private fun onEditCommit(event: TableColumn.CellEditEvent<ModelLayer, Double>) {
+        val index: Int = event.tablePosition.row
+        val oldValue: ModelLayer = event.rowValue
+        val newInputValue: Double = event.newValue
+        val newValue: ModelLayer = when (event.tableColumn) {
+            powerCol -> oldValue.withPower(newInputValue)
+            resistanceCol -> oldValue.withResistance(newInputValue)
+            else -> throw RuntimeException("Something went wrong!")
+        }
+        if (!event.newValue.isNaN()) {
+            updateIfValidElseAlert(picket.modelData.toMutableList().also { it[index] = newValue })
         } else {
-            historyManager.snapshotAfter(
-                    () -> sectionManager.update(modified));
-            FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField);
+            table.refresh()
         }
     }
 
     @FXML
-    private void importModel() {
-        mainViewControllerProvider.get().importMOD();
+    private fun addLayer() {
+        if (!addBtn.isDisable) {
+            val newResistanceValue: Double = try {
+                decimalFormat.parse(resistanceTextField.text).toDouble()
+            } catch (_: ParseException) {
+                return
+            }
+            val newPowerValue: Double = try {
+                decimalFormat.parse(powerTextField.text).toDouble()
+            } catch (_: ParseException) {
+                return
+            }
+            val index = try {
+                indexTextField.text.toInt().coerceAtMost(picket.modelData.lastIndex + 1)
+            } catch (_: NumberFormatException) {
+                picket.modelData.lastIndex + 1
+            }
+            updateIfValidElseAlert(
+                picket.modelData.toMutableList().apply {
+                    add(index, ModelLayer.create(newPowerValue, newResistanceValue))
+                }
+            )
+        }
     }
 
     @FXML
-    private void dragOverHandle(DragEvent dragEvent) {
-        if (dragEvent.getDragboard().hasFiles()) {
-            List<File> files = dragEvent.getDragboard().getFiles();
-            for (var file : files) {
-                if (file.getName().endsWith(".MOD") || file.getName().endsWith(".mod")) {
-                    dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+    private fun deleteSelected() {
+        picket.modelData.toMutableList().apply {
+            removeAllAt(table.selectionModel.selectedIndices)
+        }.also {
+            updateIfValidElseAlert(it)
+        }
+    }
+
+    private fun updateIfValidElseAlert(newModelData: List<ModelLayer>) {
+        val modified = picket.withModelData(newModelData)
+        val violations = validator.validate(modified)
+        if (violations.isNotEmpty()) {
+            alertsFactory.violationsAlert(violations, stage).show()
+            table.refresh()
+        } else {
+            historyManager.snapshotAfter { sectionManager.update(modified) }
+            FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField)
+        }
+    }
+
+    @FXML
+    private fun importModel() = mainViewControllerProvider.get().importMOD()
+
+    @FXML
+    private fun dragOverHandle(dragEvent: DragEvent) {
+        if (dragEvent.dragboard.hasFiles()) {
+            val files = dragEvent.dragboard.files
+            for (file in files) {
+                if (file.name.endsWith(".MOD") || file.name.endsWith(".mod")) {
+                    dragEvent.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
                 }
             }
         }
-        dragEvent.consume();
+        dragEvent.consume()
     }
 
     @FXML
-    private void dragDropHandle(DragEvent dragEvent) {
-        if (dragEvent.getDragboard().hasFiles()) {
-            List<File> files = dragEvent.getDragboard().getFiles();
-            dragEvent.setDropCompleted(true);
-            dragEvent.consume();
-            for (var file : files) {
-                if (file.getName().endsWith(".MOD") || file.getName().endsWith(".mod")) {
-                    mainViewControllerProvider.get().importMOD(file);
+    private fun dragDropHandle(dragEvent: DragEvent) {
+        if (dragEvent.dragboard.hasFiles()) {
+            val files = dragEvent.dragboard.files
+            dragEvent.isDropCompleted = true
+            dragEvent.consume()
+            for (file in files) {
+                if (file.name.endsWith(".MOD", ignoreCase = true)) {
+                    mainViewControllerProvider.get().importMOD(file)
                 }
             }
         }

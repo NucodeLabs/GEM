@@ -133,13 +133,13 @@ public class ExperimentalTableController extends AbstractController {
 
         Predicate<String> validateDataInput = s -> Tables.validateDoubleInput(s, decimalFormat);
         BooleanBinding validInput
-                = Tables.setupInputValidation(ab2TextField, validateDataInput)
-                .and(Tables.setupInputValidation(mn2TextField, validateDataInput))
-                .and(Tables.setupInputValidation(resAppTextField, validateDataInput))
-                .and(Tables.setupInputValidation(errResAppTextField, validateDataInput))
-                .and(Tables.setupInputValidation(voltageTextField, validateDataInput))
-                .and(Tables.setupInputValidation(amperageTextField, validateDataInput))
-                .and(Tables.setupInputValidation(indexTextField, Tables::validateIndexInput));
+                = Tables.valid(ab2TextField, validateDataInput)
+                .and(Tables.valid(mn2TextField, validateDataInput))
+                .and(Tables.valid(resAppTextField, validateDataInput))
+                .and(Tables.valid(errResAppTextField, validateDataInput))
+                .and(Tables.valid(voltageTextField, validateDataInput))
+                .and(Tables.valid(amperageTextField, validateDataInput))
+                .and(Tables.valid(indexTextField, Tables::validateIndexInput));
 
         BooleanBinding allRequiredNotBlank
                 = FXUtils.isNotBlank(ab2TextField.textProperty())
