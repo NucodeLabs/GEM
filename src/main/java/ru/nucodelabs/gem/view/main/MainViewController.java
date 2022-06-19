@@ -251,13 +251,13 @@ public class MainViewController extends AbstractController implements FileImport
                 preferences.put("EXP_FC_INIT_DIR", files.get(files.size() - 1).getParentFile().getAbsolutePath());
             }
             for (var file : files) {
-                addEXP(file);
+                importEXP(file);
             }
         }
     }
 
     @Override
-    public void addEXP(@NotNull File file) {
+    public void importEXP(@NotNull File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createDefaultWithNewId());
             var violations = validator.validate(picketFromEXPFile);
