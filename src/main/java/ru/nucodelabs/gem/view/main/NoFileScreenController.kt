@@ -67,11 +67,12 @@ class NoFileScreenController @Inject constructor(
 
         filesString.split(separator)
             .dropLastWhile { it.isEmpty() }
-            .filter { File(it).exists() }
             .distinct()
-            .also { preferences.put("RECENT_FILES", it.joinToString(separator)) }
             .map { File(it) }
+            .filter { it.exists() }
             .also { recentFiles.items.setAll(it) }
+            .map { it.absolutePath }
+            .also { preferences.put("RECENT_FILES", it.joinToString(separator)) }
     }
 
     @FXML
@@ -96,7 +97,7 @@ class NoFileScreenController @Inject constructor(
             dragEvent.isDropCompleted = true
             dragEvent.consume()
             for (file in files) {
-                if (file.name.endsWith(".EXP", ignoreCase = true)) {
+                if (file.name.endsWith(".exp", ignoreCase = true)) {
                     importEXP(file)
                 } else if (file.name.endsWith(".json", ignoreCase = true)) {
                     openJsonSection(file)
