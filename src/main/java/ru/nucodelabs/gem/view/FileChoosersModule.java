@@ -10,10 +10,11 @@ import java.io.File;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+import static ru.nucodelabs.gem.app.pref.AppPreferencesKt.*;
+
 public class FileChoosersModule extends AbstractModule {
 
     private static final FileChooser.ExtensionFilter allFilesFilter = new FileChooser.ExtensionFilter("All files", "*.*");
-    private static final String defaultInitDir = System.getProperty("user.home");
 
     @Provides
     @Singleton
@@ -24,7 +25,7 @@ public class FileChoosersModule extends AbstractModule {
                 new FileChooser.ExtensionFilter(ui.getString("expData"), "*.EXP", "*.exp"),
                 allFilesFilter
         );
-        File initDir = new File(preferences.get("EXP_FC_INIT_DIR", defaultInitDir));
+        File initDir = new File(preferences.get(EXP_FILES_DIR.getKey(), EXP_FILES_DIR.getDef()));
         if (initDir.exists()) {
             chooser.setInitialDirectory(initDir);
         }
@@ -40,7 +41,7 @@ public class FileChoosersModule extends AbstractModule {
                 new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json", "*.JSON"),
                 allFilesFilter
         );
-        File initDir = new File(preferences.get("JSON_FC_INIT_DIR", defaultInitDir));
+        File initDir = new File(preferences.get(JSON_FILES_DIR.getKey(), JSON_FILES_DIR.getDef()));
         if (initDir.exists()) {
             chooser.setInitialDirectory(initDir);
         }
@@ -56,7 +57,7 @@ public class FileChoosersModule extends AbstractModule {
                 new FileChooser.ExtensionFilter(ui.getString("modData"), "*.MOD", "*.mod"),
                 allFilesFilter
         );
-        File initDir = new File(preferences.get("MOD_FC_INIT_DIR", defaultInitDir));
+        File initDir = new File(preferences.get(MOD_FILES_DIR.getKey(), MOD_FILES_DIR.getDef()));
         if (initDir.exists()) {
             chooser.setInitialDirectory(initDir);
         }
