@@ -17,10 +17,10 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.PropertyConfigManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.pref.FXPreferences;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.utils.FXUtils;
@@ -39,6 +39,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+
+import static ru.nucodelabs.gem.app.pref.AppPreferencesKt.*;
+import static ru.nucodelabs.gem.app.pref.UIPreferencesKt.VES_CURVES_LEGEND_VISIBLE;
+
 
 public class MainViewController extends AbstractController implements FileImporter, FileOpener {
 
@@ -105,7 +109,7 @@ public class MainViewController extends AbstractController implements FileImport
     @Inject
     private DecimalFormat decimalFormat;
     @Inject
-    private PropertyConfigManager propertyConfigManager;
+    private FXPreferences fxPreferences;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -158,11 +162,11 @@ public class MainViewController extends AbstractController implements FileImport
     }
 
     private void initConfig() {
-        propertyConfigManager.bind(getStage().widthProperty(), "WINDOW_W", 1280, getStage()::setWidth);
-        propertyConfigManager.bind(getStage().heightProperty(), "WINDOW_H", 720, getStage()::setHeight);
-        propertyConfigManager.bind(getStage().xProperty(), "WINDOW_X", 720, getStage()::setX);
-        propertyConfigManager.bind(getStage().yProperty(), "WINDOW_Y", 720, getStage()::setY);
-        propertyConfigManager.bind(menuViewVESCurvesLegend.selectedProperty(), "VES_CURVES_LEGEND", false);
+        fxPreferences.bind(getStage().widthProperty(), MAIN_WINDOW_W.getKey(), MAIN_WINDOW_W.getDef(), getStage()::setWidth);
+        fxPreferences.bind(getStage().heightProperty(), MAIN_WINDOW_H.getKey(), MAIN_WINDOW_H.getDef(), getStage()::setHeight);
+        fxPreferences.bind(getStage().xProperty(), MAIN_WINDOW_X.getKey(), MAIN_WINDOW_X.getDef(), getStage()::setX);
+        fxPreferences.bind(getStage().yProperty(), MAIN_WINDOW_Y.getKey(), MAIN_WINDOW_Y.getDef(), getStage()::setY);
+        fxPreferences.bind(menuViewVESCurvesLegend.selectedProperty(), VES_CURVES_LEGEND_VISIBLE.getKey(), VES_CURVES_LEGEND_VISIBLE.getDef());
     }
 
     private void bind() {
@@ -248,7 +252,7 @@ public class MainViewController extends AbstractController implements FileImport
         if (files != null) {
             if (files.get(files.size() - 1).getParentFile().isDirectory()) {
                 expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
-                preferences.put("EXP_FC_INIT_DIR", files.get(files.size() - 1).getParentFile().getAbsolutePath());
+                preferences.put(EXP_FILES_DIR.getKey(), files.get(files.size() - 1).getParentFile().getAbsolutePath());
             }
             for (var file : files) {
                 importEXP(file);
@@ -283,7 +287,7 @@ public class MainViewController extends AbstractController implements FileImport
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
             openJsonSection(file);
         }
@@ -307,7 +311,9 @@ public class MainViewController extends AbstractController implements FileImport
             historyManager.clear();
             historyManager.snapshot();
             setWindowFileTitle(file);
-            preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
+            preferences.put(RECENT_FILES.getKey(), file.getAbsolutePath()
+                    + File.pathSeparator
+                    + preferences.get(RECENT_FILES.getKey(), RECENT_FILES.getDef()));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -347,7 +353,7 @@ public class MainViewController extends AbstractController implements FileImport
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 modFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("MOD_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(MOD_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
             importMOD(file);
         }
@@ -378,7 +384,7 @@ public class MainViewController extends AbstractController implements FileImport
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
 
             importJsonPicket(file);
@@ -403,7 +409,7 @@ public class MainViewController extends AbstractController implements FileImport
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
 
             try {
@@ -443,8 +449,10 @@ public class MainViewController extends AbstractController implements FileImport
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
-                preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
+                preferences.put(RECENT_FILES.getKey(), file.getAbsolutePath()
+                        + File.pathSeparator
+                        + preferences.get(RECENT_FILES.getKey(), RECENT_FILES.getDef()));
             }
             try {
                 storageManager.saveToJson(file, sectionManager.snapshot().getValue());

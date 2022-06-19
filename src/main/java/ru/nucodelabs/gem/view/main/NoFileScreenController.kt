@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import ru.nucodelabs.gem.app.pref.RECENT_FILES
 import ru.nucodelabs.gem.utils.emptyBinding
 import ru.nucodelabs.gem.view.AbstractController
 import java.io.File
@@ -62,7 +63,7 @@ class NoFileScreenController @Inject constructor(
     }
 
     private fun initConfig(preferences: Preferences) {
-        val filesString = preferences["RECENT_FILES", ""]
+        val filesString = preferences[RECENT_FILES.key, RECENT_FILES.def]
         val separator = File.pathSeparator
 
         filesString.split(separator)
@@ -72,7 +73,7 @@ class NoFileScreenController @Inject constructor(
             .filter { it.exists() }
             .also { recentFiles.items.setAll(it) }
             .map { it.absolutePath }
-            .also { preferences.put("RECENT_FILES", it.joinToString(separator)) }
+            .also { preferences.put(RECENT_FILES.key, it.joinToString(separator)) }
     }
 
     @FXML
@@ -109,7 +110,7 @@ class NoFileScreenController @Inject constructor(
     @FXML
     private fun clearRecentFiles() {
         preferences.apply {
-            put("RECENT_FILES", "")
+            put(RECENT_FILES.key, RECENT_FILES.def)
         }.also {
             initConfig(it)
         }
