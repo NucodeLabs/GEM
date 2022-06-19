@@ -70,7 +70,9 @@ public class AppModule extends AbstractModule {
 
     @Provides
     private Validator provideValidator() {
-        return Validation.buildDefaultValidatorFactory().getValidator();
+        try (var factory = Validation.buildDefaultValidatorFactory()) {
+            return factory.getValidator();
+        }
     }
 
     @Provides
