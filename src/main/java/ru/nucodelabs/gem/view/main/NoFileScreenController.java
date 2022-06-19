@@ -33,23 +33,27 @@ public class NoFileScreenController extends AbstractController {
     private VBox root;
 
     @Inject
-    private Provider<MainViewController> mainViewControllerProvider;
+    private Provider<FileOpener> fileOpenerProvider;
+
+    @Inject
+    private Provider<FileImporter> fileImporterProvider;
+
     @Inject
     private Preferences preferences;
 
     @FXML
     private void addPicket() {
-        mainViewControllerProvider.get().addPicket();
+        fileOpenerProvider.get().addNewPicket();
     }
 
     @FXML
     private void importEXP() {
-        mainViewControllerProvider.get().importEXP();
+        fileImporterProvider.get().importEXP();
     }
 
     @FXML
     private void openSection(Event event) {
-        mainViewControllerProvider.get().openJsonSection(event);
+        fileOpenerProvider.get().openJsonSection(event);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class NoFileScreenController extends AbstractController {
         recentFiles.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 if (recentFiles.getSelectionModel().getSelectedItems().size() == 1) {
-                    mainViewControllerProvider.get().openJsonSection(
+                    fileOpenerProvider.get().openJsonSection(
                             recentFiles.getSelectionModel().getSelectedItem()
                     );
                 }
@@ -131,9 +135,9 @@ public class NoFileScreenController extends AbstractController {
             dragEvent.consume();
             for (var file : files) {
                 if (file.getName().endsWith(".EXP") || file.getName().endsWith(".exp")) {
-                    mainViewControllerProvider.get().addEXP(file);
+                    fileImporterProvider.get().addEXP(file);
                 } else if (file.getName().endsWith(".json") || file.getName().endsWith(".JSON")) {
-                    mainViewControllerProvider.get().openJsonSection(file);
+                    fileOpenerProvider.get().openJsonSection(file);
                 }
             }
         }

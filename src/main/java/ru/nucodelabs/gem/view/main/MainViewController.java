@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.app.PropertyConfigManager;
@@ -39,7 +40,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-public class MainViewController extends AbstractController {
+public class MainViewController extends AbstractController implements FileImporter, FileOpener {
 
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
@@ -240,6 +241,7 @@ public class MainViewController extends AbstractController {
         return event;
     }
 
+    @Override
     @FXML
     public void importEXP() {
         List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
@@ -254,7 +256,8 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    public void addEXP(File file) {
+    @Override
+    public void addEXP(@NotNull File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createDefaultWithNewId());
             var violations = validator.validate(picketFromEXPFile);
@@ -270,8 +273,9 @@ public class MainViewController extends AbstractController {
     }
 
 
+    @Override
     @FXML
-    public void openJsonSection(Event event) {
+    public void openJsonSection(@NotNull Event event) {
         if (askToSave(event).isConsumed()) {
             return;
         }
@@ -285,7 +289,8 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    public void openJsonSection(File file) {
+    @Override
+    public void openJsonSection(@NotNull File file) {
         try {
             Section loadedSection = storageManager.loadFromJson(file, Section.class);
             var violations =
@@ -334,6 +339,7 @@ public class MainViewController extends AbstractController {
     /**
      * Asks which file to import and then import it
      */
+    @Override
     @FXML
     public void importMOD() {
         File file = modFileChooser.showOpenDialog(getStage());
@@ -347,7 +353,8 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    public void importMOD(File file) {
+    @Override
+    public void importMOD(@NotNull File file) {
         try {
             Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
@@ -364,8 +371,8 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    @FXML
-    private void importJsonPicket() {
+    @Override
+    public void importJsonPicket() {
         File file = jsonFileChooser.showOpenDialog(getStage());
 
         if (file != null) {
@@ -378,7 +385,8 @@ public class MainViewController extends AbstractController {
         }
     }
 
-    public void importJsonPicket(File file) {
+    @Override
+    public void importJsonPicket(@NotNull File file) {
         try {
             Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
             historyManager.snapshotAfter(() -> sectionManager.add(loadedPicket));
@@ -502,8 +510,9 @@ public class MainViewController extends AbstractController {
         }
     }
 
+    @Override
     @FXML
-    public void addPicket() {
+    public void addNewPicket() {
         historyManager.snapshotAfter(() -> sectionManager.add(Picket.createDefaultWithNewId()));
         picketIndex.set(sectionManager.size() - 1);
     }

@@ -24,7 +24,7 @@ import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.utils.FXUtils.isNotBlank
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.main.MainViewController
+import ru.nucodelabs.gem.view.main.FileImporter
 import ru.nucodelabs.gem.view.tables.Tables.*
 import java.net.URL
 import java.text.DecimalFormat
@@ -35,14 +35,14 @@ import javax.inject.Provider
 
 class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
-    private val mainViewControllerProvider: Provider<MainViewController>,
+    private val fileImporterProvider: Provider<FileImporter>,
     private val alertsFactory: AlertsFactory,
     private val validator: Validator,
     private val sectionManager: SectionManager,
     private val historyManager: HistoryManager<Section>,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat
-) : AbstractController() {
+) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
     private lateinit var zCol: TableColumn<ModelLayer, Double>
@@ -211,9 +211,6 @@ class ModelTableController @Inject constructor(
     }
 
     @FXML
-    private fun importModel() = mainViewControllerProvider.get().importMOD()
-
-    @FXML
     private fun dragOverHandle(dragEvent: DragEvent) {
         if (dragEvent.dragboard.hasFiles()) {
             val files = dragEvent.dragboard.files
@@ -234,7 +231,7 @@ class ModelTableController @Inject constructor(
             dragEvent.consume()
             for (file in files) {
                 if (file.name.endsWith(".MOD", ignoreCase = true)) {
-                    mainViewControllerProvider.get().importMOD(file)
+                    importMOD(file)
                 }
             }
         }

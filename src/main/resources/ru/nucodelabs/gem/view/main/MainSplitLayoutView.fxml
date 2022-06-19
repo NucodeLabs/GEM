@@ -21,7 +21,7 @@
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
-                        <MenuItem text="%addPicket" onAction="#addPicket"/>
+                        <MenuItem text="%addPicket" onAction="#addNewPicket"/>
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
@@ -65,7 +65,7 @@
                                         <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
                                         <HBox>
                                             <Button fx:id="addPicketBtn" prefWidth="50" minWidth="50" maxWidth="50"
-                                                    onAction="#addPicket" stylesheets="@PicketsBar.css"
+                                                    onAction="#addNewPicket" stylesheets="@PicketsBar.css"
                                                     HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
                                                 <graphic>
                                                     <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
