@@ -40,22 +40,12 @@ class PicketsBarController @Inject constructor(
     }
 
     private fun update() {
-        val buttons = mutableListOf<Button>()
         val pickets = section.pickets
 
-        for (index in pickets.indices) {
+        val buttons = mutableListOf<Button>()
+        for ((index, picket) in pickets.withIndex()) {
             // TODO использовать UI Properties
             val contextMenu = ContextMenu(
-                MenuItem("Удалить").apply {
-                    onAction = EventHandler {
-                        historyManager.snapshotAfter {
-                            sectionManager.remove(index)
-                        }
-                    }
-                    if (pickets.size == 1) {
-                        isDisable = true
-                    }
-                },
                 MenuItem("Переместить влево").apply {
                     onAction = EventHandler {
                         historyManager.snapshotAfter {
@@ -75,10 +65,20 @@ class PicketsBarController @Inject constructor(
                     if (index == pickets.lastIndex) {
                         isDisable = true
                     }
-                }
+                },
+                MenuItem("Удалить").apply {
+                    onAction = EventHandler {
+                        historyManager.snapshotAfter {
+                            sectionManager.remove(index)
+                        }
+                    }
+                    if (pickets.size == 1) {
+                        isDisable = true
+                    }
+                },
             )
 
-            val button = Button(pickets[index].name).apply {
+            val button = Button(picket.name).apply {
                 if (index == picketIndex.get()) {
                     style = "-fx-background-color: LightGray;"
                 }
