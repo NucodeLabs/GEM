@@ -15,7 +15,8 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
             initOwner(owner)
         }
 
-    fun unsatisfiedLinkErrorAlert(e: UnsatisfiedLinkError, owner: Stage?): Alert =
+    @JvmOverloads
+    fun unsatisfiedLinkErrorAlert(e: UnsatisfiedLinkError, owner: Stage? = null): Alert =
         Alert(Alert.AlertType.ERROR, e.message).apply {
             title = uiProperties.getString("noLib")
             headerText = uiProperties.getString("unableToDrawChart")
@@ -23,13 +24,15 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
         }
 
 
-    fun incorrectFileAlert(e: Exception, owner: Stage?): Alert =
+    @JvmOverloads
+    fun incorrectFileAlert(e: Exception, owner: Stage? = null): Alert =
         simpleExceptionAlert(e, owner).apply {
             headerText = uiProperties.getString("fileError")
         }
 
 
-    fun unsafeDataAlert(picketName: String, owner: Stage?): Alert =
+    @JvmOverloads
+    fun unsafeDataAlert(picketName: String, owner: Stage? = null): Alert =
         Alert(Alert.AlertType.WARNING).apply {
             title = uiProperties.getString("compatibilityMode")
             headerText = picketName + " - " + uiProperties.getString("EXPSTTMismatch")
@@ -37,7 +40,8 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
             initOwner(owner)
         }
 
-    fun violationsAlert(violations: Set<ConstraintViolation<*>>, owner: Stage?): Alert {
+    @JvmOverloads
+    fun violationsAlert(violations: Set<ConstraintViolation<*>>, owner: Stage? = null): Alert {
         val message = violations.joinToString("\n") { it.message }
         return Alert(Alert.AlertType.ERROR, message).apply {
             initOwner(owner)
