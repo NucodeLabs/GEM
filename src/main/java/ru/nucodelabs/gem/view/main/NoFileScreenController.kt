@@ -63,17 +63,20 @@ class NoFileScreenController @Inject constructor(
     }
 
     private fun initConfig(preferences: Preferences) {
-        val filesString = preferences[RECENT_FILES.key, RECENT_FILES.def]
-        val separator = File.pathSeparator
+        val recentFilesPaths = preferences[RECENT_FILES.key, RECENT_FILES.def].split(File.pathSeparator)
 
-        filesString.split(separator)
-            .dropLastWhile { it.isEmpty() }
-            .distinct()
-            .map { File(it) }
-            .filter { it.exists() }
-            .also { recentFiles.items.setAll(it) }
-            .map { it.absolutePath }
-            .also { preferences.put(RECENT_FILES.key, it.joinToString(separator)) }
+        recentFiles.items.setAll(
+            recentFilesPaths.dropLastWhile { it.isEmpty() }
+                .distinct()
+                .map { File(it) }
+                .filter { it.exists() }
+                .also { existingFiles ->
+                    preferences.put(
+                        RECENT_FILES.key,
+                        existingFiles.joinToString(File.pathSeparator) { file -> file.absolutePath }
+                    )
+                }
+        )
     }
 
     @FXML
