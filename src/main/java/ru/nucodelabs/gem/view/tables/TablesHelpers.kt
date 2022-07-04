@@ -1,89 +1,74 @@
-package ru.nucodelabs.gem.view.tables;
+package ru.nucodelabs.gem.view.tables
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
-import javafx.util.Callback;
-import ru.nucodelabs.gem.utils.FXUtils;
+import javafx.beans.binding.Bindings
+import javafx.beans.property.BooleanProperty
+import javafx.scene.control.TableCell
+import javafx.scene.control.TableColumn
+import javafx.scene.control.TextField
+import javafx.util.Callback
+import ru.nucodelabs.gem.utils.FXUtils
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.util.function.Predicate
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
 
-final class Tables {
-
-    private static final Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> INDEX_CELL_FACTORY = col -> {
-        TableCell<Object, Integer> cell = new TableCell<>();
-
-        cell.textProperty().bind(
-                Bindings.when(cell.emptyProperty())
-                        .then("")
-                        .otherwise(cell.indexProperty().asString()));
-
-        return cell;
-    };
-
-    public static Callback<TableColumn<Object, Integer>, TableCell<Object, Integer>> indexCellFactory() {
-        return INDEX_CELL_FACTORY;
-    }
-
-    private Tables() {
-    }
-
-    /**
-     * Validating string containing index in array
-     *
-     * @param s string
-     * @return true if string represents valid index
-     */
-    static boolean validateIndexInput(String s) {
-        if (s.isBlank()) {
-            return true;
-        }
-        try {
-            int val = Integer.parseInt(s);
-            return val >= 0;
-        } catch (NumberFormatException e) {
-            return false;
+fun indexCellFactory(fromOne: Boolean = true): Callback<TableColumn<Any?, Int?>, TableCell<Any, Int>> =
+    Callback { _: TableColumn<Any?, Int?> ->
+        TableCell<Any, Int>().also {
+            it.textProperty().bind(
+                Bindings.`when`(it.emptyProperty())
+                    .then("")
+                    .otherwise(it.indexProperty().add(if (fromOne) 1 else 0).asString())
+            )
         }
     }
 
-    /**
-     * Validating string containing double value
-     *
-     * @param s string
-     * @return true if string represents valid double value
-     */
-    static boolean validateDoubleInput(String s, DecimalFormat decimalFormat) {
-        if (s.isBlank()) {
-            return true;
-        }
-        try {
-            decimalFormat.parse(s).doubleValue();
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
+/**
+ * Validating string containing index in array
+ *
+ * @param s string
+ * @return true if string represents valid index
+ */
+fun validateIndexInput(s: String): Boolean {
+    return if (s.isBlank()) {
+        true
+    } else try {
+        val `val` = s.toInt()
+        `val` >= 0
+    } catch (e: NumberFormatException) {
+        false
     }
+}
 
-    static <T> List<T> deleteIndices(List<Integer> indicesToRemove, List<T> removeFrom) {
-        indicesToRemove = indicesToRemove.stream().sorted(Comparator.reverseOrder()).toList();
-        List<T> list = new ArrayList<>(removeFrom);
-        indicesToRemove.forEach(i -> list.remove(i.intValue()));
-        return list;
+/**
+ * Validating string containing double value
+ *
+ * @param s string
+ * @return true if string represents valid double value
+ */
+fun validateDoubleInput(s: String, decimalFormat: DecimalFormat): Boolean {
+    return if (s.isBlank()) {
+        true
+    } else try {
+        decimalFormat.parse(s).toDouble()
+        true
+    } catch (e: ParseException) {
+        false
     }
+}
 
-    static BooleanProperty valid(
-            TextField textField,
-            Predicate<String> validateInput) {
-        return FXUtils.TextFieldValidationSetup.of(textField)
-                .validateWith(validateInput)
-                .applyStyleIfInvalid("-fx-background-color: LightPink")
-                .done();
+fun valid(
+    textField: TextField,
+    validateInput: Predicate<String>
+): BooleanProperty {
+    return FXUtils.TextFieldValidationSetup.of(textField)
+        .validateWith(validateInput)
+        .applyStyleIfInvalid("-fx-background-color: LightPink")
+        .done()
+}
+
+fun MutableList<*>.removeAllAt(indices: Collection<Int>) {
+    for (index in indices.sorted().reversed()) {
+        this.removeAt(index)
     }
 }
