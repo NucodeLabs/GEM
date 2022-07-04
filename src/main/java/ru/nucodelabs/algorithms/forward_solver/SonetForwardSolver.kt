@@ -1,39 +1,28 @@
-package ru.nucodelabs.algorithms.forward_solver;
+package ru.nucodelabs.algorithms.forward_solver
 
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelLayer;
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.ModelLayer
 
-import java.util.ArrayList;
-import java.util.List;
+internal class SonetForwardSolver : ForwardSolver {
 
-final class SonetForwardSolver implements ForwardSolver {
-
-    static {
-        System.loadLibrary("forwardsolver");
+    init {
+        System.loadLibrary("forwardsolver")
     }
 
-    SonetForwardSolver() {
-    }
+    private external fun ves(
+        resistance: DoubleArray,
+        power: DoubleArray,
+        layersCnt: Int,
+        AB_2: DoubleArray,
+        distCnt: Int
+    ): DoubleArray
 
-    private static native double[] ves(
-            double[] resistance,
-            double[] power,
-            int layersCnt,
-            double[] AB_2,
-            int distCnt);
-
-    @Override
-    public List<Double> solve(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
-        List<Double> res = new ArrayList<>();
-        double[] doubleArr = ves(
-                modelData.stream().map(ModelLayer::getResistance).mapToDouble(d -> d).toArray(),
-                modelData.stream().map(ModelLayer::getPower).mapToDouble(d -> d).toArray(),
-                modelData.size(),
-                experimentalData.stream().map(ExperimentalData::getAb2).mapToDouble(d -> d).toArray(),
-                experimentalData.size());
-        for (double number : doubleArr) {
-            res.add(number);
-        }
-        return res;
-    }
+    override fun invoke(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Double> =
+        ves(
+            resistance = modelData.map { it.resistance }.toDoubleArray(),
+            power = modelData.map { it.power }.toDoubleArray(),
+            layersCnt = modelData.size,
+            AB_2 = experimentalData.map { it.ab2 }.toDoubleArray(),
+            distCnt = experimentalData.size
+        ).toList()
 }
