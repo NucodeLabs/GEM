@@ -1,291 +1,272 @@
-package ru.nucodelabs.gem.view.tables;
+package ru.nucodelabs.gem.view.tables
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.model.SectionManager;
-import ru.nucodelabs.gem.app.snapshot.HistoryManager;
-import ru.nucodelabs.gem.utils.FXUtils;
-import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.AlertsFactory;
+import jakarta.validation.Validator
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableObjectValue
+import javafx.collections.FXCollections.observableList
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
+import javafx.fxml.FXML
+import javafx.scene.control.*
+import javafx.scene.control.cell.TextFieldTableCell
+import javafx.stage.Stage
+import javafx.util.Callback
+import javafx.util.StringConverter
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.emptyBinding
+import ru.nucodelabs.gem.utils.FXUtils
+import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.AlertsFactory
+import java.net.URL
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.util.*
+import java.util.function.Predicate
+import javax.inject.Inject
 
-import javax.inject.Inject;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import static java.lang.Math.min;
-
-public class ExperimentalTableController extends AbstractController {
-
-    private final ObservableObjectValue<Picket> picket;
-    @FXML
-    private Button recalculateBtn;
-
-    @FXML
-    private TableColumn<Object, Integer> indexCol;
-    @FXML
-    private TableColumn<ExperimentalData, Double> ab2Col;
-    @FXML
-    private TableColumn<ExperimentalData, Double> mn2Col;
-    @FXML
-    private TableColumn<ExperimentalData, Double> resistanceApparentCol;
-    @FXML
-    private TableColumn<ExperimentalData, Double> errorResistanceCol;
-    @FXML
-    private TableColumn<ExperimentalData, Double> amperageCol;
-    @FXML
-    private TableColumn<ExperimentalData, Double> voltageCol;
-    @FXML
-    private TextField indexTextField;
-    @FXML
-    private TextField ab2TextField;
-    @FXML
-    private TextField mn2TextField;
-    @FXML
-    private TextField resAppTextField;
-    @FXML
-    private TextField errResAppTextField;
-    @FXML
-    private TextField amperageTextField;
-    @FXML
-    private TextField voltageTextField;
+class ExperimentalTableController @Inject constructor(
+    private val picketObservable: ObservableObjectValue<Picket>,
+    private val validator: Validator,
+    private val sectionManager: SectionManager,
+    private val historyManager: HistoryManager<Section>,
+    private val alertsFactory: AlertsFactory,
+    private val doubleStringConverter: StringConverter<Double>,
+    private val decimalFormat: DecimalFormat
+) : AbstractController() {
 
     @FXML
-    private Button addBtn;
-    @FXML
-    private Button deleteBtn;
-    @FXML
-    private TableView<ExperimentalData> table;
+    private lateinit var recalculateBtn: Button
 
-    @Inject
-    private Validator validator;
-    @Inject
-    private SectionManager sectionManager;
-    @Inject
-    private HistoryManager<Section> historyManager;
-    @Inject
-    private AlertsFactory alertsFactory;
-    @Inject
-    private StringConverter<Double> doubleStringConverter;
-    @Inject
-    private DecimalFormat decimalFormat;
+    @FXML
+    private lateinit var indexCol: TableColumn<Any, Int>
 
-    @Inject
-    public ExperimentalTableController(ObservableObjectValue<Picket> picket) {
-        this.picket = picket;
-        picket.addListener((observable, oldValue, newValue) -> {
+    @FXML
+    private lateinit var ab2Col: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var mn2Col: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var resistanceApparentCol: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var errorResistanceCol: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var amperageCol: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var voltageCol: TableColumn<ExperimentalData, Double>
+
+    @FXML
+    private lateinit var indexTextField: TextField
+
+    @FXML
+    private lateinit var ab2TextField: TextField
+
+    @FXML
+    private lateinit var mn2TextField: TextField
+
+    @FXML
+    private lateinit var resAppTextField: TextField
+
+    @FXML
+    private lateinit var errResAppTextField: TextField
+
+    @FXML
+    private lateinit var amperageTextField: TextField
+
+    @FXML
+    private lateinit var voltageTextField: TextField
+
+    @FXML
+    private lateinit var addBtn: Button
+
+    @FXML
+    private lateinit var deleteBtn: Button
+
+    @FXML
+    private lateinit var table: TableView<ExperimentalData>
+
+    private val picket: Picket
+        get() = picketObservable.get()!!
+
+    init {
+        picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 if (oldValue != null
-                        && !oldValue.getExperimentalData().equals(newValue.getExperimentalData())) {
-                    update();
+                    && oldValue.experimentalData != newValue.experimentalData
+                ) {
+                    update()
                 } else if (oldValue == null) {
-                    update();
+                    update()
                 }
             }
-        });
+        }
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(URL location, ResourceBundle resources) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        table.getSelectionModel().getSelectedItems()
-                .addListener((ListChangeListener<? super ExperimentalData>) c -> {
-                    if (c.next()) {
-                        deleteBtn.setDisable(c.getList().isEmpty());
-                        recalculateBtn.setDisable(c.getList().isEmpty());
-                    }
-                });
+        deleteBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
+        recalculateBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
 
-        indexCol.setCellFactory(Tables.indexCellFactory());
+        indexCol.cellFactory = indexCellFactory()
+        ab2Col.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.ab2) }
+        mn2Col.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.mn2) }
+        resistanceApparentCol.cellValueFactory =
+            Callback { features -> SimpleObjectProperty(features.value.resistanceApparent) }
+        errorResistanceCol.cellValueFactory =
+            Callback { features -> SimpleObjectProperty(features.value.errorResistanceApparent) }
+        amperageCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.amperage) }
+        voltageCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.voltage) }
 
-        ab2Col.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getAb2()));
-        mn2Col.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getMn2()));
-        resistanceApparentCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getResistanceApparent()));
-        errorResistanceCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getErrorResistanceApparent()));
-        amperageCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getAmperage()));
-        voltageCol.setCellValueFactory(f -> new SimpleObjectProperty<>(f.getValue().getVoltage()));
-
-        for (int i = 1; i < table.getColumns().size(); i++) {
+        for (i in 1 until table.columns.size) {
             // safe cast
-            ((TableColumn<ExperimentalData, Double>) table.getColumns().get(i))
-                    .setCellFactory(TextFieldTableCell.forTableColumn(doubleStringConverter));
+            table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
         }
 
-        Predicate<String> validateDataInput = s -> Tables.validateDoubleInput(s, decimalFormat);
-        BooleanBinding validInput
-                = Tables.valid(ab2TextField, validateDataInput)
-                .and(Tables.valid(mn2TextField, validateDataInput))
-                .and(Tables.valid(resAppTextField, validateDataInput))
-                .and(Tables.valid(errResAppTextField, validateDataInput))
-                .and(Tables.valid(voltageTextField, validateDataInput))
-                .and(Tables.valid(amperageTextField, validateDataInput))
-                .and(Tables.valid(indexTextField, Tables::validateIndexInput));
+        val validateDataInput = Predicate { s: String -> validateDoubleInput(s, decimalFormat) }
+        val validInput = valid(ab2TextField, validateDataInput)
+            .and(valid(mn2TextField, validateDataInput))
+            .and(valid(resAppTextField, validateDataInput))
+            .and(valid(errResAppTextField, validateDataInput))
+            .and(valid(voltageTextField, validateDataInput))
+            .and(valid(amperageTextField, validateDataInput))
+            .and(valid(indexTextField) { s: String -> validateIndexInput(s) })
 
-        BooleanBinding allRequiredNotBlank
-                = FXUtils.isNotBlank(ab2TextField.textProperty())
-                .and(FXUtils.isNotBlank(mn2TextField.textProperty()))
-                .and(FXUtils.isNotBlank(resAppTextField.textProperty()))
-                .and(FXUtils.isNotBlank(errResAppTextField.textProperty()))
-                .and(FXUtils.isNotBlank(voltageTextField.textProperty()))
-                .and(FXUtils.isNotBlank(amperageTextField.textProperty()));
+        val allRequiredNotBlank = FXUtils.isNotBlank(ab2TextField.textProperty())
+            .and(FXUtils.isNotBlank(mn2TextField.textProperty()))
+            .and(FXUtils.isNotBlank(resAppTextField.textProperty()))
+            .and(FXUtils.isNotBlank(errResAppTextField.textProperty()))
+            .and(FXUtils.isNotBlank(voltageTextField.textProperty()))
+            .and(FXUtils.isNotBlank(amperageTextField.textProperty()))
 
-        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()));
+        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
 
-        table.itemsProperty().addListener((observable, oldValue, newValue) -> {
-            newValue.addListener((ListChangeListener<? super ExperimentalData>) c -> table.refresh());
-            table.refresh();
-        });
-    }
-
-    @Override
-    protected Stage getStage() {
-        return (Stage) table.getScene().getWindow();
-    }
-
-    protected void update() {
-        table.itemsProperty().setValue(FXCollections.observableList(picket.get().getExperimentalData()));
-        table.refresh();
-    }
-
-
-    @FXML
-    private void deleteSelected() {
-        List<ExperimentalData> newExpData = Tables.deleteIndices(
-                table.getSelectionModel().getSelectedIndices(),
-                picket.get().getExperimentalData());
-        updateIfValidElseAlert(newExpData);
-    }
-
-    @FXML
-    private void add() {
-        if (!addBtn.isDisable()) {
-
-            double newAb2Value;
-            double newMn2Value;
-            double newResAppValue;
-            double newErrResAppValue;
-            double newAmperageValue;
-            double newVoltageValue;
-            try {
-                newAb2Value = decimalFormat.parse(ab2TextField.getText()).doubleValue();
-                newMn2Value = decimalFormat.parse(mn2TextField.getText()).doubleValue();
-                newResAppValue = decimalFormat.parse(resAppTextField.getText()).doubleValue();
-                newErrResAppValue = decimalFormat.parse(errResAppTextField.getText()).doubleValue();
-                newAmperageValue = decimalFormat.parse(amperageTextField.getText()).doubleValue();
-                newVoltageValue = decimalFormat.parse(voltageTextField.getText()).doubleValue();
-            } catch (ParseException e) {
-                return;
-            }
-
-            int index = picket.get().getExperimentalData().size();
-
-            try {
-                index = Integer.parseInt(indexTextField.getText());
-            } catch (NumberFormatException ignored) {
-            }
-
-            index = min(index, picket.get().getExperimentalData().size());
-
-            List<ExperimentalData> experimentalData = new ArrayList<>(picket.get().getExperimentalData());
-
-            experimentalData.add(index, ExperimentalData.create(
-                    newAb2Value, newMn2Value, newResAppValue, newErrResAppValue, newAmperageValue, newVoltageValue
-            ));
-
-            updateIfValidElseAlert(experimentalData);
+        table.itemsProperty().addListener { _, _, newValue: ObservableList<ExperimentalData> ->
+            newValue.addListener(ListChangeListener { table.refresh() })
+            table.refresh()
         }
     }
 
+    override val stage: Stage
+        get() = table.scene.window as Stage
 
-    private void updateIfValidElseAlert(List<ExperimentalData> newExpData) {
-        Picket modified = picket.get().withExperimentalData(newExpData);
+    private fun update() {
+        table.itemsProperty().value = observableList(picket.experimentalData)
+        table.refresh()
+    }
 
-        Set<ConstraintViolation<Picket>> violations = validator.validate(modified);
+    @FXML
+    private fun deleteSelected() {
+        updateIfValidElseAlert(
+            picket.experimentalData.toMutableList().apply { removeAllAt(table.selectionModel.selectedIndices) }
+        )
+    }
 
-        if (!violations.isEmpty()) {
-            alertsFactory.violationsAlert(violations, getStage()).show();
-            table.refresh();
+    @FXML
+    private fun add() {
+        if (!addBtn.isDisable) {
+            val newAb2Value: Double
+            val newMn2Value: Double
+            val newResAppValue: Double
+            val newErrResAppValue: Double
+            val newAmperageValue: Double
+            val newVoltageValue: Double
+            try {
+                newAb2Value = decimalFormat.parse(ab2TextField.text).toDouble()
+                newMn2Value = decimalFormat.parse(mn2TextField.text).toDouble()
+                newResAppValue = decimalFormat.parse(resAppTextField.text).toDouble()
+                newErrResAppValue = decimalFormat.parse(errResAppTextField.text).toDouble()
+                newAmperageValue = decimalFormat.parse(amperageTextField.text).toDouble()
+                newVoltageValue = decimalFormat.parse(voltageTextField.text).toDouble()
+            } catch (e: ParseException) {
+                return
+            }
+
+            val index = try {
+                indexTextField.text.toInt().coerceAtMost(picket.experimentalData.size)
+            } catch (_: NumberFormatException) {
+                picket.experimentalData.size
+            }
+
+            updateIfValidElseAlert(picket.experimentalData.toMutableList().apply {
+                add(
+                    index, ExperimentalData.create(
+                        newAb2Value,
+                        newMn2Value,
+                        newResAppValue,
+                        newErrResAppValue,
+                        newAmperageValue,
+                        newVoltageValue
+                    )
+                )
+            })
+        }
+    }
+
+    private fun updateIfValidElseAlert(newExpData: List<ExperimentalData>) {
+        val modified = picket.withExperimentalData(newExpData)
+        val violations = validator.validate(modified)
+        if (violations.isNotEmpty()) {
+            alertsFactory.violationsAlert(violations, stage).show()
+            table.refresh()
         } else {
-            historyManager.snapshotAfter(
-                    () -> sectionManager.update(modified));
+            historyManager.snapshotAfter { sectionManager.update(modified) }
             FXUtils.unfocus(
-                    indexTextField,
-                    ab2TextField,
-                    mn2TextField,
-                    resAppTextField,
-                    errResAppTextField,
-                    amperageTextField,
-                    voltageTextField);
+                indexTextField,
+                ab2TextField,
+                mn2TextField,
+                resAppTextField,
+                errResAppTextField,
+                amperageTextField,
+                voltageTextField
+            )
         }
     }
 
     @FXML
-    private void onEditCommit(TableColumn.CellEditEvent<ExperimentalData, Double> event) {
-        int index = event.getTablePosition().getRow();
+    private fun onEditCommit(event: TableColumn.CellEditEvent<ExperimentalData, Double>) {
+        val index = event.tablePosition.row
+        val newInputValue = event.newValue
+        val oldValue = event.rowValue
 
-        double newInputValue = event.getNewValue();
-        ExperimentalData oldValue = event.getRowValue();
-        ExperimentalData newValue;
-        var column = event.getTableColumn();
-        if (column == ab2Col) {
-            newValue = oldValue.withAb2(newInputValue);
-        } else if (column == mn2Col) {
-            newValue = oldValue.withMn2(newInputValue);
-        } else if (column == resistanceApparentCol) {
-            newValue = oldValue.withResistanceApparent(newInputValue);
-        } else if (column == errorResistanceCol) {
-            newValue = oldValue.withErrorResistanceApparent(newInputValue);
-        } else if (column == amperageCol) {
-            newValue = oldValue.withAmperage(newInputValue);
-        } else if (column == voltageCol) {
-            newValue = oldValue.withVoltage(newInputValue);
-        } else {
-            throw new RuntimeException("Something went wrong!");
+        val newValue: ExperimentalData = when (event.tableColumn) {
+            ab2Col -> oldValue.withAb2(newInputValue)
+            mn2Col -> oldValue.withMn2(newInputValue)
+            resistanceApparentCol -> oldValue.withResistanceApparent(newInputValue)
+            errorResistanceCol -> oldValue.withErrorResistanceApparent(newInputValue)
+            amperageCol -> oldValue.withAmperage(newInputValue)
+            voltageCol -> oldValue.withVoltage(newInputValue)
+            else -> throw RuntimeException("Something went wrong!")
         }
 
-        List<ExperimentalData> newExpData = new ArrayList<>(picket.get().getExperimentalData());
-
-        newExpData.set(index, newValue);
-
-        if (!event.getNewValue().isNaN()) {
-            updateIfValidElseAlert(newExpData);
+        if (!event.newValue.isNaN()) {
+            updateIfValidElseAlert(picket.experimentalData.toMutableList().also { it[index] = newValue })
         } else {
-            table.refresh();
+            table.refresh()
         }
     }
 
     @FXML
-    private void recalculateSelected() {
-        List<ExperimentalData> experimentalData = new ArrayList<>(picket.get().getExperimentalData());
+    private fun recalculateSelected() {
+        val experimentalData: MutableList<ExperimentalData> = picket.experimentalData.toMutableList()
 
-        List<Integer> ind = table.getSelectionModel().getSelectedIndices();
+        val ind: List<Int> = table.selectionModel.selectedIndices
 
-        for (int i = 0; i < experimentalData.size(); i++) {
-            if (ind.contains(i)) {
-                experimentalData.set(i, experimentalData.get(i).recalculateResistanceApparent());
+        for (i in experimentalData.indices) {
+            if (i in ind) {
+                experimentalData[i] = experimentalData[i].recalculateResistanceApparent()
             }
         }
 
-        historyManager.snapshotAfter(() -> sectionManager.update(picket.get().withExperimentalData(experimentalData)));
+        historyManager.snapshotAfter {
+            sectionManager.update(picket.withExperimentalData(experimentalData))
+        }
     }
 }
