@@ -1,4 +1,9 @@
-package ru.nucodelabs.algorithms.charts;
+package ru.nucodelabs.algorithms.charts
 
-public record Point(double x, double y) {
-}
+typealias Point = Pair<Double, Double>
+
+val Point.x
+    get() = first
+
+val Point.y
+    get() = second

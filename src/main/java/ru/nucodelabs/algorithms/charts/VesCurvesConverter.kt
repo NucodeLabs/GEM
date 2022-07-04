@@ -1,150 +1,106 @@
-package ru.nucodelabs.algorithms.charts;
+package ru.nucodelabs.algorithms.charts
 
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.ModelLayer
+import javax.inject.Inject
 
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelLayer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.Math.max;
-
-public class VesCurvesConverter {
-
-    private static final VesCurvesConverter INSTANCE = new VesCurvesConverter();
-
-    private VesCurvesConverter() {
-    }
-
-    public static VesCurvesConverter getInstance() {
-        return INSTANCE;
-    }
-
-    public List<Point> experimentalCurveOf(List<ExperimentalData> experimentalData) {
+class VesCurvesConverter @Inject constructor(
+    val forwardSolver: ForwardSolver
+) {
+    fun experimentalCurveOf(experimentalData: List<ExperimentalData>): List<Point> {
         if (experimentalData.isEmpty()) {
-            return new ArrayList<>();
+            return ArrayList()
         }
-
-        List<Point> points = new ArrayList<>();
-
-        for (ExperimentalData experimentalDatum : experimentalData) {
-            double dotX = experimentalDatum.getAb2();
-            double dotY = Math.max(experimentalDatum.getResistanceApparent(), 0);
-
-            points.add(new Point(dotX, dotY));
+        val points: MutableList<Point> = ArrayList()
+        for (experimentalDatum in experimentalData) {
+            val dotX = experimentalDatum.ab2
+            val dotY = experimentalDatum.resistanceApparent.coerceAtLeast(0.0)
+            points.add(Point(dotX, dotY))
         }
-
-        return points;
+        return points
     }
 
-
-    public List<Point> experimentalCurveErrorBoundOf(List<ExperimentalData> experimentalData, BoundType boundType) {
+    fun experimentalCurveErrorBoundOf(experimentalData: List<ExperimentalData>, boundType: BoundType): List<Point> {
         if (experimentalData.isEmpty()) {
-            return new ArrayList<>();
+            return mutableListOf()
         }
-
-        List<Point> points = new ArrayList<>();
-
-        for (ExperimentalData experimentalDatum : experimentalData) {
-            double dotX = experimentalDatum.getAb2();
-            double error = experimentalDatum.getErrorResistanceApparent() / 100f;
-            double dotY;
-            if (boundType == BoundType.UPPER_BOUND) {
-                dotY = Math.max(
-                        experimentalDatum.getResistanceApparent()
-                                + experimentalDatum.getResistanceApparent() * error,
-                        0);
+        val points: MutableList<Point> = mutableListOf()
+        for (experimentalDatum in experimentalData) {
+            val dotX = experimentalDatum.ab2
+            val error = experimentalDatum.errorResistanceApparent / 100.0
+            val dotY: Double = if (boundType == BoundType.UPPER_BOUND) {
+                (experimentalDatum.resistanceApparent + experimentalDatum.resistanceApparent * error).coerceAtLeast(0.0)
             } else {
-                dotY = Math.max(
-                        experimentalDatum.getResistanceApparent()
-                                - experimentalDatum.getResistanceApparent() * error,
-                        0);
+                (experimentalDatum.resistanceApparent - experimentalDatum.resistanceApparent * error).coerceAtLeast(0.0)
             }
-
-            points.add(new Point(dotX, dotY));
+            points.add(Point(dotX, dotY))
         }
-
-        return points;
+        return points
     }
 
-    public List<Point> theoreticalCurveOf(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
+    fun theoreticalCurveOf(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Point> {
         if (experimentalData.isEmpty() || modelData.isEmpty()) {
-            return new ArrayList<>();
+            return ArrayList()
         }
+        val solvedResistance: List<Double> = forwardSolver(experimentalData, modelData)
+        val points: MutableList<Point> = mutableListOf()
 
-        ForwardSolver forwardSolver = ForwardSolver.getDefaultImpl();
-
-        List<Double> solvedResistance = new ArrayList<>(forwardSolver.solve(experimentalData, modelData));
-
-        List<Point> points = new ArrayList<>();
-        for (int i = 0; i < experimentalData.size(); i++) {
-            double dotX = experimentalData.get(i).getAb2();
-            double dotY = max(
-                    solvedResistance.get(i),
-                    0
-            );
-            points.add(new Point(dotX, dotY));
+        for ((index, expData) in experimentalData.withIndex()) {
+            val dotX = expData.ab2
+            val dotY = solvedResistance[index].coerceAtLeast(0.0)
+            points.add(Point(dotX, dotY))
         }
-
-        return points;
+        return points
     }
 
-    public List<Point> modelCurveOf(List<ModelLayer> modelData) {
-        final double FIRST_X = 1e-2;
-        final double LAST_X = 1e100;
-
-        return modelCurveOf(modelData, FIRST_X, LAST_X);
+    fun modelCurveOf(modelData: List<ModelLayer>): List<Point> {
+        val FIRST_X = 1e-2
+        val LAST_X = 1e100
+        return modelCurveOf(modelData, FIRST_X, LAST_X)
     }
 
-    public List<Point> modelCurveOf(List<ModelLayer> modelData, double firstX, double lastX) {
-
+    fun modelCurveOf(modelData: List<ModelLayer>, firstX: Double, lastX: Double): List<Point> {
         if (modelData.isEmpty()) {
-            return new ArrayList<>();
+            return mutableListOf()
         }
+        val points: MutableList<Point> = mutableListOf()
 
-        List<Point> points = new ArrayList<>();
         // first point
-        points.add(
-                new Point(
-                        firstX,
-                        modelData.get(0).getResistance()
+        points.add(Point(firstX, modelData.first().resistance))
+
+        var prevSum = 0.0
+        for (i in 0 until modelData.size - 1) {
+            val currentResistance = modelData[i].resistance
+            val currentPower = modelData[i].power
+            points.add(
+                Point(
+                    currentPower + prevSum,
+                    currentResistance
                 )
-        );
-
-        double prevSum = 0d;
-        for (int i = 0; i < modelData.size() - 1; i++) {
-            final double currentResistance = modelData.get(i).getResistance();
-            final double currentPower = modelData.get(i).getPower();
-
+            )
+            val nextResistance = modelData[i + 1].resistance
             points.add(
-                    new Point(
-                            currentPower + prevSum,
-                            currentResistance
-                    )
-            );
-
-            double nextResistance = modelData.get(i + 1).getResistance();
-            points.add(
-                    new Point(
-                            currentPower + prevSum,
-                            nextResistance
-                    )
-            );
-            prevSum += currentPower;
+                Point(
+                    currentPower + prevSum,
+                    nextResistance
+                )
+            )
+            prevSum += currentPower
         }
 
         // last point
-        final int lastResistanceIndex = modelData.size() - 1;
         points.add(
-                new Point(
-                        lastX,
-                        modelData.get(lastResistanceIndex).getResistance()
-                )
-        );
+            Point(
+                lastX,
+                modelData.last().resistance
+            )
+        )
 
-        return points;
+        return points
     }
 
-    public enum BoundType {UPPER_BOUND, LOWER_BOUND}
+    enum class BoundType {
+        UPPER_BOUND, LOWER_BOUND
+    }
 }

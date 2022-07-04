@@ -95,7 +95,8 @@ class ExperimentalTableController @Inject constructor(
     private val picket: Picket
         get() = picketObservable.get()!!
 
-    init {
+
+    override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 if (oldValue != null
@@ -107,9 +108,7 @@ class ExperimentalTableController @Inject constructor(
                 }
             }
         }
-    }
 
-    override fun initialize(location: URL, resources: ResourceBundle) {
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         deleteBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())

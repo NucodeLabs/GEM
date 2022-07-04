@@ -9,7 +9,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
+import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
+import ru.nucodelabs.algorithms.charts.MisfitValuesFactoryKt;
 import ru.nucodelabs.algorithms.charts.VesCurvesConverter;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolverKt;
 
 import java.util.ArrayList;
 
@@ -35,7 +39,18 @@ public class ChartsModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private VesCurvesConverter vesChartsConverter() {
-        return VesCurvesConverter.getInstance();
+    private VesCurvesConverter vesChartsConverter(ForwardSolver forwardSolver) {
+        return new VesCurvesConverter(forwardSolver);
+    }
+
+    @Provides
+    @Singleton
+    ForwardSolver forwardSolver() {
+        return ForwardSolverKt.ForwardSolver();
+    }
+
+    @Provides
+    MisfitValuesFactory misfitValuesFactory(ForwardSolver forwardSolver) {
+        return MisfitValuesFactoryKt.MisfitValuesFactory(forwardSolver);
     }
 }

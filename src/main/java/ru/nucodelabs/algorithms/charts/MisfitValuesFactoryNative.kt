@@ -1,41 +1,31 @@
-package ru.nucodelabs.algorithms.charts;
+package ru.nucodelabs.algorithms.charts
 
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.data.ves.ExperimentalData;
-import ru.nucodelabs.data.ves.ModelLayer;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.ModelLayer
+import kotlin.math.abs
+import kotlin.math.sign
 
-import java.util.ArrayList;
-import java.util.List;
+internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : MisfitValuesFactory {
 
-import static java.lang.Math.abs;
-import static java.lang.Math.signum;
-
-final class MisfitValuesFactoryNative implements MisfitValuesFactory {
-
-    @Override
-    public List<Double> apply(List<ExperimentalData> experimentalData, List<ModelLayer> modelData) {
-        List<Double> resistanceApparent = experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList();
-        List<Double> errorResistanceApparent = experimentalData.stream().map(ExperimentalData::getErrorResistanceApparent).toList();
-
-        if (experimentalData.size() == 0 || modelData.size() == 0) {
-            return new ArrayList<>();
+    override fun invoke(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Double> {
+        val resistanceApparent = experimentalData.map { obj: ExperimentalData -> obj.resistanceApparent }
+        val errorResistanceApparent = experimentalData.map { obj: ExperimentalData -> obj.errorResistanceApparent }
+        if (experimentalData.isEmpty() || modelData.isEmpty()) {
+            return listOf()
         }
-
-        ForwardSolver forwardSolver = ForwardSolver.getDefaultImpl();
-
-        List<Double> solvedResistance = forwardSolver.solve(experimentalData, modelData);
-
-        List<Double> res = new ArrayList<>();
-
-        for (int i = 0; i < experimentalData.size(); i++) {
-            double value = abs(MisfitFunctions.calculateRelativeDeviationWithError(
-                    resistanceApparent.get(i),
-                    errorResistanceApparent.get(i) / 100f,
-                    solvedResistance.get(i)
-            )) * signum(solvedResistance.get(i) - resistanceApparent.get(i)) * 100f;
-            res.add(value);
+        val solvedResistance = forwardSolver(experimentalData, modelData)
+        val res: MutableList<Double> = ArrayList()
+        for (i in experimentalData.indices) {
+            val value = abs(
+                MisfitFunctions.calculateRelativeDeviationWithError(
+                    resistanceApparent[i],
+                    errorResistanceApparent[i] / 100f,
+                    solvedResistance[i]
+                )
+            ) * sign(solvedResistance[i] - resistanceApparent[i]) * 100f
+            res.add(value)
         }
-
-        return res;
+        return res
     }
 }

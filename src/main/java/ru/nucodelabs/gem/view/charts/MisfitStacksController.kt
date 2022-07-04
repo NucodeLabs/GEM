@@ -1,129 +1,113 @@
-package ru.nucodelabs.gem.view.charts;
+package ru.nucodelabs.gem.view.charts
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
-import ru.nucodelabs.algorithms.charts.Point;
-import ru.nucodelabs.algorithms.charts.VesCurvesConverter;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.AlertsFactory;
+import javafx.beans.property.ObjectProperty
+import javafx.beans.value.ObservableObjectValue
+import javafx.collections.FXCollections.observableList
+import javafx.collections.ObservableList
+import javafx.fxml.FXML
+import javafx.scene.chart.LineChart
+import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Label
+import javafx.stage.Stage
+import ru.nucodelabs.algorithms.charts.*
+import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.AlertsFactory
+import java.math.RoundingMode
+import java.net.URL
+import java.text.DecimalFormat
+import java.util.*
+import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.log10
 
-import javax.inject.Inject;
-import java.math.RoundingMode;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.log10;
-
-public class MisfitStacksController extends AbstractController {
-
-    private final ObservableObjectValue<Picket> picket;
+class MisfitStacksController @Inject constructor(
+    private val picketObservable: ObservableObjectValue<Picket>,
+    private val vesCurvesConverter: VesCurvesConverter,
+    private val alertsFactory: AlertsFactory,
+    private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    private val misfitValuesFactory: MisfitValuesFactory
+) : AbstractController() {
+    @FXML
+    private lateinit var text: Label
 
     @FXML
-    private Label text;
-    @FXML
-    private LineChart<Double, Double> lineChart;
-    @FXML
-    private NumberAxis lineChartXAxis;
-    @FXML
-    private NumberAxis lineChartYAxis;
+    private lateinit var lineChart: LineChart<Double, Double>
 
-    @Inject
-    private VesCurvesConverter vesCurvesConverter;
-    @Inject
-    private AlertsFactory alertsFactory;
-    @Inject
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
+    @FXML
+    private lateinit var lineChartXAxis: NumberAxis
 
-    @Inject
-    public MisfitStacksController(ObservableObjectValue<Picket> picket) {
-        this.picket = picket;
-        picket.addListener((observable, oldValue, newValue) -> {
+    @FXML
+    private lateinit var lineChartYAxis: NumberAxis
+
+    override val stage: Stage
+        get() = lineChartXAxis.scene.window as Stage
+
+    private val picket: Picket
+        get() = picketObservable.get()!!
+
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        picketObservable.addListener { _, _, newValue: Picket? ->
             if (newValue != null) {
-                update();
+                update()
             }
-        });
+        }
+
+        lineChart.dataProperty().bind(dataProperty)
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        lineChart.dataProperty().bind(dataProperty);
-    }
-
-    protected void update() {
-        List<XYChart.Series<Double, Double>> misfitStacksSeriesList = new ArrayList<>();
-
+    private fun update() {
+        var misfitStacksSeriesList: MutableList<Series<Double, Double>> = ArrayList()
         try {
-            List<Double> values = MisfitValuesFactory.getDefaultMisfitValuesFactory().apply(picket.get().getExperimentalData(), picket.get().getModelData());
-            List<Point> expPoints = vesCurvesConverter.experimentalCurveOf(picket.get().getExperimentalData())
-                    .stream()
-                    .map(point -> new Point(log10(point.x()), log10(point.y())))
-                    .toList();
+            val values = misfitValuesFactory(picket.experimentalData, picket.modelData)
+            val expPoints = vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
+                Point(log10(it.x), log10(it.y))
+            }
 
-            misfitStacksSeriesList = FXCollections.observableList(new ArrayList<>());
+            misfitStacksSeriesList = observableList(mutableListOf())
 
-            if (picket.get().getExperimentalData().size() != 0
-                    && picket.get().getModelData().size() != 0) {
-                if (values.size() != expPoints.size()) {
-                    throw new IllegalStateException();
-                } else {
-                    for (int i = 0; i < expPoints.size(); i++) {
-                        misfitStacksSeriesList.add(new XYChart.Series<>(
-                                FXCollections.observableList(List.of(
-                                        new XYChart.Data<>(expPoints.get(i).x(), 0d),
-                                        new XYChart.Data<>(expPoints.get(i).x(), values.get(i))
-                                ))
-                        ));
-                    }
+            if (picket.experimentalData.isNotEmpty() && picket.modelData.isNotEmpty()
+            ) {
+                check(values.size == expPoints.size)
+                for ((index, expPoint) in expPoints.withIndex()) {
+                    misfitStacksSeriesList.add(
+                        Series(
+                            observableListOf(
+                                    XYChart.Data(expPoint.x, 0.0),
+                                    XYChart.Data(expPoint.x, values[index])
+                            )
+                        )
+                    )
                 }
             }
-
-            double avg = values.stream()
-                    .mapToDouble(Math::abs)
-                    .average()
-                    .orElse(0);
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-            decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
-            text.setText("avg = " + decimalFormat.format(avg) + " %");
-        } catch (UnsatisfiedLinkError e) {
-            alertsFactory.unsatisfiedLinkErrorAlert(e, getStage()).show();
-        } catch (IllegalStateException e) {
-            alertsFactory.simpleExceptionAlert(e, getStage()).show();
+            val avg = values.map { abs(it) }.average()
+            val decimalFormat = DecimalFormat("#.##").apply {
+                roundingMode = RoundingMode.HALF_UP
+            }
+            text.text = "avg = ${decimalFormat.format(avg)} %"
+        } catch (e: UnsatisfiedLinkError) {
+            alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
+        } catch (e: IllegalStateException) {
+            alertsFactory.simpleExceptionAlert(e, stage).show()
         }
-
-        dataProperty.get().clear();
-        dataProperty.get().addAll(misfitStacksSeriesList);
-        colorizeMisfitStacksSeries();
+        dataProperty.get().clear()
+        dataProperty.get().addAll(misfitStacksSeriesList)
+        colorizeMisfitStacksSeries()
     }
 
-    private void colorizeMisfitStacksSeries() {
-        var data = dataProperty.get();
-        for (var series : data) {
-            var nonZeroPoint = series.getData().get(1);
-            if (abs(nonZeroPoint.getYValue()) < 100f) {
-                series.getNode().setStyle("-fx-stroke: LimeGreen;");
-                nonZeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
-                var zeroPoint = series.getData().get(0);
-                zeroPoint.getNode().lookup(".chart-line-symbol").setStyle("-fx-background-color: LimeGreen");
+    private fun colorizeMisfitStacksSeries() {
+        val data = dataProperty.get()
+        for (series in data) {
+            val nonZeroPoint = series.data[1]
+            if (abs(nonZeroPoint.yValue) < 100.0) {
+                series.node.style = "-fx-stroke: LimeGreen;"
+                nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
+                val zeroPoint = series.data[0]
+                zeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
             }
         }
-    }
-
-    @Override
-    protected Stage getStage() {
-        return (Stage) lineChartXAxis.getScene().getWindow();
     }
 }

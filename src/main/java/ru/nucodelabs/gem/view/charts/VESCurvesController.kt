@@ -1,216 +1,198 @@
-package ru.nucodelabs.gem.view.charts;
+package ru.nucodelabs.gem.view.charts
 
-import com.google.inject.name.Named;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.Cursor;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.charts.VesCurvesConverter;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.model.SectionManager;
-import ru.nucodelabs.gem.app.snapshot.HistoryManager;
-import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.AlertsFactory;
+import com.google.inject.name.Named
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.ObjectProperty
+import javafx.beans.value.ObservableObjectValue
+import javafx.collections.ObservableList
+import javafx.event.EventHandler
+import javafx.fxml.FXML
+import javafx.scene.Cursor
+import javafx.scene.chart.LineChart
+import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Series
+import javafx.scene.input.MouseEvent
+import javafx.stage.Stage
+import ru.nucodelabs.algorithms.charts.VesCurvesConverter
+import ru.nucodelabs.algorithms.charts.x
+import ru.nucodelabs.algorithms.charts.y
+import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.get
+import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.AlertsFactory
+import java.net.URL
+import java.util.*
+import javax.inject.Inject
+import kotlin.math.log10
 
-import javax.inject.Inject;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static java.lang.Math.log10;
-
-public class VESCurvesController extends AbstractController {
-    /**
-     * Constants
-     */
-    public static final int EXP_CURVE_SERIES_CNT = 3;
-    public static final int THEOR_CURVE_SERIES_CNT = 4;
-    public static final int MOD_CURVE_SERIES_CNT = 5;
-    public static final int EXP_CURVE_SERIES_INDEX = 0;
-    public static final int EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1;
-    public static final int EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2;
-    public static final int THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1;
-    public static final int MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1;
-
-    private final ObservableObjectValue<Picket> picket;
-
-    private ResourceBundle uiProperties;
-    private ModelCurveDragger modelCurveDragger;
-    private boolean isDragging = false;
+class VESCurvesController @Inject constructor(
+    private val picketObservable: ObservableObjectValue<Picket>,
+    @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    private val alertsFactory: AlertsFactory,
+    private val sectionManager: SectionManager,
+    private val historyManager: HistoryManager<Section>,
+    private val vesCurvesConverter: VesCurvesConverter
+) : AbstractController() {
 
     @FXML
-    private LineChart<Double, Double> lineChart;
-    @FXML
-    private NumberAxis lineChartXAxis;
-    @FXML
-    private NumberAxis lineChartYAxis;
+    private lateinit var lineChart: LineChart<Double, Double>
 
-    @Inject
-    @Named("VESCurves")
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty;
-    @Inject
-    private AlertsFactory alertsFactory;
-    @Inject
-    private SectionManager sectionManager;
-    @Inject
-    private HistoryManager<Section> historyManager;
-    @Inject
-    private VesCurvesConverter vesCurvesConverter;
+    @FXML
+    private lateinit var lineChartXAxis: NumberAxis
 
-    @Inject
-    public VESCurvesController(ObservableObjectValue<Picket> picket) {
-        this.picket = picket;
-        this.picket.addListener((observable, oldValue, newValue) -> {
+    @FXML
+    private lateinit var lineChartYAxis: NumberAxis
+
+    override val stage: Stage
+        get() = lineChart.scene.window as Stage
+
+    private val picket: Picket
+        get() = picketObservable.get()!!
+
+    private lateinit var uiProperties: ResourceBundle
+    private lateinit var modelCurveDragger: ModelCurveDragger
+    private var isDragging = false
+
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        picketObservable.addListener { _, _, newValue: Picket? ->
             if (isDragging) {
-                updateTheoreticalCurve();
+                updateTheoreticalCurve()
             } else {
                 if (newValue != null) {
-                    update();
+                    update()
                 }
             }
-        });
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        lineChart.dataProperty().bind(dataProperty);
-        uiProperties = resources;
-        modelCurveDragger = new ModelCurveDragger(
-                (pointInScene) -> new XYChart.Data<>(
-                        (Double) lineChartXAxis.getValueForDisplay(
-                                lineChartXAxis.sceneToLocal(pointInScene).getX()
-                        ),
-                        (Double) lineChartYAxis.getValueForDisplay(
-                                lineChartYAxis.sceneToLocal(pointInScene).getY()
-                        )
-                ),
-                dataProperty,
-                MOD_CURVE_SERIES_INDEX,
-                1
-        );
-    }
-
-    @Override
-    protected Stage getStage() {
-        return (Stage) lineChart.getScene().getWindow();
-    }
-
-    protected void update() {
-        lineChart.setAnimated(false);
-        lineChartYAxis.setAutoRanging(true);
-        updateExpCurves();
-        updateTheoreticalCurve();
-        updateModelCurve();
-    }
-
-    private void updateTheoreticalCurve() {
-        XYChart.Series<Double, Double> theorCurveSeries = new XYChart.Series<>();
-
-        try {
-            theorCurveSeries.getData().addAll(
-                    vesCurvesConverter.theoreticalCurveOf(
-                                    picket.get().getExperimentalData(), picket.get().getModelData())
-                            .stream()
-                            .map(point -> new XYChart.Data<>(
-                                    log10(point.x()), log10(point.y())))
-                            .toList()
-            );
-        } catch (UnsatisfiedLinkError e) {
-            alertsFactory.unsatisfiedLinkErrorAlert(e, getStage());
         }
 
-        theorCurveSeries.setName(uiProperties.getString("theorCurve"));
-        dataProperty.get().set(THEOR_CURVE_SERIES_INDEX, theorCurveSeries);
+        lineChart.dataProperty().bind(dataProperty)
+        uiProperties = resources
+        modelCurveDragger = ModelCurveDragger(
+            { pointInScene ->
+                XYChart.Data(
+                    lineChartXAxis.getValueForDisplay(
+                        lineChartXAxis.sceneToLocal(pointInScene).x
+                    ) as Double,
+                    lineChartYAxis.getValueForDisplay(
+                        lineChartYAxis.sceneToLocal(pointInScene).y
+                    ) as Double
+                )
+            },
+            dataProperty,
+            MOD_CURVE_SERIES_INDEX,
+            1.0
+        )
     }
 
-    private void updateModelCurve() {
-        XYChart.Series<Double, Double> modelCurveSeries = new XYChart.Series<>();
-
-        modelCurveSeries.getData().addAll(
-                vesCurvesConverter.modelCurveOf(picket.get().getModelData())
-                        .stream()
-                        .map(point -> new XYChart.Data<>(
-                                log10(point.x()), log10(point.y())))
-                        .toList()
-        );
-
-        modelCurveSeries.setName(uiProperties.getString("modCurve"));
-        dataProperty.get().set(MOD_CURVE_SERIES_INDEX, modelCurveSeries);
-
-        addDraggingToModelCurveSeries(modelCurveSeries);
+    private fun update() {
+        lineChart.animated = false
+        lineChartYAxis.isAutoRanging = true
+        updateExpCurves()
+        updateTheoreticalCurve()
+        updateModelCurve()
     }
 
-    private void addDraggingToModelCurveSeries(XYChart.Series<Double, Double> modelCurveSeries) {
-        modelCurveSeries.getNode().setCursor(Cursor.HAND);
-        modelCurveSeries.getNode().setOnMousePressed(e -> {
-            modelCurveSeries.getNode().requestFocus();
-            isDragging = true;
-            lineChart.setAnimated(false);
-            lineChartYAxis.setAutoRanging(false);
-            modelCurveDragger.detectPoints(e);
-            modelCurveDragger.setStyle();
-        });
-        modelCurveSeries.getNode().setOnMouseDragged(e -> {
-            isDragging = true;
+    private fun updateTheoreticalCurve() {
+        val theorCurveSeries = Series<Double, Double>()
+        try {
+            theorCurveSeries.data.addAll(
+                vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData).map {
+                    XYChart.Data(log10(it.x), log10(it.y))
+                }
+            )
+        } catch (e: UnsatisfiedLinkError) {
+            alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
+        }
+        theorCurveSeries.name = uiProperties["theorCurve"]
+        dataProperty.get()[THEOR_CURVE_SERIES_INDEX] = theorCurveSeries
+    }
+
+    private fun updateModelCurve() {
+        val modelCurveSeries = Series<Double, Double>()
+        modelCurveSeries.data.addAll(
+            vesCurvesConverter.modelCurveOf(picket.modelData).map {
+                XYChart.Data(log10(it.x), log10(it.y))
+            }
+        )
+        modelCurveSeries.name = uiProperties["modCurve"]
+        dataProperty.get()[MOD_CURVE_SERIES_INDEX] = modelCurveSeries
+        addDraggingToModelCurveSeries(modelCurveSeries)
+    }
+
+    private fun addDraggingToModelCurveSeries(modelCurveSeries: Series<Double, Double>) {
+        modelCurveSeries.node.cursor = Cursor.HAND
+        modelCurveSeries.node.onMousePressed = EventHandler { e: MouseEvent ->
+            modelCurveSeries.node.requestFocus()
+            isDragging = true
+            lineChart.animated = false
+            lineChartYAxis.isAutoRanging = false
+            modelCurveDragger.detectPoints(e)
+            modelCurveDragger.setStyle()
+        }
+        modelCurveSeries.node.onMouseDragged = EventHandler { e: MouseEvent ->
+            isDragging = true
             sectionManager.update(
-                    picket.get().withModelData(
-                            modelCurveDragger.dragHandler(e, picket.get().getModelData())));
-        });
-        modelCurveSeries.getNode().setOnMouseReleased(e -> {
-            historyManager.snapshot();
-            modelCurveDragger.resetStyle();
-            isDragging = false;
-            lineChart.setAnimated(true);
-            lineChartYAxis.setAutoRanging(true);
-        });
+                picket.withModelData(
+                    modelCurveDragger.dragHandler(e, picket.modelData)
+                )
+            )
+        }
+        modelCurveSeries.node.onMouseReleased = EventHandler {
+            historyManager.snapshot()
+            modelCurveDragger.resetStyle()
+            isDragging = false
+            lineChart.animated = true
+            lineChartYAxis.isAutoRanging = true
+        }
     }
 
-    private void updateExpCurves() {
-        XYChart.Series<Double, Double> expCurveSeries = new XYChart.Series<>(
-                FXCollections.observableList(
-                        vesCurvesConverter.experimentalCurveOf(picket.get().getExperimentalData())
-                                .stream()
-                                .map(point -> new XYChart.Data<>(
-                                        log10(point.x()), log10(point.y())))
-                                .toList()
-                )
-        );
-        expCurveSeries.setName(uiProperties.getString("expCurve"));
+    private fun updateExpCurves() {
+        val expCurveSeries = Series(
+            vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
+                XYChart.Data(log10(it.x), log10(it.y))
+            }.toObservableList()
+        )
+        expCurveSeries.name = uiProperties["expCurve"]
 
-        XYChart.Series<Double, Double> errUpperExp = new XYChart.Series<>(
-                FXCollections.observableList(
-                        vesCurvesConverter.experimentalCurveErrorBoundOf(picket.get().getExperimentalData(), VesCurvesConverter.BoundType.UPPER_BOUND)
-                                .stream()
-                                .map(point -> new XYChart.Data<>(
-                                        log10(point.x()), log10(point.y())))
-                                .toList()
-                )
-        );
-        errUpperExp.setName(uiProperties.getString("expCurveUpper"));
+        val errUpperExp = Series(
+            vesCurvesConverter.experimentalCurveErrorBoundOf(
+                picket.experimentalData,
+                VesCurvesConverter.BoundType.UPPER_BOUND
+            ).map {
+                XYChart.Data(log10(it.x), log10(it.y))
+            }.toObservableList()
+        )
+        errUpperExp.name = uiProperties["expCurveUpper"]
 
-        XYChart.Series<Double, Double> errLowerExp = new XYChart.Series<>(
-                FXCollections.observableList(
-                        vesCurvesConverter.experimentalCurveErrorBoundOf(picket.get().getExperimentalData(), VesCurvesConverter.BoundType.LOWER_BOUND)
-                                .stream()
-                                .map(point -> new XYChart.Data<>(
-                                        log10(point.x()), log10(point.y())))
-                                .toList()
-                )
-        );
-        errLowerExp.setName(uiProperties.getString("expCurveLower"));
-        dataProperty.get().set(EXP_CURVE_SERIES_INDEX, expCurveSeries);
-        dataProperty.get().set(EXP_CURVE_ERROR_UPPER_SERIES_INDEX, errUpperExp);
-        dataProperty.get().set(EXP_CURVE_ERROR_LOWER_SERIES_INDEX, errLowerExp);
+        val errLowerExp = Series(
+            vesCurvesConverter.experimentalCurveErrorBoundOf(
+                picket.experimentalData,
+                VesCurvesConverter.BoundType.LOWER_BOUND
+            ).map {
+                XYChart.Data(log10(it.x), log10(it.y))
+            }.toObservableList()
+        )
+        errLowerExp.name = uiProperties["expCurveLower"]
+
+        dataProperty.get()[EXP_CURVE_SERIES_INDEX] = expCurveSeries
+        dataProperty.get()[EXP_CURVE_ERROR_UPPER_SERIES_INDEX] = errUpperExp
+        dataProperty.get()[EXP_CURVE_ERROR_LOWER_SERIES_INDEX] = errLowerExp
     }
 
-    public BooleanProperty legendVisibleProperty() {
-        return lineChart.legendVisibleProperty();
+    fun legendVisibleProperty(): BooleanProperty = lineChart.legendVisibleProperty()
+
+    companion object Positions {
+        const val EXP_CURVE_SERIES_CNT = 3
+        const val THEOR_CURVE_SERIES_CNT = 4
+        const val MOD_CURVE_SERIES_CNT = 5
+        const val EXP_CURVE_SERIES_INDEX = 0
+        const val EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1
+        const val EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2
+        const val THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1
+        const val MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1
     }
 }
