@@ -11,7 +11,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
 
@@ -22,7 +21,7 @@ public class ObservableDataModule extends AbstractModule {
     @Provides
     @Singleton
     private ObservableObjectValue<Section> sectionObservableObjectValue(SectionManager sectionManager) {
-        ObjectProperty<Section> sectionObjectProperty = new SimpleObjectProperty<>(sectionManager.getSnapshot().value());
+        ObjectProperty<Section> sectionObjectProperty = new SimpleObjectProperty<>(sectionManager.snapshot().getValue());
         sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {

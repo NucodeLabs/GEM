@@ -19,8 +19,8 @@
             <Label style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
             <Label text="%noFileText"/>
             <VBox VBox.vgrow="ALWAYS"/>
-            <Button styleClass="action_button" text="%addPicket" defaultButton="true" onAction="#addPicket"/>
-            <Button styleClass="action_button" text="%openSection" onAction="#openSection"/>
+            <Button styleClass="action_button" text="%addPicket" defaultButton="true" onAction="#addNewPicket"/>
+            <Button styleClass="action_button" text="%openSection" onAction="#openJsonSection"/>
             <Button styleClass="action_button" text="%openEXPFile" onAction="#importEXP"/>
             <Label text="%drag"/>
         </VBox>

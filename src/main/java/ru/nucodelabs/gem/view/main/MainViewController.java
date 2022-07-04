@@ -14,16 +14,17 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.PropertyConfigManager;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
 import ru.nucodelabs.gem.app.model.SectionManager;
+import ru.nucodelabs.gem.app.pref.FXPreferences;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.utils.FXUtils;
-import ru.nucodelabs.gem.utils.OSDetect;
+import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
 import ru.nucodelabs.gem.view.charts.VESCurvesController;
@@ -39,7 +40,11 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-public class MainViewController extends AbstractController {
+import static ru.nucodelabs.gem.app.pref.AppPreferencesKt.*;
+import static ru.nucodelabs.gem.app.pref.UIPreferencesKt.VES_CURVES_LEGEND_VISIBLE;
+
+
+public class MainViewController extends AbstractController implements FileImporter, FileOpener {
 
     private final StringProperty vesNumber = new SimpleStringProperty();
     private final BooleanProperty noFileOpened = new SimpleBooleanProperty(true);
@@ -104,7 +109,7 @@ public class MainViewController extends AbstractController {
     @Inject
     private DecimalFormat decimalFormat;
     @Inject
-    private PropertyConfigManager propertyConfigManager;
+    private FXPreferences fxPreferences;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -114,7 +119,7 @@ public class MainViewController extends AbstractController {
                 this::redo);
 
 
-        if (OSDetect.isMacOS()) {
+        if (OS.isMacOS()) {
             CheckMenuItem useSystemMenu = new CheckMenuItem(resources.getString("useSystemMenu"));
             menuView.getItems().add(0, useSystemMenu);
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty());
@@ -157,11 +162,11 @@ public class MainViewController extends AbstractController {
     }
 
     private void initConfig() {
-        propertyConfigManager.bind(getStage().widthProperty(), "WINDOW_W", 1280, getStage()::setWidth);
-        propertyConfigManager.bind(getStage().heightProperty(), "WINDOW_H", 720, getStage()::setHeight);
-        propertyConfigManager.bind(getStage().xProperty(), "WINDOW_X", 720, getStage()::setX);
-        propertyConfigManager.bind(getStage().yProperty(), "WINDOW_Y", 720, getStage()::setY);
-        propertyConfigManager.bind(menuViewVESCurvesLegend.selectedProperty(), "VES_CURVES_LEGEND", false);
+        fxPreferences.bind(getStage().widthProperty(), MAIN_WINDOW_W.getKey(), MAIN_WINDOW_W.getDef(), getStage()::setWidth);
+        fxPreferences.bind(getStage().heightProperty(), MAIN_WINDOW_H.getKey(), MAIN_WINDOW_H.getDef(), getStage()::setHeight);
+        fxPreferences.bind(getStage().xProperty(), MAIN_WINDOW_X.getKey(), MAIN_WINDOW_X.getDef(), getStage()::setX);
+        fxPreferences.bind(getStage().yProperty(), MAIN_WINDOW_Y.getKey(), MAIN_WINDOW_Y.getDef(), getStage()::setY);
+        fxPreferences.bind(menuViewVESCurvesLegend.selectedProperty(), VES_CURVES_LEGEND_VISIBLE.getKey(), VES_CURVES_LEGEND_VISIBLE.getDef());
     }
 
     private void bind() {
@@ -189,7 +194,7 @@ public class MainViewController extends AbstractController {
         sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
             @Override
             public void onNext(Section item) {
-                if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
+                if (!storageManager.getSavedSnapshot().equals(sectionManager.snapshot())) {
                     dirtyAsterisk.set("*");
                 } else {
                     dirtyAsterisk.set("");
@@ -225,7 +230,7 @@ public class MainViewController extends AbstractController {
     }
 
     private Event askToSave(Event event) {
-        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
+        if (!storageManager.getSavedSnapshot().equals(sectionManager.snapshot())) {
             Dialog<ButtonType> saveDialog = saveDialogProvider.get();
             saveDialog.initOwner(getStage());
             Optional<ButtonType> answer = saveDialog.showAndWait();
@@ -240,21 +245,23 @@ public class MainViewController extends AbstractController {
         return event;
     }
 
+    @Override
     @FXML
     public void importEXP() {
         List<File> files = expFileChooser.showOpenMultipleDialog(getStage());
         if (files != null) {
             if (files.get(files.size() - 1).getParentFile().isDirectory()) {
                 expFileChooser.setInitialDirectory(files.get(files.size() - 1).getParentFile());
-                preferences.put("EXP_FC_INIT_DIR", files.get(files.size() - 1).getParentFile().getAbsolutePath());
+                preferences.put(EXP_FILES_DIR.getKey(), files.get(files.size() - 1).getParentFile().getAbsolutePath());
             }
             for (var file : files) {
-                addEXP(file);
+                importEXP(file);
             }
         }
     }
 
-    public void addEXP(File file) {
+    @Override
+    public void importEXP(@NotNull File file) {
         try {
             Picket picketFromEXPFile = storageManager.loadNameAndExperimentalDataFromEXPFile(file, Picket.createDefaultWithNewId());
             var violations = validator.validate(picketFromEXPFile);
@@ -262,7 +269,7 @@ public class MainViewController extends AbstractController {
                 alertsFactory.violationsAlert(violations, getStage()).show();
                 return;
             }
-            historyManager.performThenSnapshot(() -> sectionManager.add(picketFromEXPFile));
+            historyManager.snapshotAfter(() -> sectionManager.add(picketFromEXPFile));
             picketIndex.set(sectionManager.size() - 1);
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
@@ -270,8 +277,9 @@ public class MainViewController extends AbstractController {
     }
 
 
+    @Override
     @FXML
-    public void openJsonSection(Event event) {
+    public void openJsonSection(@NotNull Event event) {
         if (askToSave(event).isConsumed()) {
             return;
         }
@@ -279,13 +287,14 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
             openJsonSection(file);
         }
     }
 
-    public void openJsonSection(File file) {
+    @Override
+    public void openJsonSection(@NotNull File file) {
         try {
             Section loadedSection = storageManager.loadFromJson(file, Section.class);
             var violations =
@@ -302,7 +311,9 @@ public class MainViewController extends AbstractController {
             historyManager.clear();
             historyManager.snapshot();
             setWindowFileTitle(file);
-            preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
+            preferences.put(RECENT_FILES.getKey(), file.getAbsolutePath()
+                    + File.pathSeparator
+                    + preferences.get(RECENT_FILES.getKey(), RECENT_FILES.getDef()));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
@@ -311,9 +322,10 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void saveSection() {
-        if (!storageManager.equalsToSavedSnapshot(sectionManager.getSnapshot())) {
-            saveSection(storageManager.getSavedSnapshotFile()
-                    .orElseGet(() -> jsonFileChooser.showSaveDialog(getStage())));
+        if (!storageManager.getSavedSnapshot().equals(sectionManager.snapshot())) {
+            saveSection(storageManager.getSavedSnapshotFile() != null ?
+                    storageManager.getSavedSnapshotFile() :
+                    jsonFileChooser.showSaveDialog(getStage()));
         }
     }
 
@@ -333,6 +345,7 @@ public class MainViewController extends AbstractController {
     /**
      * Asks which file to import and then import it
      */
+    @Override
     @FXML
     public void importMOD() {
         File file = modFileChooser.showOpenDialog(getStage());
@@ -340,13 +353,14 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 modFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("MOD_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(MOD_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
             importMOD(file);
         }
     }
 
-    public void importMOD(File file) {
+    @Override
+    public void importMOD(@NotNull File file) {
         try {
             Picket newPicket = storageManager.loadModelDataFromMODFile(file, picket.get());
 
@@ -357,30 +371,31 @@ public class MainViewController extends AbstractController {
                 return;
             }
 
-            historyManager.performThenSnapshot(() -> sectionManager.update(newPicket));
+            historyManager.snapshotAfter(() -> sectionManager.update(newPicket));
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
         }
     }
 
-    @FXML
-    private void importJsonPicket() {
+    @Override
+    public void importJsonPicket() {
         File file = jsonFileChooser.showOpenDialog(getStage());
 
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
 
             importJsonPicket(file);
         }
     }
 
-    public void importJsonPicket(File file) {
+    @Override
+    public void importJsonPicket(@NotNull File file) {
         try {
             Picket loadedPicket = storageManager.loadFromJson(file, Picket.class);
-            historyManager.performThenSnapshot(() -> sectionManager.add(loadedPicket));
+            historyManager.snapshotAfter(() -> sectionManager.add(loadedPicket));
             picketIndex.set(sectionManager.size() - 1);
         } catch (Exception e) {
             alertsFactory.incorrectFileAlert(e, getStage()).show();
@@ -394,7 +409,7 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
             }
 
             try {
@@ -424,7 +439,7 @@ public class MainViewController extends AbstractController {
     @FXML
     private void inverseSolve() {
         try {
-            historyManager.performThenSnapshot(() -> sectionManager.inverseSolve(picket.get()));
+            historyManager.snapshotAfter(() -> sectionManager.inverseSolve(picket.get()));
         } catch (Exception e) {
             alertsFactory.simpleExceptionAlert(e, getStage()).show();
         }
@@ -434,11 +449,13 @@ public class MainViewController extends AbstractController {
         if (file != null) {
             if (file.getParentFile().isDirectory()) {
                 jsonFileChooser.setInitialDirectory(file.getParentFile());
-                preferences.put("JSON_FC_INIT_DIR", file.getParentFile().getAbsolutePath());
-                preferences.put("RECENT_FILES", file.getAbsolutePath() + File.pathSeparator + preferences.get("RECENT_FILES", ""));
+                preferences.put(JSON_FILES_DIR.getKey(), file.getParentFile().getAbsolutePath());
+                preferences.put(RECENT_FILES.getKey(), file.getAbsolutePath()
+                        + File.pathSeparator
+                        + preferences.get(RECENT_FILES.getKey(), RECENT_FILES.getDef()));
             }
             try {
-                storageManager.saveToJson(file, sectionManager.getSnapshot().value());
+                storageManager.saveToJson(file, sectionManager.snapshot().getValue());
                 setWindowFileTitle(file);
                 dirtyAsterisk.set("");
             } catch (Exception e) {
@@ -465,7 +482,7 @@ public class MainViewController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             picketOffsetX.selectAll();
         } else {
-            historyManager.performThenSnapshot(() ->
+            historyManager.snapshotAfter(() ->
                     sectionManager.update(modified));
             FXUtils.unfocus(picketOffsetX);
         }
@@ -473,7 +490,7 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void submitPicketName() {
-        historyManager.performThenSnapshot(() -> sectionManager.update(picket.get().withName(picketName.getText())));
+        historyManager.snapshotAfter(() -> sectionManager.update(picket.get().withName(picketName.getText())));
         FXUtils.unfocus(picketName);
     }
 
@@ -495,15 +512,16 @@ public class MainViewController extends AbstractController {
             alertsFactory.violationsAlert(violations, getStage()).show();
             picketZ.selectAll();
         } else {
-            historyManager.performThenSnapshot(() ->
+            historyManager.snapshotAfter(() ->
                     sectionManager.update(modified));
             FXUtils.unfocus(picketZ);
         }
     }
 
+    @Override
     @FXML
-    public void addPicket() {
-        historyManager.performThenSnapshot(() -> sectionManager.add(Picket.createDefaultWithNewId()));
+    public void addNewPicket() {
+        historyManager.snapshotAfter(() -> sectionManager.add(Picket.createDefaultWithNewId()));
         picketIndex.set(sectionManager.size() - 1);
     }
 
