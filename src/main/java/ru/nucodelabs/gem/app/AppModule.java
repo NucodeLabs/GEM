@@ -15,7 +15,6 @@ import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -135,6 +134,6 @@ public class AppModule extends AbstractModule {
     @Singleton
     public ColorPalette provideColorPalette() throws Exception {
         return new ColorPalette(
-                new CLRFileParser(new File("../GEM/data/clr/002_ERT_Rainbow_2.clr")).parse());
+                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
     }
 }

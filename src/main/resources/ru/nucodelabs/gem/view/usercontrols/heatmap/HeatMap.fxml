@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.VBox?>
+<fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.VBox"
+         xmlns="http://javafx.com/javafx"
+         fx:id="container">
+    <Canvas fx:id="canvas" width="${container.width}" height="${container.height}"/>
+</fx:root>

@@ -97,7 +97,7 @@ public class ColorPaletteController extends AbstractController {
             double key = i * coeff.get();
             Label label = new Label(String.valueOf(computeResistance(key)));
             label.setLayoutX(0);
-            label.setLayoutY(labelsPane.getPrefHeight() * (key - 0.6 * coeff.get()));
+            label.layoutYProperty().bind(labelsPane.heightProperty().multiply(key - 0.6 * coeff.get()));
             label.fontProperty().set(new Font(10));
             labelList.add(label);
 
@@ -179,7 +179,7 @@ public class ColorPaletteController extends AbstractController {
         double num;
         try {
             num = Double.parseDouble(input);
-            if (num <= 0) {
+            if (num < 0) {
                 textField.setText(Double.toString(property.get()));
                 return property.get();
             }
