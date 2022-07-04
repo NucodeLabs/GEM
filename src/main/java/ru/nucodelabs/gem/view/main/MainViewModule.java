@@ -52,4 +52,14 @@ public class MainViewModule extends AbstractModule {
     private Snapshot.Originator<Section> sectionOriginator(SectionManager sectionManager) {
         return sectionManager;
     }
+
+    @Provides
+    private FileImporter fileImporter(MainViewController mainViewController) {
+        return mainViewController;
+    }
+
+    @Provides
+    private FileOpener fileOpener(MainViewController mainViewController) {
+        return mainViewController;
+    }
 }

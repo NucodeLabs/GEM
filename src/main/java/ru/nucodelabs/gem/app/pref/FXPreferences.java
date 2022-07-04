@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app;
+package ru.nucodelabs.gem.app.pref;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
-public class PropertyConfigManager {
+public class FXPreferences {
 
     private final Preferences preferences;
 
     @Inject
-    public PropertyConfigManager(Preferences preferences) {
+    public FXPreferences(Preferences preferences) {
         this.preferences = preferences;
     }
 
