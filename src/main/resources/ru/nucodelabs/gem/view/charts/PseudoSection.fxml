@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/17"
+      alignment="CENTER"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      stylesheets="@../common.css, @VESCurves.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
+    <Label text="%pseudoSection" styleClass="uclabel"/>
+    <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0"/>
+</VBox>

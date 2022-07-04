@@ -1,16 +1,15 @@
 package ru.nucodelabs.files.color_palette;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class CLRFileParser {
-    private final File clrFile;
+    private final InputStream clrFile;
 
-    public CLRFileParser(File clrFile) {
+    public CLRFileParser(InputStream clrFile) {
         this.clrFile = clrFile;
     }
 
