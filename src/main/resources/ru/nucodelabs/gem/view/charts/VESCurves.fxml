@@ -15,7 +15,8 @@
     <HBox maxWidth="Infinity">
         <Label styleClass="uclabel" text="%ves" VBox.vgrow="NEVER"/>
     </HBox>
-    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
+               onMouseDragged="#navigateUsingDrag" onMousePressed="#startDrag">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis"
                         forceZeroInRange="false"
