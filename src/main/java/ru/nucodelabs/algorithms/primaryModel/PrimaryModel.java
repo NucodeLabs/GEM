@@ -15,6 +15,10 @@ public class PrimaryModel {
     }
 
     public List<ModelLayer> get3LayersPrimaryModel() {
+        if (experimentalData.size() <= 3) {
+           return new ArrayList<>();
+        }
+
         List<ExperimentalData> logExperimentalData = experimentalData.stream()
                 .map(experimentalData -> experimentalData.withAb2(Math.log(experimentalData.getAb2())))
                 .toList();
@@ -30,8 +34,14 @@ public class PrimaryModel {
         logSplitData.add(logExperimentalData.stream()
                 .filter(experimentalData -> experimentalData.getAb2() <= ab2max && experimentalData.getAb2() > ab2max * 2.0 / 3.0)
                 .collect(Collectors.toList()));
+
         List<ModelLayer> modelLayers = new ArrayList<>();
         for (int i = 0; i < logSplitData.size(); i++) {
+
+            if (logSplitData.get(i).size() == 0) {
+               return new ArrayList<>();
+            }
+
             double prevLast;
             List<ExperimentalData> list = logSplitData.get(i);
             double avg = list.stream()
