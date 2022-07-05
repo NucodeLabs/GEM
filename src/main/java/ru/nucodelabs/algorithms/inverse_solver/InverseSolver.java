@@ -95,10 +95,18 @@ public class InverseSolver {
         List<Double> newModelResistance = new ArrayList<>();
 
         for (int i = 0; i < modelResistance.size(); i++) {
-            newModelResistance.add(Math.exp(key[i]));
+            if (modelData.get(i).isFixedResistance()) {
+                newModelResistance.add(modelData.get(i).getResistance());
+            } else {
+                newModelResistance.add(Math.exp(key[i]));
+            }
         }
         for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
-            newModelPower.add(Math.exp(key[i]));
+            if (modelData.get(i - modelResistance.size()).isFixedPower()) {
+                newModelPower.add(modelData.get(i - modelResistance.size()).getPower());
+            } else {
+                newModelPower.add(Math.exp(key[i]));
+            }
         }
         newModelPower.add(0.0); //Для последнего слоя
 
