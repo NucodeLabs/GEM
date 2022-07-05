@@ -1,58 +1,54 @@
-package ru.nucodelabs.gem.view.charts;
+package ru.nucodelabs.gem.view.charts
 
-import javafx.beans.value.ObservableObjectValue;
-import javafx.fxml.FXML;
-import javafx.scene.chart.XYChart;
-import javafx.stage.Stage;
-import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
-import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap;
+import javafx.beans.value.ObservableObjectValue
+import javafx.fxml.FXML
+import javafx.scene.chart.XYChart
+import javafx.stage.Stage
+import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.color_palette.ColorPalette
+import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap
+import java.net.URL
+import java.util.*
+import javax.inject.Inject
 
-import javax.inject.Inject;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-public class PseudoSectionController extends AbstractController {
+class PseudoSectionController @Inject constructor(
+    private val sectionObservableObjectValue: ObservableObjectValue<Section>,
+    private val colorPalette: ColorPalette
+) : AbstractController() {
 
     @FXML
-    private HeatMap chart;
-    @Inject
-    private ObservableObjectValue<Section> sectionObservableObjectValue;
-    @Inject
-    private ColorPalette colorPalette;
+    private lateinit var chart: HeatMap
 
-    @Override
-    protected Stage getStage() {
-        return null;
-    }
+    override val stage: Stage?
+        get() = chart.scene.window as Stage?
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        chart.setColorPalette(colorPalette);
-        sectionObservableObjectValue.addListener((observable, oldValue, newValue) -> {
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        chart.colorPalette = colorPalette
+        sectionObservableObjectValue.addListener { _, oldValue: Section?, newValue: Section? ->
             if (newValue != null
-                    && !newValue.getPickets().stream().map(Picket::getExperimentalData)
-                    .equals(oldValue.getPickets().stream().map(Picket::getExperimentalData))) {
-                update();
-            }
-        });
-    }
-
-    private void update() {
-        var section = sectionObservableObjectValue.get();
-        List<XYChart.Data<Double, Double>> data = new ArrayList<>();
-        for (var picket : section.getPickets()) {
-            for (var expData : picket.getExperimentalData()) {
-                data.add(new XYChart.Data<>(
-                        section.xOfPicket(picket),
-                        expData.getAb2(),
-                        expData.getResistanceApparent()));
+                && newValue.pickets.map { it.experimentalData } != oldValue?.pickets?.map { it.experimentalData }
+            ) {
+                update()
             }
         }
-        chart.getData().setAll(data);
+    }
+
+    private fun update() {
+        val section = sectionObservableObjectValue.get()
+        val data: MutableList<XYChart.Data<Double, Double>> = mutableListOf()
+
+        for (picket in section.pickets) {
+            for (expData in picket.experimentalData) {
+                data.add(
+                    XYChart.Data(
+                        section.xOfPicket(picket),
+                        expData.ab2,
+                        expData.resistanceApparent
+                    )
+                )
+            }
+        }
+        chart.data.setAll(data)
     }
 }
