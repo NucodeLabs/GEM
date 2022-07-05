@@ -171,8 +171,9 @@
 
 .tooltip {
     -fx-effect: none;
-    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-text-fill: Gray;
+    -fx-font-size: 12;
     -fx-border-width: 1;
     -fx-border-color: Gray;
     -fx-background-radius: 5;
