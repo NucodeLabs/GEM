@@ -13,9 +13,17 @@ public interface ModelLayer extends Serializable {
 
     static ModelLayer create(
             double power,
+            double resistance,
+            boolean fixed
+    ) {
+        return new ModelLayerImpl(resistance, power, fixed);
+    }
+
+    static ModelLayer create(
+            double power,
             double resistance
     ) {
-        return new ModelLayerImpl(resistance, power);
+        return new ModelLayerImpl(resistance, power, false);
     }
 
     /**
@@ -28,11 +36,16 @@ public interface ModelLayer extends Serializable {
      */
     @Min(1) double getResistance();
 
+    /**
+     * True if layer is fixed
+     */
+    boolean isFixed();
+
     default ModelLayer withPower(double power) {
         if (power == getPower()) {
             return this;
         } else {
-            return create(power, getResistance());
+            return create(power, getResistance(), isFixed());
         }
     }
 
@@ -40,7 +53,14 @@ public interface ModelLayer extends Serializable {
         if (resistance == getResistance()) {
             return this;
         } else {
-            return create(getPower(), resistance);
+            return create(getPower(), resistance, isFixed());
         }
+    }
+
+    default ModelLayer withFixed(boolean fixed) {
+        if (fixed == isFixed()) {
+            return this;
+        }
+        return create(getPower(), getResistance(), fixed);
     }
 }
