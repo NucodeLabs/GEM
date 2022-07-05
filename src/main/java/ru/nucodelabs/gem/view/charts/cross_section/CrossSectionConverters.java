@@ -6,6 +6,7 @@ import ru.nucodelabs.data.ves.Picket;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class CrossSectionConverters {
 
     /**

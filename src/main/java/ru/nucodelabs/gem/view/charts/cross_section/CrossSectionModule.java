@@ -7,12 +7,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.files.color_palette.CLRData;
-import ru.nucodelabs.files.color_palette.CLRFileParser;
 
-import java.io.File;
 import java.util.ArrayList;
 
+@Deprecated
 public class CrossSectionModule extends AbstractModule {
     @Provides
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> provideEmptyCrossSectionData() {

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.CLRData;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 
+@Deprecated
 public class ColorPalette implements ColorMapper {
 
     private final CLRData clrData;
