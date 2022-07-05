@@ -3,9 +3,12 @@ package ru.nucodelabs.gem.view.color_palette;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.CLRData;
+import ru.nucodelabs.gem.view.color.ColorMapper;
 
-public class ColorPalette {
+@Deprecated
+public class ColorPalette implements ColorMapper {
 
     private final CLRData clrData;
 
@@ -25,7 +28,9 @@ public class ColorPalette {
         maxValue = new SimpleDoubleProperty(initMaxResistance);
     }
 
-    public Color colorForValue(double value) {
+    @NotNull
+    @Override
+    public Color colorFor(double value) {
         double resistance = value - minValue.get();
         double topBorder = maxValue.get() - minValue.get();
         double percent;
@@ -102,26 +107,34 @@ public class ColorPalette {
         return clrData;
     }
 
+    @Override
     public double getMinValue() {
         return minValue.get();
     }
 
+    @Override
     public void setMinValue(double minValue) {
         this.minValue.set(minValue);
     }
 
+    @Override
+    @NotNull
     public DoubleProperty minValueProperty() {
         return minValue;
     }
 
+    @Override
     public double getMaxValue() {
         return maxValue.get();
     }
 
+    @Override
     public void setMaxValue(double maxValue) {
         this.maxValue.set(maxValue);
     }
 
+    @Override
+    @NotNull
     public DoubleProperty maxValueProperty() {
         return maxValue;
     }

@@ -8,17 +8,17 @@
       maxHeight="Infinity"
       maxWidth="Infinity"
       VBox.vgrow="ALWAYS"
-      fx:controller="ru.nucodelabs.gem.view.charts.cross_section.CrossSectionController"
-      stylesheets="@CrossSection.css">
+      fx:controller="ru.nucodelabs.gem.view.charts.ModelSectionController"
+      stylesheets="@ModelSection.css">
 
-    <AreaChart fx:id="sectionAreaChart" maxWidth="Infinity"
+    <AreaChart fx:id="chart" maxWidth="Infinity"
                maxHeight="Infinity" animated="false" legendVisible="false">
         <xAxis>
-            <NumberAxis fx:id="sectionX" label="Пикеты" side="TOP" prefWidth="-Infinity"/>
+            <NumberAxis fx:id="xAxis" label="X (m)" side="TOP" prefWidth="-Infinity" autoRanging="false"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="sectionY" label="Слои" side="LEFT" prefHeight="500" maxHeight="-Infinity"/>
+            <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
+                        autoRanging="false"/>
         </yAxis>
     </AreaChart>
-
 </VBox>
