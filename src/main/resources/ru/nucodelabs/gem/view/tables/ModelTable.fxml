@@ -33,6 +33,7 @@
                 <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
                     <Label text="%drag"/>
                 </HBox>
+                <Button text="Первичная модель" onAction="#makePrimaryModel"/>
             </VBox>
         </placeholder>
         <columns>
