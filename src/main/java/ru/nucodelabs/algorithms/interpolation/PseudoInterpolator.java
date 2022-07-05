@@ -4,10 +4,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,12 @@ public class PseudoInterpolator {
 
     //Расстояние от пикета до нуля
     private final List<Double> xs = new ArrayList<>();
-    private final ColorPalette colorPalette;
+    private final ColorMapper colorPalette;
 
     //Линии по общим для всех пикетов ab_2
     private final List<Line> lines = new ArrayList<>();
 
-    public PseudoInterpolator(List<List<XYChart.Data<Double, Double>>> listList, ColorPalette colorPalette) {
+    public PseudoInterpolator(List<List<XYChart.Data<Double, Double>>> listList, ColorMapper colorPalette) {
         this.colorPalette = colorPalette;
         //Минимальное количество измерений (линий) у пикета
         int minLinesCnt = listList.stream().map(List::size).mapToInt(Integer::intValue).min().orElse(0);
@@ -88,7 +87,7 @@ public class PseudoInterpolator {
             //Первый пикет на расстоянии 0
             double curX = xs.get(0); // = 0
             for (int j = 0; j < canvas.getWidth(); j++) {
-                pw.setColor(j, i, colorPalette.colorForValue(function.value(curX, curY)));
+                pw.setColor(j, i, colorPalette.colorFor(function.value(curX, curY)));
                 curX += stepX;
             }
             curY += stepY;
