@@ -23,7 +23,7 @@ public class InverseSolverTest {
                 picket.getExperimentalData(),
                 new SquaresDiff(),
                 picket.getModelData());
-        InverseSolver inverseSolver = new InverseSolver(picket, SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, multivariateFunction);
+        InverseSolver inverseSolver = new InverseSolver(picket, SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD);
         List<ModelLayer> modelData = inverseSolver.getOptimizedModelData();
         modelData.forEach(System.out::println);
     }
