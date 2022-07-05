@@ -46,11 +46,11 @@ public class ChartsModule extends AbstractModule {
     @Provides
     @Singleton
     ForwardSolver forwardSolver() {
-        return ForwardSolverKt.ForwardSolver();
+        return ForwardSolver.createDefault();
     }
 
     @Provides
     MisfitValuesFactory misfitValuesFactory(ForwardSolver forwardSolver) {
-        return MisfitValuesFactoryKt.MisfitValuesFactory(forwardSolver);
+        return MisfitValuesFactory.createDefault(forwardSolver);
     }
 }
