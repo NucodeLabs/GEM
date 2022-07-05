@@ -29,18 +29,14 @@ public class InverseSolver {
     private final double sideLength;
     private final double relativeThreshold;
     private final double absoluteThreshold;
-    private final MultivariateFunction multivariateFunction;
+    private MultivariateFunction multivariateFunction;
 
     public InverseSolver(Picket picket) {
         this(
                 picket,
                 SIDE_LENGTH_DEFAULT,
                 RELATIVE_THRESHOLD_DEFAULT,
-                ABSOLUTE_THRESHOLD_DEFAULT,
-                new FunctionValue(
-                        picket.getExperimentalData(),
-                        new SquaresDiff(),
-                        picket.getModelData())
+                ABSOLUTE_THRESHOLD_DEFAULT
         );
     }
 
@@ -48,13 +44,11 @@ public class InverseSolver {
             Picket picket,
             double sideLength,
             double relativeThreshold,
-            double absoluteThreshold,
-            MultivariateFunction multivariateFunction) {
+            double absoluteThreshold) {
         this.picket = picket;
         this.sideLength = sideLength;
         this.relativeThreshold = relativeThreshold;
         this.absoluteThreshold = absoluteThreshold;
-        this.multivariateFunction = multivariateFunction;
     }
 
     public List<ModelLayer> getOptimizedModelData() {
@@ -62,8 +56,25 @@ public class InverseSolver {
 
         List<ModelLayer> modelData = picket.getModelData();
 
-        List<Double> modelResistance = modelData.stream().map(ModelLayer::getResistance).toList();
-        List<Double> modelPower = modelData.stream().map(ModelLayer::getPower).toList();
+        //TODO: тест
+        modelData = new ArrayList<>(picket.getModelData());
+        modelData.set(1, modelData.get(1).withFixedPower(true));
+
+        //Изменяемые сопротивления и мощности
+        List<Double> modelResistance = modelData.stream()
+                .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).toList();
+        List<Double> modelPower = modelData.stream()
+                .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).toList();
+
+        //Неизменяемые сопротивления и мощности
+        List<Double> fixedModelResistance = modelData.stream()
+                .filter(ModelLayer::isFixedResistance).map(ModelLayer::getResistance).toList();
+        List<Double> fixedModelPower = modelData.stream()
+                .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
+
+        multivariateFunction = new FunctionValue(
+                picket.getExperimentalData(), new SquaresDiff(), picket.getModelData()
+        );
 
         //anyArray = resistance.size...(model.size - 1)
         int dimension = modelResistance.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
@@ -81,6 +92,7 @@ public class InverseSolver {
 
         InitialGuess initialGuess = new InitialGuess(startPoint);
 
+        //TODO: Передавать только изменяемые параметры
         PointValuePair pointValuePair = optimizer.optimize(
                 new MaxEval(MAX_EVAL),
                 new ObjectiveFunction(multivariateFunction),
@@ -95,18 +107,10 @@ public class InverseSolver {
         List<Double> newModelResistance = new ArrayList<>();
 
         for (int i = 0; i < modelResistance.size(); i++) {
-            if (modelData.get(i).isFixedResistance()) {
-                newModelResistance.add(modelData.get(i).getResistance());
-            } else {
-                newModelResistance.add(Math.exp(key[i]));
-            }
+            newModelResistance.add(Math.exp(key[i]));
         }
         for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
-            if (modelData.get(i - modelResistance.size()).isFixedPower()) {
-                newModelPower.add(modelData.get(i - modelResistance.size()).getPower());
-            } else {
-                newModelPower.add(Math.exp(key[i]));
-            }
+            newModelPower.add(Math.exp(key[i]));
         }
         newModelPower.add(0.0); //Для последнего слоя
 
