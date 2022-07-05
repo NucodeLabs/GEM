@@ -224,7 +224,8 @@ class VESCurvesController @Inject constructor(
     private fun tooltipForModel(x: Double, y: Double) =
         Tooltip("Z = ${decimalFormat.format(picket.z - x)} m\nρ = ${decimalFormat.format(y)} Ω‧m")
 
-    fun navigateUsingDrag(mouseEvent: MouseEvent) {
+    @FXML
+    private fun navigateUsingDrag(mouseEvent: MouseEvent) {
         if (mouseEvent.isShortcutDown) {
             val (startX, startY) = dragStart
 
@@ -245,7 +246,8 @@ class VESCurvesController @Inject constructor(
         }
     }
 
-    fun startDrag(mouseEvent: MouseEvent) {
+    @FXML
+    private fun startDrag(mouseEvent: MouseEvent) {
         dragStart = mouseEvent.sceneX to mouseEvent.sceneY
     }
 
