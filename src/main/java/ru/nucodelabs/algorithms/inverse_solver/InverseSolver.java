@@ -29,7 +29,6 @@ public class InverseSolver {
     private final double sideLength;
     private final double relativeThreshold;
     private final double absoluteThreshold;
-    private MultivariateFunction multivariateFunction;
 
     public InverseSolver(Picket picket) {
         this(
@@ -56,13 +55,6 @@ public class InverseSolver {
 
         List<ModelLayer> modelData = picket.getModelData();
 
-//        Тест
-//        modelData = new ArrayList<>(picket.getModelData());
-//        modelData.set(1, modelData.get(1).withFixedResistance(true));
-//        modelData.set(4, modelData.get(4).withFixedResistance(true));
-//        modelData.set(1, modelData.get(1).withFixedPower(true));
-//        modelData.set(3, modelData.get(3).withFixedPower(true));
-
         //Изменяемые сопротивления и мощности
         List<Double> modelResistance = modelData.stream()
                 .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).toList();
@@ -75,7 +67,7 @@ public class InverseSolver {
         List<Double> fixedModelPower = modelData.stream()
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
-        multivariateFunction = new FunctionValue(
+        MultivariateFunction multivariateFunction = new FunctionValue(
                 picket.getExperimentalData(), new SquaresDiff(), modelData
         );
 
@@ -111,8 +103,7 @@ public class InverseSolver {
 
         int cntFixedResistances = 0;
         int cntUnfixedResistances = 0;
-        for (int i = 0; i < modelData.size(); i++) {
-            ModelLayer modelLayer = modelData.get(i);
+        for (ModelLayer modelLayer : modelData) {
             if (modelLayer.isFixedResistance()) {
                 newModelResistance.add(fixedModelResistance.get(cntFixedResistances));
                 cntFixedResistances++;

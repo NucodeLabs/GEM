@@ -24,12 +24,6 @@ public class FunctionValue implements MultivariateFunction {
         this.experimentalData = experimentalData;
         this.inverseFunction = inverseFunction;
         this.modelLayers = modelLayers;
-//        Тест
-//        this.modelLayers = new ArrayList<>(modelLayers);
-//        this.modelLayers.set(1, modelLayers.get(1).withFixedResistance(true));
-//        this.modelLayers.set(4, modelLayers.get(4).withFixedResistance(true));
-//        this.modelLayers.set(1, modelLayers.get(1).withFixedPower(true));
-//        this.modelLayers.set(3, modelLayers.get(3).withFixedPower(true));
     }
 
     @Override
@@ -41,16 +35,11 @@ public class FunctionValue implements MultivariateFunction {
         int unfixedResistancesCnt = (int) modelLayers.stream()
                 .filter(modelLayer -> !modelLayer.isFixedResistance()).count();
 
-        int unfixedPowersCnt = (int) modelLayers.stream()
-                .filter(modelLayer -> !modelLayer.isFixedPower()).count();
-
         //Восстановление изменяемых слоев до нормальной формы
         for (int i = 0; i < unfixedResistancesCnt; i++) {
-            ModelLayer modelLayer = modelLayers.get(i);
             currentModelResistance.add(Math.exp(variables[i]));
         }
         for (int i = unfixedResistancesCnt; i < variables.length; i++) {
-            ModelLayer modelLayer = modelLayers.get(i - (variables.length + 1) / 2);
             currentModelPower.add(Math.exp(variables[i]));
         }
         currentModelPower.add(0.0);
@@ -60,8 +49,7 @@ public class FunctionValue implements MultivariateFunction {
         List<Double> newModelPower = new ArrayList<>();
 
         int cntUnfixedResistances = 0;
-        for (int i = 0; i < modelLayers.size(); i++) {
-            ModelLayer modelLayer = modelLayers.get(i);
+        for (ModelLayer modelLayer : modelLayers) {
             if (modelLayer.isFixedResistance()) {
                 newModelResistance.add(modelLayer.getResistance());
             } else {
@@ -71,8 +59,7 @@ public class FunctionValue implements MultivariateFunction {
         }
 
         int cntUnfixedPowers = 0;
-        for (int i = 0; i < modelLayers.size(); i++) {
-            ModelLayer modelLayer = modelLayers.get(i);
+        for (ModelLayer modelLayer : modelLayers) {
             if (modelLayer.isFixedPower()) {
                 newModelPower.add(modelLayer.getPower());
             } else {
