@@ -56,9 +56,12 @@ public class InverseSolver {
 
         List<ModelLayer> modelData = picket.getModelData();
 
-        //TODO: тест
-        modelData = new ArrayList<>(picket.getModelData());
-        modelData.set(1, modelData.get(1).withFixedPower(true));
+//        Тест
+//        modelData = new ArrayList<>(picket.getModelData());
+//        modelData.set(1, modelData.get(1).withFixedResistance(true));
+//        modelData.set(4, modelData.get(4).withFixedResistance(true));
+//        modelData.set(1, modelData.get(1).withFixedPower(true));
+//        modelData.set(3, modelData.get(3).withFixedPower(true));
 
         //Изменяемые сопротивления и мощности
         List<Double> modelResistance = modelData.stream()
@@ -73,7 +76,7 @@ public class InverseSolver {
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
         multivariateFunction = new FunctionValue(
-                picket.getExperimentalData(), new SquaresDiff(), picket.getModelData()
+                picket.getExperimentalData(), new SquaresDiff(), modelData
         );
 
         //anyArray = resistance.size...(model.size - 1)
@@ -92,7 +95,7 @@ public class InverseSolver {
 
         InitialGuess initialGuess = new InitialGuess(startPoint);
 
-        //TODO: Передавать только изменяемые параметры
+        //Передавать только изменяемые параметры
         PointValuePair pointValuePair = optimizer.optimize(
                 new MaxEval(MAX_EVAL),
                 new ObjectiveFunction(multivariateFunction),
@@ -106,20 +109,40 @@ public class InverseSolver {
         List<Double> newModelPower = new ArrayList<>();
         List<Double> newModelResistance = new ArrayList<>();
 
-        for (int i = 0; i < modelResistance.size(); i++) {
-            newModelResistance.add(Math.exp(key[i]));
+        int cntFixedResistances = 0;
+        int cntUnfixedResistances = 0;
+        for (int i = 0; i < modelData.size(); i++) {
+            ModelLayer modelLayer = modelData.get(i);
+            if (modelLayer.isFixedResistance()) {
+                newModelResistance.add(fixedModelResistance.get(cntFixedResistances));
+                cntFixedResistances++;
+            } else {
+                newModelResistance.add(Math.exp(key[cntUnfixedResistances]));
+                cntUnfixedResistances++;
+            }
         }
-        for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
-            newModelPower.add(Math.exp(key[i]));
+
+        int cntFixedPowers = 0;
+        int cntUnfixedPowers = 0;
+        for (int i = 0; i < modelData.size() - 1; i++) {
+            ModelLayer modelLayer = modelData.get(i);
+            int shift = modelResistance.size();
+            if (modelLayer.isFixedPower()) {
+                newModelPower.add(fixedModelPower.get(cntFixedPowers));
+                cntFixedPowers++;
+            } else {
+                newModelPower.add(Math.exp(key[cntUnfixedPowers + shift]));
+                cntUnfixedPowers++;
+            }
         }
         newModelPower.add(0.0); //Для последнего слоя
 
-        List<ModelLayer> res = new ArrayList<>();
+        List<ModelLayer> resultModel = new ArrayList<>();
 
         for (int i = 0; i < modelData.size(); i++) {
-            res.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
+            resultModel.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
         }
 
-        return res;
+        return resultModel;
     }
 }
