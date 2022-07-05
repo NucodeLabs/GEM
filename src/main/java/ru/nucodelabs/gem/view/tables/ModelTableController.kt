@@ -15,6 +15,7 @@ import javafx.scene.input.TransferMode
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
+import ru.nucodelabs.algorithms.primaryModel.PrimaryModel
 import ru.nucodelabs.data.ves.ModelLayer
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
@@ -235,5 +236,12 @@ class ModelTableController @Inject constructor(
                 }
             }
         }
+    }
+
+    @FXML
+    fun makePrimaryModel() {
+        val primaryModel = PrimaryModel(picket.experimentalData)
+        val newModelData = primaryModel.get3LayersPrimaryModel()
+        historyManager.snapshotAfter { sectionManager.update(picket.withModelData(newModelData)) }
     }
 }
