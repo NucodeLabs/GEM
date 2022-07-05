@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ru.nucodelabs.gem.utils.NumbersUtils;
 import ru.nucodelabs.gem.view.AbstractController;
+import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,7 +55,7 @@ public class ColorPaletteController extends AbstractController {
     private DoubleProperty coeff;
 
     @Inject
-    private ColorPalette colorPalette;
+    private ColorMapper colorPalette;
 
     @Inject
     @Named("CSS")
@@ -130,8 +131,8 @@ public class ColorPaletteController extends AbstractController {
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
                 Stop[] stops = {
-                        new Stop(0, colorPalette.colorForValue(computeResistance(key))),
-                        new Stop(1, colorPalette.colorForValue(computeResistance(key + coeff.get())))};
+                        new Stop(0, colorPalette.colorFor(computeResistance(key))),
+                        new Stop(1, colorPalette.colorFor(computeResistance(key + coeff.get())))};
                 LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 
                 ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);

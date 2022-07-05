@@ -1,6 +1,9 @@
 package ru.nucodelabs.gem.app;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -11,6 +14,7 @@ import ru.nucodelabs.files.color_palette.CLRFileParser;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
+import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
@@ -132,9 +136,8 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Inject
     @Singleton
-    public ColorPalette provideColorPalette() throws Exception {
+    ColorMapper colorMapper() throws Exception {
         return new ColorPalette(
                 new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
     }
