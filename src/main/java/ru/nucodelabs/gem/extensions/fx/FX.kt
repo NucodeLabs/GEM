@@ -4,7 +4,12 @@ import javafx.beans.binding.Bindings
 import javafx.beans.binding.BooleanBinding
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.scene.chart.XYChart
 import java.util.*
+
+typealias Line<X, Y> = XYChart.Series<X, Y>
+
+typealias Point<X, Y> = XYChart.Data<X, Y>
 
 fun ObservableList<*>.emptyBinding(): BooleanBinding = Bindings.createBooleanBinding({ isEmpty() }, this)
 

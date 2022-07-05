@@ -15,7 +15,7 @@ import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
 import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.view.AbstractController;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -36,7 +36,7 @@ public class CrossSectionController extends AbstractController {
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty;
 
     @Inject
-    private ColorPalette colorPalette;
+    private ColorMapper colorPalette;
 
     @Inject
     public CrossSectionController(ObservableObjectValue<Section> section) {
@@ -75,7 +75,7 @@ public class CrossSectionController extends AbstractController {
 
                     //Assign color according to resistance value
                     //String layerColor = colorPalette.getRGBColor(resistance);
-                    String layerColor = FXUtils.toWeb(colorPalette.colorForValue(resistance));
+                    String layerColor = FXUtils.toWeb(colorPalette.colorFor(resistance));
 
                     //Find positive part and color it
                     seriesList.get(count).getNode().lookup(".chart-series-area-fill")

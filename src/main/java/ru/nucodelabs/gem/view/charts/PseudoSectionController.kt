@@ -6,7 +6,7 @@ import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.view.AbstractController
-import ru.nucodelabs.gem.view.color_palette.ColorPalette
+import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap
 import java.net.URL
 import java.util.*
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class PseudoSectionController @Inject constructor(
     private val sectionObservableObjectValue: ObservableObjectValue<Section>,
-    private val colorPalette: ColorPalette
+    private val colorMapper: ColorMapper
 ) : AbstractController() {
 
     @FXML
@@ -24,7 +24,7 @@ class PseudoSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        chart.colorPalette = colorPalette
+        chart.colorPalette = colorMapper
         sectionObservableObjectValue.addListener { _, oldValue: Section?, newValue: Section? ->
             if (newValue != null
                 && newValue.pickets.map { it.experimentalData } != oldValue?.pickets?.map { it.experimentalData }
