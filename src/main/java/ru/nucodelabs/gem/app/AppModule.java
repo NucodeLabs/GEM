@@ -100,7 +100,7 @@ public class AppModule extends AbstractModule {
         decimalFormat.setMaximumFractionDigits(2);
         decimalFormat.setGroupingSize(3);
         var dfs = new DecimalFormatSymbols();
-        dfs.setDecimalSeparator(',');
+        dfs.setDecimalSeparator('.');
         dfs.setGroupingSeparator(' ');
         decimalFormat.setDecimalFormatSymbols(dfs);
 
