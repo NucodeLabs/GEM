@@ -33,7 +33,7 @@
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis"
                         forceZeroInRange="false"
-                        label="ρₐ (Ohm‧m)"
+                        label="ρₐ (Ω‧m)"
                         side="LEFT"
                         tickUnit="1"
                         autoRanging="false"

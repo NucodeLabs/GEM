@@ -26,7 +26,6 @@ import ru.nucodelabs.gem.utils.FXUtils.isNotBlank
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
-import ru.nucodelabs.gem.view.tables.Tables.*
 import java.net.URL
 import java.text.DecimalFormat
 import java.text.ParseException
