@@ -21,7 +21,8 @@ public class InverseSolverTest {
         double ABSOLUTE_THRESHOLD = 1e-30;
         MultivariateFunction multivariateFunction = new FunctionValue(
                 picket.getExperimentalData(),
-                new SquaresDiff());
+                new SquaresDiff(),
+                picket.getModelData());
         InverseSolver inverseSolver = new InverseSolver(picket, SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, multivariateFunction);
         List<ModelLayer> modelData = inverseSolver.getOptimizedModelData();
         modelData.forEach(System.out::println);
