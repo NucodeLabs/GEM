@@ -185,14 +185,11 @@ class VESCurvesController @Inject constructor(
 
     fun legendVisibleProperty(): BooleanProperty = lineChart.legendVisibleProperty()
 
-    companion object Positions {
-        const val EXP_CURVE_SERIES_CNT = 3
-        const val THEOR_CURVE_SERIES_CNT = 4
-        const val MOD_CURVE_SERIES_CNT = 5
+    companion object Order {
         const val EXP_CURVE_SERIES_INDEX = 0
         const val EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1
         const val EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2
-        const val THEOR_CURVE_SERIES_INDEX = THEOR_CURVE_SERIES_CNT - 1
-        const val MOD_CURVE_SERIES_INDEX = MOD_CURVE_SERIES_CNT - 1
+        const val THEOR_CURVE_SERIES_INDEX = 3
+        const val MOD_CURVE_SERIES_INDEX = 4
     }
 }

@@ -10,7 +10,7 @@ class VesCurvesConverter @Inject constructor(
 ) {
     fun experimentalCurveOf(experimentalData: List<ExperimentalData>): List<Point> {
         if (experimentalData.isEmpty()) {
-            return ArrayList()
+            return mutableListOf()
         }
         val points: MutableList<Point> = ArrayList()
         for (experimentalDatum in experimentalData) {
@@ -30,9 +30,11 @@ class VesCurvesConverter @Inject constructor(
             val dotX = experimentalDatum.ab2
             val error = experimentalDatum.errorResistanceApparent / 100.0
             val dotY: Double = if (boundType == BoundType.UPPER_BOUND) {
-                (experimentalDatum.resistanceApparent + experimentalDatum.resistanceApparent * error).coerceAtLeast(0.0)
+                (experimentalDatum.resistanceApparent + experimentalDatum.resistanceApparent * error)
+                    .coerceAtLeast(0.0)
             } else {
-                (experimentalDatum.resistanceApparent - experimentalDatum.resistanceApparent * error).coerceAtLeast(0.0)
+                (experimentalDatum.resistanceApparent - experimentalDatum.resistanceApparent * error)
+                    .coerceAtLeast(0.0)
             }
             points.add(Point(dotX, dotY))
         }
@@ -41,7 +43,7 @@ class VesCurvesConverter @Inject constructor(
 
     fun theoreticalCurveOf(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Point> {
         if (experimentalData.isEmpty() || modelData.isEmpty()) {
-            return ArrayList()
+            return mutableListOf()
         }
         val solvedResistance: List<Double> = forwardSolver(experimentalData, modelData)
         val points: MutableList<Point> = mutableListOf()
