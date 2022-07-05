@@ -78,7 +78,7 @@
                                     <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                HBox.hgrow="ALWAYS">
                                         <fx:include source="../charts/PseudoSection.fxml"/>
-                                        <fx:include fx:id="crossSection" source="../charts/CrossSection.fxml"/>
+                                        <fx:include fx:id="crossSection" source="../charts/ModelSection.fxml"/>
                                     </SplitPane>
                                 </VBox>
                             </HBox>

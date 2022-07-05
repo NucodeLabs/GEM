@@ -14,7 +14,7 @@ import java.net.URL
 import java.util.*
 import javax.inject.Inject
 
-class CrossSectionController @Inject constructor(
+class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
 ) : AbstractController() {
 

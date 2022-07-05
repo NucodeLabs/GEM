@@ -8,7 +8,7 @@
       maxHeight="Infinity"
       maxWidth="Infinity"
       VBox.vgrow="ALWAYS"
-      fx:controller="ru.nucodelabs.gem.view.charts.CrossSectionController"
+      fx:controller="ru.nucodelabs.gem.view.charts.ModelSectionController"
       stylesheets="@CrossSection.css">
 
     <AreaChart fx:id="chart" maxWidth="Infinity"
