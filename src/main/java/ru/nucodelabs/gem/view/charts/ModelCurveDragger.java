@@ -154,13 +154,13 @@ public class ModelCurveDragger {
                 double newValue1 = initialValue1 + diff;
 
                 ModelLayer old1 = modelData.get(index1);
-                modelData.set(index1, ModelLayer.create(newValue1, old1.getResistance()));
+                modelData.set(index1, ModelLayer.createNotFixed(newValue1, old1.getResistance()));
 
                 if (index2 < modelData.size() - 1) {
                     double initialValue2 = modelData.get(index2).getPower();
                     double newValue2 = initialValue2 - diff;
                     ModelLayer old2 = modelData.get(index2);
-                    modelData.set(index2, ModelLayer.create(newValue2, old2.getResistance()));
+                    modelData.set(index2, ModelLayer.createNotFixed(newValue2, old2.getResistance()));
                 }
 
             } else if (Objects.equals(point1.getYValue(), point2.getYValue()) // горизонтальная линия
@@ -170,7 +170,7 @@ public class ModelCurveDragger {
                 int index = pointResistanceMap.get(point1);
                 double newValue = pow(10, mouseY);
                 ModelLayer old = modelData.get(index);
-                modelData.set(index, ModelLayer.create(old.getPower(), newValue));
+                modelData.set(index, ModelLayer.createNotFixed(old.getPower(), newValue));
             }
         }
         return modelData;

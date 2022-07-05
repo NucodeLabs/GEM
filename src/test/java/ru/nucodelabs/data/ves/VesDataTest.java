@@ -25,9 +25,9 @@ public class VesDataTest {
     @BeforeAll
     static void prepare() {
         List<ModelLayer> layers = new ArrayList<>();
-        layers.add(ModelLayer.create(12, 12));
-        layers.add(ModelLayer.create(13, 13));
-        layers.add(ModelLayer.create(-1, -1));
+        layers.add(ModelLayer.createNotFixed(12, 12));
+        layers.add(ModelLayer.createNotFixed(13, 13));
+        layers.add(ModelLayer.createNotFixed(-1, -1));
         vesModelData = layers;
 
         vesExperimentalData = Collections.emptyList();
@@ -70,7 +70,7 @@ public class VesDataTest {
         Assertions.assertEquals("Пикет", picket2.getName());
         Assertions.assertEquals(0, picket2.getZ());
 
-        Assertions.assertEquals(vesModelData.get(0), ModelLayer.create(12, 12));
+        Assertions.assertEquals(vesModelData.get(0), ModelLayer.createNotFixed(12, 12));
     }
 
     @Test

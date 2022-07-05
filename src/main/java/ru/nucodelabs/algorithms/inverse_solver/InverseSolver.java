@@ -39,7 +39,8 @@ public class InverseSolver {
                 ABSOLUTE_THRESHOLD_DEFAULT,
                 new FunctionValue(
                         picket.getExperimentalData(),
-                        new SquaresDiff())
+                        new SquaresDiff(),
+                        picket.getModelData())
         );
     }
 
@@ -104,7 +105,7 @@ public class InverseSolver {
         List<ModelLayer> res = new ArrayList<>();
 
         for (int i = 0; i < modelData.size(); i++) {
-            res.add(ModelLayer.create(newModelPower.get(i), newModelResistance.get(i)));
+            res.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
         }
 
         return res;
