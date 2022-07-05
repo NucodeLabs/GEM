@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 record ModelLayerImpl(
         double resistance,
-        double power
+        double power,
+        boolean fixed
 ) implements ModelLayer, Serializable {
         @Override
         public double getPower() {
@@ -14,5 +15,10 @@ record ModelLayerImpl(
         @Override
         public double getResistance() {
                 return resistance();
+        }
+
+        @Override
+        public boolean isFixed() {
+                return fixed();
         }
 }
