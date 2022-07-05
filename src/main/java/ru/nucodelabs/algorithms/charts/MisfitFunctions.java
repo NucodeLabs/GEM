@@ -1,6 +1,6 @@
 package ru.nucodelabs.algorithms.charts;
 
-class MisfitFunctions {
+final class MisfitFunctions {
     static {
         System.loadLibrary("misfit");
     }

@@ -2,6 +2,7 @@ package ru.nucodelabs.algorithms.inverse_solver.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolverKt;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
@@ -37,7 +38,7 @@ public class FunctionValue implements MultivariateFunction {
             modelLayers.add(ModelLayer.create(currentModelPower.get(i), currentModelResistance.get(i)));
         }
 
-        List<Double> solvedResistance = ForwardSolver.getDefaultImpl().solve(experimentalData, modelLayers);
+        List<Double> solvedResistance = (List<Double>) ForwardSolverKt.ForwardSolver().invoke(experimentalData, modelLayers);
 
         return inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
