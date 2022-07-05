@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Deprecated
 public class CrossSectionController extends AbstractController {
 
     private final ObservableObjectValue<Section> section;
