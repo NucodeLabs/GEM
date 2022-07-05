@@ -10,13 +10,12 @@ import javafx.fxml.FXML
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import ru.nucodelabs.algorithms.charts.VesCurvesConverter
-import ru.nucodelabs.algorithms.charts.x
-import ru.nucodelabs.algorithms.charts.y
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
@@ -26,6 +25,7 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.log10
@@ -36,7 +36,8 @@ class VESCurvesController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val sectionManager: SectionManager,
     private val historyManager: HistoryManager<Section>,
-    private val vesCurvesConverter: VesCurvesConverter
+    private val vesCurvesConverter: VesCurvesConverter,
+    private val decimalFormat: DecimalFormat
 ) : AbstractController() {
 
     @FXML
@@ -57,11 +58,13 @@ class VESCurvesController @Inject constructor(
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDragging = false
+    private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
             if (isDragging) {
                 updateTheoreticalCurve()
+                addTooltips()
             } else {
                 if (newValue != null) {
                     update()
@@ -73,7 +76,7 @@ class VESCurvesController @Inject constructor(
         uiProperties = resources
         modelCurveDragger = ModelCurveDragger(
             { pointInScene ->
-                XYChart.Data(
+                Data(
                     lineChartXAxis.getValueForDisplay(
                         lineChartXAxis.sceneToLocal(pointInScene).x
                     ) as Double,
@@ -89,20 +92,32 @@ class VESCurvesController @Inject constructor(
     }
 
     private fun update() {
+        tooltips.clear()
         lineChart.animated = false
         lineChartYAxis.isAutoRanging = true
         updateExpCurves()
         updateTheoreticalCurve()
         updateModelCurve()
+        addTooltips()
+    }
+
+    // tooltips must be added after nodes shown on screen, otherwise it doesn't work
+    private fun addTooltips() {
+        for (series in lineChart.data) {
+            for (dataPoint in series.data) {
+                tooltips[dataPoint]?.let { Tooltip.install(dataPoint.node, it) }
+            }
+        }
     }
 
     private fun updateTheoreticalCurve() {
         val theorCurveSeries = Series<Double, Double>()
         try {
             theorCurveSeries.data.addAll(
-                vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData).map {
-                    XYChart.Data(log10(it.x), log10(it.y))
-                }
+                vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData)
+                    .mapIndexed { i, (x, y) ->
+                        Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
+                    }
             )
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
@@ -114,12 +129,13 @@ class VESCurvesController @Inject constructor(
     private fun updateModelCurve() {
         val modelCurveSeries = Series<Double, Double>()
         modelCurveSeries.data.addAll(
-            vesCurvesConverter.modelCurveOf(picket.modelData).map {
-                XYChart.Data(log10(it.x), log10(it.y))
+            vesCurvesConverter.modelCurveOf(picket.modelData).map { (x, y) ->
+                Data(log10(x), log10(y)).also { tooltips += it to tooltipForModel(x, y) }
             }
         )
         modelCurveSeries.name = uiProperties["modCurve"]
         dataProperty.get()[MOD_CURVE_SERIES_INDEX] = modelCurveSeries
+
         addDraggingToModelCurveSeries(modelCurveSeries)
     }
 
@@ -152,8 +168,8 @@ class VESCurvesController @Inject constructor(
 
     private fun updateExpCurves() {
         val expCurveSeries = Series(
-            vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
-                XYChart.Data(log10(it.x), log10(it.y))
+            vesCurvesConverter.experimentalCurveOf(picket.experimentalData).mapIndexed { i, (x, y) ->
+                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         expCurveSeries.name = uiProperties["expCurve"]
@@ -162,8 +178,8 @@ class VESCurvesController @Inject constructor(
             vesCurvesConverter.experimentalCurveErrorBoundOf(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.UPPER_BOUND
-            ).map {
-                XYChart.Data(log10(it.x), log10(it.y))
+            ).mapIndexed { i, (x, y) ->
+                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errUpperExp.name = uiProperties["expCurveUpper"]
@@ -172,8 +188,8 @@ class VESCurvesController @Inject constructor(
             vesCurvesConverter.experimentalCurveErrorBoundOf(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.LOWER_BOUND
-            ).map {
-                XYChart.Data(log10(it.x), log10(it.y))
+            ).mapIndexed { i, (x, y) ->
+                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errLowerExp.name = uiProperties["expCurveLower"]
@@ -184,6 +200,18 @@ class VESCurvesController @Inject constructor(
     }
 
     fun legendVisibleProperty(): BooleanProperty = lineChart.legendVisibleProperty()
+
+    private fun tooltip(n: Int, x: Double, y: Double) =
+        Tooltip(
+            """
+               №${n + 1}
+               AB/2 = ${decimalFormat.format(x)} m
+               ρₐ = ${decimalFormat.format(y)} Ω‧m
+            """.trimIndent()
+        )
+
+    private fun tooltipForModel(x: Double, y: Double) =
+        Tooltip("Z = ${decimalFormat.format(picket.z - x)} m\nρ = ${decimalFormat.format(y)} Ω‧m")
 
     companion object Order {
         const val EXP_CURVE_SERIES_INDEX = 0
