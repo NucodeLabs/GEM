@@ -3,6 +3,8 @@ package ru.nucodelabs.algorithms.interpolation;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.PixelWriter;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
 import ru.nucodelabs.gem.view.color_palette.ColorPalette;
@@ -16,13 +18,6 @@ public class PseudoInterpolator {
     //Расстояние от пикета до нуля
     private final List<Double> xs = new ArrayList<>();
     private final ColorPalette colorPalette;
-    //Список всех ab_2 пикетов
-    //private final List<List<Double>> abs = new ArrayList<>();
-    //Список всех сопротивлений пикетов
-    //private final List<List<Double>> resistances = new ArrayList<>();
-
-    private Double minRo = 0d;
-    private Double maxRo = 0d;
 
     //Линии по общим для всех пикетов ab_2
     private final List<Line> lines = new ArrayList<>();
@@ -37,33 +32,17 @@ public class PseudoInterpolator {
             lines.add(new Line(listList.get(0).get(i).getYValue()));
         }
 
-        minRo = (Double) listList.get(0).get(0).getExtraValue();
-
         //Разбор пикетов
-        for (int i = 0; i < listList.size(); i++) {
-            List<XYChart.Data<Double, Double>> currentList = listList.get(i);
+        for (List<XYChart.Data<Double, Double>> currentList : listList) {
             xs.add(currentList.get(0).getXValue());
-//            abs.add(new ArrayList<>());
-//            resistances.add(new ArrayList<>());
 
-            double currentPicketLinesCnt = 0;
-
-            //Разбор пикета
-//            for (XYChart.Data<Double, Double> data : currentList) {
-//                abs.get(i).add(data.getYValue());
-//                resistances.get(i).add((Double) data.getExtraValue());
-//            }
             for (int j = 0; j < minLinesCnt; j++) {
                 double currentResistance = (Double) currentList.get(j).getExtraValue();
                 lines.get(j).addResistance(currentResistance);
-                minRo = Math.min(minRo, currentResistance);
-                maxRo = Math.max(maxRo, currentResistance);
             }
         }
 
-//        colorPalette.setMinValue(minRo);
-//        colorPalette.setMaxValue(maxRo);
-
+        //Удаление одинаковых линий
         for (int i = 1; i < lines.size(); i++) {
             if (Objects.equals(lines.get(i).getAb_2(), lines.get(i - 1).getAb_2())) {
                 lines.remove(i);
@@ -88,7 +67,14 @@ public class PseudoInterpolator {
         return interpolator.interpolate(xval, yval, fval);
     }
 
-    public void paint(Canvas canvas) throws Exception {
+    public void paint(Canvas canvas) {
+        if (xs.size() <= 1) {
+            var gc = canvas.getGraphicsContext2D();
+            gc.setFill(Color.WHITE);
+            gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            return;
+        }
+
         PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 
         double rangeY = lines.get(lines.size() - 1).getAb_2() - lines.get(0).getAb_2();
