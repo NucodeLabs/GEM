@@ -16,14 +16,8 @@ public class PrimaryModel {
 
     public List<ModelLayer> get3LayersPrimaryModel() {
         List<ExperimentalData> logExperimentalData = experimentalData.stream()
-                .map(experimentalData -> ExperimentalData.create(
-                        Math.log(experimentalData.getAb2()),
-                        experimentalData.getMn2(),
-                        experimentalData.getResistanceApparent(),
-                        experimentalData.getErrorResistanceApparent(),
-                        experimentalData.getAmperage(),
-                        experimentalData.getVoltage())
-                ).toList();
+                .map(experimentalData -> experimentalData.withAb2(Math.log(experimentalData.getAb2())))
+                .toList();
         int pointsCnt = logExperimentalData.size();
         double ab2max = logExperimentalData.get(pointsCnt - 1).getAb2();
         List<List<ExperimentalData>> logSplitData = new ArrayList<>();
@@ -38,13 +32,13 @@ public class PrimaryModel {
                 .collect(Collectors.toList()));
         List<ModelLayer> modelLayers = new ArrayList<>();
         for (int i = 0; i < logSplitData.size(); i++) {
-            double avg = 0.0;
             double prevLast;
             List<ExperimentalData> list = logSplitData.get(i);
-            for (ExperimentalData myExperimentalData:list) {
-                avg += myExperimentalData.getResistanceApparent();
-            }
-            avg /= list.size();
+            double avg = list.stream()
+                    .map(ExperimentalData::getResistanceApparent)
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0);
             if (i > 0) {
                 prevLast = Math.exp(logSplitData.get(i - 1).get(logSplitData.get(i - 1).size() - 1).getAb2());
             } else {
