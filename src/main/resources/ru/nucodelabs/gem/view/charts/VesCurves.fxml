@@ -36,7 +36,7 @@
         </HBox>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
-               onMouseDragged="#navigateUsingDrag" onMousePressed="#startDrag">
+               onMouseDragged="#chartOnMouseDragged" onMousePressed="#chartOnMousePressed">
         <xAxis>
             <NumberAxis fx:id="lineChartXAxis"
                         forceZeroInRange="false"
