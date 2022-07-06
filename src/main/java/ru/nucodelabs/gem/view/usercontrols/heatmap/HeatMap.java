@@ -1,16 +1,17 @@
 package ru.nucodelabs.gem.view.usercontrols.heatmap;
 
+import javafx.beans.NamedArg;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
@@ -21,22 +22,44 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static javafx.beans.binding.Bindings.when;
+
 public class HeatMap extends VBUserControl {
 
-    private final StringProperty xAxisLabel = new SimpleStringProperty("X");
-    private final StringProperty yAxisLabel = new SimpleStringProperty("Y");
     @FXML
     private Canvas canvas;
     @FXML
     private VBox container;
+    private final ObjectProperty<NumberAxis> xAxis = new SimpleObjectProperty<>();
+    private final ObjectProperty<NumberAxis> yAxis = new SimpleObjectProperty<>();
     @FXML
-    private NumberAxis xAxis;
-    @FXML
-    private NumberAxis yAxis;
+    private Pane pane;
 
     private final ObjectProperty<ColorMapper> colorPalette = new SimpleObjectProperty<>();
 
-    public HeatMap() {
+    public HeatMap(@NamedArg("xAxis") NumberAxis xAxis, @NamedArg("yAxis") NumberAxis yAxis) {
+        setXAxis(xAxis);
+        setYAxis(yAxis);
+
+        pane.getChildren().addAll(xAxis, yAxis);
+
+        setupAxes();
+        setupCanvas();
+
+        xAxisProperty().addListener((observable, oldValue, newValue) -> {
+            pane.getChildren().remove(oldValue);
+            pane.getChildren().add(newValue);
+            setupAxes();
+            setupCanvas();
+        });
+
+        yAxisProperty().addListener(((observable, oldValue, newValue) -> {
+            pane.getChildren().remove(oldValue);
+            pane.getChildren().add(newValue);
+            setupAxes();
+            setupCanvas();
+        }));
+
         canvas.widthProperty().addListener((observable, oldValue, newValue) -> repaint());
         canvas.heightProperty().addListener(((observable, oldValue, newValue) -> repaint()));
 
@@ -56,9 +79,74 @@ public class HeatMap extends VBUserControl {
                 newValue.minValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
             }
         });
+    }
 
-        xAxis.labelProperty().bind(xAxisLabel);
-        yAxis.labelProperty().bind(yAxisLabel);
+    private void setupCanvas() {
+        canvas.widthProperty().unbind();
+        canvas.widthProperty().bind(
+                pane.widthProperty().subtract(getYAxis().widthProperty())
+        );
+
+        canvas.heightProperty().unbind();
+        canvas.heightProperty().bind(
+                pane.heightProperty().subtract(getXAxis().heightProperty())
+        );
+
+        canvas.layoutYProperty().unbind();
+        canvas.layoutYProperty().bind(
+                when(getXAxis().sideProperty().isEqualTo(Side.TOP))
+                        .then(getXAxis().heightProperty())
+                        .otherwise(0)
+        );
+
+        canvas.layoutXProperty().unbind();
+        canvas.layoutXProperty().bind(
+                when(getYAxis().sideProperty().isEqualTo(Side.LEFT))
+                        .then(getYAxis().widthProperty())
+                        .otherwise(0)
+        );
+    }
+
+    private void setupAxes() {
+        getXAxis().setAutoRanging(false);
+        getYAxis().setAutoRanging(false);
+
+        getXAxis().prefWidthProperty().unbind();
+        getXAxis().prefWidthProperty().bind(canvas.widthProperty());
+
+        getXAxis().layoutYProperty().unbind();
+        getXAxis().layoutYProperty().bind(
+                when(getXAxis().sideProperty().isEqualTo(Side.BOTTOM))
+                        .then(canvas.heightProperty())
+                        .otherwise(0)
+        );
+
+        getXAxis().layoutXProperty().unbind();
+        getXAxis().layoutXProperty().bind(
+                when(getYAxis().sideProperty().isEqualTo(Side.LEFT))
+                        .then(getYAxis().widthProperty())
+                        .otherwise(0)
+        );
+
+
+        getYAxis().prefHeightProperty().unbind();
+        getYAxis().prefHeightProperty().bind(canvas.heightProperty());
+
+        getYAxis().layoutXProperty().unbind();
+        getYAxis().layoutXProperty().bind(
+                when(getYAxis().sideProperty().isEqualTo(Side.RIGHT))
+                        .then(canvas.widthProperty())
+                        .otherwise(0)
+        );
+
+        getYAxis().layoutYProperty().unbind();
+        getYAxis().layoutYProperty().bind(
+                when(getXAxis().sideProperty().isEqualTo(Side.TOP))
+                        .then(getXAxis().heightProperty())
+                        .otherwise(0)
+        );
+
+
     }
 
     private void update() {
@@ -76,7 +164,8 @@ public class HeatMap extends VBUserControl {
 
         if (!lists.isEmpty()) {
             try {
-                lists.get(0).forEach(dt -> dt.setXValue(0d));
+//                lists.get(0).forEach(dt -> dt.setXValue(0d));
+                lists.set(0, lists.get(0).stream().map(dt -> new XYChart.Data<>(0.0, dt.getYValue(), dt.getExtraValue())).toList());
                 new PseudoInterpolator(lists, colorPalette.get()).paint(canvas);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -88,11 +177,11 @@ public class HeatMap extends VBUserControl {
     }
 
     private void updateAxes() {
-        xAxis.setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).min().orElse(0));
-        xAxis.setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).max().orElse(100));
+        getXAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).min().orElse(0));
+        getXAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).max().orElse(100));
 
-        yAxis.setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
-        yAxis.setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
+        getYAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
+        getYAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
     }
 
     private final ObjectProperty<ObservableList<XYChart.Data<Double, Double>>> data
@@ -122,27 +211,27 @@ public class HeatMap extends VBUserControl {
         return colorPalette;
     }
 
-    public String getXAxisLabel() {
-        return xAxisLabel.get();
+    public NumberAxis getXAxis() {
+        return xAxis.get();
     }
 
-    public void setXAxisLabel(String xAxisLabel) {
-        this.xAxisLabel.set(xAxisLabel);
+    public void setXAxis(NumberAxis xAxis) {
+        this.xAxis.set(xAxis);
     }
 
-    public StringProperty xAxisLabelProperty() {
-        return xAxisLabel;
+    public ObjectProperty<NumberAxis> xAxisProperty() {
+        return xAxis;
     }
 
-    public String getYAxisLabel() {
-        return yAxisLabel.get();
+    public NumberAxis getYAxis() {
+        return yAxis.get();
     }
 
-    public void setYAxisLabel(String yAxisLabel) {
-        this.yAxisLabel.set(yAxisLabel);
+    public void setYAxis(NumberAxis yAxis) {
+        this.yAxis.set(yAxis);
     }
 
-    public StringProperty yAxisLabelProperty() {
-        return yAxisLabel;
+    public ObjectProperty<NumberAxis> yAxisProperty() {
+        return yAxis;
     }
 }

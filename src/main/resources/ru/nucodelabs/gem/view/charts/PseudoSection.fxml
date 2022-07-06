@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap?>
@@ -12,6 +13,12 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
     <Label text="%pseudoSection" styleClass="uclabel"/>
-    <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0"
-             xAxisLabel="X (m)" yAxisLabel="AB/2 (m)"/>
+    <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0">
+        <xAxis>
+            <NumberAxis fx:id="xAxis" side="TOP" label="X (m)" minorTickVisible="false"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false"/>
+        </yAxis>
+    </HeatMap>
 </VBox>

@@ -14,11 +14,12 @@
     <AreaChart fx:id="chart" maxWidth="Infinity"
                maxHeight="Infinity" animated="false" legendVisible="false">
         <xAxis>
-            <NumberAxis fx:id="xAxis" label="X (m)" side="TOP" prefWidth="-Infinity" autoRanging="false"/>
+            <NumberAxis fx:id="xAxis" label="X (m)" side="TOP" prefWidth="-Infinity" autoRanging="false"
+                        minorTickVisible="false"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
-                        autoRanging="false"/>
+                        autoRanging="false" minorTickVisible="false"/>
         </yAxis>
     </AreaChart>
 </VBox>
