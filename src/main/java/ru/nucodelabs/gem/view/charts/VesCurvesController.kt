@@ -8,7 +8,6 @@ import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
-import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
@@ -87,7 +86,7 @@ class VesCurvesController @Inject constructor(
         lineChart.dataProperty().bind(dataProperty)
         uiProperties = resources
         modelCurveDragger = ModelCurveDragger(
-            pointInSceneToValue,
+            (lineChartXAxis to lineChartYAxis)::valueForSceneCoordinates,
             dataProperty,
             MOD_CURVE_SERIES_INDEX,
             1.0
@@ -95,24 +94,12 @@ class VesCurvesController @Inject constructor(
 
         dragViewSupport = DragViewSupport(
             xAxis = lineChartXAxis,
-            yAxis = lineChartYAxis,
-            sceneToValueForAxis = pointInSceneToValue
+            yAxis = lineChartYAxis
         )
 
         zoomSupport = ZoomSupport(
             xAxis = lineChartXAxis,
             yAxis = lineChartYAxis
-        )
-    }
-
-    private val pointInSceneToValue = { pointInScene: Point2D ->
-        Data(
-            lineChartXAxis.getValueForDisplay(
-                lineChartXAxis.sceneToLocal(pointInScene).x
-            ) as Double,
-            lineChartYAxis.getValueForDisplay(
-                lineChartYAxis.sceneToLocal(pointInScene).y
-            ) as Double
         )
     }
 
@@ -179,7 +166,7 @@ class VesCurvesController @Inject constructor(
             isDraggingModel = true
             sectionManager.update(
                 picket.withModelData(
-                    modelCurveDragger.dragHandler(e, picket.modelData)
+                    modelCurveDragger.handleMouseDragged(e, picket.modelData)
                 )
             )
         }

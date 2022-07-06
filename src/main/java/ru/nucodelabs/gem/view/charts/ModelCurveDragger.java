@@ -119,7 +119,7 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse dragged event
      * @param modelData  model data
      */
-    public List<ModelLayer> dragHandler(MouseEvent mouseEvent, List<ModelLayer> modelData) {
+    public List<ModelLayer> handleMouseDragged(MouseEvent mouseEvent, List<ModelLayer> modelData) {
         Objects.requireNonNull(modelData);
 
         mapModelData(modelData);

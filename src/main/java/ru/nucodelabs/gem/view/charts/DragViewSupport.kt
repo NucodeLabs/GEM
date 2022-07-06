@@ -1,8 +1,6 @@
 package ru.nucodelabs.gem.view.charts
 
-import javafx.geometry.Point2D
 import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart
 import javafx.scene.input.MouseEvent
 
 /**
@@ -11,7 +9,6 @@ import javafx.scene.input.MouseEvent
 class DragViewSupport(
     val xAxis: NumberAxis,
     val yAxis: NumberAxis,
-    val sceneToValueForAxis: (Point2D) -> XYChart.Data<Double, Double>,
     val sensitivity: Double = 1.0,
 ) {
 
@@ -23,8 +20,9 @@ class DragViewSupport(
     fun handleMouseDragged(mouseEvent: MouseEvent) {
         val (startX, startY) = dragStart
 
-        val start = sceneToValueForAxis(Point2D(startX, startY))
-        val now = sceneToValueForAxis(Point2D(mouseEvent.sceneX, mouseEvent.sceneY))
+        val axes = xAxis to yAxis
+        val start = axes.valueForSceneCoordinates(startX, startY)
+        val now = axes.valueForMouseCoordinates(mouseEvent)
 
         val distX = (now.xValue - start.xValue) * sensitivity
         val distY = (now.yValue - start.yValue) * sensitivity
