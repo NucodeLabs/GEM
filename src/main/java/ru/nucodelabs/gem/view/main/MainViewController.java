@@ -27,6 +27,7 @@ import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
+import ru.nucodelabs.gem.view.charts.MisfitStacksController;
 import ru.nucodelabs.gem.view.charts.VesCurvesController;
 
 import javax.inject.Inject;
@@ -72,6 +73,8 @@ public class MainViewController extends AbstractController implements FileImport
     private NoFileScreenController noFileScreenController;
     @FXML
     private VesCurvesController vesCurvesController;
+    @FXML
+    private MisfitStacksController misfitStacksController;
 
     @Inject
     private ObservableObjectValue<Picket> picket;
@@ -143,6 +146,15 @@ public class MainViewController extends AbstractController implements FileImport
 
         setupValidationOnPicketXZ(picketOffsetX);
         setupValidationOnPicketXZ(picketZ);
+        syncMisfitAndVesXAxes();
+    }
+
+    private void syncMisfitAndVesXAxes() {
+        misfitStacksController.getLineChartXAxis().lowerBoundProperty().bind(
+                vesCurvesController.getLineChartXAxis().lowerBoundProperty());
+
+        misfitStacksController.getLineChartXAxis().upperBoundProperty().bind(
+                vesCurvesController.getLineChartXAxis().upperBoundProperty());
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField tf) {
