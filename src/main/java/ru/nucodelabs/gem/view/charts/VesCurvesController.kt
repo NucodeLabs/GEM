@@ -46,7 +46,7 @@ class VesCurvesController @Inject constructor(
     private lateinit var lineChart: LineChart<Double, Double>
 
     @FXML
-    private lateinit var lineChartXAxis: NumberAxis
+    lateinit var lineChartXAxis: NumberAxis
 
     @FXML
     private lateinit var lineChartYAxis: NumberAxis
