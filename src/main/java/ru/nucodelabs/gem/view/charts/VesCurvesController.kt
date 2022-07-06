@@ -31,7 +31,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.log10
 
-class VESCurvesController @Inject constructor(
+class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
     private val alertsFactory: AlertsFactory,
