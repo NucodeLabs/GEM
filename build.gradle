@@ -38,6 +38,7 @@ repositories {
 }
 
 ext {
+    jfxVersion = '18.0.1'
     // Platform Info
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
@@ -88,7 +89,7 @@ application {
 }
 
 javafx {
-    version = "17.0.2"
+    version = jfxVersion
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
 }
 
@@ -96,7 +97,7 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
-    testImplementation 'org.openjfx:javafx:17.0.2'
+    testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
