@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
+import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.geometry.Point2D
@@ -16,6 +17,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
+import javafx.util.Duration
 import ru.nucodelabs.algorithms.charts.VesCurvesConverter
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
@@ -67,6 +69,7 @@ class VesCurvesController @Inject constructor(
     private val X_MAX_LOG = 10.0
     private val Y_MIN_LOG = -2.0
     private val Y_MAX_LOG = 10.0
+    private val ZOOM_DELTA_LOG = 0.1
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
@@ -219,10 +222,13 @@ class VesCurvesController @Inject constructor(
                AB/2 = ${decimalFormat.format(x)} m
                ρₐ = ${decimalFormat.format(y)} Ω‧m
             """.trimIndent()
-        )
+        ).halfSecondDelay()
 
     private fun tooltipForModel(x: Double, y: Double) =
         Tooltip("Z = ${decimalFormat.format(picket.z - x)} m\nρ = ${decimalFormat.format(y)} Ω‧m")
+            .halfSecondDelay()
+
+    private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
 
     @FXML
     private fun navigateUsingDrag(mouseEvent: MouseEvent) {
@@ -249,6 +255,24 @@ class VesCurvesController @Inject constructor(
     @FXML
     private fun startDrag(mouseEvent: MouseEvent) {
         dragStart = mouseEvent.sceneX to mouseEvent.sceneY
+    }
+
+    @FXML
+    private fun zoomIn(actionEvent: ActionEvent) {
+        lineChartXAxis.lowerBound += ZOOM_DELTA_LOG
+        lineChartXAxis.upperBound -= ZOOM_DELTA_LOG
+
+        lineChartYAxis.lowerBound += ZOOM_DELTA_LOG
+        lineChartXAxis.upperBound -= ZOOM_DELTA_LOG
+    }
+
+    @FXML
+    private fun zoomOut(actionEvent: ActionEvent) {
+        lineChartXAxis.lowerBound -= ZOOM_DELTA_LOG
+        lineChartXAxis.upperBound += ZOOM_DELTA_LOG
+
+        lineChartYAxis.lowerBound -= ZOOM_DELTA_LOG
+        lineChartXAxis.upperBound += ZOOM_DELTA_LOG
     }
 
 //    fun zoomUsingScroll(scrollEvent: ScrollEvent) {
