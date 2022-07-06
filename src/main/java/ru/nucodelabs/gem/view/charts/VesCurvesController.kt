@@ -60,7 +60,7 @@ class VesCurvesController @Inject constructor(
 
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
-    private var isDragging = false
+    private var isDraggingModel = false
     private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
     private lateinit var dragStart: Pair<Double, Double>
@@ -73,7 +73,7 @@ class VesCurvesController @Inject constructor(
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
-            if (isDragging) {
+            if (isDraggingModel) {
                 updateTheoreticalCurve()
                 addTooltips()
             } else {
@@ -157,14 +157,14 @@ class VesCurvesController @Inject constructor(
         modelCurveSeries.node.cursor = Cursor.HAND
         modelCurveSeries.node.onMousePressed = EventHandler { e: MouseEvent ->
             modelCurveSeries.node.requestFocus()
-            isDragging = true
+            isDraggingModel = true
 //            lineChart.animated = false
 //            lineChartYAxis.isAutoRanging = false
             modelCurveDragger.detectPoints(e)
             modelCurveDragger.setStyle()
         }
         modelCurveSeries.node.onMouseDragged = EventHandler { e: MouseEvent ->
-            isDragging = true
+            isDraggingModel = true
             sectionManager.update(
                 picket.withModelData(
                     modelCurveDragger.dragHandler(e, picket.modelData)
@@ -174,7 +174,7 @@ class VesCurvesController @Inject constructor(
         modelCurveSeries.node.onMouseReleased = EventHandler {
             historyManager.snapshot()
             modelCurveDragger.resetStyle()
-            isDragging = false
+            isDraggingModel = false
 //            lineChart.animated = true
 //            lineChartYAxis.isAutoRanging = true
         }
@@ -232,7 +232,7 @@ class VesCurvesController @Inject constructor(
 
     @FXML
     private fun navigateUsingDrag(mouseEvent: MouseEvent) {
-        if (mouseEvent.isShortcutDown) {
+        if (!isDraggingModel) {
             val (startX, startY) = dragStart
 
             val start = pointInSceneToValue(Point2D(startX, startY))
