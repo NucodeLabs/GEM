@@ -63,7 +63,8 @@ class VesCurvesController @Inject constructor(
     private var isDraggingModel = false
     private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
-    private lateinit var dragStart: Pair<Double, Double>
+    private lateinit var dragViewSupport: DragViewSupport
+    private lateinit var zoomSupport: ZoomSupport
 
     private val X_MIN_LOG = -2.0
     private val X_MAX_LOG = 10.0
@@ -90,6 +91,17 @@ class VesCurvesController @Inject constructor(
             dataProperty,
             MOD_CURVE_SERIES_INDEX,
             1.0
+        )
+
+        dragViewSupport = DragViewSupport(
+            xAxis = lineChartXAxis,
+            yAxis = lineChartYAxis,
+            sceneToValueForAxis = pointInSceneToValue
+        )
+
+        zoomSupport = ZoomSupport(
+            xAxis = lineChartXAxis,
+            yAxis = lineChartYAxis
         )
     }
 
@@ -231,49 +243,24 @@ class VesCurvesController @Inject constructor(
     private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
 
     @FXML
-    private fun navigateUsingDrag(mouseEvent: MouseEvent) {
+    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
         if (!isDraggingModel) {
-            val (startX, startY) = dragStart
-
-            val start = pointInSceneToValue(Point2D(startX, startY))
-            val now = pointInSceneToValue(Point2D(mouseEvent.sceneX, mouseEvent.sceneY))
-
-            val sensitivity = 1
-            val distX = (now.xValue - start.xValue) * sensitivity
-            val distY = (now.yValue - start.yValue) * sensitivity
-
-            lineChartXAxis.lowerBound -= distX
-            lineChartXAxis.upperBound -= distX
-
-            lineChartYAxis.lowerBound -= distY
-            lineChartYAxis.upperBound -= distY
-
-            dragStart = mouseEvent.sceneX to mouseEvent.sceneY
+            dragViewSupport.handleMouseDragged(mouseEvent)
         }
     }
 
     @FXML
-    private fun startDrag(mouseEvent: MouseEvent) {
-        dragStart = mouseEvent.sceneX to mouseEvent.sceneY
+    private fun chartOnMousePressed(mouseEvent: MouseEvent) {
+        if (!isDraggingModel) {
+            dragViewSupport.handleMousePressed(mouseEvent)
+        }
     }
 
     @FXML
-    private fun zoomIn(actionEvent: ActionEvent) {
-        lineChartXAxis.lowerBound += ZOOM_DELTA_LOG
-        lineChartXAxis.upperBound -= ZOOM_DELTA_LOG
-
-        lineChartYAxis.lowerBound += ZOOM_DELTA_LOG
-        lineChartXAxis.upperBound -= ZOOM_DELTA_LOG
-    }
+    private fun zoomIn(actionEvent: ActionEvent) = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
 
     @FXML
-    private fun zoomOut(actionEvent: ActionEvent) {
-        lineChartXAxis.lowerBound -= ZOOM_DELTA_LOG
-        lineChartXAxis.upperBound += ZOOM_DELTA_LOG
-
-        lineChartYAxis.lowerBound -= ZOOM_DELTA_LOG
-        lineChartXAxis.upperBound += ZOOM_DELTA_LOG
-    }
+    private fun zoomOut(actionEvent: ActionEvent) = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
 
 //    fun zoomUsingScroll(scrollEvent: ScrollEvent) {
 //        if (scrollEvent.isShortcutDown) {
