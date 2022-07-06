@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <fx:root xmlns:fx="http://javafx.com/fxml" type="javafx.scene.layout.VBox"
          xmlns="http://javafx.com/javafx"
          fx:id="container">
-    <Canvas fx:id="canvas" width="${container.width}" height="${container.height}"/>
+    <Pane prefWidth="${container.width}" prefHeight="${container.height}">
+        <NumberAxis fx:id="xAxis" side="TOP" autoRanging="false"
+                    prefWidth="${canvas.width}"
+                    layoutY="${canvas.height}"
+                    layoutX="${yAxis.width}"/>
+        <NumberAxis fx:id="yAxis" side="LEFT" autoRanging="false"
+                    prefHeight="${canvas.height}"/>
+        <Canvas fx:id="canvas" width="${container.width - yAxis.width}" height="${container.height - xAxis.height}"
+                layoutX="${yAxis.width}"/>
+    </Pane>
 </fx:root>
