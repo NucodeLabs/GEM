@@ -27,7 +27,7 @@ import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.charts.VesCurvesController;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -71,7 +71,7 @@ public class MainViewController extends AbstractController implements FileImport
     @FXML
     private NoFileScreenController noFileScreenController;
     @FXML
-    private VESCurvesController vesCurvesController;
+    private VesCurvesController vesCurvesController;
 
     @Inject
     private ObservableObjectValue<Picket> picket;
