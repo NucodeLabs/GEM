@@ -2,7 +2,7 @@ package ru.nucodelabs.files.color_palette;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+@Deprecated
 public class CLRData {
     private Map<Double, ColorSettings> colorMap;
 
