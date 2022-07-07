@@ -183,7 +183,7 @@ class ModelTableController @Inject constructor(
             }
             updateIfValidElseAlert(
                 picket.modelData.toMutableList().apply {
-                    add(index, ModelLayer.create(newPowerValue, newResistanceValue))
+                    add(index, ModelLayer.createNotFixed(newPowerValue, newResistanceValue))
                 }
             )
         }

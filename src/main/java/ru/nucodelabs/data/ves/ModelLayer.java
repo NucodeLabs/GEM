@@ -14,16 +14,17 @@ public interface ModelLayer extends Serializable {
     static ModelLayer create(
             double power,
             double resistance,
-            boolean fixed
+            boolean fixedPower,
+            boolean fixedResistance
     ) {
-        return new ModelLayerImpl(resistance, power, fixed);
+        return new ModelLayerImpl(power, resistance, fixedPower, fixedResistance);
     }
 
-    static ModelLayer create(
+    static ModelLayer createNotFixed(
             double power,
             double resistance
     ) {
-        return new ModelLayerImpl(resistance, power, false);
+        return new ModelLayerImpl(power, resistance, false, false);
     }
 
     /**
@@ -39,13 +40,15 @@ public interface ModelLayer extends Serializable {
     /**
      * True if layer is fixed
      */
-    boolean isFixed();
+    boolean isFixedPower();
+
+    boolean isFixedResistance();
 
     default ModelLayer withPower(double power) {
         if (power == getPower()) {
             return this;
         } else {
-            return create(power, getResistance(), isFixed());
+            return create(power, getResistance(), isFixedPower(), isFixedResistance());
         }
     }
 
@@ -53,14 +56,21 @@ public interface ModelLayer extends Serializable {
         if (resistance == getResistance()) {
             return this;
         } else {
-            return create(getPower(), resistance, isFixed());
+            return create(getPower(), resistance, isFixedPower(), isFixedResistance());
         }
     }
 
-    default ModelLayer withFixed(boolean fixed) {
-        if (fixed == isFixed()) {
+    default ModelLayer withFixedPower(boolean fixedPower) {
+        if (fixedPower == isFixedPower()) {
             return this;
         }
-        return create(getPower(), getResistance(), fixed);
+        return create(getPower(), getResistance(), fixedPower, isFixedResistance());
+    }
+
+    default ModelLayer withFixedResistance(boolean fixedResistance) {
+        if (fixedResistance == isFixedResistance()) {
+            return this;
+        }
+        return create(getPower(), getResistance(), isFixedPower(), fixedResistance);
     }
 }
