@@ -12,25 +12,6 @@ public class CLRData {
 
     public record ColorSettings(int red, int green, int blue, int opacity) {
 
-        @Override
-        public int red() {
-            return red;
-        }
-
-        @Override
-        public int green() {
-            return green;
-        }
-
-        @Override
-        public int blue() {
-            return blue;
-        }
-
-        @Override
-        public int opacity() {
-            return opacity;
-        }
     }
 
     public Map<Double, ColorSettings> getColorMap() {
@@ -39,5 +20,4 @@ public class CLRData {
 
     public void setColorMap(Map<Double, ColorSettings> colorMap) {
         this.colorMap = colorMap;
-    }
-}
+    }}
