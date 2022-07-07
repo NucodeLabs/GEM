@@ -30,6 +30,16 @@ public class ColorPalette implements ColorMapper {
             if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
             blocksInit();
         });
+        minValue.addListener((observable, oldValue, newValue) -> {
+            colorBlockList.clear();
+            if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
+            blocksInit();
+        });
+        maxValue.addListener((observable, oldValue, newValue) -> {
+            colorBlockList.clear();
+            if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
+            blocksInit();
+        });
     }
 
     /**
@@ -132,6 +142,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     private double percentageFor(double resistance) {
+        if (resistance < minValue.get()) return 0.0;
+        if (resistance > maxValue.get()) return 1.0;
         return (resistance - minValue.get()) / (maxValue.get() - minValue.get());
     }
 
