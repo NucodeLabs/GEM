@@ -14,6 +14,7 @@ import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class InverseSolver {
     private final double absoluteThreshold;
     private final ForwardSolver forwardSolver;
 
+    @Inject
     public InverseSolver(ForwardSolver forwardSolver) {
         this(
                 SIDE_LENGTH_DEFAULT,

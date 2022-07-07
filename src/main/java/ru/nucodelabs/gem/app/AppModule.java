@@ -7,6 +7,7 @@ import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.files.color_palette.CLRFileParser;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
@@ -137,5 +138,11 @@ public class AppModule extends AbstractModule {
     public ColorPalette provideColorPalette() throws Exception {
         return new ColorPalette(
                 new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
+    }
+
+    @Provides
+    @Singleton
+    ForwardSolver forwardSolver() {
+        return ForwardSolver.createDefault();
     }
 }

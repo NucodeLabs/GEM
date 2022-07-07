@@ -42,12 +42,6 @@ public class ChartsModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
-    ForwardSolver forwardSolver() {
-        return ForwardSolver.createDefault();
-    }
-
-    @Provides
     MisfitValuesFactory misfitValuesFactory(ForwardSolver forwardSolver) {
         return MisfitValuesFactory.createDefault(forwardSolver);
     }
