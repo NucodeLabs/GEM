@@ -1,15 +1,11 @@
 package ru.nucodelabs.gem.view.tables
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.BooleanProperty
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableColumn
-import javafx.scene.control.TextField
 import javafx.util.Callback
-import ru.nucodelabs.gem.utils.FXUtils
 import java.text.DecimalFormat
 import java.text.ParseException
-import java.util.function.Predicate
 
 
 fun indexCellFactory(fromOne: Boolean = true): Callback<TableColumn<Any?, Int?>, TableCell<Any, Int>> =
@@ -33,8 +29,8 @@ fun validateIndexInput(s: String): Boolean {
     return if (s.isBlank()) {
         true
     } else try {
-        val `val` = s.toInt()
-        `val` >= 0
+        val number = s.toInt()
+        number >= 0
     } catch (e: NumberFormatException) {
         false
     }
@@ -55,16 +51,6 @@ fun validateDoubleInput(s: String, decimalFormat: DecimalFormat): Boolean {
     } catch (e: ParseException) {
         false
     }
-}
-
-fun valid(
-    textField: TextField,
-    validateInput: Predicate<String>
-): BooleanProperty {
-    return FXUtils.TextFieldValidationSetup.of(textField)
-        .validateWith(validateInput)
-        .applyStyleIfInvalid("-fx-background-color: LightPink")
-        .done()
 }
 
 fun MutableList<*>.removeAllAt(indices: Collection<Int>) {
