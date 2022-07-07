@@ -2,42 +2,44 @@ package ru.nucodelabs.gem.view.color_palette;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ColorPalette implements ColorMapper {
 
     private final List<ValueColor> valueColorList;
-    private final DoubleProperty minValue;
-    private final DoubleProperty maxValue;
-    private final IntegerProperty blocksCnt;
+    private final DoubleProperty minValue = new SimpleDoubleProperty();
+    private final DoubleProperty maxValue = new SimpleDoubleProperty();
+    private final IntegerProperty blocksCount = new SimpleIntegerProperty();
 
     private final List<ColorBlock> colorBlockList = new ArrayList<>();
 
-    public ColorPalette(List<ValueColor> valueColorList, DoubleProperty minValue, DoubleProperty maxValue, IntegerProperty blocksCnt) {
+    public ColorPalette(List<ValueColor> valueColorList, double minValue, double maxValue, int blocksCount) {
         this.valueColorList = valueColorList;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.blocksCnt = blocksCnt;
-        if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
+        setMinValue(minValue);
+        setMaxValue(maxValue);
+        setBlocksCount(blocksCount);
+        if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
         blocksInit();
-        blocksCnt.addListener((observable, oldValue, newValue) -> {
+        this.blocksCount.addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
             colorBlockList.clear();
-            if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
             blocksInit();
         });
-        minValue.addListener((observable, oldValue, newValue) -> {
+        this.minValue.addListener((observable, oldValue, newValue) -> {
             colorBlockList.clear();
-            if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
             blocksInit();
         });
-        maxValue.addListener((observable, oldValue, newValue) -> {
+        this.maxValue.addListener((observable, oldValue, newValue) -> {
             colorBlockList.clear();
-            if (blocksCnt.get() < 2) throw new RuntimeException("Число блоков меньше 2");
             blocksInit();
         });
     }
@@ -105,7 +107,7 @@ public class ColorPalette implements ColorMapper {
         Color firstColor = valueColorList.get(0).color();
         Color lastColor = valueColorList.get(valueColorList.size() - 1).color();
 
-        double blockSize = 1.0 / blocksCnt.get();
+        double blockSize = 1.0 / blocksCount.get();
         double currentFrom = 0;
         double currentTo = blockSize;
 
@@ -114,7 +116,7 @@ public class ColorPalette implements ColorMapper {
         currentFrom += blockSize;
         currentTo += blockSize;
 
-        for (int i = 1; i < blocksCnt.get() - 1; i++) {
+        for (int i = 1; i < blocksCount.get() - 1; i++) {
             colorBlockList.add(new ColorBlock(currentFrom, currentTo, blockColor(currentFrom, currentTo)));
             currentFrom += blockSize;
             currentTo += blockSize;
@@ -131,8 +133,8 @@ public class ColorPalette implements ColorMapper {
         while (low <= high) {
             mid = low + (high - low) / 2;
             ColorBlock block = colorBlockList.get(mid);
-            if (block.from() <= percentage && percentage <= block.to()) return block;
-            else if (block.to() < percentage) {
+            if (block.getFrom() <= percentage && percentage <= block.getTo()) return block;
+            else if (block.getTo() < percentage) {
                 low = mid + 1;
             } else {
                 high = mid - 1;
@@ -152,7 +154,7 @@ public class ColorPalette implements ColorMapper {
     public Color colorFor(double value) {
         double percentage = percentageFor(value);
         ColorBlock block = blockFor(percentage);
-        return block.color();
+        return block.getColor();
     }
 
     @Override
@@ -189,28 +191,24 @@ public class ColorPalette implements ColorMapper {
 
     @NotNull
     @Override
-    public IntegerProperty blocksCntProperty() {
-        return blocksCnt;
+    public IntegerProperty blocksCountProperty() {
+        return blocksCount;
     }
 
     @Override
-    public int getBlocksCnt() {
-        return blocksCnt.get();
+    public int getBlocksCount() {
+        return blocksCount.get();
     }
 
     @Override
-    public void setBlocksCnt(int value) {
-        blocksCnt.set(value);
+    public void setBlocksCount(int value) {
+        blocksCount.set(value);
     }
 
     @NotNull
     @Override
-    public List<ColorBlock> getColorBlockList() {
+    public List<ColorMapper.ColorBlock> getColorBlocks() {
         return colorBlockList;
-    }
-
-    public record ColorBlock(double from, double to, Color color) {
-
     }
 }
 

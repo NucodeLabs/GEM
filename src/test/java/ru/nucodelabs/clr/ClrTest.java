@@ -1,13 +1,10 @@
 package ru.nucodelabs.clr;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
-import ru.nucodelabs.files.color_palette.CLRParser;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.files.color_palette.ClrParser;
 import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,15 +14,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CLRTest {
+public class ClrTest {
 
     @Test
     public void test_parser() throws FileNotFoundException {
-        CLRParser clrParser = new CLRParser();
+        ClrParser clrParser = new ClrParser();
         File file = new File("data/clr/002_ERT_Rainbow_2.clr");
         InputStream inputStream = new FileInputStream(file);
 
-        List<ValueColor> valueColorList = clrParser.parseCLR(inputStream);
+        List<ValueColor> valueColorList = clrParser.parse(inputStream);
 
         Comparator<ValueColor> c = Comparator.comparing(ValueColor::percentage);
 
@@ -47,16 +44,12 @@ public class CLRTest {
 
     @Test
     public void colorFor_test() throws FileNotFoundException {
-        CLRParser clrParser = new CLRParser();
+        ClrParser clrParser = new ClrParser();
         File file = new File("data/clr/002_ERT_Rainbow_2.clr");
         InputStream inputStream = new FileInputStream(file);
 
-        List<ValueColor> valueColorList = clrParser.parseCLR(inputStream);
-        DoubleProperty min = new SimpleDoubleProperty(0.0);
-        DoubleProperty max = new SimpleDoubleProperty(1500.0);
-        ColorPalette colorPalette = new ColorPalette(valueColorList, min, max, new SimpleIntegerProperty(10));
+        List<ValueColor> valueColorList = clrParser.parse(inputStream);
+        ColorPalette colorPalette = new ColorPalette(valueColorList, 0, 1500, 10);
         Color color = colorPalette.colorFor(1200);
-
-
     }
 }

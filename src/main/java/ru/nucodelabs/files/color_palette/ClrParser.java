@@ -3,15 +3,18 @@ package ru.nucodelabs.files.color_palette;
 import javafx.scene.paint.Color;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 
-public class CLRParser {
-    private String nameCLR = "default";
+public class ClrParser {
+    private String name = "default";
     private final List<ValueColor> valueColorList = new ArrayList<>();
 
-    public List<ValueColor> parseCLR(InputStream clrFile) {
+    public List<ValueColor> parse(InputStream clrFile) {
         Scanner sc = new Scanner(clrFile).useLocale(Locale.US);
-        nameCLR = sc.nextLine();
+        name = sc.nextLine();
 
         while (sc.hasNextLine()) {
             double percentage = sc.nextDouble() * 0.01;
@@ -30,11 +33,11 @@ public class CLRParser {
         return valueColorList;
     }
 
-    public List<ValueColor> getValueColorList() {
+    public List<ValueColor> getValueColors() {
         return valueColorList;
     }
 
-    public String getNameCLR() {
-        return nameCLR;
+    public String getName() {
+        return name;
     }
 }

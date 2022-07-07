@@ -11,9 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -84,7 +81,7 @@ public class ColorPaletteController extends AbstractController {
 
         colorPalette.minValueProperty().bind(minResistanceProperty);
         colorPalette.maxValueProperty().bind(maxResistanceProperty);
-        colorPalette.blocksCntProperty().bind(precisionProperty);
+        colorPalette.blocksCountProperty().bind(precisionProperty);
 
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
@@ -136,7 +133,7 @@ public class ColorPaletteController extends AbstractController {
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
 
-                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getColorBlockList().get(i).color());
+                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getColorBlocks().get(i).getColor());
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
             }
         }
