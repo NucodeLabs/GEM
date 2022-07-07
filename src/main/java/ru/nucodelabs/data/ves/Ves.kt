@@ -35,3 +35,33 @@ private fun k(ab2: Double, mn2: Double): Double {
             / (1 / am - 1 / bm - 1 / bm
             + 1 / am))
 }
+
+fun Section.picketsWidths(): List<Double> = pickets.map { picket ->
+    val (leftX, rightX) = picketBounds(picket)
+    rightX - leftX
+}
+
+
+fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
+    val index = pickets.indexOf(picket).also { if (it < 0) throw IllegalArgumentException() }
+
+    val leftX: Double = if (index == 0) {
+        xOfPicket(picket)
+    } else {
+        xOfPicket(pickets[index - 1]) + (picket.offsetX / 2)
+    }
+
+    val rightX: Double = if (index == pickets.lastIndex) {
+        xOfPicket(picket)
+    } else {
+        xOfPicket(picket) + (pickets[index + 1].offsetX / 2)
+    }
+
+    return Pair(leftX, rightX)
+}
+
+fun Section.lenght() = when (pickets.size) {
+    0 -> 0.0
+    1 -> 100.0
+    else -> xOfPicket(pickets.last()) - xOfPicket(pickets.first())
+}

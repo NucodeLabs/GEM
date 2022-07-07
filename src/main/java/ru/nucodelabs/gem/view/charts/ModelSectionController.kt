@@ -6,8 +6,8 @@ import javafx.scene.chart.AreaChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.data.ves.picketBounds
 import ru.nucodelabs.gem.extensions.fx.Line
 import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -19,12 +19,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
+private const val LAST_COEF = 0.5
+private const val SINGLE_PICKET_LEFT_X = 0.0
+private const val SINGLE_PICKET_RIGHT_X = 100.0
+
 class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
-
-    private val LAST_COEF = 0.5
 
     @FXML
     private lateinit var yAxis: NumberAxis
@@ -63,10 +65,18 @@ class ModelSectionController @Inject constructor(
         val lowerBoundZ = zWithVirtualLastLayers().minOf { it.min() }
 
         val colors = mutableMapOf<Line<Double, Double>, Color>()
-        for ((index, picket) in section.pickets.withIndex()) {
+        for (picket in section.pickets) {
+            if (picket.modelData.isEmpty()) {
+                continue
+            }
+
             val linesForPicket = mutableListOf<Line<Double, Double>>()
 
-            val (leftX, rightX) = picketBounds(index, picket)
+            val (leftX, rightX) = if (section.pickets.size > 1) {
+                section.picketBounds(picket)
+            } else {
+                SINGLE_PICKET_LEFT_X to SINGLE_PICKET_RIGHT_X
+            }
 
             // top line
             linesForPicket += Line(
@@ -125,25 +135,14 @@ class ModelSectionController @Inject constructor(
         }
     }
 
-    private fun picketBounds(index: Int, picket: Picket): Pair<Double, Double> {
-        val leftX: Double = if (index == 0) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(section.pickets[index - 1]) + (picket.offsetX / 2)
-        }
-
-        val rightX: Double = if (index == section.pickets.lastIndex) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(picket) + (section.pickets[index + 1].offsetX / 2)
-        }
-
-        return Pair(leftX, rightX)
-    }
-
     private fun setupXAxisBounds() {
-        xAxis.lowerBound = section.xOfPicket(section.pickets.first())
-        xAxis.upperBound = section.xOfPicket(section.pickets.last())
+        if (section.pickets.size > 1) {
+            xAxis.lowerBound = section.xOfPicket(section.pickets.first())
+            xAxis.upperBound = section.xOfPicket(section.pickets.last())
+        } else {
+            xAxis.lowerBound = SINGLE_PICKET_LEFT_X
+            xAxis.upperBound = SINGLE_PICKET_RIGHT_X
+        }
     }
 
     private fun setupYAxisBounds() {
@@ -153,8 +152,10 @@ class ModelSectionController @Inject constructor(
 
     private fun zWithVirtualLastLayers(): List<List<Double>> = section.pickets.map {
         it.zOfModelLayers().toMutableList().also { zList ->
-            zList[zList.lastIndex] = zList[zList.lastIndex - 1]
-            zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+            if (zList.size >= 2) {
+                zList[zList.lastIndex] = zList[zList.lastIndex - 1]
+                zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+            }
         }
-    }
+    }.filter { it.isNotEmpty() }
 }
