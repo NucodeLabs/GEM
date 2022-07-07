@@ -20,8 +20,6 @@ import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 private const val LAST_COEF = 0.5
-private const val SINGLE_PICKET_LEFT_X = 0.0
-private const val SINGLE_PICKET_RIGHT_X = 100.0
 
 class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
@@ -44,11 +42,8 @@ class ModelSectionController @Inject constructor(
         get() = sectionObservable.get()!!
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        sectionObservable.addListener { _, oldValue: Section?, newValue: Section? ->
-            if (newValue != null
-                && (newValue.pickets.map { it.modelData } != oldValue?.pickets?.map { it.modelData }
-                        || newValue.pickets.map { it.z } != oldValue.pickets.map { it.z })
-            ) {
+        sectionObservable.addListener { _, _: Section?, newValue: Section? ->
+            if (newValue != null) {
                 update()
             }
         }
@@ -72,11 +67,7 @@ class ModelSectionController @Inject constructor(
 
             val linesForPicket = mutableListOf<Line<Double, Double>>()
 
-            val (leftX, rightX) = if (section.pickets.size > 1) {
-                section.picketBounds(picket)
-            } else {
-                SINGLE_PICKET_LEFT_X to SINGLE_PICKET_RIGHT_X
-            }
+            val (leftX, rightX) = section.picketBounds(picket)
 
             // top line
             linesForPicket += Line(
@@ -136,12 +127,20 @@ class ModelSectionController @Inject constructor(
     }
 
     private fun setupXAxisBounds() {
-        if (section.pickets.size > 1) {
-            xAxis.lowerBound = section.xOfPicket(section.pickets.first())
-            xAxis.upperBound = section.xOfPicket(section.pickets.last())
-        } else {
-            xAxis.lowerBound = SINGLE_PICKET_LEFT_X
-            xAxis.upperBound = SINGLE_PICKET_RIGHT_X
+        when (section.pickets.size) {
+            1 -> {
+                val (leftX, rightX) = section.picketBounds(section.pickets.first())
+                xAxis.lowerBound = leftX
+                xAxis.upperBound = rightX
+            }
+            0 -> {
+                xAxis.lowerBound = -3.0
+                xAxis.upperBound = 4.0
+            }
+            else -> {
+                xAxis.lowerBound = section.xOfPicket(section.pickets.first())
+                xAxis.upperBound = section.xOfPicket(section.pickets.last())
+            }
         }
     }
 

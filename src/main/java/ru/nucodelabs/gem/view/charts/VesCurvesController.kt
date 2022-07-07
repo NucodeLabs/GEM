@@ -120,25 +120,25 @@ class VesCurvesController @Inject constructor(
 
     private fun setupXAxisBounds() {
         lineChartXAxis.lowerBound = listOf(
-            picket.modelData.firstOrNull()?.power ?: -1.0,
-            picket.experimentalData.firstOrNull()?.ab2 ?: -1.0
+            picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
+            picket.experimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
         ).minOf { log10(it) } - X_AXIS_LOG_PADDING
 
         lineChartXAxis.upperBound = listOf(
-            picket.z - (picket.zOfModelLayers().lastOrNull() ?: 3.0),
-            picket.experimentalData.lastOrNull()?.ab2 ?: 3.0
+            picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
+            picket.experimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
         ).maxOf { log10(it) } + X_AXIS_LOG_PADDING
     }
 
     private fun setupYAxisBounds() {
         lineChartYAxis.lowerBound = listOf(
-            picket.modelData.minOfOrNull { it.resistance } ?: -1.0,
-            picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: -1.0
+            picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
+            picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
         ).minOf { log10(it) } - Y_AXIS_LOG_PADDING
 
         lineChartYAxis.upperBound = listOf(
-            picket.modelData.maxOfOrNull { it.resistance } ?: 3.0,
-            picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: 3.0
+            picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
+            picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
         ).maxOf { log10(it) } + Y_AXIS_LOG_PADDING
     }
 

@@ -25,10 +25,8 @@ class PseudoSectionController @Inject constructor(
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         chart.colorPalette = colorMapper
-        sectionObservableObjectValue.addListener { _, oldValue: Section?, newValue: Section? ->
-            if (newValue != null
-                && newValue.pickets.map { it.experimentalData } != oldValue?.pickets?.map { it.experimentalData }
-            ) {
+        sectionObservableObjectValue.addListener { _, _: Section?, newValue: Section? ->
+            if (newValue != null) {
                 update()
             }
         }
