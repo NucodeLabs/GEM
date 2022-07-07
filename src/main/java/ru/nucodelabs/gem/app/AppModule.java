@@ -7,10 +7,14 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.files.color_palette.CLRFileParser;
+import ru.nucodelabs.files.color_palette.CLRParser;
+import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
@@ -19,12 +23,16 @@ import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -138,7 +146,12 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     ColorMapper colorMapper() throws Exception {
-        return new ColorPalette(
-                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
+//        return new ColorPalette(
+//                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
+        CLRParser clrParser = new CLRParser();
+        List<ValueColor> valueColorList = clrParser.parseCLR(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
+        DoubleProperty min = new SimpleDoubleProperty(0.0);
+        DoubleProperty max = new SimpleDoubleProperty(1500.0);
+        return new ru.nucodelabs.files.color_palette.ColorPalette(valueColorList, min, max, 15);
     }
 }
