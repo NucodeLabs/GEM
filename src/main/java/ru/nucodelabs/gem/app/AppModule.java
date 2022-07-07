@@ -11,7 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.files.color_palette.CLRFileParser;
+import ru.nucodelabs.files.color_palette.ClrParser;
+import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -138,9 +140,12 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ColorMapper colorMapper() throws Exception {
-        return new ColorPalette(
-                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
+    ColorMapper colorMapper() {
+//        return new ColorPalette(
+//                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
+        ClrParser clrParser = new ClrParser();
+        List<ValueColor> valueColorList = clrParser.parse(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
+        return new ColorPalette(valueColorList, 0, 1500, 15);
     }
 
     @Provides
