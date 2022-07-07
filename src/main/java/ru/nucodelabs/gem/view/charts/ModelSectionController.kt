@@ -17,15 +17,14 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
 
-    companion object {
-        const val LAST_COEF = 0.5
-    }
+    private val LAST_COEF = 0.5
 
     @FXML
     private lateinit var yAxis: NumberAxis
@@ -53,6 +52,7 @@ class ModelSectionController @Inject constructor(
         }
     }
 
+    // the chart fills area between line and ZERO
     private fun update() {
         chart.data.clear()
 
@@ -68,14 +68,13 @@ class ModelSectionController @Inject constructor(
 
             val (leftX, rightX) = picketBounds(index, picket)
 
-            val zOfLayers = picket.zOfModelLayers().dropLast(1)
-
-            val topLine = Line(
+            // top line
+            linesForPicket += Line(
                 observableListOf(
                     Point(leftX, picket.z),
                     Point(rightX, picket.z)
                 )
-            ).also {
+            ).also<Line<Double, Double>> {
                 colors[it] = if (picket.z > 0) {
                     colorMapper.colorFor(picket.modelData.first().resistance)
                 } else {
@@ -83,8 +82,7 @@ class ModelSectionController @Inject constructor(
                 }
             }
 
-            linesForPicket += topLine
-
+            val zOfLayers = picket.zOfModelLayers().dropLast(1)
             for ((i, layerZ) in zOfLayers.withIndex()) {
                 linesForPicket += Line(
                     observableListOf(
@@ -119,23 +117,11 @@ class ModelSectionController @Inject constructor(
     }
 
     private fun setupStyle(colors: MutableMap<Line<Double, Double>, Color>) {
-        val aboveZero = mutableListOf<Line<Double, Double>>()
-        val underZero = mutableListOf<Line<Double, Double>>()
-        for (line in chart.data) {
-            line.node.lookup(".chart-series-area-fill").style = "-fx-fill: ${colors[line]?.toCss()};"
-            if (line.data.first().yValue >= 0) {
-                aboveZero += line
-            } else {
-                underZero += line
-            }
-        }
-
-        for ((index, line) in aboveZero.sortedBy { it.data.first().yValue }.withIndex()) {
-            line.node.viewOrder = index.toDouble()
-        }
-
-        for ((index, line) in underZero.sortedBy { it.data.first().yValue }.reversed().withIndex()) {
-            line.node.viewOrder = aboveZero.size + index.toDouble()
+        chart.data.forEach { it.node.lookup(".chart-series-area-fill").style = "-fx-fill: ${colors[it]?.toCss()};" }
+        chart.data.sortedBy {
+            it.data.first().yValue.absoluteValue
+        }.forEachIndexed { index, series ->
+            series.node.viewOrder = index.toDouble()
         }
     }
 
