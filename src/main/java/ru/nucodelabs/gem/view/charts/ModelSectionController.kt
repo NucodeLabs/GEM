@@ -6,8 +6,8 @@ import javafx.scene.chart.AreaChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.data.ves.picketBounds
 import ru.nucodelabs.gem.extensions.fx.Line
 import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -63,10 +63,10 @@ class ModelSectionController @Inject constructor(
         val lowerBoundZ = zWithVirtualLastLayers().minOf { it.min() }
 
         val colors = mutableMapOf<Line<Double, Double>, Color>()
-        for ((index, picket) in section.pickets.withIndex()) {
+        for (picket in section.pickets) {
             val linesForPicket = mutableListOf<Line<Double, Double>>()
 
-            val (leftX, rightX) = picketBounds(index, picket)
+            val (leftX, rightX) = section.picketBounds(picket)
 
             // top line
             linesForPicket += Line(
@@ -123,22 +123,6 @@ class ModelSectionController @Inject constructor(
         }.forEachIndexed { index, series ->
             series.node.viewOrder = index.toDouble()
         }
-    }
-
-    private fun picketBounds(index: Int, picket: Picket): Pair<Double, Double> {
-        val leftX: Double = if (index == 0) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(section.pickets[index - 1]) + (picket.offsetX / 2)
-        }
-
-        val rightX: Double = if (index == section.pickets.lastIndex) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(picket) + (section.pickets[index + 1].offsetX / 2)
-        }
-
-        return Pair(leftX, rightX)
     }
 
     private fun setupXAxisBounds() {
