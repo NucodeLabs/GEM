@@ -68,7 +68,7 @@ internal class SonetImportManagerImpl : SonetImportManager {
 
         val modelData: MutableList<ModelLayer> = mutableListOf()
         for (i in 0 until minSize) {
-            modelData += ModelLayer.create(
+            modelData += ModelLayer.createNotFixed(
                 modParsed.power[i],
                 modParsed.resistance[i]
             )

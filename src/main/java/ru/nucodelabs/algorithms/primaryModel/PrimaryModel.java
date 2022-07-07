@@ -55,7 +55,7 @@ public class PrimaryModel {
                 prevLast = 0;
             }
             //От последнего в этом слою отнимаем последний в прошлом
-            modelLayers.add(ModelLayer.create(Math.exp(list.get(list.size() - 1).getAb2()) - prevLast, avg));
+            modelLayers.add(ModelLayer.createNotFixed(Math.exp(list.get(list.size() - 1).getAb2()) - prevLast, avg));
         }
         modelLayers.set(modelLayers.size() - 1, modelLayers.get(modelLayers.size() - 1).withPower(0));
         return modelLayers;

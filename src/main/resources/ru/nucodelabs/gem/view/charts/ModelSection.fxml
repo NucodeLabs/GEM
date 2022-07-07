@@ -2,6 +2,8 @@
 
 <?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -10,15 +12,18 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.ModelSectionController"
       stylesheets="@ModelSection.css">
-
+    <HBox alignment="CENTER_LEFT">
+        <Label text="Модель, разрез" styleClass="uclabel"/>
+    </HBox>
     <AreaChart fx:id="chart" maxWidth="Infinity"
                maxHeight="Infinity" animated="false" legendVisible="false">
         <xAxis>
-            <NumberAxis fx:id="xAxis" label="X (m)" side="TOP" prefWidth="-Infinity" autoRanging="false"/>
+            <NumberAxis fx:id="xAxis" label="X (m)" side="BOTTOM" prefWidth="-Infinity" autoRanging="false"
+                        minorTickVisible="false"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
-                        autoRanging="false"/>
+                        autoRanging="false" minorTickVisible="false"/>
         </yAxis>
     </AreaChart>
 </VBox>

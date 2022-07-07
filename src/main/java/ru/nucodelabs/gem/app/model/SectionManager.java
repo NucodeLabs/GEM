@@ -18,9 +18,11 @@ public class SectionManager implements Snapshot.Originator<Section> {
             = new SubmissionPublisher<>(Runnable::run, Flow.defaultBufferSize());
 
     private final MutableSection mutableSection = new MutableSection();
+    private final InverseSolver inverseSolver;
 
     @Inject
-    public SectionManager() {
+    public SectionManager(InverseSolver inverseSolver) {
+        this.inverseSolver = inverseSolver;
         sectionObservable.submit(mutableSection.toImmutable());
     }
 
@@ -84,8 +86,7 @@ public class SectionManager implements Snapshot.Originator<Section> {
         var id = picket.getId();
         var picketToSolve = getById(id);
         if (picketToSolve.isPresent()) {
-            InverseSolver inverseSolver = new InverseSolver(picketToSolve.get());
-            update(picketToSolve.get().withModelData(inverseSolver.getOptimizedModelData()));
+            update(picketToSolve.get().withModelData(inverseSolver.getOptimizedModelData(picketToSolve.get())));
         }
     }
 

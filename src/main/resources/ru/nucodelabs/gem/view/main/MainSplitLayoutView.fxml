@@ -62,9 +62,8 @@
                                             VBox.vgrow="ALWAYS"/>
                                 <VBox HBox.hgrow="ALWAYS">
                                     <HBox>
-                                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
                                         <HBox>
-                                            <Button fx:id="addPicketBtn" prefWidth="50" minWidth="50" maxWidth="50"
+                                            <Button fx:id="addPicketBtn" prefWidth="65" minWidth="65" maxWidth="65"
                                                     onAction="#addNewPicket" stylesheets="@PicketsBar.css"
                                                     HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
                                                 <graphic>
@@ -74,6 +73,8 @@
                                                 </graphic>
                                             </Button>
                                         </HBox>
+                                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
+                                        <HBox prefWidth="16"/>
                                     </HBox>
                                     <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                HBox.hgrow="ALWAYS">
@@ -112,17 +113,20 @@
                                     <Label text="X"/>
                                     <Label text="="/>
                                     <Label fx:id="xCoordLbl" text="-"/>
+                                    <Label text="m"/>
                                     <HBox HBox.hgrow="ALWAYS"/>
                                     <Label text="Z"/>
                                     <Label text="="/>
                                     <TextField promptText="Z" fx:id="picketZ" prefWidth="50" onAction="#submitZ"/>
+                                    <Label text="m"/>
                                     <fx:include source="SmallDivider.fxml"/>
                                     <Label text="%offset"/>
                                     <Label text="="/>
                                     <TextField promptText="%offset" fx:id="picketOffsetX" prefWidth="50"
                                                onAction="#submitOffsetX"/>
+                                    <Label text="m"/>
                                     <fx:include source="SmallDivider.fxml"/>
-                                    <Button text="%inverse" onAction="#inverseSolve">
+                                    <Button text="%inverse" onAction="#inverseSolve" fx:id="inverseBtn">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">
                                                 <Image url="@../../../../../img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
@@ -136,7 +140,7 @@
                                     <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
                                                VBox.vgrow="ALWAYS">
                                         <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"/>
-                                        <fx:include fx:id="vesCurves" source="../charts/VESCurves.fxml"/>
+                                        <fx:include fx:id="vesCurves" source="../charts/VesCurves.fxml"/>
                                     </SplitPane>
                                     <TabPane VBox.vgrow="ALWAYS">
                                         <Tab text="%experimentalTable" closable="false">

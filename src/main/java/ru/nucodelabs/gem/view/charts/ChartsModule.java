@@ -15,7 +15,7 @@ import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 
 import java.util.ArrayList;
 
-import static ru.nucodelabs.gem.view.charts.VESCurvesController.MOD_CURVE_SERIES_INDEX;
+import static ru.nucodelabs.gem.view.charts.VesCurvesController.MOD_CURVE_SERIES_INDEX;
 
 public class ChartsModule extends AbstractModule {
     @Provides
@@ -39,12 +39,6 @@ public class ChartsModule extends AbstractModule {
     @Singleton
     private VesCurvesConverter vesChartsConverter(ForwardSolver forwardSolver) {
         return new VesCurvesConverter(forwardSolver);
-    }
-
-    @Provides
-    @Singleton
-    ForwardSolver forwardSolver() {
-        return ForwardSolver.createDefault();
     }
 
     @Provides

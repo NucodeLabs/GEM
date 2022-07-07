@@ -27,7 +27,8 @@ import ru.nucodelabs.gem.utils.FXUtils;
 import ru.nucodelabs.gem.utils.OS;
 import ru.nucodelabs.gem.view.AbstractController;
 import ru.nucodelabs.gem.view.AlertsFactory;
-import ru.nucodelabs.gem.view.charts.VESCurvesController;
+import ru.nucodelabs.gem.view.charts.MisfitStacksController;
+import ru.nucodelabs.gem.view.charts.VesCurvesController;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -53,6 +54,8 @@ public class MainViewController extends AbstractController implements FileImport
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @FXML
+    private Button inverseBtn;
+    @FXML
     private TextField picketName;
     @FXML
     private Label xCoordLbl;
@@ -71,7 +74,9 @@ public class MainViewController extends AbstractController implements FileImport
     @FXML
     private NoFileScreenController noFileScreenController;
     @FXML
-    private VESCurvesController vesCurvesController;
+    private VesCurvesController vesCurvesController;
+    @FXML
+    private MisfitStacksController misfitStacksController;
 
     @Inject
     private ObservableObjectValue<Picket> picket;
@@ -143,6 +148,29 @@ public class MainViewController extends AbstractController implements FileImport
 
         setupValidationOnPicketXZ(picketOffsetX);
         setupValidationOnPicketXZ(picketZ);
+        syncMisfitAndVesXAxes();
+        setupInverseBtn();
+    }
+
+    private void setupInverseBtn() {
+        inverseBtn.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> {
+                    if (picket.get() != null) {
+                        return picket.get().getModelData().isEmpty();
+                    } else {
+                        return false;
+                    }
+                },
+                picket
+        ));
+    }
+
+    private void syncMisfitAndVesXAxes() {
+        misfitStacksController.getLineChartXAxis().lowerBoundProperty().bind(
+                vesCurvesController.getLineChartXAxis().lowerBoundProperty());
+
+        misfitStacksController.getLineChartXAxis().upperBoundProperty().bind(
+                vesCurvesController.getLineChartXAxis().upperBoundProperty());
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField tf) {
