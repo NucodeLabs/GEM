@@ -77,6 +77,7 @@ public class HeatMap extends VBUserControl {
                 repaint();
                 newValue.maxValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
                 newValue.minValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
+                newValue.blocksCountProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
             }
         });
     }
@@ -180,8 +181,8 @@ public class HeatMap extends VBUserControl {
         getXAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).min().orElse(0));
         getXAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).max().orElse(100));
 
-        getYAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
-        getYAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
+        getYAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
+        getYAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
     }
 
     private final ObjectProperty<ObservableList<XYChart.Data<Double, Double>>> data

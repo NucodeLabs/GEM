@@ -11,9 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -29,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Deprecated
 public class ColorPaletteController extends AbstractController {
 
     @FXML
@@ -80,17 +76,22 @@ public class ColorPaletteController extends AbstractController {
 
         minResistanceProperty = new SimpleDoubleProperty(0.0);
         maxResistanceProperty = new SimpleDoubleProperty(1500.0);
-        precisionProperty = new SimpleIntegerProperty(20);
+        precisionProperty = new SimpleIntegerProperty(15);
         coeff = new SimpleDoubleProperty(1.0 / precisionProperty.get());
 
         colorPalette.minValueProperty().bind(minResistanceProperty);
         colorPalette.maxValueProperty().bind(maxResistanceProperty);
+        colorPalette.blocksCountProperty().bind(precisionProperty);
 
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
 
         drawPalette();
         updatePaletteView();
+    }
+
+    private void drawPalette2() {
+
     }
 
     private void drawPalette() {
@@ -131,12 +132,8 @@ public class ColorPaletteController extends AbstractController {
                     String.valueOf(
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
-                Stop[] stops = {
-                        new Stop(0, colorPalette.colorFor(computeResistance(key))),
-                        new Stop(1, colorPalette.colorFor(computeResistance(key + coeff.get())))};
-                LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 
-                ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
+                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getColorBlocks().get(i).getColor());
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
             }
         }

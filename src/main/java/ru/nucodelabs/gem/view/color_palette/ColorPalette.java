@@ -1,110 +1,160 @@
 package ru.nucodelabs.gem.view.color_palette;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
-import ru.nucodelabs.files.color_palette.CLRData;
+import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 
-@Deprecated
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ColorPalette implements ColorMapper {
 
-    private final CLRData clrData;
+    private final List<ValueColor> valueColorList;
+    private final DoubleProperty minValue = new SimpleDoubleProperty();
+    private final DoubleProperty maxValue = new SimpleDoubleProperty();
+    private final IntegerProperty blocksCount = new SimpleIntegerProperty();
 
-    private final DoubleProperty minValue;
+    private final List<ColorBlock> colorBlockList = new ArrayList<>();
 
-    private final DoubleProperty maxValue;
-
-    public ColorPalette(CLRData clrData) {
-        this.clrData = clrData;
-        minValue = new SimpleDoubleProperty(0.0);
-        maxValue = new SimpleDoubleProperty(1500.0);
+    public ColorPalette(List<ValueColor> valueColorList, double minValue, double maxValue, int blocksCount) {
+        this.valueColorList = valueColorList;
+        setMinValue(minValue);
+        setMaxValue(maxValue);
+        setBlocksCount(blocksCount);
+        if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
+        blocksInit();
+        this.blocksCount.addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
+            colorBlockList.clear();
+            blocksInit();
+        });
+        this.minValue.addListener((observable, oldValue, newValue) -> {
+            colorBlockList.clear();
+            blocksInit();
+        });
+        this.maxValue.addListener((observable, oldValue, newValue) -> {
+            colorBlockList.clear();
+            blocksInit();
+        });
     }
 
-    public ColorPalette(CLRData clrData, double initMinResistance, double initMaxResistance) {
-        this.clrData = clrData;
-        minValue = new SimpleDoubleProperty(initMinResistance);
-        maxValue = new SimpleDoubleProperty(initMaxResistance);
+    /**
+     *
+     * @param c1 Первый цвет
+     * @param c2 Второй цвет
+     * @param percentage Процент отступа от c1
+     * @return Возвращает цвет
+     */
+    private Color colorInterpolate(Color c1, Color c2, double percentage) {
+        double r1 = c1.getRed();
+        double g1 = c1.getGreen();
+        double b1 = c1.getBlue();
+
+        double r2 = c2.getRed();
+        double g2 = c2.getGreen();
+        double b2 = c2.getBlue();
+
+        double r = r1 + (r2 - r1) * percentage;
+        double g = g1 + (g2 - g1) * percentage;
+        double b = b1 + (b2 - b1) * percentage;
+        double a = 1.0;
+
+        return new Color(r, g, b, a);
+    }
+
+    /**
+     * Ищет цвет в точке интерполяции между vc1 и vc2
+     * @param vc1 vc1.percentage() < vc2.percentage()
+     * @param vc2 vc2.percentage() > vc1.percentage()
+     * @param percentage vc1.percentage() < percentage < vc2.percentage()
+     * @return Interpolated rgba color between vc1.color() and vc2.color()
+     */
+    private Color vcInterpolate(ValueColor vc1, ValueColor vc2, double percentage) {
+        Color c1 = vc1.color();
+        Color c2 = vc2.color();
+        double diff = (percentage - vc1.percentage()) / (vc2.percentage() - vc1.percentage());
+
+        return colorInterpolate(c1, c2, diff);
+    }
+
+    private Color blockColor(double from, double to) {
+        List<ValueColor> vcsFrom = findNearestVCs(from);
+        List<ValueColor> vcsTo = findNearestVCs(to);
+
+        Color colorFrom = vcInterpolate(vcsFrom.get(0), vcsFrom.get(1), from);
+        Color colorTo = vcInterpolate(vcsTo.get(0), vcsTo.get(1), to);
+
+        return colorInterpolate(colorFrom, colorTo, 0.5);
+    }
+
+    private List<ValueColor> findNearestVCs(double percentage) {
+        for (int i = 0; i < valueColorList.size() - 1; i++) {
+            double vcPercentage1 = valueColorList.get(i).percentage();
+            double vcPercentage2 = valueColorList.get(i + 1).percentage();
+            if (vcPercentage1 <= percentage && vcPercentage2 >= percentage)
+                return new ArrayList<>(Arrays.asList(valueColorList.get(i), valueColorList.get(i + 1)));
+        }
+        throw new RuntimeException("Цвет не найден");
+    }
+
+    private void blocksInit() {
+        Color firstColor = valueColorList.get(0).color();
+        Color lastColor = valueColorList.get(valueColorList.size() - 1).color();
+
+        double blockSize = 1.0 / blocksCount.get();
+        double currentFrom = 0;
+        double currentTo = blockSize;
+
+        //Первый блок
+        colorBlockList.add(new ColorBlock(currentFrom, blockSize, firstColor));
+        currentFrom += blockSize;
+        currentTo += blockSize;
+
+        for (int i = 1; i < blocksCount.get() - 1; i++) {
+            colorBlockList.add(new ColorBlock(currentFrom, currentTo, blockColor(currentFrom, currentTo)));
+            currentFrom += blockSize;
+            currentTo += blockSize;
+        }
+
+        //Последний блок
+        colorBlockList.add(new ColorBlock(currentFrom, 1.0, lastColor));
+    }
+
+    private ColorBlock blockFor(double percentage) {
+        int low = 0;
+        int high = colorBlockList.size() - 1;
+        int mid;
+        while (low <= high) {
+            mid = low + (high - low) / 2;
+            ColorBlock block = colorBlockList.get(mid);
+            if (block.getFrom() <= percentage && percentage <= block.getTo()) return block;
+            else if (block.getTo() < percentage) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        throw new RuntimeException("Блок не найден бинарным поиском");
+    }
+
+    private double percentageFor(double resistance) {
+        if (resistance < minValue.get()) return 0.0;
+        if (resistance > maxValue.get()) return 1.0;
+        return (resistance - minValue.get()) / (maxValue.get() - minValue.get());
     }
 
     @NotNull
     @Override
     public Color colorFor(double value) {
-        double resistance = value - minValue.get();
-        double topBorder = maxValue.get() - minValue.get();
-        double percent;
-
-        if (Double.isNaN(resistance / topBorder)) {
-            percent = 100.0;
-        } else {
-            percent = (resistance / topBorder) * 100;
-        }
-
-        double lowerPoint = getNearestLowerPoint(percent);
-        double upperPoint = getNearestUpperPoint(percent);
-
-        double difference = upperPoint - lowerPoint;
-
-        if (difference < 0) {
-            return Color.rgb(
-                    clrData.getColorMap().get(0.0).red(),
-                    clrData.getColorMap().get(0.0).green(),
-                    clrData.getColorMap().get(0.0).blue());
-        } else if (percent >= 100) {
-            return Color.rgb(
-                    clrData.getColorMap().get(100.0).red(),
-                    clrData.getColorMap().get(100.0).green(),
-                    clrData.getColorMap().get(100.0).blue());
-        }
-
-        double partition = (percent - lowerPoint) / difference;
-        int[] rgbo = getColors(partition, lowerPoint, upperPoint);
-
-        return Color.rgb(
-                rgbo[0],
-                rgbo[1],
-                rgbo[2],
-                (double) rgbo[3] / 255);
-    }
-
-    private int[] getColors(double partition, double lowerPoint, double upperPoint) {
-        int[] rgbo = new int[4];
-        rgbo[0] = clrData.getColorMap().get(lowerPoint).red() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).red() - clrData.getColorMap().get(lowerPoint).red()));
-        rgbo[1] = clrData.getColorMap().get(lowerPoint).green() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).green() - clrData.getColorMap().get(lowerPoint).green()));
-        rgbo[2] = clrData.getColorMap().get(lowerPoint).blue() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).blue() - clrData.getColorMap().get(lowerPoint).blue()));
-        rgbo[3] = clrData.getColorMap().get(lowerPoint).opacity() + (int) Math.floor(partition * (clrData.getColorMap().get(upperPoint).opacity() - clrData.getColorMap().get(lowerPoint).opacity()));
-
-        return rgbo;
-    }
-
-    private Double getNearestLowerPoint(double percent) {
-        double prevKey = 0.0;
-        for (double key : clrData.getColorMap().keySet()) {
-            if (percent < key) {
-                return prevKey;
-            } else if (percent == key) {
-                return key;
-            } else if (percent > key) {
-                prevKey = key;
-            }
-        }
-
-        return prevKey;
-    }
-
-    private Double getNearestUpperPoint(double percent) {
-        for (double key : clrData.getColorMap().keySet()) {
-            if (percent <= key) {
-                return key;
-            }
-        }
-
-        return percent;
-    }
-
-    public CLRData getClrData() {
-        return clrData;
+        double percentage = percentageFor(value);
+        ColorBlock block = blockFor(percentage);
+        return block.getColor();
     }
 
     @Override
@@ -113,14 +163,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     @Override
-    public void setMinValue(double minValue) {
-        this.minValue.set(minValue);
-    }
-
-    @Override
-    @NotNull
-    public DoubleProperty minValueProperty() {
-        return minValue;
+    public void setMinValue(double value) {
+        this.minValue.set(value);
     }
 
     @Override
@@ -129,13 +173,42 @@ public class ColorPalette implements ColorMapper {
     }
 
     @Override
-    public void setMaxValue(double maxValue) {
-        this.maxValue.set(maxValue);
+    public void setMaxValue(double value) {
+        this.maxValue.set(value);
     }
 
-    @Override
     @NotNull
+    @Override
+    public DoubleProperty minValueProperty() {
+        return minValue;
+    }
+
+    @NotNull
+    @Override
     public DoubleProperty maxValueProperty() {
         return maxValue;
     }
+
+    @NotNull
+    @Override
+    public IntegerProperty blocksCountProperty() {
+        return blocksCount;
+    }
+
+    @Override
+    public int getBlocksCount() {
+        return blocksCount.get();
+    }
+
+    @Override
+    public void setBlocksCount(int value) {
+        blocksCount.set(value);
+    }
+
+    @NotNull
+    @Override
+    public List<ColorMapper.ColorBlock> getColorBlocks() {
+        return colorBlockList;
+    }
 }
+
