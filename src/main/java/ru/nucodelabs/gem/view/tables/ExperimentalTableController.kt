@@ -18,6 +18,8 @@ import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.emptyBinding
+import ru.nucodelabs.gem.extensions.fx.isNotBlank
+import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -25,7 +27,6 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.util.*
-import java.util.function.Predicate
 import javax.inject.Inject
 
 class ExperimentalTableController @Inject constructor(
@@ -129,21 +130,21 @@ class ExperimentalTableController @Inject constructor(
             table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
         }
 
-        val validateDataInput = Predicate { s: String -> validateDoubleInput(s, decimalFormat) }
-        val validInput = valid(ab2TextField, validateDataInput)
-            .and(valid(mn2TextField, validateDataInput))
-            .and(valid(resAppTextField, validateDataInput))
-            .and(valid(errResAppTextField, validateDataInput))
-            .and(valid(voltageTextField, validateDataInput))
-            .and(valid(amperageTextField, validateDataInput))
-            .and(valid(indexTextField) { s: String -> validateIndexInput(s) })
+        val validateDataInput = { s: String -> validateDoubleInput(s, decimalFormat) }
+        val validInput = ab2TextField.isValidBy { validateDataInput(it) }
+            .and(mn2TextField.isValidBy { validateDataInput(it) })
+            .and(resAppTextField.isValidBy { validateDataInput(it) })
+            .and(errResAppTextField.isValidBy { validateDataInput(it) })
+            .and(voltageTextField.isValidBy { validateDataInput(it) })
+            .and(amperageTextField.isValidBy { validateDataInput(it) })
+            .and(indexTextField.isValidBy { validateIndexInput(it) })
 
-        val allRequiredNotBlank = FXUtils.isNotBlank(ab2TextField.textProperty())
-            .and(FXUtils.isNotBlank(mn2TextField.textProperty()))
-            .and(FXUtils.isNotBlank(resAppTextField.textProperty()))
-            .and(FXUtils.isNotBlank(errResAppTextField.textProperty()))
-            .and(FXUtils.isNotBlank(voltageTextField.textProperty()))
-            .and(FXUtils.isNotBlank(amperageTextField.textProperty()))
+        val allRequiredNotBlank = ab2TextField.textProperty().isNotBlank()
+            .and(mn2TextField.textProperty().isNotBlank())
+            .and(resAppTextField.textProperty().isNotBlank())
+            .and(errResAppTextField.textProperty().isNotBlank())
+            .and(voltageTextField.textProperty().isNotBlank())
+            .and(amperageTextField.textProperty().isNotBlank())
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
 
