@@ -125,7 +125,7 @@
                                                onAction="#submitOffsetX"/>
                                     <Label text="m"/>
                                     <fx:include source="SmallDivider.fxml"/>
-                                    <Button text="%inverse" onAction="#inverseSolve">
+                                    <Button text="%inverse" onAction="#inverseSolve" fx:id="inverseBtn">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">
                                                 <Image url="@../../../../../img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
