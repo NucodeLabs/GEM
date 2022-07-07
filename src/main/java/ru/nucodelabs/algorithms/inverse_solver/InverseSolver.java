@@ -8,6 +8,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
 import ru.nucodelabs.data.ves.ModelLayer;
@@ -25,33 +26,36 @@ public class InverseSolver {
     private static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
     private static final double ABSOLUTE_THRESHOLD_DEFAULT = 1e-30;
 
-    private final Picket picket;
+    private Picket picket;
     private final double sideLength;
     private final double relativeThreshold;
     private final double absoluteThreshold;
+    private final ForwardSolver forwardSolver;
 
-    public InverseSolver(Picket picket) {
+    public InverseSolver(ForwardSolver forwardSolver) {
         this(
-                picket,
                 SIDE_LENGTH_DEFAULT,
                 RELATIVE_THRESHOLD_DEFAULT,
-                ABSOLUTE_THRESHOLD_DEFAULT
+                ABSOLUTE_THRESHOLD_DEFAULT,
+                forwardSolver
         );
     }
 
     public InverseSolver(
-            Picket picket,
             double sideLength,
             double relativeThreshold,
-            double absoluteThreshold) {
-        this.picket = picket;
+            double absoluteThreshold,
+            ForwardSolver forwardSolver
+    ) {
         this.sideLength = sideLength;
         this.relativeThreshold = relativeThreshold;
         this.absoluteThreshold = absoluteThreshold;
+        this.forwardSolver = forwardSolver;
     }
 
-    public List<ModelLayer> getOptimizedModelData() {
+    public List<ModelLayer> getOptimizedModelData(Picket inputPicket) {
         final int MAX_EVAL = 1000000;
+        this.picket = inputPicket;
 
         List<ModelLayer> modelData = picket.getModelData();
 
@@ -68,7 +72,7 @@ public class InverseSolver {
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
         MultivariateFunction multivariateFunction = new FunctionValue(
-                picket.getExperimentalData(), new SquaresDiff(), modelData
+                picket.getExperimentalData(), new SquaresDiff(), modelData, forwardSolver
         );
 
         //anyArray = resistance.size...(model.size - 1)

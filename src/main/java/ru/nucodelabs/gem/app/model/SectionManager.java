@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.app.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolverKt;
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
 import ru.nucodelabs.data.ves.Picket;
 import ru.nucodelabs.data.ves.Section;
@@ -84,8 +85,8 @@ public class SectionManager implements Snapshot.Originator<Section> {
         var id = picket.getId();
         var picketToSolve = getById(id);
         if (picketToSolve.isPresent()) {
-            InverseSolver inverseSolver = new InverseSolver(picketToSolve.get());
-            update(picketToSolve.get().withModelData(inverseSolver.getOptimizedModelData()));
+            InverseSolver inverseSolver = new InverseSolver(ForwardSolverKt.ForwardSolver());
+            update(picketToSolve.get().withModelData(inverseSolver.getOptimizedModelData(picketToSolve.get())));
         }
     }
 
