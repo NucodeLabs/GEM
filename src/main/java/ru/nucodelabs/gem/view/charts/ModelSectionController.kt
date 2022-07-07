@@ -6,8 +6,8 @@ import javafx.scene.chart.AreaChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.data.ves.picketBounds
 import ru.nucodelabs.gem.extensions.fx.Line
 import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -17,15 +17,14 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
+
+private const val LAST_COEF = 0.5
 
 class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
-
-    companion object {
-        const val LAST_COEF = 0.5
-    }
 
     @FXML
     private lateinit var yAxis: NumberAxis
@@ -43,16 +42,14 @@ class ModelSectionController @Inject constructor(
         get() = sectionObservable.get()!!
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        sectionObservable.addListener { _, oldValue: Section?, newValue: Section? ->
-            if (newValue != null
-                && (newValue.pickets.map { it.modelData } != oldValue?.pickets?.map { it.modelData }
-                        || newValue.pickets.map { it.z } != oldValue.pickets.map { it.z })
-            ) {
+        sectionObservable.addListener { _, _: Section?, newValue: Section? ->
+            if (newValue != null) {
                 update()
             }
         }
     }
 
+    // the chart fills area between line and ZERO
     private fun update() {
         chart.data.clear()
 
@@ -63,19 +60,22 @@ class ModelSectionController @Inject constructor(
         val lowerBoundZ = zWithVirtualLastLayers().minOf { it.min() }
 
         val colors = mutableMapOf<Line<Double, Double>, Color>()
-        for ((index, picket) in section.pickets.withIndex()) {
+        for (picket in section.pickets) {
+            if (picket.modelData.isEmpty()) {
+                continue
+            }
+
             val linesForPicket = mutableListOf<Line<Double, Double>>()
 
-            val (leftX, rightX) = picketBounds(index, picket)
+            val (leftX, rightX) = section.picketBounds(picket)
 
-            val zOfLayers = picket.zOfModelLayers().dropLast(1)
-
-            val topLine = Line(
+            // top line
+            linesForPicket += Line(
                 observableListOf(
                     Point(leftX, picket.z),
                     Point(rightX, picket.z)
                 )
-            ).also {
+            ).also<Line<Double, Double>> {
                 colors[it] = if (picket.z > 0) {
                     colorMapper.colorFor(picket.modelData.first().resistance)
                 } else {
@@ -83,8 +83,7 @@ class ModelSectionController @Inject constructor(
                 }
             }
 
-            linesForPicket += topLine
-
+            val zOfLayers = picket.zOfModelLayers().dropLast(1)
             for ((i, layerZ) in zOfLayers.withIndex()) {
                 linesForPicket += Line(
                     observableListOf(
@@ -119,45 +118,30 @@ class ModelSectionController @Inject constructor(
     }
 
     private fun setupStyle(colors: MutableMap<Line<Double, Double>, Color>) {
-        val aboveZero = mutableListOf<Line<Double, Double>>()
-        val underZero = mutableListOf<Line<Double, Double>>()
-        for (line in chart.data) {
-            line.node.lookup(".chart-series-area-fill").style = "-fx-fill: ${colors[line]?.toCss()};"
-            if (line.data.first().yValue >= 0) {
-                aboveZero += line
-            } else {
-                underZero += line
-            }
+        chart.data.forEach { it.node.lookup(".chart-series-area-fill").style = "-fx-fill: ${colors[it]?.toCss()};" }
+        chart.data.sortedBy {
+            it.data.first().yValue.absoluteValue
+        }.forEachIndexed { index, series ->
+            series.node.viewOrder = index.toDouble()
         }
-
-        for ((index, line) in aboveZero.sortedBy { it.data.first().yValue }.withIndex()) {
-            line.node.viewOrder = index.toDouble()
-        }
-
-        for ((index, line) in underZero.sortedBy { it.data.first().yValue }.reversed().withIndex()) {
-            line.node.viewOrder = aboveZero.size + index.toDouble()
-        }
-    }
-
-    private fun picketBounds(index: Int, picket: Picket): Pair<Double, Double> {
-        val leftX: Double = if (index == 0) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(section.pickets[index - 1]) + (picket.offsetX / 2)
-        }
-
-        val rightX: Double = if (index == section.pickets.lastIndex) {
-            section.xOfPicket(picket)
-        } else {
-            section.xOfPicket(picket) + (section.pickets[index + 1].offsetX / 2)
-        }
-
-        return Pair(leftX, rightX)
     }
 
     private fun setupXAxisBounds() {
-        xAxis.lowerBound = section.xOfPicket(section.pickets.first())
-        xAxis.upperBound = section.xOfPicket(section.pickets.last())
+        when (section.pickets.size) {
+            1 -> {
+                val (leftX, rightX) = section.picketBounds(section.pickets.first())
+                xAxis.lowerBound = leftX
+                xAxis.upperBound = rightX
+            }
+            0 -> {
+                xAxis.lowerBound = -3.0
+                xAxis.upperBound = 4.0
+            }
+            else -> {
+                xAxis.lowerBound = section.xOfPicket(section.pickets.first())
+                xAxis.upperBound = section.xOfPicket(section.pickets.last())
+            }
+        }
     }
 
     private fun setupYAxisBounds() {
@@ -167,8 +151,10 @@ class ModelSectionController @Inject constructor(
 
     private fun zWithVirtualLastLayers(): List<List<Double>> = section.pickets.map {
         it.zOfModelLayers().toMutableList().also { zList ->
-            zList[zList.lastIndex] = zList[zList.lastIndex - 1]
-            zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+            if (zList.size >= 2) {
+                zList[zList.lastIndex] = zList[zList.lastIndex - 1]
+                zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+            }
         }
-    }
+    }.filter { it.isNotEmpty() }
 }

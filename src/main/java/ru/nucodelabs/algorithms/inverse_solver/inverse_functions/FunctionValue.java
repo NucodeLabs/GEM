@@ -12,33 +12,72 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FunctionValue implements MultivariateFunction {
+    //Экспериментальные точки для FS
     private final List<ExperimentalData> experimentalData;
+    //Функция для вычисления разности между exp и theoretical точками
     private final BiFunction<List<Double>, List<Double>, Double> inverseFunction;
+    //Исходная модель
+    private final List<ModelLayer> modelLayers;
+    private final ForwardSolver forwardSolver;
 
-    public FunctionValue(List<ExperimentalData> experimentalData, BiFunction<List<Double>, List<Double>, Double> inverseFunction) {
+    public FunctionValue(List<ExperimentalData> experimentalData,
+                         BiFunction<List<Double>, List<Double>, Double> inverseFunction,
+                         List<ModelLayer> modelLayers,
+                         ForwardSolver forwardSolver) {
         this.experimentalData = experimentalData;
         this.inverseFunction = inverseFunction;
+        this.modelLayers = modelLayers;
+        this.forwardSolver = forwardSolver;
     }
 
     @Override
     public double value(double[] variables) {
+        //Изменяемые сопротивления и мощности
         List<Double> currentModelResistance = new ArrayList<>();
         List<Double> currentModelPower = new ArrayList<>();
 
-        for (int i = 0; i < (variables.length + 1) / 2; i++) {
+        int unfixedResistancesCnt = (int) modelLayers.stream()
+                .filter(modelLayer -> !modelLayer.isFixedResistance()).count();
+
+        //Восстановление изменяемых слоев до нормальной формы
+        for (int i = 0; i < unfixedResistancesCnt; i++) {
             currentModelResistance.add(Math.exp(variables[i]));
         }
-        for (int i = (variables.length + 1) / 2; i < variables.length; i++) {
+        for (int i = unfixedResistancesCnt; i < variables.length; i++) {
             currentModelPower.add(Math.exp(variables[i]));
         }
         currentModelPower.add(0.0);
 
-        List<ModelLayer> modelLayers = new ArrayList<>();
-        for (int i = 0; i < currentModelPower.size(); i++) {
-            modelLayers.add(ModelLayer.create(currentModelPower.get(i), currentModelResistance.get(i)));
+        //Объединение изменяемых и неизменяемых слоев (в нормальной форме)
+        List<Double> newModelResistance = new ArrayList<>();
+        List<Double> newModelPower = new ArrayList<>();
+
+        int cntUnfixedResistances = 0;
+        for (ModelLayer modelLayer : modelLayers) {
+            if (modelLayer.isFixedResistance()) {
+                newModelResistance.add(modelLayer.getResistance());
+            } else {
+                newModelResistance.add(currentModelResistance.get(cntUnfixedResistances));
+                cntUnfixedResistances++;
+            }
         }
 
-        List<Double> solvedResistance = (List<Double>) ForwardSolverKt.ForwardSolver().invoke(experimentalData, modelLayers);
+        int cntUnfixedPowers = 0;
+        for (ModelLayer modelLayer : modelLayers) {
+            if (modelLayer.isFixedPower()) {
+                newModelPower.add(modelLayer.getPower());
+            } else {
+                newModelPower.add(currentModelPower.get(cntUnfixedPowers));
+                cntUnfixedPowers++;
+            }
+        }
+
+        List<ModelLayer> newModelLayers = new ArrayList<>();
+        for (int i = 0; i < modelLayers.size(); i++) {
+            newModelLayers.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
+        }
+
+        List<Double> solvedResistance = (List<Double>) forwardSolver.invoke(experimentalData, newModelLayers);
 
         return inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));

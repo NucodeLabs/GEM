@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.files.color_palette.CLRParser;
 import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
@@ -150,5 +151,11 @@ public class AppModule extends AbstractModule {
         DoubleProperty min = new SimpleDoubleProperty(0.0);
         DoubleProperty max = new SimpleDoubleProperty(1500.0);
         return new ColorPalette(valueColorList, min, max, new SimpleIntegerProperty(15));
+    }
+
+    @Provides
+    @Singleton
+    ForwardSolver forwardSolver() {
+        return ForwardSolver.createDefault();
     }
 }
