@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableObjectValue
 import javafx.collections.FXCollections.observableList
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
@@ -17,7 +18,6 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.emptyBinding
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.utils.FXUtils
@@ -38,9 +38,6 @@ class ExperimentalTableController @Inject constructor(
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat
 ) : AbstractController() {
-
-    @FXML
-    private lateinit var recalculateBtn: Button
 
     @FXML
     private lateinit var indexCol: TableColumn<Any, Int>
@@ -88,10 +85,10 @@ class ExperimentalTableController @Inject constructor(
     private lateinit var addBtn: Button
 
     @FXML
-    private lateinit var deleteBtn: Button
-
-    @FXML
     private lateinit var table: TableView<ExperimentalData>
+
+    override val stage: Stage
+        get() = table.scene.window as Stage
 
     private val picket: Picket
         get() = picketObservable.get()!!
@@ -112,9 +109,17 @@ class ExperimentalTableController @Inject constructor(
 
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        deleteBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
-        recalculateBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
+        setupCellFactories()
+        setupRowFactory()
+        setupValidation()
 
+        table.itemsProperty().addListener { _, _, newValue: ObservableList<ExperimentalData> ->
+            newValue.addListener(ListChangeListener { table.refresh() })
+            table.refresh()
+        }
+    }
+
+    private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
         ab2Col.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.ab2) }
         mn2Col.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.mn2) }
@@ -125,11 +130,18 @@ class ExperimentalTableController @Inject constructor(
         amperageCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.amperage) }
         voltageCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.voltage) }
 
-        for (i in 1 until table.columns.size) {
-            // safe cast
-            table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
-        }
+        val editableColumns = listOf(
+            ab2Col,
+            mn2Col,
+            resistanceApparentCol,
+            errorResistanceCol,
+            amperageCol,
+            voltageCol
+        )
+        editableColumns.forEach { it.cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter) }
+    }
 
+    private fun setupValidation() {
         val validateDataInput = { s: String -> validateDoubleInput(s, decimalFormat) }
         val validInput = ab2TextField.isValidBy { validateDataInput(it) }
             .and(mn2TextField.isValidBy { validateDataInput(it) })
@@ -147,15 +159,26 @@ class ExperimentalTableController @Inject constructor(
             .and(amperageTextField.textProperty().isNotBlank())
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
-
-        table.itemsProperty().addListener { _, _, newValue: ObservableList<ExperimentalData> ->
-            newValue.addListener(ListChangeListener { table.refresh() })
-            table.refresh()
-        }
     }
 
-    override val stage: Stage
-        get() = table.scene.window as Stage
+    private fun setupRowFactory() {
+        table.rowFactory = Callback { _ ->
+            TableRow<ExperimentalData>().apply {
+                val contextMenu = ContextMenu(
+                    MenuItem("Удалить").apply {
+                        onAction = EventHandler { deleteSelected() }
+                    },
+                    MenuItem("Рассчитать ρₐ").apply {
+                        onAction = EventHandler { recalculateSelected() }
+                    }
+                ).apply {
+                    style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
+                }
+
+                onContextMenuRequested = EventHandler { contextMenu.show(this, it.screenX, it.screenY) }
+            }
+        }
+    }
 
     private fun update() {
         table.itemsProperty().value = observableList(picket.experimentalData)

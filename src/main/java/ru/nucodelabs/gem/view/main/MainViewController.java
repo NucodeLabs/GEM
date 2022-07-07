@@ -156,7 +156,7 @@ public class MainViewController extends AbstractController implements FileImport
         inverseBtn.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> {
                     if (picket.get() != null) {
-                        return picket.get().getModelData().isEmpty();
+                        return picket.get().getModelData().isEmpty() || picket.get().getExperimentalData().isEmpty();
                     } else {
                         return false;
                     }
