@@ -54,6 +54,8 @@ public class MainViewController extends AbstractController implements FileImport
     private final StringProperty dirtyAsterisk = new SimpleStringProperty("");
 
     @FXML
+    private Button inverseBtn;
+    @FXML
     private TextField picketName;
     @FXML
     private Label xCoordLbl;
@@ -147,6 +149,20 @@ public class MainViewController extends AbstractController implements FileImport
         setupValidationOnPicketXZ(picketOffsetX);
         setupValidationOnPicketXZ(picketZ);
         syncMisfitAndVesXAxes();
+        setupInverseBtn();
+    }
+
+    private void setupInverseBtn() {
+        inverseBtn.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> {
+                    if (picket.get() != null) {
+                        return picket.get().getModelData().isEmpty();
+                    } else {
+                        return false;
+                    }
+                },
+                picket
+        ));
     }
 
     private void syncMisfitAndVesXAxes() {

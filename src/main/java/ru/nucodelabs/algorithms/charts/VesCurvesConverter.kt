@@ -57,9 +57,9 @@ class VesCurvesConverter @Inject constructor(
     }
 
     fun modelCurveOf(modelData: List<ModelLayer>): List<Point> {
-        val FIRST_X = 1e-2
-        val LAST_X = 1e100
-        return modelCurveOf(modelData, FIRST_X, LAST_X)
+        val firstX = 1e-3
+        val lastX = 1e100
+        return modelCurveOf(modelData, firstX, lastX)
     }
 
     fun modelCurveOf(modelData: List<ModelLayer>, firstX: Double, lastX: Double): List<Point> {
