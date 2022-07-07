@@ -120,25 +120,25 @@ class VesCurvesController @Inject constructor(
 
     private fun setupXAxisBounds() {
         lineChartXAxis.lowerBound = listOf(
-            picket.modelData.first().power,
-            picket.experimentalData.first().ab2
+            picket.modelData.firstOrNull()?.power ?: -1.0,
+            picket.experimentalData.firstOrNull()?.ab2 ?: -1.0
         ).minOf { log10(it) } - X_AXIS_LOG_PADDING
 
         lineChartXAxis.upperBound = listOf(
-            picket.z - picket.zOfModelLayers().last(),
-            picket.experimentalData.last().ab2
+            picket.z - (picket.zOfModelLayers().lastOrNull() ?: 3.0),
+            picket.experimentalData.lastOrNull()?.ab2 ?: 3.0
         ).maxOf { log10(it) } + X_AXIS_LOG_PADDING
     }
 
     private fun setupYAxisBounds() {
         lineChartYAxis.lowerBound = listOf(
-            picket.modelData.minOf { it.resistance },
-            picket.experimentalData.minOf { it.resistanceApparent }
+            picket.modelData.minOfOrNull { it.resistance } ?: -1.0,
+            picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: -1.0
         ).minOf { log10(it) } - Y_AXIS_LOG_PADDING
 
         lineChartYAxis.upperBound = listOf(
-            picket.modelData.maxOf { it.resistance },
-            picket.experimentalData.maxOf { it.resistanceApparent }
+            picket.modelData.maxOfOrNull { it.resistance } ?: 3.0,
+            picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: 3.0
         ).maxOf { log10(it) } + Y_AXIS_LOG_PADDING
     }
 
