@@ -10,7 +10,7 @@ import javafx.scene.control.MenuItem
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.lenght
+import ru.nucodelabs.data.ves.length
 import ru.nucodelabs.data.ves.picketsWidths
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
@@ -88,7 +88,7 @@ class PicketsBarController @Inject constructor(
                 }
                 onAction = EventHandler { picketIndex.set(index) }
                 onContextMenuRequested = EventHandler { contextMenu.show(stage, it.screenX, it.screenY) }
-                prefWidthProperty().bind(container.widthProperty().multiply(widthsOfPickets[index] / section.lenght()))
+                prefWidthProperty().bind(container.widthProperty().multiply(widthsOfPickets[index] / section.length()))
             }
 
             buttons += button

@@ -36,14 +36,23 @@ private fun k(ab2: Double, mn2: Double): Double {
             + 1 / am))
 }
 
-fun Section.picketsWidths(): List<Double> = pickets.map { picket ->
-    val (leftX, rightX) = picketBounds(picket)
-    rightX - leftX
+fun Section.picketsWidths(): List<Double> = if (pickets.size > 1) {
+    pickets.map { picket ->
+        val (leftX, rightX) = picketBounds(picket)
+        rightX - leftX
+    }
+} else {
+    listOf(length())
 }
 
 
 fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
     val index = pickets.indexOf(picket).also { if (it < 0) throw IllegalArgumentException() }
+
+    if (pickets.size == 1) {
+        val maxAb2 = picket.experimentalData.maxOf { it.ab2 }
+        return -maxAb2 to +maxAb2
+    }
 
     val leftX: Double = if (index == 0) {
         xOfPicket(picket)
@@ -60,8 +69,8 @@ fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
     return Pair(leftX, rightX)
 }
 
-fun Section.lenght() = when (pickets.size) {
+fun Section.length() = when (pickets.size) {
     0 -> 0.0
-    1 -> 100.0
+    1 -> pickets.first().experimentalData.maxOf { it.ab2 } * 2
     else -> xOfPicket(pickets.last()) - xOfPicket(pickets.first())
 }
