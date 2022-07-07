@@ -22,7 +22,6 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.emptyBinding
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.utils.FXUtils
@@ -73,9 +72,6 @@ class ModelTableController @Inject constructor(
     private lateinit var indexTextField: TextField
 
     @FXML
-    private lateinit var deleteBtn: Button
-
-    @FXML
     private lateinit var addBtn: Button
 
     @FXML
@@ -98,7 +94,6 @@ class ModelTableController @Inject constructor(
         }
 
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        deleteBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
 
         setupCellFactories()
         setupValidation()
@@ -186,7 +181,7 @@ class ModelTableController @Inject constructor(
                                 }
                             )
                         }
-                        style = "-fx-font-size: 14;" // default
+                        style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
                     }
                 }
 
