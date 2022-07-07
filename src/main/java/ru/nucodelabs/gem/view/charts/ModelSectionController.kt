@@ -19,14 +19,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
+private const val LAST_COEF = 0.5
+private const val SINGLE_PICKET_LEFT_X = 0.0
+private const val SINGLE_PICKET_RIGHT_X = 100.0
+
 class ModelSectionController @Inject constructor(
     private val sectionObservable: ObservableObjectValue<Section>,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
-
-    private val LAST_COEF = 0.5
-    private val SINGLE_PICKET_LEFT_X = 0.0
-    private val SINGLE_PICKET_RIGHT_X = 100.0
 
     @FXML
     private lateinit var yAxis: NumberAxis
