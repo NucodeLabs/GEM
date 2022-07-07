@@ -57,7 +57,7 @@ class ModelSectionController @Inject constructor(
             return
         }
 
-        val lowerBoundZ = zWithVirtualLastLayers().minOf { it.min() }
+        val lowerBoundZ = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
 
         val colors = mutableMapOf<Line<Double, Double>, Color>()
         for (picket in section.pickets) {
@@ -146,7 +146,7 @@ class ModelSectionController @Inject constructor(
 
     private fun setupYAxisBounds() {
         yAxis.upperBound = section.pickets.maxOf { it.z }
-        yAxis.lowerBound = zWithVirtualLastLayers().minOf { it.min() }
+        yAxis.lowerBound = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
     }
 
     private fun zWithVirtualLastLayers(): List<List<Double>> = section.pickets.map {
