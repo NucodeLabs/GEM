@@ -7,14 +7,11 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.files.color_palette.CLRParser;
+import ru.nucodelabs.files.color_palette.ClrParser;
 import ru.nucodelabs.files.color_palette.ValueColor;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
@@ -143,14 +140,12 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ColorMapper colorMapper() throws Exception {
+    ColorMapper colorMapper() {
 //        return new ColorPalette(
 //                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
-        CLRParser clrParser = new CLRParser();
-        List<ValueColor> valueColorList = clrParser.parseCLR(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
-        DoubleProperty min = new SimpleDoubleProperty(0.0);
-        DoubleProperty max = new SimpleDoubleProperty(1500.0);
-        return new ColorPalette(valueColorList, min, max, new SimpleIntegerProperty(15));
+        ClrParser clrParser = new ClrParser();
+        List<ValueColor> valueColorList = clrParser.parse(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
+        return new ColorPalette(valueColorList, 0, 1500, 15);
     }
 
     @Provides
