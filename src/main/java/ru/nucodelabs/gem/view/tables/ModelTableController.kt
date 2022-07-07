@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableObjectValue
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
@@ -21,6 +22,7 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.emptyBinding
 import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.utils.FXUtils.isNotBlank
 import ru.nucodelabs.gem.view.AbstractController
@@ -91,11 +93,104 @@ class ModelTableController @Inject constructor(
         }
 
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        table.selectionModel.selectedItems.addListener(ListChangeListener {
-            if (it.next()) {
-                deleteBtn.isDisable = it.list.isEmpty()
+        deleteBtn.disableProperty().bind(table.selectionModel.selectedItems.emptyBinding())
+
+        setupCellFactories()
+        setupValidation()
+        setupRowFactory()
+
+        table.itemsProperty().addListener { _, _, newValue: ObservableList<ModelLayer> ->
+            newValue.addListener(ListChangeListener { table.refresh() })
+            table.refresh()
+        }
+    }
+
+    private fun fixPowerForSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            modelData[index] = modelData[index].withFixedPower(true)
+        }
+        updateIfValidElseAlert(modelData)
+    }
+
+    private fun fixResistanceForSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            modelData[index] = modelData[index].withFixedResistance(true)
+        }
+        updateIfValidElseAlert(modelData)
+    }
+
+    private fun unfixPowerForSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            modelData[index] = modelData[index].withFixedPower(false)
+        }
+        updateIfValidElseAlert(modelData)
+    }
+
+    private fun unfixResistanceForSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            modelData[index] = modelData[index].withFixedResistance(false)
+        }
+        updateIfValidElseAlert(modelData)
+    }
+
+    private fun setupRowFactory() {
+        table.rowFactory = Callback {
+            TableRow<ModelLayer>().apply {
+                val createContextMenu = {
+                    ContextMenu(
+                        MenuItem("Удалить").apply {
+                            onAction = EventHandler { deleteSelected() }
+                        },
+                    ).apply {
+                        if (table.selectionModel.selectedItems.size == 1) {
+                            items += MenuItem().apply {
+                                if (item.isFixedResistance) {
+                                    text = "Разблокировать сопротивление"
+                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                } else {
+                                    text = "Зафиксировать сопротивление"
+                                    onAction = EventHandler { fixResistanceForSelected() }
+                                }
+                            }
+                            items += MenuItem().apply {
+                                if (item.isFixedPower) {
+                                    text = "Разблокировать мощность"
+                                    onAction = EventHandler { unfixPowerForSelected() }
+                                } else {
+                                    text = "Зафиксировать мощность"
+                                    onAction = EventHandler { fixPowerForSelected() }
+                                }
+                            }
+                        } else {
+                            items += listOf(
+                                MenuItem("Зафиксировать сопротивление").apply {
+                                    onAction = EventHandler { fixResistanceForSelected() }
+                                },
+                                MenuItem("Разблокировать сопротивление").apply {
+                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                },
+                                MenuItem("Зафиксировать мощность").apply {
+                                    onAction = EventHandler { fixPowerForSelected() }
+                                },
+                                MenuItem("Разблокировать мощность").apply {
+                                    onAction = EventHandler { unfixPowerForSelected() }
+                                }
+                            )
+                        }
+                        style = "-fx-font-size: 14;"
+                    }
+                }
+
+                onContextMenuRequested = EventHandler { createContextMenu().show(this, it.screenX, it.screenY) }
             }
-        })
+        }
+    }
+
+    private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
         powerCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.power) }
         resistanceCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.resistance) }
@@ -122,7 +217,9 @@ class ModelTableController @Inject constructor(
         for (i in 1 until table.columns.size - 1) {
             table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
         }
+    }
 
+    private fun setupValidation() {
         val validInput = valid(indexTextField) { validateIndexInput(it) }
             .and(valid(resistanceTextField) { validateDoubleInput(it, decimalFormat) })
             .and(valid(powerTextField) { validateDoubleInput(it, decimalFormat) })
@@ -131,11 +228,6 @@ class ModelTableController @Inject constructor(
             .and(isNotBlank(resistanceTextField.textProperty()))
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
-
-        table.itemsProperty().addListener { _, _, newValue: ObservableList<ModelLayer> ->
-            newValue.addListener(ListChangeListener { table.refresh() })
-            table.refresh()
-        }
     }
 
     override val stage: Stage?
