@@ -11,15 +11,15 @@
       stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ModelTableController">
-    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">
-        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">
-            <graphic>
-                <ImageView fitHeight="15" fitWidth="15">
-                    <Image url="@../../../../../img/ui_icons/backspace/2x/round_backspace_black_24dp.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-    </HBox>
+    <!--    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">-->
+    <!--        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">-->
+    <!--            <graphic>-->
+    <!--                <ImageView fitHeight="15" fitWidth="15">-->
+    <!--                    <Image url="@../../../../../img/ui_icons/backspace/2x/round_backspace_black_24dp.png"/>-->
+    <!--                </ImageView>-->
+    <!--            </graphic>-->
+    <!--        </Button>-->
+    <!--    </HBox>-->
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
             <VBox alignment="BASELINE_CENTER" fx:id="dragDropPlaceholder"
