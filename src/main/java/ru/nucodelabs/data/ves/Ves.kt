@@ -36,7 +36,7 @@ private fun k(ab2: Double, mn2: Double): Double {
             + 1 / am))
 }
 
-private fun Section.picketsWidths(): List<Double> = pickets.map { picket ->
+fun Section.picketsWidths(): List<Double> = pickets.map { picket ->
     val (leftX, rightX) = picketBounds(picket)
     rightX - leftX
 }
@@ -58,4 +58,10 @@ fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
     }
 
     return Pair(leftX, rightX)
+}
+
+fun Section.lenght() = when (pickets.size) {
+    0 -> 0.0
+    1 -> 100.0
+    else -> xOfPicket(pickets.last()) - xOfPicket(pickets.first())
 }
