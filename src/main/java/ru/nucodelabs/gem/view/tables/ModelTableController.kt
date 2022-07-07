@@ -36,6 +36,10 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
+private const val STYLE_FOR_FIXED = """
+    -fx-text-fill: White;
+    -fx-background-color: Gray;
+"""
 class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
     private val fileImporterProvider: Provider<FileImporter>,
@@ -182,7 +186,7 @@ class ModelTableController @Inject constructor(
                                 }
                             )
                         }
-                        style = "-fx-font-size: 14;"
+                        style = "-fx-font-size: 14;" // default
                     }
                 }
 
@@ -215,9 +219,34 @@ class ModelTableController @Inject constructor(
             }
         }
 
-        for (i in 1 until table.columns.size - 1) {
-            table.columns[i].cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter)
+        val editableColumns: List<TableColumn<ModelLayer, Double>> = listOf(powerCol, resistanceCol)
+        editableColumns.forEach {
+            it.cellFactory = Callback { col ->
+                TextFieldTableCell.forTableColumn<ModelLayer, Double>(doubleStringConverter).call(col).apply {
+                    when (col) {
+                        powerCol -> indexProperty().addListener { _, _, _ ->
+                            if (index >= 0 && index <= picket.modelData.lastIndex) {
+                                style = if (picket.modelData[index].isFixedPower) {
+                                    STYLE_FOR_FIXED
+                                } else {
+                                    ""
+                                }
+                            }
+                        }
+                        resistanceCol -> indexProperty().addListener { _, _, _ ->
+                            if (index >= 0 && index <= picket.modelData.lastIndex) {
+                                style = if (picket.modelData[index].isFixedResistance) {
+                                    STYLE_FOR_FIXED
+                                } else {
+                                    ""
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
     }
 
     private fun setupValidation() {
