@@ -1,0 +1,19 @@
+.chart-area-symbol {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.chart-series-area-line {
+    /*-fx-stroke: BLACK;*/
+    -fx-stroke: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
+}
+
+#chart {
+    -fx-grid-lines-visible: false;
+    -fx-horizontal-grid-lines-visible: false;
+    -fx-vertical-grid-lines-visible: false;
+}

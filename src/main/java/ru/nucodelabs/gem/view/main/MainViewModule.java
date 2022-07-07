@@ -10,12 +10,6 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.view.DialogsModule;
 import ru.nucodelabs.gem.view.charts.ChartsModule;
-import ru.nucodelabs.gem.view.charts.VESCurvesController;
-import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionController;
-import ru.nucodelabs.gem.view.charts.cross_section.CrossSectionModule;
-import ru.nucodelabs.gem.view.color_palette.ColorPaletteController;
-import ru.nucodelabs.gem.view.tables.ExperimentalTableController;
-import ru.nucodelabs.gem.view.tables.ModelTableController;
 
 import static com.google.inject.Scopes.SINGLETON;
 
@@ -29,14 +23,8 @@ public class MainViewModule extends AbstractModule {
         install(new DialogsModule());
         install(new ObservableDataModule());
         install(new ChartsModule());
-        install(new CrossSectionModule());
 
         bind(MainViewController.class).in(SINGLETON);
-        bind(VESCurvesController.class).in(SINGLETON);
-        bind(ModelTableController.class).in(SINGLETON);
-        bind(ExperimentalTableController.class).in(SINGLETON);
-        bind(CrossSectionController.class).in(SINGLETON);
-        bind(ColorPaletteController.class).in(SINGLETON);
 
         bind(StorageManager.class).in(SINGLETON);
         bind(SectionManager.class).in(SINGLETON);
