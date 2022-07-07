@@ -23,8 +23,9 @@ import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.emptyBinding
+import ru.nucodelabs.gem.extensions.fx.isNotBlank
+import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.utils.FXUtils
-import ru.nucodelabs.gem.utils.FXUtils.isNotBlank
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
@@ -220,12 +221,12 @@ class ModelTableController @Inject constructor(
     }
 
     private fun setupValidation() {
-        val validInput = valid(indexTextField) { validateIndexInput(it) }
-            .and(valid(resistanceTextField) { validateDoubleInput(it, decimalFormat) })
-            .and(valid(powerTextField) { validateDoubleInput(it, decimalFormat) })
+        val validInput = indexTextField.isValidBy { validateIndexInput(it) }
+            .and(resistanceTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
+            .and(powerTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
 
-        val allRequiredNotBlank = isNotBlank(powerTextField.textProperty())
-            .and(isNotBlank(resistanceTextField.textProperty()))
+        val allRequiredNotBlank = powerTextField.textProperty().isNotBlank()
+            .and(resistanceTextField.textProperty().isNotBlank())
 
         addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
     }
