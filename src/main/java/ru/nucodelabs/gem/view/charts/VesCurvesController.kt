@@ -32,6 +32,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.log10
 
+private const val X_AXIS_LOG_PADDING = 0.2
+private const val Y_AXIS_LOG_PADDING = 0.2
+private const val X_MIN_LOG = -2.0
+private const val X_MAX_LOG = 10.0
+private const val Y_MIN_LOG = -2.0
+private const val Y_MAX_LOG = 10.0
+private const val ZOOM_DELTA_LOG = 0.1
+
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
@@ -64,12 +72,6 @@ class VesCurvesController @Inject constructor(
 
     private lateinit var dragViewSupport: DragViewSupport
     private lateinit var zoomSupport: ZoomSupport
-
-    private val X_MIN_LOG = -2.0
-    private val X_MAX_LOG = 10.0
-    private val Y_MIN_LOG = -2.0
-    private val Y_MAX_LOG = 10.0
-    private val ZOOM_DELTA_LOG = 0.1
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
@@ -105,12 +107,39 @@ class VesCurvesController @Inject constructor(
 
     private fun update() {
         tooltips.clear()
-//        lineChart.animated = false
-//        lineChartYAxis.isAutoRanging = true
+
         updateExpCurves()
         updateTheoreticalCurve()
         updateModelCurve()
+
         addTooltips()
+
+        setupXAxisBounds()
+        setupYAxisBounds()
+    }
+
+    private fun setupXAxisBounds() {
+        lineChartXAxis.lowerBound = listOf(
+            picket.modelData.first().power,
+            picket.experimentalData.first().ab2
+        ).minOf { log10(it) } - X_AXIS_LOG_PADDING
+
+        lineChartXAxis.upperBound = listOf(
+            picket.z - picket.zOfModelLayers().last(),
+            picket.experimentalData.last().ab2
+        ).maxOf { log10(it) } + X_AXIS_LOG_PADDING
+    }
+
+    private fun setupYAxisBounds() {
+        lineChartYAxis.lowerBound = listOf(
+            picket.modelData.minOf { it.resistance },
+            picket.experimentalData.minOf { it.resistanceApparent }
+        ).minOf { log10(it) } - Y_AXIS_LOG_PADDING
+
+        lineChartYAxis.upperBound = listOf(
+            picket.modelData.maxOf { it.resistance },
+            picket.experimentalData.maxOf { it.resistanceApparent }
+        ).maxOf { log10(it) } + Y_AXIS_LOG_PADDING
     }
 
     // tooltips must be added after nodes shown on screen, otherwise it doesn't work
