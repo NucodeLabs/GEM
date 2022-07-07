@@ -14,7 +14,7 @@ public class CLRParser {
         nameCLR = sc.nextLine();
 
         while (sc.hasNextLine()) {
-            double percentage = sc.nextDouble();
+            double percentage = sc.nextDouble() * 0.01;
 
             int red = sc.nextInt();
             int green = sc.nextInt();

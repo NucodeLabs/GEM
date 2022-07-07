@@ -93,6 +93,10 @@ public class ColorPaletteController extends AbstractController {
         updatePaletteView();
     }
 
+    private void drawPalette2() {
+
+    }
+
     private void drawPalette() {
         double prevKey = 0.0;
         for (int i = 0; i <= precisionProperty.get(); i++) {
