@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Deprecated
 public class ColorPaletteController extends AbstractController {
 
     @FXML
@@ -80,11 +79,12 @@ public class ColorPaletteController extends AbstractController {
 
         minResistanceProperty = new SimpleDoubleProperty(0.0);
         maxResistanceProperty = new SimpleDoubleProperty(1500.0);
-        precisionProperty = new SimpleIntegerProperty(20);
+        precisionProperty = new SimpleIntegerProperty(15);
         coeff = new SimpleDoubleProperty(1.0 / precisionProperty.get());
 
         colorPalette.minValueProperty().bind(minResistanceProperty);
         colorPalette.maxValueProperty().bind(maxResistanceProperty);
+        colorPalette.blocksCntProperty().bind(precisionProperty);
 
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
@@ -135,12 +135,8 @@ public class ColorPaletteController extends AbstractController {
                     String.valueOf(
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
-                Stop[] stops = {
-                        new Stop(0, colorPalette.colorFor(computeResistance(key))),
-                        new Stop(1, colorPalette.colorFor(computeResistance(key + coeff.get())))};
-                LinearGradient linearGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 
-                ((Rectangle) palettePane.getChildren().get(i)).setFill(linearGradient);
+                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getColorBlockList().get(i).color());
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
             }
         }
