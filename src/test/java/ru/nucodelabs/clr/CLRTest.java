@@ -2,10 +2,11 @@ package ru.nucodelabs.clr;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.files.color_palette.CLRParser;
-import ru.nucodelabs.files.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.files.color_palette.ValueColor;
 
 import java.io.File;
@@ -15,7 +16,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class CLRTest {
 
@@ -54,7 +54,7 @@ public class CLRTest {
         List<ValueColor> valueColorList = clrParser.parseCLR(inputStream);
         DoubleProperty min = new SimpleDoubleProperty(0.0);
         DoubleProperty max = new SimpleDoubleProperty(1500.0);
-        ColorPalette colorPalette = new ColorPalette(valueColorList, min, max, 10);
+        ColorPalette colorPalette = new ColorPalette(valueColorList, min, max, new SimpleIntegerProperty(10));
         Color color = colorPalette.colorFor(1200);
 
 
