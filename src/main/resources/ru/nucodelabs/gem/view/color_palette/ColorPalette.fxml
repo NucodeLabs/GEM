@@ -8,7 +8,7 @@
       spacing="10.0"
       xmlns="http://javafx.com/javafx/11.0.2"
       fx:controller="ru.nucodelabs.gem.view.color_palette.ColorPaletteController"
-      onContextMenuRequested="#showContextMenu">
+      onContextMenuRequested="#showContextMenu" prefWidth="70">
     <fx:define>
         <ContextMenu fx:id="contextMenu">
             <items>
