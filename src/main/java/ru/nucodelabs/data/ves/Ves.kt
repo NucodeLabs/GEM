@@ -36,13 +36,15 @@ private fun k(ab2: Double, mn2: Double): Double {
             + 1 / am))
 }
 
-fun Section.picketsWidths(): List<Double> = if (pickets.size > 1) {
-    pickets.map { picket ->
-        val (leftX, rightX) = picketBounds(picket)
-        rightX - leftX
+fun Section.picketsWidths(): List<Double> = when (pickets.size) {
+    0 -> listOf()
+    1 -> listOf(length())
+    else -> {
+        pickets.map { picket ->
+            val (leftX, rightX) = picketBounds(picket)
+            rightX - leftX
+        }
     }
-} else {
-    listOf(length())
 }
 
 
@@ -69,8 +71,20 @@ fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
     return Pair(leftX, rightX)
 }
 
+fun Section.picketBoundsOrNull(picket: Picket): Pair<Double, Double>? = try {
+    picketBounds(picket)
+} catch (_: NoSuchElementException) {
+    null
+}
+
 fun Section.length() = when (pickets.size) {
     0 -> 0.0
-    1 -> pickets.first().experimentalData.maxOf { it.ab2 } * 2
+    1 -> (pickets.first().experimentalData.maxOfOrNull { it.ab2 } ?: 0.0) * 2
     else -> xOfPicket(pickets.last()) - xOfPicket(pickets.first())
+}
+
+fun Section.lengthOrNull() = try {
+    length()
+} catch (_: NoSuchElementException) {
+    null
 }
