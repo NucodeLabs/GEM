@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.value.ObservableObjectValue
 import javafx.fxml.FXML
+import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
@@ -16,6 +17,9 @@ class PseudoSectionController @Inject constructor(
     private val sectionObservableObjectValue: ObservableObjectValue<Section>,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
+
+    @FXML
+    private lateinit var xAxis: NumberAxis
 
     @FXML
     private lateinit var chart: HeatMap
@@ -51,6 +55,15 @@ class PseudoSectionController @Inject constructor(
                 )
             }
         }
+
         chart.data.setAll(data)
+
+        // force
+        if (section.pickets.size <= 1) {
+            val maxAb2 = section.pickets.first().experimentalData.maxOfOrNull { it.ab2 } ?: 0.1
+            xAxis.lowerBound = -maxAb2
+            xAxis.upperBound = +maxAb2
+        }
+
     }
 }
