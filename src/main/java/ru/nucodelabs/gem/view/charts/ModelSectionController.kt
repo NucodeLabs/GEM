@@ -7,7 +7,7 @@ import javafx.scene.chart.NumberAxis
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.picketBounds
+import ru.nucodelabs.data.ves.picketBoundsOrNull
 import ru.nucodelabs.gem.extensions.fx.Line
 import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -67,7 +67,7 @@ class ModelSectionController @Inject constructor(
 
             val linesForPicket = mutableListOf<Line<Double, Double>>()
 
-            val (leftX, rightX) = section.picketBounds(picket)
+            val (leftX, rightX) = section.picketBoundsOrNull(picket) ?: (-0.1 to +0.1)
 
             // top line
             linesForPicket += Line(
@@ -129,7 +129,7 @@ class ModelSectionController @Inject constructor(
     private fun setupXAxisBounds() {
         when (section.pickets.size) {
             1 -> {
-                val (leftX, rightX) = section.picketBounds(section.pickets.first())
+                val (leftX, rightX) = section.picketBoundsOrNull(section.pickets.first()) ?: (-0.1 to +0.1)
                 xAxis.lowerBound = leftX
                 xAxis.upperBound = rightX
             }
