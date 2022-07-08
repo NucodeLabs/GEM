@@ -156,6 +156,11 @@ public class HeatMap extends VBUserControl {
     }
 
     private void repaint() {
+        if (data.get().isEmpty()) {
+            fillWhite();
+            return;
+        }
+
         var mapped = data.get().stream()
                 .collect(Collectors.groupingBy(XYChart.Data::getXValue));
 
@@ -163,18 +168,18 @@ public class HeatMap extends VBUserControl {
                 .sorted(Comparator.comparingDouble(list -> list.get(0).getXValue()))
                 .collect(Collectors.toList());
 
-        if (!lists.isEmpty()) {
-            try {
+        try {
 //                lists.get(0).forEach(dt -> dt.setXValue(0d));
-                lists.set(0, lists.get(0).stream().map(dt -> new XYChart.Data<>(0.0, dt.getYValue(), dt.getExtraValue())).toList());
-                new PseudoInterpolator(lists, colorPalette.get()).paint(canvas);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            canvas.getGraphicsContext2D().setFill(Color.WHITE);
-            canvas.getGraphicsContext2D().fill();
+            lists.set(0, lists.get(0).stream().map(dt -> new XYChart.Data<>(0.0, dt.getYValue(), dt.getExtraValue())).toList());
+            new PseudoInterpolator(lists, colorPalette.get()).paint(canvas);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private void fillWhite() {
+        canvas.getGraphicsContext2D().setFill(Color.WHITE);
+        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     private void updateAxes() {
