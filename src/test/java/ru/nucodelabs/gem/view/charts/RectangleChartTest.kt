@@ -19,6 +19,8 @@ internal class RectangleChartTest {
             primaryStage.show()
 
             chart.addRectangle(25.0, 30.0, 10.0, 20.0) { fill = Color.BLACK }
+            chart.addRectangle(80.0, 90.0, 50.0, 50.0) { fill = Color.RED }
+            chart.addRectangle(-50.0, -40.0, 60.0, 50.0) { fill = Color.YELLOW }
         }
     }
 
