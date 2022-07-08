@@ -16,6 +16,10 @@ class RectangleChart(
     @NamedArg("yAxis") private val yAxis: NumberAxis
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
+    init {
+        animated = false
+    }
+
     /**
      * Values for axes
      */
@@ -45,33 +49,43 @@ class RectangleChart(
         var heightOnAxis: Double
             get() = heightOnAxisProperty.value
             set(value) = heightOnAxisProperty.set(value)
+
+        override fun toString(): String =
+            "${super.toString()},\n\taxisValues[x = $xOnAxis, y = $yOnAxis, width = $widthOnAxis, height = $heightOnAxis]"
     }
 
-    private val _rectangleSeries: MutableMap<Rectangle, Series<Number, Number>> = mutableMapOf()
-    val dataRectangles: ObservableList<Rectangle> = observableListOf()
+    private val _rectangleSeries: MutableList<Pair<Rectangle, Series<Number, Number>>> = mutableListOf()
+    val rectangles: ObservableList<Rectangle> = observableListOf()
 
     init {
-        dataRectangles.addListener(ListChangeListener { change ->
-            if (change.next()) {
-                for (rect in change.list) {
-                    if (rect !in plotChildren) {
-                        setupRectangle(rect)
-                    }
-                }
-
-                for (rect in plotChildren.filterIsInstance<Rectangle>()) {
-                    if (rect !in change.list) {
-                        removeRectangle(rect)
-                    }
+        rectangles.addListener(ListChangeListener { change ->
+            while (change.next()) {
+                change.addedSubList.forEach { setupRectangle(it) }
+                change.removed.forEach {
+                    removeSeriesFor(it)
+                    removeRectangle(it)
                 }
             }
         })
+
+        val dataListener = ListChangeListener<Series<Number, Number>> { change ->
+            while (change.next()) {
+                change.removed.forEach { series ->
+                    rectangleSeries.filter { it.second == series }.forEach { removeRectangle(it.first) }
+                }
+            }
+        }
+
+        data.addListener(dataListener)
+        dataProperty().addListener { _, _, newValue ->
+            newValue.addListener(dataListener)
+        }
     }
 
     /**
      * Rectangles and associated series
      */
-    val rectangleSeries
+    val rectangleSeries: List<Pair<Rectangle, Series<Number, Number>>>
         get() = _rectangleSeries
 
     private val sizeProperties
@@ -82,6 +96,8 @@ class RectangleChart(
         )
 
     private fun setupRectangle(rectangle: Rectangle) {
+        plotChildren += rectangle
+
         rectangle.x = xAxis.getDisplayPosition(rectangle.xOnAxis)
         rectangle.xProperty().bind(
             createDoubleBinding(
@@ -91,21 +107,21 @@ class RectangleChart(
             )
         )
 
-        rectangle.y = yAxis.getDisplayPosition(rectangle.yOnAxis + rectangle.heightOnAxis)
+        rectangle.y = yAxis.getDisplayPosition(rectangle.yOnAxis)
         rectangle.yProperty().bind(
             createDoubleBinding(
-                { yAxis.getDisplayPosition(rectangle.yOnAxis + rectangle.heightOnAxis) },
+                { yAxis.getDisplayPosition(rectangle.yOnAxis) },
                 rectangle.yOnAxisProperty,
-                rectangle.heightOnAxisProperty,
                 *sizeProperties
             )
         )
 
-        rectangle.width = xAxis.getDisplayPosition(rectangle.widthOnAxis)
+        rectangle.width = xAxis.getDisplayPosition(rectangle.widthOnAxis + xAxis.lowerBound)
         rectangle.widthProperty().bind(
             createDoubleBinding(
-                { xAxis.getDisplayPosition(rectangle.widthOnAxis) },
+                { xAxis.getDisplayPosition(rectangle.widthOnAxis + xAxis.lowerBound) },
                 rectangle.widthOnAxisProperty,
+                xAxis.lowerBoundProperty(),
                 *sizeProperties
             )
         )
@@ -138,33 +154,42 @@ class RectangleChart(
                 },
                 Data(
                     rectangle.xOnAxis as Number,
-                    (rectangle.yOnAxis + rectangle.heightOnAxis) as Number
+                    (rectangle.yOnAxis - rectangle.heightOnAxis) as Number
                 ).also {
                     it.XValueProperty().bind(rectangle.xOnAxisProperty.asObject())
-                    it.YValueProperty().bind(rectangle.yOnAxisProperty.add(rectangle.heightOnAxisProperty).asObject())
+                    it.YValueProperty()
+                        .bind(rectangle.yOnAxisProperty.subtract(rectangle.heightOnAxisProperty).asObject())
                 },
                 Data(
                     (rectangle.xOnAxis + rectangle.widthOnAxis) as Number,
-                    (rectangle.yOnAxis + rectangle.heightOnAxis) as Number
+                    (rectangle.yOnAxis - rectangle.heightOnAxis) as Number
                 ).also {
                     it.XValueProperty().bind(rectangle.xOnAxisProperty.add(rectangle.widthOnAxisProperty).asObject())
-                    it.YValueProperty().bind(rectangle.yOnAxisProperty.add(rectangle.heightOnAxisProperty).asObject())
+                    it.YValueProperty()
+                        .bind(rectangle.yOnAxisProperty.subtract(rectangle.heightOnAxisProperty).asObject())
                 }
             )
         )
 
-        data += series
+        data += series.also {
+            it.data.addListener(ListChangeListener { c ->
+                while (c.next()) {
+                    removeRectangle(rectangle)
+                }
+            })
+        }
 
-        _rectangleSeries[rectangle] = series
-
-        plotChildren += rectangle
+        _rectangleSeries += rectangle to series
 
         rectangle.viewOrder = series.data.maxOf { it.node.viewOrder } + 1
     }
 
     private fun removeRectangle(rectangle: Rectangle) {
         plotChildren.remove(rectangle)
-        data.removeAll(_rectangleSeries[rectangle])
-        _rectangleSeries.remove(rectangle)
+        _rectangleSeries.removeAll { it.first == rectangle }
+    }
+
+    private fun removeSeriesFor(rectangle: Rectangle) {
+        data.removeAll(_rectangleSeries.filter { it.first == rectangle }.map { it.second })
     }
 }
