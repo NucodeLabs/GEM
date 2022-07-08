@@ -1,115 +1,102 @@
-package ru.nucodelabs.gem.view.charts;
+package ru.nucodelabs.gem.view.charts
 
-import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
-import javafx.scene.chart.XYChart;
-import javafx.scene.input.MouseEvent;
-import ru.nucodelabs.data.ves.ModelLayer;
-
-import java.util.*;
-import java.util.function.Function;
-
-import static java.lang.Math.log10;
-import static java.lang.Math.pow;
+import javafx.beans.property.ObjectProperty
+import javafx.collections.ObservableList
+import javafx.geometry.Point2D
+import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Series
+import javafx.scene.input.MouseEvent
+import ru.nucodelabs.data.ves.ModelLayer
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.properties.Delegates
 
 /**
  * Enables drag-n-drop functionality on given line chart for step curve (Model Curve)
  */
-public class ModelCurveDragger {
-
-    private static final double TOLERANCE_ABS = 2;
-    private final int MOD_CURVE_SERIES_INDEX;
-
-    private final Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue;
-    private final ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> vesCurvesData;
+class ModelCurveDragger
+/**
+ * Adds drag-n-drop functionality for model step chart.
+ * Modifies values of given property and handle ModelData.
+ *
+ * @param vesCurvesData                 data property of line chart or bound
+ * @param modelCurveIndex           index of series in data
+ */(
+    private val vesCurvesData: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    private val modelCurveIndex: Int,
+    private val lowerLimitY: Double,
+    xAxis: NumberAxis,
+    yAxis: NumberAxis
+) {
+    private val axes: Pair<NumberAxis, NumberAxis> = xAxis to yAxis
 
     // mapping: point on chart --> index of the value in data model arrays
-    private Map<XYChart.Data<Double, Double>, Integer> pointResistanceMap;
-    private Map<XYChart.Data<Double, Double>, Integer> pointPowerMap;
+    private lateinit var pointResistanceMap: MutableMap<XYChart.Data<Double, Double>, Int>
+    private lateinit var pointPowerMap: MutableMap<XYChart.Data<Double, Double>, Int>
 
     // ends of line to be dragged
-    private XYChart.Data<Double, Double> point1;
-    private XYChart.Data<Double, Double> point2;
+    private var point1: XYChart.Data<Double, Double>? = null
+    private var point2: XYChart.Data<Double, Double>? = null
 
-    private final double lowerLimitY;
     // for vertical line dragging
-    private double leftLimitX;
-    private double rightLimitX;
-
-    /**
-     * Adds drag-n-drop functionality for model step chart.
-     * Modifies values of given property and handle ModelData.
-     *
-     * @param coordinatesInSceneToValue line chart node dependent function to convert X and Y to values for axis
-     * @param chartData                 data property of line chart or bound
-     * @param modelCurveIndex           index of series in data
-     */
-    public ModelCurveDragger(
-            Function<Point2D, XYChart.Data<Double, Double>> coordinatesInSceneToValue,
-            ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> chartData,
-            int modelCurveIndex,
-            double lowerLimitY) {
-        this.coordinatesInSceneToValue = coordinatesInSceneToValue;
-        this.vesCurvesData = chartData;
-        MOD_CURVE_SERIES_INDEX = modelCurveIndex;
-        this.lowerLimitY = lowerLimitY;
-    }
+    private var leftLimitX by Delegates.notNull<Double>()
+    private var rightLimitX by Delegates.notNull<Double>()
 
     /**
      * Detects two points that will be dragged by mouse
      *
      * @param mouseEvent mouse pressed event
      */
-    public void detectPoints(MouseEvent mouseEvent) {
+    fun detectPoints(mouseEvent: MouseEvent) {
+        val mouseX = coordinatesToValues(mouseEvent).xValue
 
-        Double mouseX = coordinatesToValues(mouseEvent).getXValue();
+        val mouseXLeftBound = coordinatesToValues(
+            Point2D(mouseEvent.sceneX - TOLERANCE_ABS, mouseEvent.sceneY)
+        ).xValue
 
-        Double mouseXLeftBound = coordinatesToValues(
-                new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY())
-        ).getXValue();
-        Double mouseXRightBound = coordinatesToValues(
-                new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY())
-        ).getXValue();
+        val mouseXRightBound = coordinatesToValues(
+            Point2D(mouseEvent.sceneX + TOLERANCE_ABS, mouseEvent.sceneY)
+        ).xValue
 
-        var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
-        var closestVerticalLines = points.stream()
-                .filter(p -> mouseXLeftBound < p.getXValue() && p.getXValue() < mouseXRightBound)
-                .toList();
+        val points = vesCurvesData.get()[modelCurveIndex].data
 
-        if (closestVerticalLines.size() == 2) {
-            point1 = closestVerticalLines.get(0);
-            point2 = closestVerticalLines.get(1);
+        val closestVerticalLines = points.filter {
+            mouseXLeftBound < it.xValue && it.xValue < mouseXRightBound
+        }
 
-            for (var point : points) {
-                if (point.getXValue() < mouseX && point.getXValue() < point1.getXValue()) {
-                    leftLimitX = point.getXValue();
+        if (closestVerticalLines.size == 2) {
+            point1 = closestVerticalLines[0]
+            point2 = closestVerticalLines[1]
+            for (point in points) {
+                if (point.xValue < mouseX && point.xValue < point1!!.xValue) {
+                    leftLimitX = point.xValue
                 }
-                if (point.getXValue() > mouseX && point.getXValue() > point2.getXValue()) {
-                    rightLimitX = point.getXValue();
-                    break;
+                if (point.xValue > mouseX && point.xValue > point2!!.xValue) {
+                    rightLimitX = point.xValue
+                    break
                 }
             }
         } else {
-            for (var point : points) {
-                if (point.getXValue() < mouseX) {
-                    point1 = point;
+            for (point in points) {
+                if (point.xValue < mouseX) {
+                    point1 = point
                 }
-                if (point.getXValue() > mouseX) {
-                    point2 = point;
-                    break;
+                if (point.xValue > mouseX) {
+                    point2 = point
+                    break
                 }
             }
         }
     }
 
-    public void setStyle() {
+    fun setupStyle() {
         if (point1 != null && point2 != null) {
-            String style = """
+            val style = """
                     -fx-background-color: blue;
-                    """;
-            point1.getNode().lookup(".chart-line-symbol").setStyle(style);
-            point2.getNode().lookup(".chart-line-symbol").setStyle(style);
+                    """
+            point1!!.node.lookup(".chart-line-symbol").style = style
+            point2!!.node.lookup(".chart-line-symbol").style = style
         }
     }
 
@@ -119,58 +106,57 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse dragged event
      * @param modelData  model data
      */
-    public List<ModelLayer> handleMouseDragged(MouseEvent mouseEvent, List<ModelLayer> modelData) {
-        Objects.requireNonNull(modelData);
+    fun handleMouseDragged(mouseEvent: MouseEvent, modelData: MutableList<ModelLayer>): List<ModelLayer> {
+        val mutableModelData = modelData.toMutableList()
 
-        mapModelData(modelData);
+        mapModelData(mutableModelData)
 
-        modelData = new ArrayList<>(modelData);
+        val valuesForAxis = coordinatesToValues(mouseEvent)
+        val mouseX = valuesForAxis.xValue
+        val mouseY = valuesForAxis.yValue
 
-        var valuesForAxis = coordinatesToValues(mouseEvent);
-        double mouseX = valuesForAxis.getXValue();
-        double mouseY = valuesForAxis.getYValue();
-
-        double mouseXLeftBound
-                = coordinatesToValues(new Point2D(mouseEvent.getSceneX() - TOLERANCE_ABS, mouseEvent.getSceneY()))
-                .getXValue();
-        double mouseXRightBound
-                = coordinatesToValues(new Point2D(mouseEvent.getSceneX() + TOLERANCE_ABS, mouseEvent.getSceneY()))
-                .getXValue();
-
+        val mouseXLeftBound = coordinatesToValues(
+            Point2D(mouseEvent.sceneX - TOLERANCE_ABS, mouseEvent.sceneY)
+        ).xValue
+        val mouseXRightBound = coordinatesToValues(
+            Point2D(mouseEvent.sceneX + TOLERANCE_ABS, mouseEvent.sceneY)
+        ).xValue
 
         if (point1 != null && point2 != null) {
-            if (Objects.equals(point1.getXValue(), point2.getXValue()) // вертикальная линия
-                    && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX) {
+            // вертикальная линия
+            if (point1!!.xValue == point2!!.xValue
+                && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX
+            ) {
+                val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue)
 
-                double diff = pow(10, mouseX) - pow(10, point1.getXValue());
+                point1!!.xValue = mouseX
+                point2!!.xValue = mouseX
 
-                point1.setXValue(mouseX);
-                point2.setXValue(mouseX);
+                val index1 = pointPowerMap[point1]!!
+                val index2 = index1 + 1 // neighbor
 
-                int index1 = pointPowerMap.get(point1);
-                int index2 = index1 + 1; // neighbor
+                val initialValue1 = mutableModelData[index1].power
+                val newValue1 = initialValue1 + diff
 
-                double initialValue1 = modelData.get(index1).getPower();
-                double newValue1 = initialValue1 + diff;
+                mutableModelData[index1] = mutableModelData[index1].withPower(newValue1)
 
-                modelData.set(index1, modelData.get(index1).withPower(newValue1));
-
-                if (index2 < modelData.size() - 1) {
-                    double initialValue2 = modelData.get(index2).getPower();
-                    double newValue2 = initialValue2 - diff;
-                    modelData.set(index2, modelData.get(index2).withPower(newValue2));
+                if (index2 < mutableModelData.lastIndex) {
+                    val initialValue2 = mutableModelData[index2].power
+                    val newValue2 = initialValue2 - diff
+                    mutableModelData[index2] = mutableModelData[index2].withPower(newValue2)
                 }
 
-            } else if (Objects.equals(point1.getYValue(), point2.getYValue()) // горизонтальная линия
-                    && mouseY > log10(lowerLimitY)) {
-                point1.setYValue(mouseY);
-                point2.setYValue(mouseY);
-                int index = pointResistanceMap.get(point1);
-                double newValue = pow(10, mouseY);
-                modelData.set(index, modelData.get(index).withResistance(newValue));
+            } else if (point1!!.yValue == point2!!.yValue // горизонтальная линия
+                && mouseY > log10(lowerLimitY)
+            ) {
+                point1!!.yValue = mouseY
+                point2!!.yValue = mouseY
+                val index = pointResistanceMap[point1!!]!!
+                val newValue = 10.0.pow(mouseY)
+                mutableModelData[index] = mutableModelData[index].withResistance(newValue)
             }
         }
-        return modelData;
+        return mutableModelData
     }
 
     /**
@@ -178,38 +164,42 @@ public class ModelCurveDragger {
      *
      * @param modelData model data that match curve
      */
-    private void mapModelData(List<ModelLayer> modelData) {
-        String E_MSG = "ModelData array size: %d does not match mapping size: %d";
-
-        pointResistanceMap = new HashMap<>();
-        var points = vesCurvesData.get().get(MOD_CURVE_SERIES_INDEX).getData();
-        for (int i = 0, j = 0; i < points.size(); i += 2, j++) {
-            pointResistanceMap.put(points.get(i), j);
-            pointResistanceMap.put(points.get(i + 1), j);
+    private fun mapModelData(modelData: List<ModelLayer>) {
+        val E_MSG = "ModelData array size: %d does not match mapping size: %d"
+        pointResistanceMap = HashMap()
+        val points = vesCurvesData.get()[modelCurveIndex].data
+        run {
+            var i = 0
+            var j = 0
+            while (i < points.size) {
+                pointResistanceMap[points[i]] = j
+                pointResistanceMap[points[i + 1]] = j
+                i += 2
+                j++
+            }
         }
-
-        if (pointResistanceMap.values().stream().distinct().count() != modelData.size()) {
-            throw new IllegalArgumentException(
-                    String.format(E_MSG,
-                            pointResistanceMap.values().stream().distinct().count(),
-                            modelData.size()
-                    )
-            );
+        require(pointResistanceMap.values.stream().distinct().count() == modelData.size.toLong()) {
+            String.format(
+                E_MSG,
+                pointResistanceMap.values.stream().distinct().count(),
+                modelData.size
+            )
         }
-
-        pointPowerMap = new HashMap<>();
-        for (int i = 1, j = 0; i < points.size() - 1; i += 2, j++) {
-            pointPowerMap.put(points.get(i), j);
-            pointPowerMap.put(points.get(i + 1), j);
+        pointPowerMap = HashMap()
+        var i = 1
+        var j = 0
+        while (i < points.size - 1) {
+            pointPowerMap[points[i]] = j
+            pointPowerMap[points[i + 1]] = j
+            i += 2
+            j++
         }
-
-        if (pointPowerMap.values().stream().distinct().count() != modelData.size() - 1) {
-            throw new IllegalArgumentException(
-                    String.format(E_MSG,
-                            pointPowerMap.values().stream().distinct().count(),
-                            modelData.size()
-                    )
-            );
+        require(pointPowerMap.values.stream().distinct().count() == (modelData.size - 1).toLong()) {
+            String.format(
+                E_MSG,
+                pointPowerMap.values.stream().distinct().count(),
+                modelData.size
+            )
         }
     }
 
@@ -219,23 +209,23 @@ public class ModelCurveDragger {
      * @param mouseEvent mouse pressed/dragged event
      * @return point with valid X and Y values
      */
-    private XYChart.Data<Double, Double> coordinatesToValues(MouseEvent mouseEvent) {
-        Point2D pointInScene = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+    private fun coordinatesToValues(mouseEvent: MouseEvent): XYChart.Data<Double, Double> =
+        axes.valueForMouseCoordinates(mouseEvent)
 
-        return coordinatesToValues(pointInScene);
-    }
+    private fun coordinatesToValues(pointInScene: Point2D): XYChart.Data<Double, Double> =
+        axes.valueForSceneCoordinates(pointInScene)
 
-    private XYChart.Data<Double, Double> coordinatesToValues(Point2D pointInScene) {
-        return coordinatesInSceneToValue.apply(pointInScene);
-    }
-
-    public void resetStyle() {
+    fun resetStyle() {
         if (point1 != null && point2 != null) {
-            String style = """
+            val style = """
                      -fx-background-color: transparent;
-                    """;
-            point1.getNode().lookup(".chart-line-symbol").setStyle(style);
-            point2.getNode().lookup(".chart-line-symbol").setStyle(style);
+                    """
+            point1!!.node.lookup(".chart-line-symbol").style = style
+            point2!!.node.lookup(".chart-line-symbol").style = style
         }
+    }
+
+    companion object {
+        private const val TOLERANCE_ABS = 2.0
     }
 }

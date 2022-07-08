@@ -88,10 +88,11 @@ class VesCurvesController @Inject constructor(
         lineChart.dataProperty().bind(dataProperty)
         uiProperties = resources
         modelCurveDragger = ModelCurveDragger(
-            (lineChartXAxis to lineChartYAxis)::valueForSceneCoordinates,
-            dataProperty,
-            MOD_CURVE_SERIES_INDEX,
-            1.0
+            xAxis = lineChartXAxis,
+            yAxis = lineChartYAxis,
+            vesCurvesData = dataProperty,
+            modelCurveIndex = MOD_CURVE_SERIES_INDEX,
+            lowerLimitY = 1.0
         )
 
         dragViewSupport = DragViewSupport(
@@ -189,7 +190,7 @@ class VesCurvesController @Inject constructor(
 //            lineChart.animated = false
 //            lineChartYAxis.isAutoRanging = false
             modelCurveDragger.detectPoints(e)
-            modelCurveDragger.setStyle()
+            modelCurveDragger.setupStyle()
         }
         modelCurveSeries.node.onMouseDragged = EventHandler { e: MouseEvent ->
             isDraggingModel = true
