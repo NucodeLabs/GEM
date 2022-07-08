@@ -137,7 +137,9 @@ public class InverseSolver {
         List<ModelLayer> resultModel = new ArrayList<>();
 
         for (int i = 0; i < modelData.size(); i++) {
-            resultModel.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
+            resultModel.add(ModelLayer.create(
+                    newModelPower.get(i), newModelResistance.get(i), modelData.get(i).isFixedPower(), modelData.get(i).isFixedResistance())
+            );
         }
 
         return resultModel;
