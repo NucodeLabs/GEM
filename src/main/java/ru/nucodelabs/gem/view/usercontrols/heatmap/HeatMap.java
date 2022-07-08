@@ -14,6 +14,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.usercontrols.VBUserControl;
@@ -26,22 +27,15 @@ import static javafx.beans.binding.Bindings.when;
 
 public class HeatMap extends VBUserControl {
 
-    @FXML
-    private Canvas canvas;
-    @FXML
-    private VBox container;
-    private final ObjectProperty<NumberAxis> xAxis = new SimpleObjectProperty<>();
-    private final ObjectProperty<NumberAxis> yAxis = new SimpleObjectProperty<>();
-    @FXML
-    private Pane pane;
-
-    private final ObjectProperty<ColorMapper> colorPalette = new SimpleObjectProperty<>();
-
     public HeatMap(@NamedArg("xAxis") NumberAxis xAxis, @NamedArg("yAxis") NumberAxis yAxis) {
         setXAxis(xAxis);
         setYAxis(yAxis);
 
         pane.getChildren().addAll(xAxis, yAxis);
+        yAxis.setTickLabelFormatter(new AbsDecorator(yAxis.getTickLabelFormatter()));
+        yAxis.tickLabelFormatterProperty().addListener((observable1, oldValue1, newValue1) -> {
+            yAxis.setTickLabelFormatter(new AbsDecorator(newValue1));
+        });
 
         setupAxes();
         setupCanvas();
@@ -56,6 +50,10 @@ public class HeatMap extends VBUserControl {
         yAxisProperty().addListener(((observable, oldValue, newValue) -> {
             pane.getChildren().remove(oldValue);
             pane.getChildren().add(newValue);
+            newValue.setTickLabelFormatter(new AbsDecorator(newValue.getTickLabelFormatter()));
+            newValue.tickLabelFormatterProperty().addListener((observable1, oldValue1, newValue1) -> {
+                newValue.setTickLabelFormatter(new AbsDecorator(newValue1));
+            });
             setupAxes();
             setupCanvas();
         }));
@@ -80,6 +78,25 @@ public class HeatMap extends VBUserControl {
                 newValue.blocksCountProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
             }
         });
+    }
+
+    @FXML
+    private Canvas canvas;
+    @FXML
+    private VBox container;
+    private final ObjectProperty<NumberAxis> xAxis = new SimpleObjectProperty<>();
+    private final ObjectProperty<NumberAxis> yAxis = new SimpleObjectProperty<>();
+    @FXML
+    private Pane pane;
+
+    private final ObjectProperty<ColorMapper> colorPalette = new SimpleObjectProperty<>();
+
+    private void updateAxes() {
+        getXAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).min().orElse(0));
+        getXAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).max().orElse(100));
+
+        getYAxis().setUpperBound(-data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
+        getYAxis().setLowerBound(-data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
     }
 
     private void setupCanvas() {
@@ -182,12 +199,27 @@ public class HeatMap extends VBUserControl {
         canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    private void updateAxes() {
-        getXAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).min().orElse(0));
-        getXAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getXValue).max().orElse(100));
+    private static class AbsDecorator extends StringConverter<Number> {
 
-        getYAxis().setUpperBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).min().orElse(0));
-        getYAxis().setLowerBound(data.get().stream().mapToDouble(XYChart.Data::getYValue).max().orElse(100));
+        private final StringConverter<Number> stringConverter;
+
+        public AbsDecorator(StringConverter<Number> stringConverter) {
+            this.stringConverter = stringConverter;
+        }
+
+        @Override
+        public String toString(Number object) {
+            if (stringConverter != null) {
+                return stringConverter.toString().replaceFirst("-", "");
+            } else {
+                return String.valueOf(object.doubleValue()).replaceFirst("-", "");
+            }
+        }
+
+        @Override
+        public Number fromString(String string) {
+            return stringConverter.fromString(string);
+        }
     }
 
     private final ObjectProperty<ObservableList<XYChart.Data<Double, Double>>> data
