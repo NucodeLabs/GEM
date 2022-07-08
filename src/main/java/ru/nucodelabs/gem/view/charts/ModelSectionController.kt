@@ -138,8 +138,9 @@ class ModelSectionController @Inject constructor(
                 xAxis.upperBound = 4.0
             }
             else -> {
-                xAxis.lowerBound = section.xOfPicket(section.pickets.first())
-                xAxis.upperBound = section.xOfPicket(section.pickets.last())
+                val visibleOnPseudo = section.pickets.filter { it.experimentalData.isNotEmpty() }
+                xAxis.lowerBound = section.xOfPicket(visibleOnPseudo.first())
+                xAxis.upperBound = section.xOfPicket(visibleOnPseudo.last())
             }
         }
     }
