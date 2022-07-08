@@ -23,7 +23,7 @@
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
-                        autoRanging="false" minorTickVisible="false"/>
+                        autoRanging="false" minorTickVisible="false" prefWidth="65"/>
         </yAxis>
     </AreaChart>
 </VBox>

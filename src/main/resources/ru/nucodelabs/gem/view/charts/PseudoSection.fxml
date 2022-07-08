@@ -22,7 +22,7 @@
             <NumberAxis fx:id="xAxis" side="BOTTOM" label="X (m)" minorTickVisible="false"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false"/>
+            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false" prefWidth="65"/>
         </yAxis>
     </HeatMap>
 </VBox>
