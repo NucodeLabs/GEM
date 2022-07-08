@@ -127,33 +127,39 @@ class ModelCurveDragger
             if (point1!!.xValue == point2!!.xValue
                 && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX
             ) {
-                val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue)
-
-                point1!!.xValue = mouseX
-                point2!!.xValue = mouseX
-
                 val index1 = pointPowerMap[point1]!!
                 val index2 = index1 + 1 // neighbor
 
-                val initialValue1 = mutableModelData[index1].power
-                val newValue1 = initialValue1 + diff
+                if (!modelData[index1].isFixedPower
+                    && !modelData[index2].isFixedPower
+                ) {
+                    val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue)
 
-                mutableModelData[index1] = mutableModelData[index1].withPower(newValue1)
+                    point1!!.xValue = mouseX
+                    point2!!.xValue = mouseX
 
-                if (index2 < mutableModelData.lastIndex) {
-                    val initialValue2 = mutableModelData[index2].power
-                    val newValue2 = initialValue2 - diff
-                    mutableModelData[index2] = mutableModelData[index2].withPower(newValue2)
+                    val initialValue1 = mutableModelData[index1].power
+                    val newValue1 = initialValue1 + diff
+
+                    mutableModelData[index1] = mutableModelData[index1].withPower(newValue1)
+
+                    if (index2 < mutableModelData.lastIndex) {
+                        val initialValue2 = mutableModelData[index2].power
+                        val newValue2 = initialValue2 - diff
+                        mutableModelData[index2] = mutableModelData[index2].withPower(newValue2)
+                    }
                 }
-
             } else if (point1!!.yValue == point2!!.yValue // горизонтальная линия
                 && mouseY > log10(lowerLimitY)
             ) {
-                point1!!.yValue = mouseY
-                point2!!.yValue = mouseY
                 val index = pointResistanceMap[point1!!]!!
-                val newValue = 10.0.pow(mouseY)
-                mutableModelData[index] = mutableModelData[index].withResistance(newValue)
+
+                if (!modelData[index].isFixedResistance) {
+                    point1!!.yValue = mouseY
+                    point2!!.yValue = mouseY
+                    val newValue = 10.0.pow(mouseY)
+                    mutableModelData[index] = mutableModelData[index].withResistance(newValue)
+                }
             }
         }
         return mutableModelData
