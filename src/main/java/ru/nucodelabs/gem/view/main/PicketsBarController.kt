@@ -88,7 +88,16 @@ class PicketsBarController @Inject constructor(
                 }
                 onAction = EventHandler { picketIndex.set(index) }
                 onContextMenuRequested = EventHandler { contextMenu.show(stage, it.screenX, it.screenY) }
-                prefWidthProperty().bind(container.widthProperty().multiply(widthsOfPickets[index] / section.length()))
+                prefWidthProperty().bind(
+                    container.widthProperty()
+                        .multiply(
+                            if (section.length() > 0) {
+                                widthsOfPickets[index] / section.length()
+                            } else {
+                                1.0
+                            }
+                        )
+                )
             }
 
             buttons += button
