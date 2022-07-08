@@ -57,6 +57,8 @@ fun TextField.isValidBy(
     return property
 }
 
-fun ReadOnlyStringProperty.isBlank() = createBooleanBinding({ value.isBlank() }, this)
+fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
 
-fun ReadOnlyStringProperty.isNotBlank() = isBlank().not()
+fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
+
+fun <X, Y> line(point1: Point<X, Y>, point2: Point<X, Y>): Line<X, Y> = Line(observableListOf(point1, point2))
