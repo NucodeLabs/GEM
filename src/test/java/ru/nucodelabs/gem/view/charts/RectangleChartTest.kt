@@ -12,13 +12,14 @@ import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.view.charts.RectangleChart.Rectangle
 
 internal class RectangleChartTest {
 
     @Test
-//    @Disabled
+    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }
