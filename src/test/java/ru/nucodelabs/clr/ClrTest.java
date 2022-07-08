@@ -26,7 +26,7 @@ public class ClrTest {
 
         Comparator<ValueColor> c = Comparator.comparing(ValueColor::percentage);
 
-        int vcIndex = Collections.binarySearch(valueColorList, new ValueColor(40.369441, null), c);
+        int vcIndex = Collections.binarySearch(valueColorList, new ValueColor(0.40369441, null), c);
 
         System.out.println(valueColorList.get(vcIndex).toString());
     }
