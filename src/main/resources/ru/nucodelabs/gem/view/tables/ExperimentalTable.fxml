@@ -31,35 +31,83 @@
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
         <columns>
-            <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="N" styleClass="centered-column"
+            <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№" styleClass="centered-column"
                          resizable="false" editable="false" fx:id="indexCol"/>
             <TableColumn fx:id="ab2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAB_2" sortable="false" onEditCommit="#onEditCommit"/>
+                         sortable="false" onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%ab2">
+                        <tooltip>
+                            <Tooltip text="%ab2Full"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn fx:id="mn2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalMN_2" sortable="false" onEditCommit="#onEditCommit"/>
+                         sortable="false" onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%mn2">
+                        <tooltip>
+                            <Tooltip text="%mn2Full"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalResistanceApparent" sortable="false"
-                         onEditCommit="#onEditCommit"/>
+                         prefWidth="100.0" sortable="false"
+                         onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%resistanceApparent">
+                        <tooltip>
+                            <Tooltip text="%resistanceApparentFull"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" text="%experimentalErrorResistanceApparent" sortable="false"
-                         onEditCommit="#onEditCommit"/>
+                         prefWidth="100.0" sortable="false"
+                         onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%errorResistanceApparent">
+                        <tooltip>
+                            <Tooltip text="%errorResistanceApparentFull"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalAmperage" sortable="false"
-                         onEditCommit="#onEditCommit"/>
+                         sortable="false"
+                         onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%amperage">
+                        <tooltip>
+                            <Tooltip text="%amperageFull"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         text="%experimentalVoltage" sortable="false" onEditCommit="#onEditCommit"/>
+                         sortable="false" onEditCommit="#onEditCommit">
+                <graphic>
+                    <Label text="%voltage">
+                        <tooltip>
+                            <Tooltip text="%voltageFull"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
         </columns>
     </TableView>
     <HBox spacing="5" style="-fx-padding: 5">
         <TextField fx:id="indexTextField" promptText="N" prefWidth="45" minWidth="45" onAction="#add"/>
-        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%experimentalAB_2" onAction="#add"/>
-        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%experimentalMN_2" onAction="#add"/>
-        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%experimentalResistanceApparent"
+        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%ab2" onAction="#add"/>
+        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%mn2" onAction="#add"/>
+        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%resistanceApparent"
                    onAction="#add"/>
-        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%experimentalErrorResistanceApparent"
+        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%errorResistanceApparent"
                    onAction="#add"/>
-        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%experimentalAmperage" onAction="#add"/>
-        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%experimentalVoltage" onAction="#add"/>
+        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%amperage" onAction="#add"/>
+        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%voltage" onAction="#add"/>
         <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
             <graphic>
                 <ImageView fitWidth="15" fitHeight="15">
