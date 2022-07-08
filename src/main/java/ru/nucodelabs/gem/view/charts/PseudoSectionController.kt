@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.value.ObservableObjectValue
 import javafx.fxml.FXML
-import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Data
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.view.AbstractController
@@ -38,17 +38,34 @@ class PseudoSectionController @Inject constructor(
 
     private fun update() {
         val section = sectionObservableObjectValue.get()
-        val data: MutableList<XYChart.Data<Double, Double>> = mutableListOf()
+        val data: MutableList<Data<Double, Double>> = mutableListOf()
 
-        for (picket in section.pickets) {
+        if (section.pickets.size == 1) {
+            val picket = section.pickets.first()
+            val maxAb2 = picket.experimentalData.maxOfOrNull { it.ab2 } ?: 0.1
             for (expData in picket.experimentalData) {
-                data.add(
-                    XYChart.Data(
-                        section.xOfPicket(picket),
-                        expData.ab2,
-                        expData.resistanceApparent
-                    )
+                data += Data(
+                    -maxAb2,
+                    expData.ab2,
+                    expData.resistanceApparent
                 )
+                data += Data(
+                    +maxAb2,
+                    expData.ab2,
+                    expData.resistanceApparent
+                )
+            }
+        } else {
+            for (picket in section.pickets) {
+                for (expData in picket.experimentalData) {
+                    data.add(
+                        Data(
+                            section.xOfPicket(picket),
+                            expData.ab2,
+                            expData.resistanceApparent
+                        )
+                    )
+                }
             }
         }
         chart.data.setAll(data)
