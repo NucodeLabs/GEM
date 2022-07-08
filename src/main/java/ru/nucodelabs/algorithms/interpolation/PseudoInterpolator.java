@@ -6,6 +6,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import java.util.ArrayList;
@@ -66,8 +68,43 @@ public class PseudoInterpolator {
         return interpolator.interpolate(xval, yval, fval);
     }
 
+    public PolynomialSplineFunction getSplineInterpolateFunction() {
+        double[] xval = lines.stream().map(Line::getAb_2).mapToDouble(Double::doubleValue).toArray();
+        double[] yval = new double[lines.size()];
+
+        for (int i = 0; i < lines.size(); i++) {
+            yval[i] = lines.get(i).getResistances().get(0);
+        }
+
+        SplineInterpolator interpolator = new SplineInterpolator();
+
+        return interpolator.interpolate(xval, yval);
+    }
+
     public void paint(Canvas canvas) {
-        if (xs.size() <= 1) {
+        if (xs.size() == 1) {
+            PolynomialSplineFunction function = getSplineInterpolateFunction();
+            PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
+
+            double stepY = (double) lines.size() / Math.ceil(canvas.getHeight());
+            double curY = 0;
+            double curArg = lines.get(0).getAb_2();
+
+            for (int i = 0; i < canvas.getHeight(); i++) {
+                Color color = colorPalette.colorFor(function.value(curArg));
+                curY += stepY;
+                int rounding = (int) Math.floor(curY);
+                if (rounding >= lines.size()) {
+                    rounding = lines.size() - 1;
+                }
+                curArg = lines.get(rounding).getAb_2();
+                for (int j = 0; j < canvas.getWidth(); j++) {
+                    pw.setColor(j, i, color);
+                }
+            }
+            return;
+        }
+        if (xs.size() < 1) {
             var gc = canvas.getGraphicsContext2D();
             gc.setFill(Color.WHITE);
             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
