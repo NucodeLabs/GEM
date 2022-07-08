@@ -2,22 +2,17 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.value.ObservableObjectValue
 import javafx.fxml.FXML
-import javafx.scene.chart.AreaChart
 import javafx.scene.chart.NumberAxis
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.picketBoundsOrNull
-import ru.nucodelabs.gem.extensions.fx.Line
-import ru.nucodelabs.gem.extensions.fx.Point
-import ru.nucodelabs.gem.extensions.fx.observableListOf
-import ru.nucodelabs.gem.extensions.fx.toCss
 import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.charts.RectangleChart.Rectangle
 import ru.nucodelabs.gem.view.color.ColorMapper
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.absoluteValue
+import kotlin.math.abs
 
 private const val LAST_COEF = 0.5
 
@@ -33,7 +28,7 @@ class ModelSectionController @Inject constructor(
     private lateinit var xAxis: NumberAxis
 
     @FXML
-    private lateinit var chart: AreaChart<Double, Double>
+    private lateinit var chart: RectangleChart
 
     override val stage: Stage?
         get() = chart.scene.window as Stage?
@@ -59,71 +54,26 @@ class ModelSectionController @Inject constructor(
 
         val lowerBoundZ = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
 
-        val colors = mutableMapOf<Line<Double, Double>, Color>()
         for (picket in section.pickets) {
             if (picket.modelData.isEmpty()) {
                 continue
             }
 
-            val linesForPicket = mutableListOf<Line<Double, Double>>()
-
             val (leftX, rightX) = section.picketBoundsOrNull(picket) ?: (-0.1 to +0.1)
 
-            // top line
-            linesForPicket += Line(
-                observableListOf(
-                    Point(leftX, picket.z),
-                    Point(rightX, picket.z)
-                )
-            ).also<Line<Double, Double>> {
-                colors[it] = if (picket.z > 0) {
-                    colorMapper.colorFor(picket.modelData.first().resistance)
-                } else {
-                    Color.WHITE
-                }
+            val zList = picket.zOfModelLayers()
+            for (i in zList.indices) {
+                chart.rectangles += Rectangle(
+                    x = leftX,
+                    y = if (i == 0) picket.z else zList[i - 1],
+                    width = abs(rightX - leftX),
+                    height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
+                ) { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
-
-            val zOfLayers = picket.zOfModelLayers().dropLast(1)
-            for ((i, layerZ) in zOfLayers.withIndex()) {
-                linesForPicket += Line(
-                    observableListOf(
-                        Point(leftX, layerZ),
-                        Point(rightX, layerZ)
-                    )
-                ).also {
-                    colors[it] = if (layerZ > 0) {
-                        colorMapper.colorFor(picket.modelData[i + 1].resistance)
-                    } else {
-                        colorMapper.colorFor(picket.modelData[i].resistance)
-                    }
-                }
-            }
-
-            // lower bound line
-            linesForPicket += Line(
-                observableListOf(
-                    Point(leftX, lowerBoundZ),
-                    Point(rightX, lowerBoundZ)
-                )
-            ).also {
-                colors[it] = colorMapper.colorFor(picket.modelData.last().resistance)
-            }
-
-            chart.data += linesForPicket
         }
 
-        setupStyle(colors)
         setupXAxisBounds()
         setupYAxisBounds()
-    }
-
-    private fun setupStyle(colors: MutableMap<Line<Double, Double>, Color>) {
-        chart.data.forEach { it.node.lookup(".chart-series-area-fill").style = "-fx-fill: ${colors[it]?.toCss()};" }
-        chart.data.sortedBy {
-            it.data.first().yValue.absoluteValue
-        }.forEachIndexed { index, series ->
-            series.node.viewOrder = index.toDouble()
-        }
     }
 
     private fun setupXAxisBounds() {
