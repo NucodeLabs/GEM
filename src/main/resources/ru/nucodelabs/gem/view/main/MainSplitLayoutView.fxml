@@ -58,12 +58,13 @@
                     <VBox maxWidth="Infinity" maxHeight="Infinity">
                         <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
                             <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
-                                <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette"
-                                            VBox.vgrow="ALWAYS"/>
                                 <VBox HBox.hgrow="ALWAYS">
                                     <HBox>
+                                        <HBox prefWidth="80"/>
+                                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
                                         <HBox>
-                                            <Button fx:id="addPicketBtn" prefWidth="65" minWidth="65" maxWidth="65"
+                                            <Button fx:id="addPicketBtn" prefWidth="85" minWidth="85"
+                                                    maxWidth="85"
                                                     onAction="#addNewPicket" stylesheets="@PicketsBar.css"
                                                     HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
                                                 <graphic>
@@ -73,14 +74,16 @@
                                                 </graphic>
                                             </Button>
                                         </HBox>
-                                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
-                                        <HBox prefWidth="16"/>
                                     </HBox>
-                                    <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
-                                               HBox.hgrow="ALWAYS">
-                                        <fx:include source="../charts/PseudoSection.fxml"/>
-                                        <fx:include fx:id="crossSection" source="../charts/ModelSection.fxml"/>
-                                    </SplitPane>
+                                    <HBox>
+                                        <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
+                                                   HBox.hgrow="ALWAYS">
+                                            <fx:include source="../charts/PseudoSection.fxml"/>
+                                            <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
+                                        </SplitPane>
+                                        <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette"
+                                                    VBox.vgrow="ALWAYS"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                             <VBox maxWidth="Infinity"

@@ -19,10 +19,11 @@
 
     <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0">
         <xAxis>
-            <NumberAxis fx:id="xAxis" side="BOTTOM" label="X (m)" minorTickVisible="false"/>
+            <NumberAxis fx:id="xAxis" side="BOTTOM" label="X (m)" minorTickVisible="false" tickUnit="25"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false"/>
+            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false" prefWidth="65"
+                        tickUnit="25"/>
         </yAxis>
     </HeatMap>
 </VBox>
