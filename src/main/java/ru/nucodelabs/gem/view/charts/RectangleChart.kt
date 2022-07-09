@@ -11,6 +11,7 @@ import javafx.scene.chart.ScatterChart
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import javafx.scene.shape.Rectangle as FXRectangle
 
+@Deprecated("Используйте PolygonChart")
 class RectangleChart(
     @NamedArg("xAxis") private val xAxis: NumberAxis,
     @NamedArg("yAxis") private val yAxis: NumberAxis

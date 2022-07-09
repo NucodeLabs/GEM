@@ -3,11 +3,13 @@ package ru.nucodelabs.gem.view.charts
 import javafx.beans.value.ObservableObjectValue
 import javafx.fxml.FXML
 import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart.Data
+import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.picketBoundsOrNull
+import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
-import ru.nucodelabs.gem.view.charts.RectangleChart.Rectangle
 import ru.nucodelabs.gem.view.color.ColorMapper
 import java.net.URL
 import java.util.*
@@ -28,7 +30,7 @@ class ModelSectionController @Inject constructor(
     private lateinit var xAxis: NumberAxis
 
     @FXML
-    private lateinit var chart: RectangleChart
+    private lateinit var chart: PolygonChart
 
     override val stage: Stage?
         get() = chart.scene.window as Stage?
@@ -63,12 +65,22 @@ class ModelSectionController @Inject constructor(
 
             val zList = picket.zOfModelLayers()
             for (i in zList.indices) {
-                chart.rectangles += Rectangle(
-                    x = leftX,
-                    y = if (i == 0) picket.z else zList[i - 1],
-                    width = abs(rightX - leftX),
-                    height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
-                ) { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
+                val x = leftX
+                val y = if (i == 0) picket.z else zList[i - 1]
+                val width = abs(rightX - leftX)
+                val height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
+
+                val series: Series<Number, Number> = Series(
+                    observableListOf(
+                        Data(x, y),
+                        Data(x + width, y),
+                        Data(x + width, y - height),
+                        Data(x, y - height)
+                    )
+                )
+
+                chart.data += series
+                chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
 

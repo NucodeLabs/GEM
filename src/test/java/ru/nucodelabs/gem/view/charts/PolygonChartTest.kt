@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 
@@ -25,7 +26,7 @@ internal class PolygonChartTest {
     }
 
     @Test
-//    @Disabled
+    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }

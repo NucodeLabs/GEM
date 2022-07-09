@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.view.charts.RectangleChart.Rectangle
 
+@Disabled
 internal class RectangleChartTest {
 
     @Test
