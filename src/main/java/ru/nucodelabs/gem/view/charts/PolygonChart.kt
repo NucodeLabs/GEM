@@ -22,36 +22,43 @@ class PolygonChart(
     val seriesPolygons: Map<Series<Number, Number>, Polygon>
         get() = _seriesPolygons
 
-    override fun seriesAdded(series: Series<Number, Number>?, seriesIndex: Int) {
+    override fun seriesAdded(series: Series<Number, Number>, seriesIndex: Int) {
         super.seriesAdded(series, seriesIndex)
-        setupPolygons()
+        setupPolygon(series)
     }
 
-    override fun seriesRemoved(series: Series<Number, Number>?) {
+    override fun seriesRemoved(series: Series<Number, Number>) {
         super.seriesRemoved(series)
+        removePolygon(series)
+    }
+
+    private fun removePolygon(series: Series<Number, Number>) {
         plotChildren -= _seriesPolygons[series]
         _seriesPolygons.keys.remove(series)
     }
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
-        setupPolygons()
+        setupPolygonsAll()
     }
 
-    private fun setupPolygons() {
+    private fun setupPolygonsAll() {
         _seriesPolygons.keys.retainAll(data)
-
         for (series in data) {
-            val polygonPointsArr = series.data.flatMap {
-                listOf(
-                    xAxis.getDisplayPosition(it.xValue.toDouble()),
-                    yAxis.getDisplayPosition(it.yValue.toDouble())
-                )
-            }.toDoubleArray()
-
-            _seriesPolygons.getOrPut(series) {
-                Polygon(*polygonPointsArr).also { plotChildren += it }
-            }.points.setAll(polygonPointsArr.toList())
+            setupPolygon(series)
         }
+    }
+
+    private fun setupPolygon(series: Series<Number, Number>) {
+        val polygonPointsArr = series.data.flatMap {
+            listOf(
+                xAxis.getDisplayPosition(it.xValue.toDouble()),
+                yAxis.getDisplayPosition(it.yValue.toDouble())
+            )
+        }.toDoubleArray()
+
+        _seriesPolygons.getOrPut(series) {
+            Polygon(*polygonPointsArr).also { plotChildren += it }
+        }.points.setAll(polygonPointsArr.toList())
     }
 }
