@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import ru.nucodelabs.gem.view.charts.RectangleChart?>
+<?import ru.nucodelabs.gem.view.charts.PolygonChart?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -15,8 +15,8 @@
     <HBox alignment="CENTER_LEFT">
         <Label text="Модель, разрез" styleClass="uclabel"/>
     </HBox>
-    <RectangleChart fx:id="chart" maxWidth="Infinity"
-                    maxHeight="Infinity" animated="false" legendVisible="false">
+    <PolygonChart fx:id="chart" maxWidth="Infinity"
+                  maxHeight="Infinity" animated="false" legendVisible="false">
         <xAxis>
             <NumberAxis fx:id="xAxis" label="X (m)" side="BOTTOM" prefWidth="-Infinity" autoRanging="false"
                         minorTickVisible="false" tickUnit="25"/>
@@ -25,5 +25,5 @@
             <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
                         autoRanging="false" minorTickVisible="false" prefWidth="65" tickUnit="25"/>
         </yAxis>
-    </RectangleChart>
+    </PolygonChart>
 </VBox>

@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.charts
 
+import javafx.beans.NamedArg
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.ScatterChart
 import javafx.scene.shape.Polygon
@@ -8,7 +9,10 @@ import javafx.scene.shape.Polygon
  * Draws polygons using points of each series.
  * To get polygons references use `seriesPolygons` map view.
  */
-class PolygonChart(xAxis: NumberAxis, yAxis: NumberAxis) : ScatterChart<Number, Number>(xAxis, yAxis) {
+class PolygonChart(
+    @NamedArg("xAxis") xAxis: NumberAxis,
+    @NamedArg("yAxis") yAxis: NumberAxis
+) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     init {
         animated = false
@@ -18,9 +22,23 @@ class PolygonChart(xAxis: NumberAxis, yAxis: NumberAxis) : ScatterChart<Number, 
     val seriesPolygons: Map<Series<Number, Number>, Polygon>
         get() = _seriesPolygons
 
+    override fun seriesAdded(series: Series<Number, Number>?, seriesIndex: Int) {
+        super.seriesAdded(series, seriesIndex)
+        setupPolygons()
+    }
+
+    override fun seriesRemoved(series: Series<Number, Number>?) {
+        super.seriesRemoved(series)
+        plotChildren -= _seriesPolygons[series]
+        _seriesPolygons.keys.remove(series)
+    }
+
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
+        setupPolygons()
+    }
 
+    private fun setupPolygons() {
         _seriesPolygons.keys.retainAll(data)
 
         for (series in data) {
@@ -31,13 +49,9 @@ class PolygonChart(xAxis: NumberAxis, yAxis: NumberAxis) : ScatterChart<Number, 
                 )
             }.toDoubleArray()
 
-            if (series !in _seriesPolygons) {
-                val polygon = Polygon(*polygonPointsArr)
-                plotChildren += polygon
-                _seriesPolygons[series] = polygon
-            } else {
-                _seriesPolygons[series]?.points?.setAll(polygonPointsArr.toList())
-            }
+            _seriesPolygons.getOrPut(series) {
+                Polygon(*polygonPointsArr).also { plotChildren += it }
+            }.points.setAll(polygonPointsArr.toList())
         }
     }
 }
