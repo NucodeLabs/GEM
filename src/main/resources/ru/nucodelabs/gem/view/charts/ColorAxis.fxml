@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.VBox?>
+<?import ru.nucodelabs.gem.view.charts.PolygonChart?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ru.nucodelabs.gem.view.charts.ColorAxisController"
+      maxHeight="Infinity" prefWidth="85.0" stylesheets="@ModelSection.css">
+    <PolygonChart fx:id="chart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
+                  VBox.vgrow="ALWAYS">
+        <xAxis>
+            <NumberAxis autoRanging="false" visible="false" managed="false"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" tickUnit="100" prefWidth="25"/>
+        </yAxis>
+    </PolygonChart>
+</VBox>
