@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.extensions.fx
 
-import javafx.beans.binding.Bindings
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.ReadOnlyBooleanProperty
@@ -20,7 +19,7 @@ typealias Line<X, Y> = XYChart.Series<X, Y>
 
 typealias Point<X, Y> = XYChart.Data<X, Y>
 
-fun ObservableList<*>.emptyBinding(): BooleanBinding = Bindings.createBooleanBinding({ isEmpty() }, this)
+fun ObservableList<*>.emptyBinding(): BooleanBinding = createBooleanBinding({ isEmpty() }, this)
 
 operator fun ResourceBundle.get(key: String): String = this.getString(key)
 

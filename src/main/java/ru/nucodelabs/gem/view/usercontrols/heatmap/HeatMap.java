@@ -75,7 +75,7 @@ public class HeatMap extends VBUserControl {
                 repaint();
                 newValue.maxValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
                 newValue.minValueProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
-                newValue.blocksCountProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
+                newValue.numberOfSegmentsProperty().addListener((observable1, oldValue1, newValue1) -> repaint());
             }
         });
     }
