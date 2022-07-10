@@ -81,7 +81,7 @@ public class ColorPaletteController extends AbstractController {
 
         colorPalette.minValueProperty().bind(minResistanceProperty);
         colorPalette.maxValueProperty().bind(maxResistanceProperty);
-        colorPalette.blocksCountProperty().bind(precisionProperty);
+        colorPalette.numberOfSegmentsProperty().bind(precisionProperty);
 
         rectangleList = new ArrayList<>();
         labelList = new ArrayList<>();
@@ -133,7 +133,7 @@ public class ColorPaletteController extends AbstractController {
                             NumbersUtils.round(computeResistance(key), 2)));
             if (i < precisionProperty.get()) {
 
-                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getColorBlocks().get(i).getColor());
+                ((Rectangle) palettePane.getChildren().get(i)).setFill(colorPalette.getSegments().get(i).getColor());
                 palettePane.getChildren().get(i).setStyle("-fx-stroke: BLACK");
             }
         }
