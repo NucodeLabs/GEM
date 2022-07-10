@@ -8,6 +8,7 @@ import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.scene.Node
 import javafx.scene.chart.XYChart
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
@@ -62,3 +63,9 @@ fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ va
 fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
 
 fun <X, Y> line(point1: Point<X, Y>, point2: Point<X, Y>): Line<X, Y> = Line(observableListOf(point1, point2))
+
+fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
+    layoutBoundsProperty(),
+    boundsInParentProperty(),
+    boundsInLocalProperty()
+)
