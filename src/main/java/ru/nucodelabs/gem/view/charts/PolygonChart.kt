@@ -34,7 +34,7 @@ class PolygonChart(
 
     private fun removePolygon(series: Series<Number, Number>) {
         plotChildren -= _seriesPolygons[series]
-        _seriesPolygons.keys.remove(series)
+        _seriesPolygons.keys -= series
     }
 
     override fun layoutPlotChildren() {
@@ -43,7 +43,6 @@ class PolygonChart(
     }
 
     private fun setupPolygonsAll() {
-        _seriesPolygons.keys.retainAll(data)
         for (series in data) {
             setupPolygon(series)
         }
