@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.usercontrols;
+package ru.nucodelabs.gem.view.control;
 
 import javafx.scene.layout.VBox;
 import ru.nucodelabs.gem.utils.FXUtils;

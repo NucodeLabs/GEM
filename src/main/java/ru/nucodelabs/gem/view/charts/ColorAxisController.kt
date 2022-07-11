@@ -18,6 +18,7 @@ import ru.nucodelabs.gem.extensions.fx.rangeBinding
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences

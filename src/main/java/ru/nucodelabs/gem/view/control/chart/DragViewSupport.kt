@@ -1,7 +1,9 @@
-package ru.nucodelabs.gem.view.charts
+package ru.nucodelabs.gem.view.control.chart
 
 import javafx.scene.chart.NumberAxis
 import javafx.scene.input.MouseEvent
+import ru.nucodelabs.gem.view.charts.valueForMouseCoordinates
+import ru.nucodelabs.gem.view.charts.valueForSceneCoordinates
 
 /**
  * Drag chart plot using mouse support for chart

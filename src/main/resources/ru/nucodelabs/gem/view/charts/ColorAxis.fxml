@@ -5,12 +5,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<?import ru.nucodelabs.gem.view.charts.PolygonChart?>
+<?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.charts.ColorAxisController"
       maxHeight="Infinity" maxWidth="70" minWidth="70" stylesheets="@ModelSection.css"
-      onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -15;">
+      onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -10;">
     <fx:define>
         <Stage fx:id="configWindow" resizable="false">
             <scene>

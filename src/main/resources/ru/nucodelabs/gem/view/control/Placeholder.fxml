@@ -8,7 +8,7 @@
          alignment="CENTER"
          maxHeight="Infinity"
          maxWidth="Infinity"
-         stylesheets="@../../common.css"
+         stylesheets="@../common.css"
          VBox.vgrow="ALWAYS" style="-fx-border-width: 2; -fx-border-color: LightGray; -fx-border-style: dashed;">
     <HBox alignment="CENTER">
         <Label fx:id="text"/>
