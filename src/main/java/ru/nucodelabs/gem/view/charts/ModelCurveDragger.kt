@@ -3,15 +3,13 @@ package ru.nucodelabs.gem.view.charts
 import javafx.beans.property.ObjectProperty
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
-import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.input.MouseEvent
 import ru.nucodelabs.data.ves.ModelLayer
 import ru.nucodelabs.gem.view.control.chart.valueForMouseCoordinates
 import ru.nucodelabs.gem.view.control.chart.valueForSceneCoordinates
-import kotlin.math.log10
-import kotlin.math.pow
 import kotlin.properties.Delegates
 
 /**
@@ -28,10 +26,10 @@ class ModelCurveDragger
     private val vesCurvesData: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val modelCurveIndex: Int,
     private val lowerLimitY: Double,
-    xAxis: NumberAxis,
-    yAxis: NumberAxis
+    xAxis: ValueAxis<Number>,
+    yAxis: ValueAxis<Number>
 ) {
-    private val axes: Pair<NumberAxis, NumberAxis> = xAxis to yAxis
+    private val axes: Pair<ValueAxis<Number>, ValueAxis<Number>> = xAxis to yAxis
 
     // mapping: point on chart --> index of the value in data model arrays
     private lateinit var pointResistanceMap: MutableMap<XYChart.Data<*, *>, Int>
@@ -135,7 +133,7 @@ class ModelCurveDragger
                 if (!modelData[index1].isFixedPower
                     && !modelData[index2].isFixedPower
                 ) {
-                    val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue.toDouble())
+                    val diff = mouseX - point1!!.xValue.toDouble()
 
                     point1!!.xValue = mouseX
                     point2!!.xValue = mouseX
@@ -152,14 +150,14 @@ class ModelCurveDragger
                     }
                 }
             } else if (point1!!.yValue == point2!!.yValue // горизонтальная линия
-                && mouseY > log10(lowerLimitY)
+                && mouseY > lowerLimitY
             ) {
                 val index = pointResistanceMap[point1!!]!!
 
                 if (!modelData[index].isFixedResistance) {
                     point1!!.yValue = mouseY
                     point2!!.yValue = mouseY
-                    val newValue = 10.0.pow(mouseY)
+                    val newValue = mouseY
                     mutableModelData[index] = mutableModelData[index].withResistance(newValue)
                 }
             }
