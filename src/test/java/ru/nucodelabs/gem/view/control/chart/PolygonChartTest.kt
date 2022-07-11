@@ -64,6 +64,5 @@ internal class PolygonChartTest : FXTest() {
             primaryStage.show()
             chart.seriesPolygons[series]?.apply { fill = Color.GREENYELLOW }
         }
-
     }
 }

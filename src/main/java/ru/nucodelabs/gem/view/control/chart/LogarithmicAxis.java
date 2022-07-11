@@ -37,6 +37,10 @@ public class LogarithmicAxis extends ValueAxis<Number> {
         }
     }
 
+    public LogarithmicAxis() {
+        this(0.0, 100.0);
+    }
+
     /**
      * Bind our logarithmic bounds with the super class bounds, consider the base 10 logarithmic scale.
      */

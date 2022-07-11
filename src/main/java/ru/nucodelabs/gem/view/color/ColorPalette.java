@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.color_palette;
+package ru.nucodelabs.gem.view.color;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
-import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

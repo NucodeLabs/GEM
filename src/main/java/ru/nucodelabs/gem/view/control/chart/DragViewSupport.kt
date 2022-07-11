@@ -1,16 +1,14 @@
 package ru.nucodelabs.gem.view.control.chart
 
-import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.ValueAxis
 import javafx.scene.input.MouseEvent
-import ru.nucodelabs.gem.view.charts.valueForMouseCoordinates
-import ru.nucodelabs.gem.view.charts.valueForSceneCoordinates
 
 /**
  * Drag chart plot using mouse support for chart
  */
 class DragViewSupport(
-    val xAxis: NumberAxis,
-    val yAxis: NumberAxis,
+    val xAxis: ValueAxis<Number>,
+    val yAxis: ValueAxis<Number>,
     val sensitivity: Double = 1.0,
 ) {
 

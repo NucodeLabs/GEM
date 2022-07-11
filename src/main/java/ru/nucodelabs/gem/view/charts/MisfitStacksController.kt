@@ -13,7 +13,7 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import ru.nucodelabs.algorithms.charts.*
 import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.extensions.fx.line
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import java.math.RoundingMode
@@ -28,14 +28,14 @@ class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val vesCurvesConverter: VesCurvesConverter,
     private val alertsFactory: AlertsFactory,
-    private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val misfitValuesFactory: MisfitValuesFactory
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
 
     @FXML
-    private lateinit var lineChart: LineChart<Double, Double>
+    private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
     lateinit var lineChartXAxis: NumberAxis
@@ -60,7 +60,7 @@ class MisfitStacksController @Inject constructor(
     }
 
     private fun update() {
-        var misfitStacksSeriesList: MutableList<Series<Double, Double>> = ArrayList()
+        var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
         try {
             val values = misfitValuesFactory(picket.experimentalData, picket.modelData)
             val expPoints = vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
@@ -73,13 +73,9 @@ class MisfitStacksController @Inject constructor(
             ) {
                 check(values.size == expPoints.size)
                 for ((index, expPoint) in expPoints.withIndex()) {
-                    misfitStacksSeriesList.add(
-                        Series(
-                            observableListOf(
-                                    XYChart.Data(expPoint.x, 0.0),
-                                    XYChart.Data(expPoint.x, values[index])
-                            )
-                        )
+                    misfitStacksSeriesList += line(
+                        XYChart.Data(expPoint.x as Number, 0.0 as Number),
+                        XYChart.Data(expPoint.x as Number, values[index] as Number)
                     )
                 }
             }
@@ -94,7 +90,7 @@ class MisfitStacksController @Inject constructor(
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }
         dataProperty.get().clear()
-        dataProperty.get().addAll(misfitStacksSeriesList)
+        dataProperty.get() += misfitStacksSeriesList
         colorizeMisfitStacksSeries()
     }
 
@@ -102,7 +98,7 @@ class MisfitStacksController @Inject constructor(
         val data = dataProperty.get()
         for (series in data) {
             val nonZeroPoint = series.data[1]
-            if (abs(nonZeroPoint.yValue) < 100.0) {
+            if (abs(nonZeroPoint.yValue.toDouble()) < 100.0) {
                 series.node.style = "-fx-stroke: LimeGreen;"
                 nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
                 val zeroPoint = series.data[0]

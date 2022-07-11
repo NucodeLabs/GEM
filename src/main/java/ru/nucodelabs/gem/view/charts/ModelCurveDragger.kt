@@ -8,6 +8,8 @@ import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.input.MouseEvent
 import ru.nucodelabs.data.ves.ModelLayer
+import ru.nucodelabs.gem.view.control.chart.valueForMouseCoordinates
+import ru.nucodelabs.gem.view.control.chart.valueForSceneCoordinates
 import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.properties.Delegates
@@ -23,7 +25,7 @@ class ModelCurveDragger
  * @param vesCurvesData                 data property of line chart or bound
  * @param modelCurveIndex           index of series in data
  */(
-    private val vesCurvesData: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    private val vesCurvesData: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val modelCurveIndex: Int,
     private val lowerLimitY: Double,
     xAxis: NumberAxis,
@@ -32,12 +34,12 @@ class ModelCurveDragger
     private val axes: Pair<NumberAxis, NumberAxis> = xAxis to yAxis
 
     // mapping: point on chart --> index of the value in data model arrays
-    private lateinit var pointResistanceMap: MutableMap<XYChart.Data<Double, Double>, Int>
-    private lateinit var pointPowerMap: MutableMap<XYChart.Data<Double, Double>, Int>
+    private lateinit var pointResistanceMap: MutableMap<XYChart.Data<*, *>, Int>
+    private lateinit var pointPowerMap: MutableMap<XYChart.Data<*, *>, Int>
 
     // ends of line to be dragged
-    private var point1: XYChart.Data<Double, Double>? = null
-    private var point2: XYChart.Data<Double, Double>? = null
+    private var point1: XYChart.Data<Number, Number>? = null
+    private var point2: XYChart.Data<Number, Number>? = null
 
     // for vertical line dragging
     private var leftLimitX by Delegates.notNull<Double>()
@@ -62,27 +64,27 @@ class ModelCurveDragger
         val points = vesCurvesData.get()[modelCurveIndex].data
 
         val closestVerticalLines = points.filter {
-            mouseXLeftBound < it.xValue && it.xValue < mouseXRightBound
+            mouseXLeftBound.toDouble() < it.xValue.toDouble() && it.xValue.toDouble() < mouseXRightBound.toDouble()
         }
 
         if (closestVerticalLines.size == 2) {
             point1 = closestVerticalLines[0]
             point2 = closestVerticalLines[1]
             for (point in points) {
-                if (point.xValue < mouseX && point.xValue < point1!!.xValue) {
-                    leftLimitX = point.xValue
+                if (point.xValue.toDouble() < mouseX && point.xValue.toDouble() < point1!!.xValue.toDouble()) {
+                    leftLimitX = point.xValue.toDouble()
                 }
-                if (point.xValue > mouseX && point.xValue > point2!!.xValue) {
-                    rightLimitX = point.xValue
+                if (point.xValue.toDouble() > mouseX && point.xValue.toDouble() > point2!!.xValue.toDouble()) {
+                    rightLimitX = point.xValue.toDouble()
                     break
                 }
             }
         } else {
             for (point in points) {
-                if (point.xValue < mouseX) {
+                if (point.xValue.toDouble() < mouseX) {
                     point1 = point
                 }
-                if (point.xValue > mouseX) {
+                if (point.xValue.toDouble() > mouseX) {
                     point2 = point
                     break
                 }
@@ -127,13 +129,13 @@ class ModelCurveDragger
             if (point1!!.xValue == point2!!.xValue
                 && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX
             ) {
-                val index1 = pointPowerMap[point1]!!
+                val index1 = pointPowerMap[point1 as XYChart.Data<*, *>]!!
                 val index2 = index1 + 1 // neighbor
 
                 if (!modelData[index1].isFixedPower
                     && !modelData[index2].isFixedPower
                 ) {
-                    val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue)
+                    val diff = 10.0.pow(mouseX) - 10.0.pow(point1!!.xValue.toDouble())
 
                     point1!!.xValue = mouseX
                     point2!!.xValue = mouseX
