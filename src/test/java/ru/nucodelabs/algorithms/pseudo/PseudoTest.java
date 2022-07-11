@@ -8,8 +8,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
 import ru.nucodelabs.gem.app.AppModule;
+import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,7 +13,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.Axis
-import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
@@ -78,7 +78,7 @@ fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
     boundsInLocalProperty()
 )
 
-fun NumberAxis.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
+fun ValueAxis<Number>.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
 
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
 
