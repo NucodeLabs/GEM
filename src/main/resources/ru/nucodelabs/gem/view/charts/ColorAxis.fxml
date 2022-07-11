@@ -1,19 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.charts.PolygonChart?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.charts.ColorAxisController"
-      maxHeight="Infinity" prefWidth="85.0" stylesheets="@ModelSection.css">
+      maxHeight="Infinity" prefWidth="85.0" stylesheets="@ModelSection.css"
+      onContextMenuRequested="#openContextMenu">
+    <fx:define>
+        <Stage fx:id="configWindow" resizable="false">
+            <scene>
+                <Scene stylesheets="@../common.css">
+                    <VBox spacing="10" style="-fx-padding: 15;">
+                        <Label text="Настройки цветовой шкалы" styleClass="window-header"/>
+                        <Label text="Минимальное значение"/>
+                        <Spinner promptText="Минимальное значение" fx:id="minValueSpinner" editable="true"/>
+                        <Label text="Максимальное значение"/>
+                        <Spinner promptText="Максимальное значение" fx:id="maxValueSpinner" editable="true"/>
+                        <Label text="Число сегментов"/>
+                        <Spinner promptText="Число сегментов" fx:id="numberOfSegmentsSpinner" editable="true"/>
+                    </VBox>
+                </Scene>
+            </scene>
+        </Stage>
+        <ContextMenu fx:id="ctxMenu">
+            <items>
+                <MenuItem text="Настроить" onAction="#openConfiguration"/>
+            </items>
+        </ContextMenu>
+    </fx:define>
     <PolygonChart fx:id="chart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
-                  VBox.vgrow="ALWAYS">
+                  VBox.vgrow="ALWAYS" rotate="180">
         <xAxis>
-            <NumberAxis autoRanging="false" visible="false" managed="false"/>
+            <NumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
+                        minorTickVisible="false"
+                        opacity="0"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" tickUnit="100" prefWidth="25"/>
+            <NumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="25"
+                        side="LEFT" tickLabelRotation="180"/>
         </yAxis>
     </PolygonChart>
 </VBox>
