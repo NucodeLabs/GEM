@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.charts
+package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
 import javafx.scene.chart.ScatterChart

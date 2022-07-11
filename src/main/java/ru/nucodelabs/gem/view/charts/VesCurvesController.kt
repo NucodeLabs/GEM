@@ -26,6 +26,8 @@ import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.DragViewSupport
+import ru.nucodelabs.gem.view.control.chart.ZoomSupport
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*

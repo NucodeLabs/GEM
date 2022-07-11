@@ -209,3 +209,7 @@
 .window-header {
     -fx-font-size: 16;
 }
+
+.top-chart {
+    -fx-padding: -5 0 -5 -10;
+}
