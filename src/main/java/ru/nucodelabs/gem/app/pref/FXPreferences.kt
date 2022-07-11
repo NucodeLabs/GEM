@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.app.pref
 
 import javafx.beans.property.*
-import java.util.function.Consumer
 import java.util.prefs.Preferences
 import javax.inject.Inject
 
@@ -17,14 +16,14 @@ class FXPreferences @Inject constructor(val preferences: Preferences) {
         }
     }
 
-    fun bind(property: ReadOnlyDoubleProperty, propertyName: String?, def: Double, setter: Consumer<Double?>) {
-        setter.accept(preferences.getDouble(propertyName, def))
+    fun bind(property: ReadOnlyDoubleProperty, propertyName: String?, def: Double): Double {
         property.addListener { _, _, newValue: Number ->
             preferences.putDouble(
                 propertyName,
                 newValue.toDouble()
             )
         }
+        return preferences.getDouble(propertyName, def)
     }
 
     fun bind(booleanProperty: BooleanProperty, propertyName: String?, def: Boolean) {

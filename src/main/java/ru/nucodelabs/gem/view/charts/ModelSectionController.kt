@@ -44,9 +44,12 @@ class ModelSectionController @Inject constructor(
                 update()
             }
         }
+
+        colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
+        colorMapper.minValueProperty().addListener { _, _, _ -> update() }
+        colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
     }
 
-    // the chart fills area between line and ZERO
     private fun update() {
         chart.data.clear()
 

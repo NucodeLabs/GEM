@@ -81,7 +81,7 @@
                                             <fx:include source="../charts/PseudoSection.fxml"/>
                                             <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
                                         </SplitPane>
-                                        <fx:include source="../charts/ColorAxis.fxml" VBox.vgrow="ALWAYS"/>
+                                        <fx:include source="../charts/ColorAxis.fxml"/>
                                     </HBox>
                                 </VBox>
                             </HBox>
