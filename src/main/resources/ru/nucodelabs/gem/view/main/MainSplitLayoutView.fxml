@@ -63,7 +63,7 @@
                                     <HBox>
                                         <HBox>
                                             <prefWidth>
-                                                <UIConstantsKt fx:constant="TOP_CHARTS_LEFT_AXIS_WIDTH"/>
+                                                <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                                             </prefWidth>
                                         </HBox>
                                         <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>

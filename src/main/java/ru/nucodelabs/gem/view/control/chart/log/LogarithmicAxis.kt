@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.control.chart
+package ru.nucodelabs.gem.view.control.chart.log
 
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
@@ -6,6 +6,7 @@ import javafx.animation.Timeline
 import javafx.beans.NamedArg
 import javafx.beans.binding.Bindings.createDoubleBinding
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.chart.ValueAxis
 import javafx.util.Duration
@@ -20,6 +21,12 @@ class LogarithmicAxis @JvmOverloads constructor(
     private val upperRangeTimeline = Timeline()
     private val logUpperBound: DoubleProperty = SimpleDoubleProperty()
     private val logLowerBound: DoubleProperty = SimpleDoubleProperty()
+
+    private val _inverted = SimpleBooleanProperty(false)
+    fun invertedProperty() = _inverted
+    var inverted
+        get() = _inverted.get()
+        set(value) = _inverted.set(value)
 
     init {
         validateBounds(lowerBound, upperBound)
@@ -49,12 +56,12 @@ class LogarithmicAxis @JvmOverloads constructor(
      * [0,Double.MAX_VALUE]
      */
     private fun validateBounds(lowerBound: Double, upperBound: Double) =
-        require(lowerBound < 0 || upperBound < 0 || lowerBound <= upperBound)
+        require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
 
 
     override fun calculateMinorTickMarks(): List<Number> {
         val range = range
-        val minorTickMarksPositions: MutableList<Number> = mutableListOf()
+        val minorTickMarksPositions = mutableListOf<Number>()
         val upperBound = range[1]
         val logUpperBound = log10(upperBound.toDouble())
 
@@ -145,9 +152,17 @@ class LogarithmicAxis @JvmOverloads constructor(
         val delta = logUpperBound.get() - logLowerBound.get()
 
         return if (side.isVertical) {
-            10.0.pow(((1.0 - displayPosition / height) * delta) + logLowerBound.get())
+            if (!inverted) {
+                (10.0.pow(((1.0 - displayPosition / height) * delta) + logLowerBound.get()))
+            } else {
+                (10.0.pow(((displayPosition / height) * delta) + logLowerBound.get()))
+            }
         } else {
-            10.0.pow(((displayPosition / width) * delta) + logLowerBound.get())
+            if (!inverted) {
+                10.0.pow(((displayPosition / width) * delta) + logLowerBound.get())
+            } else {
+                10.0.pow(((1.0 - displayPosition / width) * delta) + logLowerBound.get())
+            }
         }
     }
 
@@ -156,9 +171,17 @@ class LogarithmicAxis @JvmOverloads constructor(
         val deltaV = log10(value.toDouble()) - logLowerBound.get()
 
         return if (side.isVertical) {
-            (1.0 - deltaV / delta) * height
+            if (!inverted) {
+                (1.0 - deltaV / delta) * height
+            } else {
+                (deltaV / delta) * height
+            }
         } else {
-            (deltaV / delta) * width
+            if (!inverted) {
+                (deltaV / delta) * width
+            } else {
+                (1.0 - deltaV / delta) * width
+            }
         }
     }
 

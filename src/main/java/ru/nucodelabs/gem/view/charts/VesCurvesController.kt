@@ -22,20 +22,22 @@ import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.math.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.*
+import ru.nucodelabs.gem.view.control.chart.DragViewSupport
+import ru.nucodelabs.gem.view.control.chart.ZoomSupport
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.log10
 
-private const val X_AXIS_LOG_PADDING = 0.2
-private const val Y_AXIS_LOG_PADDING = 0.2
-private const val X_AXIS_PADDING_REL = 0.1
-private const val Y_AXIS_PADDING_REL = 0.1
+private const val X_AXIS_PADDING_LOG = 0.1
+private const val Y_AXIS_PADDING_LOG = 0.1
 private const val X_MIN_LOG = -2.0
 private const val X_MIN = 1e-2
 private const val X_MAX_LOG = 10.0
@@ -61,10 +63,10 @@ class VesCurvesController @Inject constructor(
     private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
-    lateinit var lineChartXAxis: LogarithmicAxis
+    lateinit var xAxis: LogarithmicAxis
 
     @FXML
-    private lateinit var lineChartYAxis: LogarithmicAxis
+    private lateinit var yAxis: LogarithmicAxis
 
     override val stage: Stage
         get() = lineChart.scene.window as Stage
@@ -80,11 +82,9 @@ class VesCurvesController @Inject constructor(
     private lateinit var dragViewSupport: DragViewSupport
     private lateinit var zoomSupport: ZoomSupport
 
-    private val xAxisRange
-        get() = lineChartXAxis.upperBound - lineChartXAxis.lowerBound
+    private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
-    private val yAxisRange
-        get() = lineChartYAxis.upperBound - lineChartYAxis.lowerBound
+    private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
@@ -101,16 +101,13 @@ class VesCurvesController @Inject constructor(
         lineChart.dataProperty().bind(dataProperty)
         uiProperties = resources
         modelCurveDragger = ModelCurveDragger(
-            xAxis = lineChartXAxis,
-            yAxis = lineChartYAxis,
+            xAxis = xAxis,
+            yAxis = yAxis,
             vesCurvesData = dataProperty,
             modelCurveIndex = MOD_CURVE_SERIES_INDEX,
             lowerLimitY = 1.0
         )
 
-        dragViewSupport = lineChart.initDragViewSupport()
-
-        zoomSupport = lineChart.initZoomSupport()
     }
 
     private fun update() {
@@ -126,36 +123,42 @@ class VesCurvesController @Inject constructor(
         setupYAxisBounds()
     }
 
+    private fun paddingLowerBound(bound: Double, range: Double, padding: Double): Double =
+        bound - bound / exp10(range * padding)
+
+    private fun paddingUpperBound(bound: Double, range: Double, padding: Double) =
+        bound * exp10(range * padding) - bound
+
     private fun setupXAxisBounds() {
-        lineChartXAxis.lowerBound = min(
+        xAxis.lowerBound = min(
             picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
             picket.experimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
         )
 
-        lineChartXAxis.upperBound = max(
+        xAxis.upperBound = max(
             picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
             picket.experimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
         )
 
-        val range = xAxisRange
-        lineChartXAxis.upperBound += range * X_AXIS_PADDING_REL
-        lineChartXAxis.upperBound += range * X_AXIS_PADDING_REL
+        val range = xAxisRangeLog()
+        xAxis.lowerBound -= paddingLowerBound(xAxis.lowerBound, range, X_AXIS_PADDING_LOG)
+        xAxis.upperBound += paddingUpperBound(xAxis.upperBound, range, X_AXIS_PADDING_LOG)
     }
 
     private fun setupYAxisBounds() {
-        lineChartYAxis.lowerBound = min(
+        yAxis.lowerBound = min(
             picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
             picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
         )
 
-        lineChartYAxis.upperBound = max(
+        yAxis.upperBound = max(
             picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
             picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
         )
 
-        val range = xAxisRange
-        lineChartYAxis.upperBound += range * Y_AXIS_PADDING_REL
-        lineChartYAxis.upperBound += range * Y_AXIS_PADDING_REL
+        val range = yAxisRangeLog()
+        yAxis.lowerBound -= paddingLowerBound(yAxis.lowerBound, range, Y_AXIS_PADDING_LOG)
+        yAxis.upperBound += paddingUpperBound(yAxis.upperBound, range, Y_AXIS_PADDING_LOG)
     }
 
     // tooltips must be added after nodes shown on screen, otherwise it doesn't work
@@ -219,6 +222,7 @@ class VesCurvesController @Inject constructor(
             historyManager.snapshot()
             modelCurveDragger.resetStyle()
             isDraggingModel = false
+            update()
 //            lineChart.animated = true
 //            lineChartYAxis.isAutoRanging = true
         }
