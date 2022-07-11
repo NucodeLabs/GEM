@@ -200,3 +200,7 @@
 .wrong-input {
     -fx-background-color: LightPink;
 }
+
+.window-header {
+    -fx-font-size: 16;
+}

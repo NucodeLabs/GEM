@@ -2,12 +2,14 @@ package ru.nucodelabs.gem.extensions.fx
 
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
+import javafx.beans.binding.DoubleBinding
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.Node
+import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
@@ -68,3 +70,5 @@ fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
     boundsInParentProperty(),
     boundsInLocalProperty()
 )
+
+fun NumberAxis.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
