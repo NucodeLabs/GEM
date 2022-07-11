@@ -1,9 +1,12 @@
 package ru.nucodelabs.gem.view.control.chart
 
+import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
+import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 
 /**
@@ -40,7 +43,20 @@ fun Pair<ValueAxis<Number>, ValueAxis<Number>>.valueForSceneCoordinates(
 fun Pair<ValueAxis<Number>, ValueAxis<Number>>.valueForSceneCoordinates(pointInScene: Point2D) =
     valueForSceneCoordinates(pointInScene.x, pointInScene.y)
 
-fun XYChart<Number, Number>.initDragViewSupport() =
-    DragViewSupport(xAxis as ValueAxis<Number>, yAxis as ValueAxis<Number>)
+fun <X, Y> XYChart<X, Y>.installTooltips(factory: (series: Series<X, Y>, point: Data<X, Y>) -> Tooltip) {
+    for (series in data) {
+        for (point in series.data) {
+            Tooltip.install(point.node, factory(series, point))
+        }
+    }
 
-fun XYChart<Number, Number>.initZoomSupport() = ZoomSupport(xAxis as ValueAxis<Number>, yAxis as ValueAxis<Number>)
+    data.addListener(ListChangeListener {
+        while (it.next()) {
+            for (series in it.addedSubList) {
+                for (point in series.data) {
+                    Tooltip.install(point.node, factory(series, point))
+                }
+            }
+        }
+    })
+}

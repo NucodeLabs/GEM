@@ -167,10 +167,10 @@ public class MainViewController extends AbstractController implements FileImport
 
     private void syncMisfitAndVesXAxes() {
         misfitStacksController.getLineChartXAxis().lowerBoundProperty().bind(
-                vesCurvesController.getLineChartXAxis().lowerBoundProperty());
+                vesCurvesController.getXAxis().lowerBoundProperty());
 
         misfitStacksController.getLineChartXAxis().upperBoundProperty().bind(
-                vesCurvesController.getLineChartXAxis().upperBoundProperty());
+                vesCurvesController.getXAxis().upperBoundProperty());
     }
 
     private BooleanProperty setupValidationOnPicketXZ(TextField tf) {

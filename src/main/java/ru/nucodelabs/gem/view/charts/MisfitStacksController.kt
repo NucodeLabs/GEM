@@ -16,14 +16,13 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.gem.extensions.fx.line
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.LogarithmicAxis
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.math.log10
 
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
@@ -65,7 +64,7 @@ class MisfitStacksController @Inject constructor(
         try {
             val values = misfitValuesFactory(picket.experimentalData, picket.modelData)
             val expPoints = vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
-                Point(log10(it.x), log10(it.y))
+                Point(it.x, it.y)
             }
 
             misfitStacksSeriesList = observableList(mutableListOf())

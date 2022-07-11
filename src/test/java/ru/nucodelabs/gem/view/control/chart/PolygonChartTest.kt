@@ -10,15 +10,15 @@ import javafx.scene.control.Button
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.FXTest
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 
 internal class PolygonChartTest : FXTest() {
 
     @Test
-    @Disabled
+//    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }
@@ -26,8 +26,11 @@ internal class PolygonChartTest : FXTest() {
     class TestApp : Application() {
         override fun start(primaryStage: Stage) {
             val chart = PolygonChart(
-                xAxis = LogarithmicAxis(10.0, 100.0).apply { label = "Iks" },
-                yAxis = NumberAxis(10.0, 50.0, 1.0).apply { label = "Igrek" }
+                xAxis = NumberAxis(10.0, 100.0, 10.0).apply { label = "X Axis" },
+                yAxis = LogarithmicAxis(10.0, 50.0).apply {
+                    label = "Y Axis"
+                    inverted = true
+                }
             )
             chart.data += Series(
                 observableListOf(

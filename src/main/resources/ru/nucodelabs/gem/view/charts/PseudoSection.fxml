@@ -28,7 +28,7 @@
             <NumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
                         tickUnit="25" forceZeroInRange="false">
                 <prefWidth>
-                    <UIConstantsKt fx:constant="TOP_CHARTS_LEFT_AXIS_WIDTH"/>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
             </NumberAxis>
         </yAxis>
