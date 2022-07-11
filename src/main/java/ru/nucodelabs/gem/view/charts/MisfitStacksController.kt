@@ -16,6 +16,7 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.gem.extensions.fx.line
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.LogarithmicAxis
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -38,7 +39,7 @@ class MisfitStacksController @Inject constructor(
     private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
-    lateinit var lineChartXAxis: NumberAxis
+    lateinit var lineChartXAxis: LogarithmicAxis
 
     @FXML
     private lateinit var lineChartYAxis: NumberAxis

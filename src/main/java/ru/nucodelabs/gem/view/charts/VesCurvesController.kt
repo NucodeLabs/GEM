@@ -9,7 +9,6 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Tooltip
@@ -25,23 +24,28 @@ import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.DragViewSupport
-import ru.nucodelabs.gem.view.control.chart.ZoomSupport
-import ru.nucodelabs.gem.view.control.chart.initDragViewSupport
-import ru.nucodelabs.gem.view.control.chart.initZoomSupport
+import ru.nucodelabs.gem.view.control.chart.*
+import java.lang.Double.max
+import java.lang.Double.min
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.log10
 
 private const val X_AXIS_LOG_PADDING = 0.2
 private const val Y_AXIS_LOG_PADDING = 0.2
+private const val X_AXIS_PADDING_REL = 0.1
+private const val Y_AXIS_PADDING_REL = 0.1
 private const val X_MIN_LOG = -2.0
+private const val X_MIN = 1e-2
 private const val X_MAX_LOG = 10.0
+private const val X_MAX = 1e10
 private const val Y_MIN_LOG = -2.0
+private const val Y_MIN = 1e-2
 private const val Y_MAX_LOG = 10.0
+private const val Y_MAX = 1e10
 private const val ZOOM_DELTA_LOG = 0.1
+private const val ZOOM_DELTA_REL = 0.1
 
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
@@ -57,10 +61,10 @@ class VesCurvesController @Inject constructor(
     private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
-    lateinit var lineChartXAxis: NumberAxis
+    lateinit var lineChartXAxis: LogarithmicAxis
 
     @FXML
-    private lateinit var lineChartYAxis: NumberAxis
+    private lateinit var lineChartYAxis: LogarithmicAxis
 
     override val stage: Stage
         get() = lineChart.scene.window as Stage
@@ -75,6 +79,12 @@ class VesCurvesController @Inject constructor(
 
     private lateinit var dragViewSupport: DragViewSupport
     private lateinit var zoomSupport: ZoomSupport
+
+    private val xAxisRange
+        get() = lineChartXAxis.upperBound - lineChartXAxis.lowerBound
+
+    private val yAxisRange
+        get() = lineChartYAxis.upperBound - lineChartYAxis.lowerBound
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
@@ -117,27 +127,35 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun setupXAxisBounds() {
-        lineChartXAxis.lowerBound = listOf(
+        lineChartXAxis.lowerBound = min(
             picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
             picket.experimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
-        ).minOf { log10(it) } - X_AXIS_LOG_PADDING
+        )
 
-        lineChartXAxis.upperBound = listOf(
+        lineChartXAxis.upperBound = max(
             picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
             picket.experimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
-        ).maxOf { log10(it) } + X_AXIS_LOG_PADDING
+        )
+
+        val range = xAxisRange
+        lineChartXAxis.upperBound += range * X_AXIS_PADDING_REL
+        lineChartXAxis.upperBound += range * X_AXIS_PADDING_REL
     }
 
     private fun setupYAxisBounds() {
-        lineChartYAxis.lowerBound = listOf(
+        lineChartYAxis.lowerBound = min(
             picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
             picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
-        ).minOf { log10(it) } - Y_AXIS_LOG_PADDING
+        )
 
-        lineChartYAxis.upperBound = listOf(
+        lineChartYAxis.upperBound = max(
             picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
             picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
-        ).maxOf { log10(it) } + Y_AXIS_LOG_PADDING
+        )
+
+        val range = xAxisRange
+        lineChartYAxis.upperBound += range * Y_AXIS_PADDING_REL
+        lineChartYAxis.upperBound += range * Y_AXIS_PADDING_REL
     }
 
     // tooltips must be added after nodes shown on screen, otherwise it doesn't work
@@ -155,7 +173,7 @@ class VesCurvesController @Inject constructor(
             theorCurveSeries.data.addAll(
                 vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData)
                     .mapIndexed { i, (x, y) ->
-                        Data(log10(x) as Number, log10(y) as Number).also { tooltips += it to tooltip(i, x, y) }
+                        Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
                     }
             )
         } catch (e: UnsatisfiedLinkError) {
@@ -169,7 +187,7 @@ class VesCurvesController @Inject constructor(
         val modelCurveSeries = Series<Number, Number>()
         modelCurveSeries.data.addAll(
             vesCurvesConverter.modelCurveOf(picket.modelData).map { (x, y) ->
-                Data(log10(x) as Number, log10(y) as Number).also { tooltips += it to tooltipForModel(x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltipForModel(x, y) }
             }
         )
         modelCurveSeries.name = uiProperties["modCurve"]
@@ -209,7 +227,7 @@ class VesCurvesController @Inject constructor(
     private fun updateExpCurves() {
         val expCurveSeries = Series(
             vesCurvesConverter.experimentalCurveOf(picket.experimentalData).mapIndexed { i, (x, y) ->
-                Data(log10(x) as Number, log10(y) as Number).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         expCurveSeries.name = uiProperties["expCurve"]
@@ -219,7 +237,7 @@ class VesCurvesController @Inject constructor(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.UPPER_BOUND
             ).mapIndexed { i, (x, y) ->
-                Data(log10(x) as Number, log10(y) as Number).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errUpperExp.name = uiProperties["expCurveUpper"]
@@ -229,7 +247,7 @@ class VesCurvesController @Inject constructor(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.LOWER_BOUND
             ).mapIndexed { i, (x, y) ->
-                Data(log10(x) as Number, log10(y) as Number).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errLowerExp.name = uiProperties["expCurveLower"]

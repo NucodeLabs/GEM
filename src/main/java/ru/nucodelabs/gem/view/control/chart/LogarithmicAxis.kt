@@ -1,191 +1,175 @@
-package ru.nucodelabs.gem.view.control.chart;
+package ru.nucodelabs.gem.view.control.chart
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.NamedArg;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.chart.ValueAxis;
-import javafx.util.Duration;
+import javafx.animation.KeyFrame
+import javafx.animation.KeyValue
+import javafx.animation.Timeline
+import javafx.beans.NamedArg
+import javafx.beans.binding.Bindings.createDoubleBinding
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
+import javafx.scene.chart.ValueAxis
+import javafx.util.Duration
+import kotlin.math.log10
+import kotlin.math.pow
 
-import java.util.ArrayList;
-import java.util.List;
+class LogarithmicAxis @JvmOverloads constructor(
+    @NamedArg("lowerBound") lowerBound: Double = 0.0,
+    @NamedArg("upperBound") upperBound: Double = 100.0
+) : ValueAxis<Number>(lowerBound, upperBound) {
+    private val lowerRangeTimeline = Timeline()
+    private val upperRangeTimeline = Timeline()
+    private val logUpperBound: DoubleProperty = SimpleDoubleProperty()
+    private val logLowerBound: DoubleProperty = SimpleDoubleProperty()
 
-public class LogarithmicAxis extends ValueAxis<Number> {
-
-    /**
-     * The time of animation in ms
-     */
-    private static final double ANIMATION_TIME = 700;
-    private final Timeline lowerRangeTimeline = new Timeline();
-    private final Timeline upperRangeTimeline = new Timeline();
-
-    private final DoubleProperty logUpperBound = new SimpleDoubleProperty();
-    private final DoubleProperty logLowerBound = new SimpleDoubleProperty();
-
-    public LogarithmicAxis(
-            @NamedArg("lowerBound") double lowerBound,
-            @NamedArg("upperBound") double upperBound) {
-        super(lowerBound, upperBound);
-        try {
-            validateBounds(lowerBound, upperBound);
-            bindLogBoundsToDefaultBounds();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public LogarithmicAxis() {
-        this(0.0, 100.0);
+    init {
+        validateBounds(lowerBound, upperBound)
+        bindLogBoundsToDefaultBounds()
     }
 
     /**
      * Bind our logarithmic bounds with the super class bounds, consider the base 10 logarithmic scale.
      */
-    private void bindLogBoundsToDefaultBounds() {
+    private fun bindLogBoundsToDefaultBounds() {
         logLowerBound.bind(
-                Bindings.createDoubleBinding(
-                        () -> Math.log10(lowerBoundProperty().get()),
-                        lowerBoundProperty()));
+            createDoubleBinding(
+                { log10(lowerBoundProperty().get()) },
+                lowerBoundProperty()
+            )
+        )
         logUpperBound.bind(
-                Bindings.createDoubleBinding(
-                        () -> Math.log10(upperBoundProperty().get()),
-                        upperBoundProperty()));
+            createDoubleBinding(
+                { log10(upperBoundProperty().get()) },
+                upperBoundProperty()
+            )
+        )
     }
 
     /**
      * Validate the bounds by throwing an exception if the values are not conform to the mathematics log interval:
-     * ]0,Double.MAX_VALUE]
+     * [0,Double.MAX_VALUE]
      */
-    private void validateBounds(double lowerBound, double upperBound) throws IllegalArgumentException {
-        if (lowerBound < 0 || upperBound < 0 || lowerBound > upperBound) {
-            throw new IllegalArgumentException(
-                    "The logarithmic range should be include to ]0,Double.MAX_VALUE] and the lowerBound should be less than the upperBound");
+    private fun validateBounds(lowerBound: Double, upperBound: Double) =
+        require(lowerBound < 0 || upperBound < 0 || lowerBound <= upperBound)
+
+
+    override fun calculateMinorTickMarks(): List<Number> {
+        val range = range
+        val minorTickMarksPositions: MutableList<Number> = mutableListOf()
+        val upperBound = range[1]
+        val logUpperBound = log10(upperBound.toDouble())
+
+        var i = 0.0
+        while (i <= logUpperBound) {
+            var j = 0.0
+            while (j <= 9) {
+                val value = j * 10.0.pow(i)
+                minorTickMarksPositions += value
+                j += 1.0 / minorTickCount
+            }
+            i += 1.0
         }
+
+        return minorTickMarksPositions
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected List<Number> calculateMinorTickMarks() {
-        Number[] range = getRange();
-        List<Number> minorTickMarksPositions = new ArrayList<>();
+    @Suppress("UNCHECKED_CAST")
+    override fun calculateTickValues(length: Double, range: Any?): List<Number> {
+        val tickPositions: MutableList<Number> = mutableListOf()
         if (range != null) {
-
-            Number upperBound = range[1];
-            double logUpperBound = Math.log10(upperBound.doubleValue());
-            int minorTickMarkCount = getMinorTickCount();
-
-            for (double i = 0; i <= logUpperBound; i += 1) {
-                for (double j = 0; j <= 9; j += (1. / minorTickMarkCount)) {
-                    double value = j * Math.pow(10, i);
-                    minorTickMarksPositions.add(value);
+            // Number lowerBound = ((Number[]) range)[0];
+            range as Array<Number>
+            val upperBound = range[1]
+            // double logLowerBound = Math.log10(lowerBound.doubleValue());
+            val logUpperBound = log10(upperBound.toDouble())
+            var i = 0.0
+            while (i <= logUpperBound) {
+                for (j in 1..9) {
+                    val value = j * 10.0.pow(i)
+                    tickPositions.add(value)
                 }
+                i += 1.0
             }
         }
-        return minorTickMarksPositions;
+        return tickPositions
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected List<Number> calculateTickValues(double length, Object range) {
-        List<Number> tickPositions = new ArrayList<>();
+    override fun getRange(): Array<Number> = arrayOf(lowerBoundProperty().get(), upperBoundProperty().get())
+
+    override fun getTickMarkLabel(value: Number): String = tickLabelFormatter?.toString(value) ?: value.toString()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun setRange(range: Any?, animate: Boolean) {
         if (range != null) {
-//            Number lowerBound = ((Number[]) range)[0];
-            Number upperBound = ((Number[]) range)[1];
-//            double logLowerBound = Math.log10(lowerBound.doubleValue());
-            double logUpperBound = Math.log10(upperBound.doubleValue());
+            range as Array<Number>
+            val lowerBound = range[0]
+            val upperBound = range[1]
+            validateBounds(lowerBound.toDouble(), upperBound.toDouble())
 
-            for (double i = 0; i <= logUpperBound; i += 1) {
-                for (double j = 1; j <= 9; j++) {
-                    double value = j * Math.pow(10, i);
-                    tickPositions.add(value);
-                }
-            }
-        }
-        return tickPositions;
-    }
-
-    @Override
-    protected Number[] getRange() {
-        return new Number[]{lowerBoundProperty().get(), upperBoundProperty().get()};
-    }
-
-    @Override
-    protected String getTickMarkLabel(Number value) {
-        return getTickLabelFormatter() != null ? getTickLabelFormatter().toString(value) : String.valueOf(value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setRange(Object range, boolean animate) {
-        if (range != null) {
-            Number lowerBound = ((Number[]) range)[0];
-            Number upperBound = ((Number[]) range)[1];
-            try {
-                validateBounds(lowerBound.doubleValue(), upperBound.doubleValue());
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
             if (animate) {
                 try {
-                    lowerRangeTimeline.getKeyFrames().clear();
-                    upperRangeTimeline.getKeyFrames().clear();
-
-                    lowerRangeTimeline.getKeyFrames()
-                            .addAll(new KeyFrame(Duration.ZERO, new KeyValue(lowerBoundProperty(), lowerBoundProperty()
-                                            .get())),
-                                    new KeyFrame(new Duration(ANIMATION_TIME), new KeyValue(lowerBoundProperty(),
-                                            lowerBound.doubleValue())));
-
-                    upperRangeTimeline.getKeyFrames()
-                            .addAll(new KeyFrame(Duration.ZERO, new KeyValue(upperBoundProperty(), upperBoundProperty()
-                                            .get())),
-                                    new KeyFrame(new Duration(ANIMATION_TIME), new KeyValue(upperBoundProperty(),
-                                            upperBound.doubleValue())));
-                    lowerRangeTimeline.play();
-                    upperRangeTimeline.play();
-                } catch (Exception e) {
-                    lowerBoundProperty().set(lowerBound.doubleValue());
-                    upperBoundProperty().set(upperBound.doubleValue());
+                    lowerRangeTimeline.keyFrames.clear()
+                    upperRangeTimeline.keyFrames.clear()
+                    lowerRangeTimeline.keyFrames.addAll(
+                        KeyFrame(
+                            Duration.ZERO,
+                            KeyValue(lowerBoundProperty(), lowerBoundProperty().get())
+                        ),
+                        KeyFrame(
+                            Duration(ANIMATION_TIME),
+                            KeyValue(lowerBoundProperty(), lowerBound.toDouble())
+                        )
+                    )
+                    upperRangeTimeline.keyFrames.addAll(
+                        KeyFrame(
+                            Duration.ZERO,
+                            KeyValue(upperBoundProperty(), upperBoundProperty().get())
+                        ),
+                        KeyFrame(
+                            Duration(ANIMATION_TIME),
+                            KeyValue(upperBoundProperty(), upperBound.toDouble())
+                        )
+                    )
+                    lowerRangeTimeline.play()
+                    upperRangeTimeline.play()
+                } catch (e: Exception) {
+                    lowerBoundProperty().set(lowerBound.toDouble())
+                    upperBoundProperty().set(upperBound.toDouble())
                 }
             }
-            lowerBoundProperty().set(lowerBound.doubleValue());
-            upperBoundProperty().set(upperBound.doubleValue());
+            lowerBoundProperty().set(lowerBound.toDouble())
+            upperBoundProperty().set(upperBound.toDouble())
         }
     }
 
-    @Override
-    public Number getValueForDisplay(double displayPosition) {
-        double delta = logUpperBound.get() - logLowerBound.get();
-        if (getSide().isVertical()) {
-            return Math.pow(10, (((displayPosition - getHeight()) / -getHeight()) * delta) + logLowerBound.get());
+    override fun getValueForDisplay(displayPosition: Double): Number {
+        val delta = logUpperBound.get() - logLowerBound.get()
+
+        return if (side.isVertical) {
+            10.0.pow(((1.0 - displayPosition / height) * delta) + logLowerBound.get())
         } else {
-            return Math.pow(10, (((displayPosition / getWidth()) * delta) + logLowerBound.get()));
+            10.0.pow(((displayPosition / width) * delta) + logLowerBound.get())
         }
     }
 
-    @Override
-    public double getDisplayPosition(Number value) {
-        double delta = logUpperBound.get() - logLowerBound.get();
-        double deltaV = Math.log10(value.doubleValue()) - logLowerBound.get();
-        if (getSide().isVertical()) {
-            return (1. - ((deltaV) / delta)) * getHeight();
+    override fun getDisplayPosition(value: Number): Double {
+        val delta = logUpperBound.get() - logLowerBound.get()
+        val deltaV = log10(value.toDouble()) - logLowerBound.get()
+
+        return if (side.isVertical) {
+            (1.0 - deltaV / delta) * height
         } else {
-            return ((deltaV) / delta) * getWidth();
+            (deltaV / delta) * width
         }
     }
 
+    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any =
+        arrayOf<Number>(lowerBoundProperty().get(), upperBoundProperty().get())
 
-    @Override
-    protected Object autoRange(double minValue, double maxValue, double length, double labelSize) {
-        return new Number[]{lowerBoundProperty().get(), upperBoundProperty().get()};
+
+    companion object {
+        /**
+         * The time of animation in ms
+         */
+        private const val ANIMATION_TIME = 700.0
     }
 }
