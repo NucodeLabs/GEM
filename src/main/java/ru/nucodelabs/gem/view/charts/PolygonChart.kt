@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.NamedArg
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.ScatterChart
+import javafx.scene.chart.ValueAxis
 import javafx.scene.shape.Polygon
 
 /**
@@ -10,8 +10,8 @@ import javafx.scene.shape.Polygon
  * To get polygons references use `seriesPolygons` map view.
  */
 class PolygonChart(
-    @NamedArg("xAxis") xAxis: NumberAxis,
-    @NamedArg("yAxis") yAxis: NumberAxis
+    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") yAxis: ValueAxis<Number>
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     init {

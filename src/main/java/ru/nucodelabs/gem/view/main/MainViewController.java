@@ -190,10 +190,10 @@ public class MainViewController extends AbstractController implements FileImport
     }
 
     private void initConfig() {
-        fxPreferences.bind(getStage().widthProperty(), MAIN_WINDOW_W.getKey(), MAIN_WINDOW_W.getDef(), getStage()::setWidth);
-        fxPreferences.bind(getStage().heightProperty(), MAIN_WINDOW_H.getKey(), MAIN_WINDOW_H.getDef(), getStage()::setHeight);
-        fxPreferences.bind(getStage().xProperty(), MAIN_WINDOW_X.getKey(), MAIN_WINDOW_X.getDef(), getStage()::setX);
-        fxPreferences.bind(getStage().yProperty(), MAIN_WINDOW_Y.getKey(), MAIN_WINDOW_Y.getDef(), getStage()::setY);
+        getStage().setWidth(fxPreferences.bind(getStage().widthProperty(), MAIN_WINDOW_W.getKey(), MAIN_WINDOW_W.getDef()));
+        getStage().setHeight(fxPreferences.bind(getStage().heightProperty(), MAIN_WINDOW_H.getKey(), MAIN_WINDOW_H.getDef()));
+        getStage().setX(fxPreferences.bind(getStage().xProperty(), MAIN_WINDOW_X.getKey(), MAIN_WINDOW_X.getDef()));
+        getStage().setY(fxPreferences.bind(getStage().yProperty(), MAIN_WINDOW_Y.getKey(), MAIN_WINDOW_Y.getDef()));
         fxPreferences.bind(menuViewVESCurvesLegend.selectedProperty(), VES_CURVES_LEGEND_VISIBLE.getKey(), VES_CURVES_LEGEND_VISIBLE.getDef());
     }
 
