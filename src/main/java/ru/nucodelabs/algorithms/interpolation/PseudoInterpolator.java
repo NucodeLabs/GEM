@@ -4,11 +4,19 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+import org.apache.commons.math3.analysis.BivariateFunction;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import ru.nucodelabs.gem.view.color.ColorMapper;
+import smile.interpolation.RBFInterpolation;
+import smile.interpolation.RBFInterpolation2D;
+import smile.math.rbf.GaussianRadialBasis;
+import smile.math.rbf.InverseMultiquadricRadialBasis;
+import smile.math.rbf.MultiquadricRadialBasis;
+import smile.math.rbf.RadialBasisFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +31,13 @@ public class PseudoInterpolator {
     //Линии по общим для всех пикетов ab_2
     private final List<Line> lines = new ArrayList<>();
 
+    //Входные данные
+    private final List<List<XYChart.Data<Double, Double>>> inputPoints;
+
+    private RBFInterpolation2D rbfInterpolation2D;
+
     public PseudoInterpolator(List<List<XYChart.Data<Double, Double>>> listList, ColorMapper colorPalette) {
+        this.inputPoints = listList;
         this.colorPalette = colorPalette;
         //Минимальное количество измерений (линий) у пикета
         int minLinesCnt = listList.stream().map(List::size).mapToInt(Integer::intValue).min().orElse(0);
@@ -52,7 +66,7 @@ public class PseudoInterpolator {
         }
     }
 
-    public BicubicInterpolatingFunction getInterpolationFunction() {
+    public BivariateFunction getInterpolationFunction() {
         double[] xval = xs.stream().mapToDouble(Double::doubleValue).toArray();
         double[] yval = lines.stream().map(Line::getAb_2).mapToDouble(Double::doubleValue).toArray();
         double[][] fval = new double[xs.size()][lines.size()];
@@ -68,7 +82,7 @@ public class PseudoInterpolator {
         return interpolator.interpolate(xval, yval, fval);
     }
 
-    public PolynomialSplineFunction getSplineInterpolateFunction() {
+    public UnivariateFunction getSplineInterpolateFunction() {
         double[] xval = lines.stream().map(Line::getAb_2).mapToDouble(Double::doubleValue).toArray();
         double[] yval = new double[lines.size()];
 
@@ -81,9 +95,28 @@ public class PseudoInterpolator {
         return interpolator.interpolate(xval, yval);
     }
 
+    public void rbfInterpolateInit() {
+
+        int size = xs.size() * lines.size();
+        double[] x1 = new double[size]; //xs
+        double[] x2 = new double[size]; //lines
+        double[] y = new double[size]; //rhos
+
+        for (int i = 0; i < xs.size(); i++) {
+            for (int j = 0; j < lines.size(); j++) {
+                x1[i * lines.size() + j] = xs.get(i);
+                x2[i * lines.size() + j] = inputPoints.get(i).get(j).getYValue();
+                y[i * lines.size() + j] = (Double) inputPoints.get(i).get(j).getExtraValue();
+            }
+        }
+
+        RadialBasisFunction radialBasisFunction = new MultiquadricRadialBasis();
+        this.rbfInterpolation2D = new RBFInterpolation2D(x1, x2, y, new smile.math.rbf.GaussianRadialBasis());
+    }
+
     public void paint(Canvas canvas) {
         if (xs.size() == 1) {
-            PolynomialSplineFunction function = getSplineInterpolateFunction();
+            UnivariateFunction function = getSplineInterpolateFunction();
             PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 
             double stepY = (double) lines.size() / Math.ceil(canvas.getHeight());
@@ -119,12 +152,14 @@ public class PseudoInterpolator {
         double stepX = rangeX / canvas.getWidth();
         double curY = lines.get(0).getAb_2();
 
-        BicubicInterpolatingFunction function = this.getInterpolationFunction();
+        BivariateFunction function = this.getInterpolationFunction();
+        rbfInterpolateInit();
         for (int i = 0; i < canvas.getHeight(); i++) {
             //Первый пикет на расстоянии 0
             double curX = xs.get(0); // = 0
             for (int j = 0; j < canvas.getWidth(); j++) {
-                pw.setColor(j, i, colorPalette.colorFor(function.value(curX, curY)));
+                //pw.setColor(j, i, colorPalette.colorFor(function.value(curX, curY)));
+                pw.setColor(j, i, colorPalette.colorFor(this.rbfInterpolation2D.interpolate(curX, curY)));
                 curX += stepX;
             }
             curY += stepY;
