@@ -4,8 +4,6 @@ import javafx.beans.NamedArg
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
-import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator
-import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.view.color.ColorMapper
 
 class InterpolationMap @JvmOverloads constructor(
@@ -22,28 +20,28 @@ class InterpolationMap @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun draw(canvas: Canvas) {
-        if (data.isEmpty()) {
-            canvas.clear()
-            return
-        }
-
-        for (series in data) {
-            val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
-
-            try {
-                groupByX[0] = groupByX[0].map {
-                    Data(
-                        0.0,
-                        it.yValue,
-                        it.extraValue
-                    )
-                }
-
-                PseudoInterpolator(groupByX as List<List<Data<Double, Double>>>, colorMapper).paint(canvas)
-                // safe cast Double : Number
-            } catch (e: Exception) {
-                throw RuntimeException(e)
-            }
-        }
+//        if (data.isEmpty()) {
+//            canvas.clear()
+//            return
+//        }
+//
+//        for (series in data) {
+//            val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
+//
+//            try {
+//                groupByX[0] = groupByX[0].map {
+//                    Data(
+//                        0.0,
+//                        it.yValue,
+//                        it.extraValue
+//                    )
+//                }
+//
+//                PseudoInterpolator(groupByX as List<List<Data<Double, Double>>>, colorMapper).paint(canvas)
+//                // safe cast Double : Number
+//            } catch (e: Exception) {
+//                throw RuntimeException(e)
+//            }
+//        }
     }
 }

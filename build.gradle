@@ -43,9 +43,15 @@ ext {
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
     currentOSVer = System.getProperty("os.version").toString()
+    javaHome = Jvm.current().javaHome
+
+    // For deps
+    var osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linus"
+    var archName = "x86_64"
+    platform = "$osName-$archName"
 
     // JNI specific variables
-    platform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
+    libPlatform = currentOS.isMacOsX() ? "darwin" : currentOS.isLinux() ? "linux" : "win32"
     libPrefix = currentOS.isWindows() ? "" : "lib"
     libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
 
@@ -56,8 +62,8 @@ ext {
     shared = currentOS.isMacOsX() ? "-dynamiclib" : "-shared"
 
     jniIncludePaths = [
-            "-I", file("${Jvm.current().javaHome}/include").absolutePath,
-            "-I", file("${Jvm.current().javaHome}/include/" + platform).absolutePath
+            "-I", file("${javaHome}/include").absolutePath,
+            "-I", file("${javaHome}/include/${libPlatform}").absolutePath
     ]
 
     jniArgs = prepareJNIArgs()
@@ -78,6 +84,7 @@ task printPlatformInfo {
     println "OS:             ${currentOS.name}"
     println "OS VERSION:     ${currentOSVer}"
     println "ARCHITECTURE:   ${currentArch.name}"
+    println "CLASSIFIER:     ${platform}"
 }
 
 tasks.withType(JavaCompile) {
@@ -102,9 +109,9 @@ dependencies {
     implementation 'com.github.haifengl:smile-data:2.6.0'
     implementation 'com.github.haifengl:smile-plot:2.6.0'
     implementation 'com.github.haifengl:smile-io:2.6.0'
-    implementation 'org.bytedeco:openblas:0.3.13-1.5.5:windows-x86_64'
-    implementation 'org.bytedeco:javacpp:1.5.7:windows-x86_64'
-    implementation 'org.bytedeco:arpack-ng:3.8.0-1.5.7:windows-x86_64'
+    implementation "org.bytedeco:openblas:0.3.13-1.5.5:$platform"
+    implementation "org.bytedeco:javacpp:1.5.7:$platform"
+    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
