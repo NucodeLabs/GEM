@@ -1,5 +1,5 @@
 #lineChart {
-    -fx-padding: 0 0 10 25;
+    /*-fx-padding: 0 0 10 25;*/
     -fx-legend-visible: false;
     -fx-legend-side: top;
 }
@@ -8,13 +8,13 @@
     -fx-stroke: transparent;
 }
 
-#lineChart #lineChartYAxis .axis-label {
-    -fx-label-padding: -45 0 0 0;
-}
+/*#lineChart #lineChartYAxis .axis-label {*/
+/*    -fx-label-padding: -45 0 0 0;*/
+/*}*/
 
-#lineChart #lineChartXAxis .axis-label {
-    -fx-label-padding: 0 0 -15 0;
-}
+/*#lineChart #lineChartXAxis .axis-label {*/
+/*    -fx-label-padding: 0 0 -15 0;*/
+/*}*/
 
 #lineChart .chart-line-symbol.series0 {
     -fx-background-color: LightGreen;
@@ -74,7 +74,7 @@
     -fx-pref-height: 4px;
 }
 
-#lineChartXAxis, #lineChartYAxis {
-    -fx-tick-label-font-size: 12pt;
-    -fx-font-size: 10pt;
-}
+/*#lineChartXAxis, #lineChartYAxis {*/
+/*    -fx-tick-label-font-size: 12pt;*/
+/*    -fx-font-size: 10pt;*/
+/*}*/

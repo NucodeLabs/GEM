@@ -20,7 +20,7 @@
     </HBox>
     <InterpolationMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0"
                       minHeight="0"
-                      legendVisible="false" styleClass="top-chart">
+                      legendVisible="false" styleClass="padded-chart">
         <xAxis>
             <NumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
                         forceZeroInRange="false"/>

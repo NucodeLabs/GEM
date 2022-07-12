@@ -41,7 +41,7 @@
                               opacity="0"/>
         </xAxis>
         <yAxis>
-            <NucodeNumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="25"
+            <NucodeNumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="35"
                               side="RIGHT" inverted="true"/>
         </yAxis>
     </PolygonChart>
