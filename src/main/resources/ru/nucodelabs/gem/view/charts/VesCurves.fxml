@@ -10,7 +10,6 @@
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
       stylesheets="@../common.css, @VesCurves.css"
@@ -36,7 +35,8 @@
             </Button>
         </HBox>
     </HBox>
-    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
+               styleClass="padded-chart">
         <xAxis>
             <LogarithmicAxis fx:id="xAxis"
                              label="AB/2 (m)"

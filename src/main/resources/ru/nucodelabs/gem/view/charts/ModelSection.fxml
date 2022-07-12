@@ -17,13 +17,13 @@
         <Label text="Модель, разрез" styleClass="uclabel"/>
     </HBox>
     <PolygonChart fx:id="chart" maxWidth="Infinity"
-                  maxHeight="Infinity" animated="false" legendVisible="false" styleClass="top-chart">
+                  maxHeight="Infinity" animated="false" legendVisible="false" styleClass="padded-chart">
         <xAxis>
-            <NumberAxis fx:id="xAxis" label="%x" side="BOTTOM" prefWidth="-Infinity" autoRanging="false"
+            <NumberAxis fx:id="xAxis" label="%x" side="BOTTOM" autoRanging="false"
                         minorTickVisible="false" tickUnit="25"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" label="%z" side="LEFT" prefHeight="500" maxHeight="-Infinity"
+            <NumberAxis fx:id="yAxis" label="%z" side="LEFT"
                         autoRanging="false" minorTickVisible="false" tickUnit="25">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
