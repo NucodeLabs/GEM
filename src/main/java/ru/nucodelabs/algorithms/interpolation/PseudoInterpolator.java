@@ -114,8 +114,8 @@ public class PseudoInterpolator {
             }
         }
 
-        RadialBasisFunction radialBasisFunction = new MultiquadricRadialBasis();
-        this.rbfInterpolation2D = new RBFInterpolation2D(x1, x2, y, new smile.math.rbf.GaussianRadialBasis());
+        //RadialBasisFunction radialBasisFunction = new MultiquadricRadialBasis();
+        //this.rbfInterpolation2D = new RBFInterpolation2D(x1, x2, y, new smile.math.rbf.GaussianRadialBasis());
     }
 
     public void paint(Canvas canvas) {
@@ -162,8 +162,8 @@ public class PseudoInterpolator {
             //Первый пикет на расстоянии 0
             double curX = xs.get(0); // = 0
             for (int j = 0; j < canvas.getWidth(); j++) {
-                //pw.setColor(j, i, colorPalette.colorFor(function.value(curX, curY)));
-                pw.setColor(j, i, colorPalette.colorFor(this.rbfInterpolation2D.interpolate(curX, curY)));
+                pw.setColor(j, i, colorPalette.colorFor(function.value(curX, curY)));
+                //pw.setColor(j, i, colorPalette.colorFor(this.rbfInterpolation2D.interpolate(curX, curY)));
                 curX += stepX;
             }
             curY += stepY;
