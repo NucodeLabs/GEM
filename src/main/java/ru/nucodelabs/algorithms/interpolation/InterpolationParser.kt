@@ -19,6 +19,8 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
 
     private val grid: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
 
+    private val missedPositions: MutableList<Pair<Int, Int>> = arrayListOf()
+
     override fun parse() {
         checkData()
         copyData(inputImmutableData, inputData)
@@ -31,7 +33,11 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         checkMissedPoints()
     }
 
-    private fun copyData(listFrom: List<List<XYChart.Data<Double, Double>>>, listTo: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
+    fun getMissedPositions(): MutableList<Pair<Int, Int>> {
+        return missedPositions
+    }
+
+    fun copyData(listFrom: List<List<XYChart.Data<Double, Double>>>, listTo: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
         for (picketIdx in listFrom.indices) {
             listTo.add(arrayListOf())
             for (ab in listFrom[picketIdx]) {
@@ -46,6 +52,8 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
             while (--abIdx >= 0) {
                 if (missedPoints[picketIdx][abIdx].extraValue as Double != -1.0)
                     missedPoints[picketIdx].removeAt(abIdx)
+                else
+                    missedPositions.add(Pair(picketIdx, abIdx))
             }
         }
     }
