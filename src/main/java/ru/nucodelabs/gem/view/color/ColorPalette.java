@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.color_palette;
+package ru.nucodelabs.gem.view.color;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
-import ru.nucodelabs.gem.view.color.ColorMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,26 +19,26 @@ public class ColorPalette implements ColorMapper {
     private final DoubleProperty maxValue = new SimpleDoubleProperty();
     private final IntegerProperty blocksCount = new SimpleIntegerProperty();
 
-    private final List<ColorBlock> colorBlockList = new ArrayList<>();
+    private final List<Segment> segmentList = new ArrayList<>();
 
     public ColorPalette(List<ValueColor> valueColorList, double minValue, double maxValue, int blocksCount) {
         this.valueColorList = valueColorList;
         setMinValue(minValue);
         setMaxValue(maxValue);
-        setBlocksCount(blocksCount);
+        setNumberOfSegments(blocksCount);
         if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
         blocksInit();
         this.blocksCount.addListener((observable, oldValue, newValue) -> {
             if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
-            colorBlockList.clear();
+            segmentList.clear();
             blocksInit();
         });
         this.minValue.addListener((observable, oldValue, newValue) -> {
-            colorBlockList.clear();
+            segmentList.clear();
             blocksInit();
         });
         this.maxValue.addListener((observable, oldValue, newValue) -> {
-            colorBlockList.clear();
+            segmentList.clear();
             blocksInit();
         });
     }
@@ -112,27 +111,27 @@ public class ColorPalette implements ColorMapper {
         double currentTo = blockSize;
 
         //Первый блок
-        colorBlockList.add(new ColorBlock(currentFrom, blockSize, firstColor));
+        segmentList.add(new Segment(currentFrom, blockSize, firstColor));
         currentFrom += blockSize;
         currentTo += blockSize;
 
         for (int i = 1; i < blocksCount.get() - 1; i++) {
-            colorBlockList.add(new ColorBlock(currentFrom, currentTo, blockColor(currentFrom, currentTo)));
+            segmentList.add(new Segment(currentFrom, currentTo, blockColor(currentFrom, currentTo)));
             currentFrom += blockSize;
             currentTo += blockSize;
         }
 
         //Последний блок
-        colorBlockList.add(new ColorBlock(currentFrom, 1.0, lastColor));
+        segmentList.add(new Segment(currentFrom, 1.0, lastColor));
     }
 
-    private ColorBlock blockFor(double percentage) {
+    private Segment blockFor(double percentage) {
         int low = 0;
-        int high = colorBlockList.size() - 1;
+        int high = segmentList.size() - 1;
         int mid;
         while (low <= high) {
             mid = low + (high - low) / 2;
-            ColorBlock block = colorBlockList.get(mid);
+            Segment block = segmentList.get(mid);
             if (block.getFrom() <= percentage && percentage <= block.getTo()) return block;
             else if (block.getTo() < percentage) {
                 low = mid + 1;
@@ -153,7 +152,7 @@ public class ColorPalette implements ColorMapper {
     @Override
     public Color colorFor(double value) {
         double percentage = percentageFor(value);
-        ColorBlock block = blockFor(percentage);
+        Segment block = blockFor(percentage);
         return block.getColor();
     }
 
@@ -191,24 +190,24 @@ public class ColorPalette implements ColorMapper {
 
     @NotNull
     @Override
-    public IntegerProperty blocksCountProperty() {
+    public IntegerProperty numberOfSegmentsProperty() {
         return blocksCount;
     }
 
     @Override
-    public int getBlocksCount() {
+    public int getNumberOfSegments() {
         return blocksCount.get();
     }
 
     @Override
-    public void setBlocksCount(int value) {
+    public void setNumberOfSegments(int value) {
         blocksCount.set(value);
     }
 
     @NotNull
     @Override
-    public List<ColorMapper.ColorBlock> getColorBlocks() {
-        return colorBlockList;
+    public List<ColorMapper.Segment> getSegments() {
+        return segmentList;
     }
 }
 

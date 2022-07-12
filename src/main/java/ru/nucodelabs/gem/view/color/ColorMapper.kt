@@ -8,11 +8,11 @@ interface ColorMapper {
     fun colorFor(value: Double): Color
     var minValue: Double
     var maxValue: Double
-    var blocksCount: Int
+    var numberOfSegments: Int
     fun minValueProperty(): DoubleProperty
     fun maxValueProperty(): DoubleProperty
-    fun blocksCountProperty(): IntegerProperty
-    val colorBlocks: List<ColorBlock>
+    fun numberOfSegmentsProperty(): IntegerProperty
+    val segments: List<Segment>
 
-    data class ColorBlock(val from: Double, val to: Double, val color: Color)
+    data class Segment(val from: Double, val to: Double, val color: Color)
 }

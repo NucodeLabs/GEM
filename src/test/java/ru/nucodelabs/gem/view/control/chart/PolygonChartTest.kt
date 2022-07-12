@@ -1,29 +1,22 @@
-package ru.nucodelabs.gem.view.charts
+package ru.nucodelabs.gem.view.control.chart
 
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Button
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.view.FXTest
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 
-internal class PolygonChartTest {
-    companion object Init {
-        @BeforeAll
-        @JvmStatic
-        fun initJfxRunTime(): Unit {
-            Platform.startup { }
-        }
-    }
+internal class PolygonChartTest : FXTest() {
 
     @Test
     @Disabled
@@ -34,8 +27,15 @@ internal class PolygonChartTest {
     class TestApp : Application() {
         override fun start(primaryStage: Stage) {
             val chart = PolygonChart(
-                NumberAxis(10.0, 100.0, 1.0),
-                NumberAxis(10.0, 100.0, 1.0)
+                xAxis = NucodeNumberAxis(10.0, 100.0).apply {
+                    label = "X Axis"
+                    tickUnit = 1.0
+                    inverted = true
+                },
+                yAxis = LogarithmicAxis(10.0, 50.0).apply {
+                    label = "Y Axis"
+                    inverted = true
+                }
             )
             chart.data += Series(
                 observableListOf(
@@ -53,6 +53,7 @@ internal class PolygonChartTest {
                 )
             )
             chart.data += series
+            val zoom = AxisZoom(chart.xAxis as ValueAxis<Number>, chart.yAxis as ValueAxis<Number>)
 
             primaryStage.scene = Scene(
                 VBox(
@@ -66,13 +67,23 @@ internal class PolygonChartTest {
                         onAction = EventHandler {
                             chart.data[0].data.first().also { it.xValue = it.xValue.toDouble() + 5.0 }
                         }
+                    },
+                    Button("+").apply {
+                        onAction = EventHandler {
+                            zoom.zoom(2.0, 1.0)
+                            println("${(chart.yAxis as ValueAxis<Number>).lowerBound}, ${(chart.yAxis as ValueAxis<Number>).upperBound}")
+                        }
+                    },
+                    Button("-").apply {
+                        onAction = EventHandler {
+                            zoom.zoom(2.0, 1.0, out = true)
+                            println("${(chart.yAxis as ValueAxis<Number>).lowerBound}, ${(chart.yAxis as ValueAxis<Number>).upperBound}")
+                        }
                     }
                 )
             )
             primaryStage.show()
-
             chart.seriesPolygons[series]?.apply { fill = Color.GREENYELLOW }
         }
-
     }
 }

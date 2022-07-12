@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import ru.nucodelabs.gem.view.charts.PolygonChart?>
+<?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
+<?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -16,14 +17,18 @@
         <Label text="Модель, разрез" styleClass="uclabel"/>
     </HBox>
     <PolygonChart fx:id="chart" maxWidth="Infinity"
-                  maxHeight="Infinity" animated="false" legendVisible="false">
+                  maxHeight="Infinity" animated="false" legendVisible="false" styleClass="top-chart">
         <xAxis>
-            <NumberAxis fx:id="xAxis" label="X (m)" side="BOTTOM" prefWidth="-Infinity" autoRanging="false"
+            <NumberAxis fx:id="xAxis" label="%x" side="BOTTOM" prefWidth="-Infinity" autoRanging="false"
                         minorTickVisible="false" tickUnit="25"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" label="Z (m)" side="LEFT" prefHeight="500" maxHeight="-Infinity"
-                        autoRanging="false" minorTickVisible="false" prefWidth="65" tickUnit="25"/>
+            <NumberAxis fx:id="yAxis" label="%z" side="LEFT" prefHeight="500" maxHeight="-Infinity"
+                        autoRanging="false" minorTickVisible="false" tickUnit="25">
+                <prefWidth>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                </prefWidth>
+            </NumberAxis>
         </yAxis>
     </PolygonChart>
 </VBox>

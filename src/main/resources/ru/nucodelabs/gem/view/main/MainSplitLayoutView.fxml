@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        maxWidth="Infinity" maxHeight="Infinity"
@@ -60,13 +61,25 @@
                             <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
                                 <VBox HBox.hgrow="ALWAYS">
                                     <HBox>
-                                        <HBox prefWidth="80"/>
+                                        <HBox>
+                                            <prefWidth>
+                                                <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                                            </prefWidth>
+                                        </HBox>
                                         <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
                                         <HBox>
-                                            <Button fx:id="addPicketBtn" prefWidth="85" minWidth="85"
-                                                    maxWidth="85"
+                                            <Button fx:id="addPicketBtn"
                                                     onAction="#addNewPicket" stylesheets="@PicketsBar.css"
                                                     HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
+                                                <prefWidth>
+                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                                </prefWidth>
+                                                <minWidth>
+                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                                </minWidth>
+                                                <maxWidth>
+                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                                </maxWidth>
                                                 <graphic>
                                                     <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
                                                         <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
@@ -81,8 +94,7 @@
                                             <fx:include source="../charts/PseudoSection.fxml"/>
                                             <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
                                         </SplitPane>
-                                        <fx:include source="../color_palette/ColorPalette.fxml" fx:id="colorPalette"
-                                                    VBox.vgrow="ALWAYS"/>
+                                        <fx:include source="../charts/ColorAxis.fxml"/>
                                     </HBox>
                                 </VBox>
                             </HBox>

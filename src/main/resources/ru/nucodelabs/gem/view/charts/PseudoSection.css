@@ -1,0 +1,8 @@
+.chart-symbol {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-border-radius: 100;
+    -fx-pref-height: 6;
+    -fx-pref-width: 6;
+}

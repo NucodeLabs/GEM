@@ -45,7 +45,7 @@
 
 ### UserControl
 
-- Должен лежать в `ru.nucodelabs.gem.view.usercontrols`
+- Должен лежать в `ru.nucodelabs.gem.view.control`
     - Представляет собой связку
         - `SampleControl.java`
         - `SampleControl.fxml`
@@ -72,5 +72,5 @@
             - После вызова базового конструктора (`super();`) объект становится контроллером для своего FXML-файла.
               Поэтому дополнительную настройку элементов можно производить в конструкторе сразу после вызова `super();`(
               см. `MainMenuBar.java`).
-    - **Соглашение имен файлов обязательное.** (почему? см. `ru.nucodelabs.gem.view.usercontrols.VBUserControl.java`).
+    - **Соглашение имен файлов обязательное.** (почему? см. `ru.nucodelabs.gem.view.control.VBUserControl.java`).
   > [Подробнее про реализацию UserControl (docs.oracle.com)](https://docs.oracle.com/javafx/2/fxml_get_started/custom_control.htm)

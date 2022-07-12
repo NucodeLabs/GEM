@@ -11,6 +11,7 @@ import ru.nucodelabs.data.ves.picketBoundsOrNull
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -44,9 +45,12 @@ class ModelSectionController @Inject constructor(
                 update()
             }
         }
+
+        colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
+        colorMapper.minValueProperty().addListener { _, _, _ -> update() }
+        colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
     }
 
-    // the chart fills area between line and ZERO
     private fun update() {
         chart.data.clear()
 
