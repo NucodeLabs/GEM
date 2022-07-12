@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.event.EventHandler
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.ContextMenu
@@ -18,6 +17,7 @@ import ru.nucodelabs.gem.extensions.fx.rangeBinding
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.net.URL
 import java.util.*
@@ -49,7 +49,7 @@ class ColorAxisController @Inject constructor(
     private lateinit var ctxMenu: ContextMenu
 
     @FXML
-    private lateinit var yAxis: NumberAxis
+    private lateinit var yAxis: NucodeNumberAxis
 
     @FXML
     private lateinit var chart: PolygonChart
