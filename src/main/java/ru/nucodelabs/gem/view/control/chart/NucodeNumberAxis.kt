@@ -6,10 +6,15 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.round
 
-class NucodeNumberAxis(
-    @NamedArg("lowerBound") lowerBound: Double,
-    @NamedArg("upperBound") upperBound: Double
+class NucodeNumberAxis @JvmOverloads constructor(
+    @NamedArg("lowerBound") lowerBound: Double = 0.0,
+    @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
+
+    init {
+        // bugfix: autoRanging is true by default, but it won't work until you set it manually
+        isAutoRanging = true
+    }
 
     private val _tickUnit = SimpleDoubleProperty(10.0)
     fun tickUnitProperty() = _tickUnit
@@ -43,20 +48,21 @@ class NucodeNumberAxis(
         upperBound = range[1]
     }
 
-    override fun getRange(): List<Double> = listOf(lowerBound, upperBound)
+    override fun getRange(): List<Double> = listOf(lowerBound, upperBound, tickUnit)
 
     override fun autoRange(
         minValue: Double,
         maxValue: Double,
         length: Double,
         labelSize: Double
-    ): List<Double> = listOf(minValue, maxValue, length, labelSize)
+    ): List<Double> = listOf(minValue, maxValue, tickUnit)
 
     @Suppress("UNCHECKED_CAST")
     override fun calculateTickValues(length: Double, range: Any?): List<Number> {
         range as List<Double>
         val lowerBound = range[0]
         val upperBound = range[1]
+        val tickUnit = range[2]
         val ticks = mutableListOf<Number>()
 
         when {
@@ -102,6 +108,9 @@ class NucodeNumberAxis(
         }
         return ticks
     }
+
+    // How to extend final class?
+    // - Copy/Paste Pattern
 
     override fun calculateMinorTickMarks(): List<Number> {
         val minorTicks = mutableListOf<Number>()

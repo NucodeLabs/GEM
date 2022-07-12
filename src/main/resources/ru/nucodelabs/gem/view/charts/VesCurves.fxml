@@ -20,14 +20,14 @@
         <Label styleClass="uclabel" text="%ves" VBox.vgrow="NEVER"/>
         <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
         <HBox spacing="5" style="-fx-padding: 5">
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#zoomIn">
+            <Button contentDisplay="GRAPHIC_ONLY">
                 <graphic>
                     <ImageView fitHeight="15" fitWidth="15">
                         <Image url="@../../../../../img/ui_icons/zoom_in.png"/>
                     </ImageView>
                 </graphic>
             </Button>
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#zoomOut">
+            <Button contentDisplay="GRAPHIC_ONLY">
                 <graphic>
                     <ImageView fitHeight="15" fitWidth="15">
                         <Image url="@../../../../../img/ui_icons/zoom_out.png"/>
@@ -36,8 +36,7 @@
             </Button>
         </HBox>
     </HBox>
-    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
-               onMouseDragged="#chartOnMouseDragged" onMousePressed="#chartOnMousePressed">
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
             <LogarithmicAxis fx:id="xAxis"
                              label="AB/2 (m)"

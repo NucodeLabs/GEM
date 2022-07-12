@@ -42,7 +42,7 @@ class LogarithmicAxis @JvmOverloads constructor(
     }
 
     private fun validateBounds(lowerBound: Double, upperBound: Double) =
-        require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
+        require(lowerBound >= 0 && upperBound >= 0 && lowerBound <= upperBound)
 
 
     override fun calculateMinorTickMarks(): List<Number> {
