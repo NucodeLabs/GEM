@@ -149,4 +149,8 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
     override fun getMissedPoints(): MutableList<MutableList<XYChart.Data<Double, Double>>> {
         return missedPoints
     }
+
+    override fun getGrid(): List<List<XYChart.Data<Double, Double>>> {
+        return grid
+    }
 }
