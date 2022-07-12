@@ -26,7 +26,7 @@ import ru.nucodelabs.gem.extensions.math.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.DragViewSupport
-import ru.nucodelabs.gem.view.control.chart.ZoomSupport
+import ru.nucodelabs.gem.view.control.chart.LinearAxisZoomSupport
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
@@ -80,7 +80,7 @@ class VesCurvesController @Inject constructor(
     private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
     private lateinit var dragViewSupport: DragViewSupport
-    private lateinit var zoomSupport: ZoomSupport
+    private lateinit var zoomSupport: LinearAxisZoomSupport
 
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
@@ -278,25 +278,25 @@ class VesCurvesController @Inject constructor(
 
     private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
 
-    @FXML
-    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
-        if (!isDraggingModel) {
-            dragViewSupport.handleMouseDragged(mouseEvent)
-        }
-    }
+//    @FXML
+//    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
+//        if (!isDraggingModel) {
+//            dragViewSupport.handleMouseDragged(mouseEvent)
+//        }
+//    }
+//
+//    @FXML
+//    private fun chartOnMousePressed(mouseEvent: MouseEvent) {
+//        if (!isDraggingModel) {
+//            dragViewSupport.handleMousePressed(mouseEvent)
+//        }
+//    }
 
-    @FXML
-    private fun chartOnMousePressed(mouseEvent: MouseEvent) {
-        if (!isDraggingModel) {
-            dragViewSupport.handleMousePressed(mouseEvent)
-        }
-    }
-
-    @FXML
-    private fun zoomIn() = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
-
-    @FXML
-    private fun zoomOut() = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
+//    @FXML
+//    private fun zoomIn() = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
+//
+//    @FXML
+//    private fun zoomOut() = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
 
 //    fun zoomUsingScroll(scrollEvent: ScrollEvent) {
 //        if (scrollEvent.isShortcutDown) {

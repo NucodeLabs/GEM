@@ -6,36 +6,26 @@ import javafx.animation.Timeline
 import javafx.beans.NamedArg
 import javafx.beans.binding.Bindings.createDoubleBinding
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.scene.chart.ValueAxis
 import javafx.util.Duration
+import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import kotlin.math.log10
 import kotlin.math.pow
 
 class LogarithmicAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 0.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
-) : ValueAxis<Number>(lowerBound, upperBound) {
+) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
     private val lowerRangeTimeline = Timeline()
     private val upperRangeTimeline = Timeline()
     private val logUpperBound: DoubleProperty = SimpleDoubleProperty()
     private val logLowerBound: DoubleProperty = SimpleDoubleProperty()
-
-    private val _inverted = SimpleBooleanProperty(false)
-    fun invertedProperty() = _inverted
-    var inverted
-        get() = _inverted.get()
-        set(value) = _inverted.set(value)
 
     init {
         validateBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
 
-    /**
-     * Bind our logarithmic bounds with the super class bounds, consider the base 10 logarithmic scale.
-     */
     private fun bindLogBoundsToDefaultBounds() {
         logLowerBound.bind(
             createDoubleBinding(
@@ -51,10 +41,6 @@ class LogarithmicAxis @JvmOverloads constructor(
         )
     }
 
-    /**
-     * Validate the bounds by throwing an exception if the values are not conform to the mathematics log interval:
-     * [0,Double.MAX_VALUE]
-     */
     private fun validateBounds(lowerBound: Double, upperBound: Double) =
         require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
 
@@ -190,9 +176,6 @@ class LogarithmicAxis @JvmOverloads constructor(
 
 
     companion object {
-        /**
-         * The time of animation in ms
-         */
         private const val ANIMATION_TIME = 700.0
     }
 }
