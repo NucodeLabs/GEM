@@ -1,5 +1,11 @@
 package ru.nucodelabs.algorithms.interpolation
 
-interface Interpolator {
-    fun getValueFor(x: Double, y: Double)
+import javafx.scene.chart.XYChart
+import ru.nucodelabs.gem.view.color_palette.ColorPalette
+
+class Interpolator (
+    private val inputData: List<List<XYChart.Data<Double, Double>>>,
+    private val colorPalette: ColorPalette
+) {
+    private lateinit var interpolationParser: InterpolationDataParser
 }

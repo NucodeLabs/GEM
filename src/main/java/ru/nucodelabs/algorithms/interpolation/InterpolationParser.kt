@@ -2,8 +2,7 @@ package ru.nucodelabs.algorithms.interpolation
 
 import javafx.scene.chart.XYChart
 
-class InterpolationParser (private var inputData: MutableList<List<XYChart.Data<Double, Double>>>) :
-    InterpolationDataParser {
+class InterpolationParser (private val inputImmutableData: List<List<XYChart.Data<Double, Double>>>) : InterpolationDataParser {
 
     private lateinit var gridX: DoubleArray
     private lateinit var gridY: DoubleArray
@@ -12,24 +11,43 @@ class InterpolationParser (private var inputData: MutableList<List<XYChart.Data<
     private lateinit var y: DoubleArray
     private lateinit var f: DoubleArray
 
+    private var inputData: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
+
     private var missedPoints: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
 
-    private val uniquePoints: MutableList<XYChart.Data<Double, Double>> = arrayListOf()
+    private val uniquePoints: MutableList<Double> = arrayListOf()
 
     private val grid: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
 
     override fun parse() {
         checkData()
+        copyData(inputImmutableData, inputData)
         removeSame()
+        copyData(inputData, grid)
         parseUnique()
         parseRegularGrid()
         parseSpatial()
+        copyData(grid, missedPoints)
         checkMissedPoints()
     }
 
+    private fun copyData(listFrom: List<List<XYChart.Data<Double, Double>>>, listTo: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
+        for (picketIdx in listFrom.indices) {
+            listTo.add(arrayListOf())
+            for (ab in listFrom[picketIdx]) {
+                listTo[picketIdx].add(XYChart.Data(ab.xValue, ab.yValue, ab.extraValue))
+            }
+        }
+    }
+
     private fun checkMissedPoints() {
-        missedPoints = grid
-        missedPoints.map { uniquePoints - it.toSet() }
+        for (picketIdx in missedPoints.indices) {
+            var abIdx = missedPoints[picketIdx].size
+            while (--abIdx >= 0) {
+                if (missedPoints[picketIdx][abIdx].extraValue as Double != -1.0)
+                    missedPoints[picketIdx].removeAt(abIdx)
+            }
+        }
     }
 
     private fun parseSpatial() {
@@ -37,12 +55,13 @@ class InterpolationParser (private var inputData: MutableList<List<XYChart.Data<
         x = DoubleArray(pointsCnt)
         y = DoubleArray(pointsCnt)
         f = DoubleArray(pointsCnt)
-        val cnt = 0
+        var cnt = 0
         for (picketIdx in inputData.indices) {
             for (ab in inputData[picketIdx]) {
                 x[cnt] = ab.xValue
                 y[cnt] = ab.yValue
                 f[cnt] = ab.extraValue as Double
+                cnt++
             }
         }
     }
@@ -70,24 +89,36 @@ class InterpolationParser (private var inputData: MutableList<List<XYChart.Data<
     }
 
     private fun gridInit() {
-        for (i in inputData.indices) {
-            grid.add(uniquePoints)
+        for (picketIdx in inputData.indices) {
+            for (ab in uniquePoints) {
+                if (!grid[picketIdx].any {e -> e.yValue == ab})
+                    grid[picketIdx].add(XYChart.Data(inputData[picketIdx][0].xValue, ab, -1.0))
+            }
+            grid[picketIdx].sortBy { it.yValue }
         }
     }
 
     private fun parseUnique() {
         for (picket in inputData) {
             for (ab in picket) {
-                if (!uniquePoints.contains(ab))
-                    uniquePoints.add(ab)
+                if (!uniquePoints.contains(ab.yValue))
+                    uniquePoints.add(ab.yValue)
             }
         }
-        uniquePoints.sortBy { it.xValue }
+        uniquePoints.sortBy { it }
     }
 
     private fun removeSame() {
-        for (i in inputData.indices) {
-            inputData[i] = inputData[i].distinct()
+        for (picket in inputData) {
+            var size = picket.size - 1
+            var abIdx = 0
+            while (abIdx < size) {
+                if (picket[abIdx].yValue == picket[abIdx + 1].yValue) {
+                    picket.removeAt(abIdx + 1)
+                    size --
+                }
+                abIdx++
+            }
         }
     }
 

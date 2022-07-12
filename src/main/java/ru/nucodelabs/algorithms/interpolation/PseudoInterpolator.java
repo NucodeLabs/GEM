@@ -39,6 +39,10 @@ public class PseudoInterpolator {
     public PseudoInterpolator(List<List<XYChart.Data<Double, Double>>> listList, ColorMapper colorPalette) {
         this.inputPoints = listList;
         this.colorPalette = colorPalette;
+
+        InterpolationDataParser interpolationDataParser = new InterpolationParser(inputPoints);
+        interpolationDataParser.parse();
+
         //Минимальное количество измерений (линий) у пикета
         int minLinesCnt = listList.stream().map(List::size).mapToInt(Integer::intValue).min().orElse(0);
 
