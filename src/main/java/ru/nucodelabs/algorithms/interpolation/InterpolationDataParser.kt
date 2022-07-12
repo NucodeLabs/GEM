@@ -7,6 +7,8 @@ interface InterpolationDataParser {
 
     fun getMissedPoints(): List<List<XYChart.Data<Double, Double>>>
 
+    fun getGrid(): List<List<XYChart.Data<Double, Double>>>
+
     fun getGridX(): DoubleArray
     fun getGridY(): DoubleArray
     fun getGridF(): Array<DoubleArray>
