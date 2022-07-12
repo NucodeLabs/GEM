@@ -6,7 +6,6 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator
 import ru.nucodelabs.gem.extensions.fx.clear
-import ru.nucodelabs.gem.extensions.fx.flipVertically
 import ru.nucodelabs.gem.view.color.ColorMapper
 
 class InterpolationMap @JvmOverloads constructor(
@@ -14,10 +13,6 @@ class InterpolationMap @JvmOverloads constructor(
     @NamedArg("yAxis") yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
-
-    init {
-        canvas.flipVertically()
-    }
 
     private val _colorMapper = SimpleObjectProperty<ColorMapper?>(colorMapper)
     fun colorMapperProperty() = _colorMapper

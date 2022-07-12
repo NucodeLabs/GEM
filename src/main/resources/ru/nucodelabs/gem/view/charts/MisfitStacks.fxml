@@ -25,7 +25,7 @@
         <xAxis>
             <LogarithmicAxis fx:id="lineChartXAxis"
                              side="BOTTOM" minorTickVisible="false" tickLabelsVisible="false" tickMarkVisible="false"
-                             autoRanging="false" lowerBound="0.01" upperBound="1e4"/>
+                             autoRanging="false" lowerBound="0.1" upperBound="1e4"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" cache="true" forceZeroInRange="false"

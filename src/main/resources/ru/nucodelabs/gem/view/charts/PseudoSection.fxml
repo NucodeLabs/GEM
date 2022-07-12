@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import ru.nucodelabs.gem.view.control.chart.InterpolationMap?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/17"
@@ -25,12 +26,12 @@
                         forceZeroInRange="false"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
-                        tickUnit="25" forceZeroInRange="false">
+            <NucodeNumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
+                              tickUnit="25" inverted="true">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
-            </NumberAxis>
+            </NucodeNumberAxis>
         </yAxis>
     </InterpolationMap>
 </VBox>
