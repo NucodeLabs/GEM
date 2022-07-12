@@ -96,6 +96,15 @@ javafx {
 dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
+    implementation 'com.github.haifengl:smile-math:2.6.0'
+    implementation 'com.github.haifengl:smile-interpolation:2.6.0'
+    implementation 'com.github.haifengl:smile-core:2.6.0'
+    implementation 'com.github.haifengl:smile-data:2.6.0'
+    implementation 'com.github.haifengl:smile-plot:2.6.0'
+    implementation 'com.github.haifengl:smile-io:2.6.0'
+    implementation 'org.bytedeco:openblas:0.3.13-1.5.5:windows-x86_64'
+    implementation 'org.bytedeco:javacpp:1.5.7:windows-x86_64'
+    implementation 'org.bytedeco:arpack-ng:3.8.0-1.5.7:windows-x86_64'
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
@@ -104,6 +113,9 @@ dependencies {
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // https://mvnrepository.com/artifact/org.tinfour/TinfourCore
+    implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
+
 }
 
 task forwardSolver(type: Exec) {
