@@ -5,12 +5,10 @@ import javafx.beans.property.BooleanProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
-import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Tooltip
@@ -24,25 +22,36 @@ import ru.nucodelabs.gem.app.model.SectionManager
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.math.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.DragViewSupport
+import ru.nucodelabs.gem.view.control.chart.LinearAxisZoomSupport
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import java.lang.Double.max
+import java.lang.Double.min
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.log10
 
-private const val X_AXIS_LOG_PADDING = 0.2
-private const val Y_AXIS_LOG_PADDING = 0.2
+private const val X_AXIS_PADDING_LOG = 0.1
+private const val Y_AXIS_PADDING_LOG = 0.1
 private const val X_MIN_LOG = -2.0
+private const val X_MIN = 1e-2
 private const val X_MAX_LOG = 10.0
+private const val X_MAX = 1e10
 private const val Y_MIN_LOG = -2.0
+private const val Y_MIN = 1e-2
 private const val Y_MAX_LOG = 10.0
+private const val Y_MAX = 1e10
 private const val ZOOM_DELTA_LOG = 0.1
+private const val ZOOM_DELTA_REL = 0.1
 
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
-    @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Double, Double>>>,
+    @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val alertsFactory: AlertsFactory,
     private val sectionManager: SectionManager,
     private val historyManager: HistoryManager<Section>,
@@ -51,13 +60,13 @@ class VesCurvesController @Inject constructor(
 ) : AbstractController() {
 
     @FXML
-    private lateinit var lineChart: LineChart<Double, Double>
+    private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
-    lateinit var lineChartXAxis: NumberAxis
+    lateinit var xAxis: LogarithmicAxis
 
     @FXML
-    private lateinit var lineChartYAxis: NumberAxis
+    private lateinit var yAxis: LogarithmicAxis
 
     override val stage: Stage
         get() = lineChart.scene.window as Stage
@@ -71,7 +80,11 @@ class VesCurvesController @Inject constructor(
     private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
     private lateinit var dragViewSupport: DragViewSupport
-    private lateinit var zoomSupport: ZoomSupport
+    private lateinit var zoomSupport: LinearAxisZoomSupport
+
+    private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
+
+    private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
@@ -88,22 +101,13 @@ class VesCurvesController @Inject constructor(
         lineChart.dataProperty().bind(dataProperty)
         uiProperties = resources
         modelCurveDragger = ModelCurveDragger(
-            xAxis = lineChartXAxis,
-            yAxis = lineChartYAxis,
+            xAxis = xAxis,
+            yAxis = yAxis,
             vesCurvesData = dataProperty,
             modelCurveIndex = MOD_CURVE_SERIES_INDEX,
             lowerLimitY = 1.0
         )
 
-        dragViewSupport = DragViewSupport(
-            xAxis = lineChartXAxis,
-            yAxis = lineChartYAxis
-        )
-
-        zoomSupport = ZoomSupport(
-            xAxis = lineChartXAxis,
-            yAxis = lineChartYAxis
-        )
     }
 
     private fun update() {
@@ -119,28 +123,42 @@ class VesCurvesController @Inject constructor(
         setupYAxisBounds()
     }
 
+    private fun paddingLowerBound(bound: Double, range: Double, padding: Double): Double =
+        bound - bound / exp10(range * padding)
+
+    private fun paddingUpperBound(bound: Double, range: Double, padding: Double) =
+        bound * exp10(range * padding) - bound
+
     private fun setupXAxisBounds() {
-        lineChartXAxis.lowerBound = listOf(
+        xAxis.lowerBound = min(
             picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
             picket.experimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
-        ).minOf { log10(it) } - X_AXIS_LOG_PADDING
+        )
 
-        lineChartXAxis.upperBound = listOf(
+        xAxis.upperBound = max(
             picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
             picket.experimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
-        ).maxOf { log10(it) } + X_AXIS_LOG_PADDING
+        )
+
+        val range = xAxisRangeLog()
+        xAxis.lowerBound -= paddingLowerBound(xAxis.lowerBound, range, X_AXIS_PADDING_LOG)
+        xAxis.upperBound += paddingUpperBound(xAxis.upperBound, range, X_AXIS_PADDING_LOG)
     }
 
     private fun setupYAxisBounds() {
-        lineChartYAxis.lowerBound = listOf(
+        yAxis.lowerBound = min(
             picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
             picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
-        ).minOf { log10(it) } - Y_AXIS_LOG_PADDING
+        )
 
-        lineChartYAxis.upperBound = listOf(
+        yAxis.upperBound = max(
             picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
             picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
-        ).maxOf { log10(it) } + Y_AXIS_LOG_PADDING
+        )
+
+        val range = yAxisRangeLog()
+        yAxis.lowerBound -= paddingLowerBound(yAxis.lowerBound, range, Y_AXIS_PADDING_LOG)
+        yAxis.upperBound += paddingUpperBound(yAxis.upperBound, range, Y_AXIS_PADDING_LOG)
     }
 
     // tooltips must be added after nodes shown on screen, otherwise it doesn't work
@@ -153,12 +171,12 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun updateTheoreticalCurve() {
-        val theorCurveSeries = Series<Double, Double>()
+        val theorCurveSeries = Series<Number, Number>()
         try {
             theorCurveSeries.data.addAll(
                 vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData)
                     .mapIndexed { i, (x, y) ->
-                        Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
+                        Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
                     }
             )
         } catch (e: UnsatisfiedLinkError) {
@@ -169,10 +187,10 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun updateModelCurve() {
-        val modelCurveSeries = Series<Double, Double>()
+        val modelCurveSeries = Series<Number, Number>()
         modelCurveSeries.data.addAll(
             vesCurvesConverter.modelCurveOf(picket.modelData).map { (x, y) ->
-                Data(log10(x), log10(y)).also { tooltips += it to tooltipForModel(x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltipForModel(x, y) }
             }
         )
         modelCurveSeries.name = uiProperties["modCurve"]
@@ -181,7 +199,7 @@ class VesCurvesController @Inject constructor(
         addDraggingToModelCurveSeries(modelCurveSeries)
     }
 
-    private fun addDraggingToModelCurveSeries(modelCurveSeries: Series<Double, Double>) {
+    private fun addDraggingToModelCurveSeries(modelCurveSeries: Series<*, *>) {
         modelCurveSeries.data.forEach { it.node.cursor = Cursor.HAND }
         modelCurveSeries.node.cursor = Cursor.HAND
         modelCurveSeries.node.onMousePressed = EventHandler { e: MouseEvent ->
@@ -204,6 +222,7 @@ class VesCurvesController @Inject constructor(
             historyManager.snapshot()
             modelCurveDragger.resetStyle()
             isDraggingModel = false
+            update()
 //            lineChart.animated = true
 //            lineChartYAxis.isAutoRanging = true
         }
@@ -212,7 +231,7 @@ class VesCurvesController @Inject constructor(
     private fun updateExpCurves() {
         val expCurveSeries = Series(
             vesCurvesConverter.experimentalCurveOf(picket.experimentalData).mapIndexed { i, (x, y) ->
-                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         expCurveSeries.name = uiProperties["expCurve"]
@@ -222,7 +241,7 @@ class VesCurvesController @Inject constructor(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.UPPER_BOUND
             ).mapIndexed { i, (x, y) ->
-                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errUpperExp.name = uiProperties["expCurveUpper"]
@@ -232,7 +251,7 @@ class VesCurvesController @Inject constructor(
                 picket.experimentalData,
                 VesCurvesConverter.BoundType.LOWER_BOUND
             ).mapIndexed { i, (x, y) ->
-                Data(log10(x), log10(y)).also { tooltips += it to tooltip(i, x, y) }
+                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
         errLowerExp.name = uiProperties["expCurveLower"]
@@ -259,25 +278,25 @@ class VesCurvesController @Inject constructor(
 
     private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
 
-    @FXML
-    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
-        if (!isDraggingModel) {
-            dragViewSupport.handleMouseDragged(mouseEvent)
-        }
-    }
+//    @FXML
+//    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
+//        if (!isDraggingModel) {
+//            dragViewSupport.handleMouseDragged(mouseEvent)
+//        }
+//    }
+//
+//    @FXML
+//    private fun chartOnMousePressed(mouseEvent: MouseEvent) {
+//        if (!isDraggingModel) {
+//            dragViewSupport.handleMousePressed(mouseEvent)
+//        }
+//    }
 
-    @FXML
-    private fun chartOnMousePressed(mouseEvent: MouseEvent) {
-        if (!isDraggingModel) {
-            dragViewSupport.handleMousePressed(mouseEvent)
-        }
-    }
-
-    @FXML
-    private fun zoomIn(actionEvent: ActionEvent) = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
-
-    @FXML
-    private fun zoomOut(actionEvent: ActionEvent) = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
+//    @FXML
+//    private fun zoomIn() = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
+//
+//    @FXML
+//    private fun zoomOut() = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
 
 //    fun zoomUsingScroll(scrollEvent: ScrollEvent) {
 //        if (scrollEvent.isShortcutDown) {

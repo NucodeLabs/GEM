@@ -17,7 +17,7 @@ import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.color.ColorMapper;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 

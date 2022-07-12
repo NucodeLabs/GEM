@@ -4,6 +4,8 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -21,9 +23,9 @@
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" title="\%"
                titleSide="LEFT" minHeight="0" minWidth="0" animated="false">
         <xAxis>
-            <NumberAxis fx:id="lineChartXAxis" forceZeroInRange="false"
-                        side="BOTTOM" minorTickVisible="false" tickLabelsVisible="false" tickMarkVisible="false"
-                        tickUnit="100.0" autoRanging="false" lowerBound="-1" upperBound="4"/>
+            <LogarithmicAxis fx:id="lineChartXAxis"
+                             side="BOTTOM" minorTickVisible="false" tickLabelsVisible="false" tickMarkVisible="false"
+                             autoRanging="false" lowerBound="0.1" upperBound="1e4"/>
         </xAxis>
         <yAxis>
             <NumberAxis fx:id="lineChartYAxis" cache="true" forceZeroInRange="false"
@@ -32,7 +34,11 @@
                         upperBound="200.0"
                         lowerBound="-200.0"
                         minorTickCount="2"
-                        tickUnit="100.0"/>
+                        tickUnit="100.0">
+                <prefWidth>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                </prefWidth>
+            </NumberAxis>
         </yAxis>
     </LineChart>
 </VBox>

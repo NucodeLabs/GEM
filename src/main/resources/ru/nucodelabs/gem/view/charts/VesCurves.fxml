@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import ru.nucodelabs.gem.view.PowerOf10Formatter?>
+<?import javafx.util.converter.DoubleStringConverter?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../common.css, @VESCurves.css"
+      stylesheets="@../common.css, @VesCurves.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.VesCurvesController">
     <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
         <Label styleClass="uclabel" text="%ves" VBox.vgrow="NEVER"/>
         <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
         <HBox spacing="5" style="-fx-padding: 5">
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#zoomIn">
+            <Button contentDisplay="GRAPHIC_ONLY">
                 <graphic>
                     <ImageView fitHeight="15" fitWidth="15">
                         <Image url="@../../../../../img/ui_icons/zoom_in.png"/>
                     </ImageView>
                 </graphic>
             </Button>
-            <Button contentDisplay="GRAPHIC_ONLY" onAction="#zoomOut">
+            <Button contentDisplay="GRAPHIC_ONLY">
                 <graphic>
                     <ImageView fitHeight="15" fitWidth="15">
                         <Image url="@../../../../../img/ui_icons/zoom_out.png"/>
@@ -35,35 +36,34 @@
             </Button>
         </HBox>
     </HBox>
-    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
-               onMouseDragged="#chartOnMouseDragged" onMousePressed="#chartOnMousePressed">
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false">
         <xAxis>
-            <NumberAxis fx:id="lineChartXAxis"
-                        forceZeroInRange="false"
-                        label="AB/2 (m)"
-                        side="BOTTOM"
-                        tickUnit="1"
-                        autoRanging="false"
-                        lowerBound="-1" upperBound="4"
-                        minorTickVisible="false">
+            <LogarithmicAxis fx:id="xAxis"
+                             label="AB/2 (m)"
+                             side="BOTTOM"
+                             autoRanging="false"
+                             lowerBound="0.01" upperBound="1e4"
+                             minorTickVisible="false"
+                             tickLabelRotation="-45">
                 <tickLabelFormatter>
-                    <PowerOf10Formatter/>
+                    <DoubleStringConverter/>
                 </tickLabelFormatter>
-            </NumberAxis>
+            </LogarithmicAxis>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="lineChartYAxis"
-                        forceZeroInRange="false"
-                        label="ρₐ (Ω‧m)"
-                        side="LEFT"
-                        tickUnit="1"
-                        autoRanging="false"
-                        lowerBound="0" upperBound="4"
-                        minorTickVisible="false">
+            <LogarithmicAxis fx:id="yAxis"
+                             label="ρₐ (Ω‧m)"
+                             side="LEFT"
+                             autoRanging="false"
+                             lowerBound="0" upperBound="10e4"
+                             minorTickVisible="false">
                 <tickLabelFormatter>
-                    <PowerOf10Formatter/>
+                    <DoubleStringConverter/>
                 </tickLabelFormatter>
-            </NumberAxis>
+                <prefWidth>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                </prefWidth>
+            </LogarithmicAxis>
         </yAxis>
     </LineChart>
 </VBox>

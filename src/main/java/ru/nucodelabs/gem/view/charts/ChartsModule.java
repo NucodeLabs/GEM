@@ -19,15 +19,15 @@ import static ru.nucodelabs.gem.view.charts.VesCurvesController.MOD_CURVE_SERIES
 
 public class ChartsModule extends AbstractModule {
     @Provides
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> emptyChartData() {
+    private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> emptyChartData() {
         return new SimpleObjectProperty<>(
                 FXCollections.observableArrayList(new ArrayList<>()));
     }
 
     @Provides
     @Named("VESCurves")
-    private ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> provideVESCurvesData() {
-        ObjectProperty<ObservableList<XYChart.Series<Double, Double>>> dataProperty =
+    private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> provideVESCurvesData() {
+        ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty =
                 new SimpleObjectProperty<>(FXCollections.observableArrayList());
         for (int i = 0; i < MOD_CURVE_SERIES_INDEX + 1; i++) {
             dataProperty.get().add(new XYChart.Series<>());

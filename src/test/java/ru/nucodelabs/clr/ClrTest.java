@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.files.color_palette.ClrParser;
 import ru.nucodelabs.files.color_palette.ValueColor;
-import ru.nucodelabs.gem.view.color_palette.ColorPalette;
+import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.io.File;
 import java.io.FileInputStream;

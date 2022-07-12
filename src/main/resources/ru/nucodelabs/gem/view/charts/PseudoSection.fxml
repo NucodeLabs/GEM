@@ -4,26 +4,34 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import ru.nucodelabs.gem.view.usercontrols.heatmap.HeatMap?>
+<?import ru.nucodelabs.gem.view.control.chart.InterpolationMap?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
+<?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/17"
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../common.css, @VESCurves.css"
+      stylesheets="@../common.css, @PseudoSection.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
     <HBox alignment="CENTER_LEFT">
         <Label text="%pseudoSection" styleClass="uclabel"/>
     </HBox>
-
-    <HeatMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" minHeight="0">
+    <InterpolationMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0"
+                      minHeight="0"
+                      legendVisible="false" styleClass="top-chart">
         <xAxis>
-            <NumberAxis fx:id="xAxis" side="BOTTOM" label="X (m)" minorTickVisible="false" tickUnit="25"/>
+            <NumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
+                        forceZeroInRange="false"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" side="LEFT" label="AB/2 (m)" minorTickVisible="false" prefWidth="65"
-                        tickUnit="25"/>
+            <NucodeNumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
+                              tickUnit="25" inverted="true">
+                <prefWidth>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                </prefWidth>
+            </NucodeNumberAxis>
         </yAxis>
-    </HeatMap>
+    </InterpolationMap>
 </VBox>
