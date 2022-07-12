@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
@@ -34,15 +34,15 @@
         </ContextMenu>
     </fx:define>
     <PolygonChart fx:id="chart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
-                  VBox.vgrow="ALWAYS" rotate="180">
+                  VBox.vgrow="ALWAYS">
         <xAxis>
-            <NumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
-                        minorTickVisible="false"
-                        opacity="0"/>
+            <NucodeNumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
+                              minorTickVisible="false"
+                              opacity="0"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="25"
-                        side="LEFT" tickLabelRotation="180"/>
+            <NucodeNumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="25"
+                              side="RIGHT" inverted="true"/>
         </yAxis>
     </PolygonChart>
 </VBox>
