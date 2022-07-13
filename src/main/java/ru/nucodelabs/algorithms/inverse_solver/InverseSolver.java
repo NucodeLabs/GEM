@@ -56,7 +56,7 @@ public class InverseSolver {
     }
 
     public List<ModelLayer> getOptimizedModelData(Picket inputPicket) {
-        final int MAX_EVAL = 1000000;
+        final int MAX_EVAL = 100000;
         this.picket = inputPicket;
 
         List<ModelLayer> modelData = picket.getModelData();
