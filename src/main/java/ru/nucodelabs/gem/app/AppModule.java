@@ -140,9 +140,23 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
+    StringConverter<Number> numberStringConverter(StringConverter<Double> doubleStringConverter) {
+        return new StringConverter<>() {
+            @Override
+            public String toString(Number object) {
+                return doubleStringConverter.toString(object.doubleValue());
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return doubleStringConverter.fromString(string);
+            }
+        };
+    }
+
+    @Provides
+    @Singleton
     ColorMapper colorMapper() {
-//        return new ColorPalette(
-//                new CLRFileParser(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr")).parse());
         ClrParser clrParser = new ClrParser();
         List<ValueColor> valueColorList = clrParser.parse(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
         return new ColorPalette(valueColorList, 0, 1500, 15);
