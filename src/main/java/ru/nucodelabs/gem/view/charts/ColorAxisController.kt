@@ -10,11 +10,9 @@ import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.input.ContextMenuEvent
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.fx.observableListOf
-import ru.nucodelabs.gem.extensions.fx.rangeBinding
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
@@ -27,7 +25,8 @@ import javax.inject.Inject
 class ColorAxisController @Inject constructor(
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val stringConverter: StringConverter<Number>
 ) : AbstractController() {
 
     private val minAndMaxRange = 0.0..100_000.0
@@ -62,7 +61,14 @@ class ColorAxisController @Inject constructor(
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
 
         setupControls()
+        setupAxis()
         update()
+    }
+
+    private fun setupAxis() {
+        yAxis.tickLabelFormatter = stringConverter
+        yAxis.tickUnitProperty().bind(yAxis.rangeBinding().divide(colorMapper.numberOfSegmentsProperty()))
+        yAxis.limitTickLabelsWidth(35.0)
     }
 
     private fun lazyConfigWindowInitOwner() {
@@ -78,8 +84,6 @@ class ColorAxisController @Inject constructor(
     }
 
     private fun setupControls() {
-        yAxis.tickUnitProperty().bind(yAxis.rangeBinding().divide(colorMapper.numberOfSegmentsProperty()))
-
         configWindow.initStyle(StageStyle.UTILITY)
 
         val step = 10.0
@@ -92,29 +96,32 @@ class ColorAxisController @Inject constructor(
             )
         }
 
-        minValueSpinner.valueFactory = doubleValueFactory(COLOR_MIN_VALUE)
-        var valid = minValueSpinner.editor.isValidBy {
-            it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
+        // TODO: Исправить NPE при вводе не цифровых символов в спиннерах. Он вызывает commitValue() при потере фокуса
+        with(minValueSpinner) {
+            valueFactory = doubleValueFactory(COLOR_MIN_VALUE)
+            val valid = editor.isValidBy {
+                it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
+            }
+            editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
-        minValueSpinner.editor.onAction = EventHandler { if (valid.value) minValueSpinner.commitValue() }
-
-        maxValueSpinner.valueFactory = doubleValueFactory(COLOR_MAX_VALUE)
-        valid = maxValueSpinner.editor.isValidBy {
-            it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
+        with(maxValueSpinner) {
+            valueFactory = doubleValueFactory(COLOR_MAX_VALUE)
+            val valid = editor.isValidBy {
+                it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
+            }
+            editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
-        maxValueSpinner.editor.onAction = EventHandler { if (valid.value) maxValueSpinner.commitValue() }
-
-        numberOfSegmentsSpinner.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
-            2,
-            100,
-            preferences.getInt(COLOR_SEGMENTS.key, COLOR_SEGMENTS.def),
-            1,
-        )
-        valid = numberOfSegmentsSpinner.editor.isValidBy {
-            it.toIntOrNull()?.let { parsed -> parsed in segmentsRange } ?: false
-        }
-        numberOfSegmentsSpinner.editor.onAction = EventHandler {
-            if (valid.value) numberOfSegmentsSpinner.commitValue()
+        with(numberOfSegmentsSpinner) {
+            valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
+                2,
+                100,
+                preferences.getInt(COLOR_SEGMENTS.key, COLOR_SEGMENTS.def),
+                1,
+            )
+            val valid = numberOfSegmentsSpinner.editor.isValidBy {
+                it.toIntOrNull()?.let { parsed -> parsed in segmentsRange } ?: false
+            }
+            editor.onAction = EventHandler { if (valid.get()) numberOfSegmentsSpinner.commitValue() }
         }
 
         colorMapper.minValueProperty().bind(minValueSpinner.valueProperty())

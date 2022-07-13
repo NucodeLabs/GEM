@@ -13,11 +13,13 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.Axis
+import javafx.scene.chart.Axis.TickMark
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 import java.lang.String.format
 import java.util.*
@@ -70,6 +72,9 @@ fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ va
 
 fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
 
+/**
+ * Creates series with 2 data points
+ */
 fun <X, Y> line(point1: Point<X, Y>, point2: Point<X, Y>): Line<X, Y> = Line(observableListOf(point1, point2))
 
 fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
@@ -78,6 +83,9 @@ fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
     boundsInLocalProperty()
 )
 
+/**
+ * `upperBound - lowerBound`
+ */
 fun ValueAxis<Number>.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
 
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
@@ -91,6 +99,19 @@ val Axis<*>.labelNode: Label
 val Label.textNode: Text
     get() = childrenUnmodifiable.filterIsInstance<Text>().first()
 
+val Axis<*>.childrenTextNodes: List<Text>
+    get() = childrenUnmodifiable.filterIsInstance<Text>()
+
+val <T : Number> ValueAxis<T>.tickMarksTextNodes: Map<TickMark<T>, Text>
+    get() = buildMap {
+        val textNodes = childrenTextNodes
+        tickMarks.forEach { tick ->
+            textNodes.find { node -> node.text == tickLabelFormatter.toString(tick.value) }?.let { node ->
+                put(tick, node)
+            }
+        }
+    }
+
 fun Axis<*>.applyForEachTickMarkLabel(config: Text.() -> Unit) {
     childrenUnmodifiable.forEach { (it as? Text)?.config() }
     childrenUnmodifiable.addListener(ListChangeListener { c ->
@@ -102,6 +123,25 @@ fun Axis<*>.applyForEachTickMarkLabel(config: Text.() -> Unit) {
             }
         }
     })
+}
+
+fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, maxFontSize: Double = 13.0) {
+    val correctFontSize = {
+        val nodes = childrenTextNodes
+        val maxTickWidth = nodes.maxOfOrNull { it.layoutBounds.width } ?: maxWidth
+        val currentFont = tickLabelFont
+        tickLabelFont = if (maxTickWidth >= maxWidth) {
+            Font.font((currentFont.size - 1).coerceAtLeast(minFontSize))
+        } else {
+            Font.font((currentFont.size + 1).coerceAtMost(maxFontSize))
+        }
+    }
+    tickMarks.addListener(ListChangeListener { c ->
+        if (c.next()) {
+            correctFontSize()
+        }
+    })
+    widthProperty().addListener { _, _, _ -> correctFontSize() }
 }
 
 fun Node.flipHorizontally() {

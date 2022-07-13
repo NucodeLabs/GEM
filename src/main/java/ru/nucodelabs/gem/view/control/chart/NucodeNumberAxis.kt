@@ -1,19 +1,82 @@
 package ru.nucodelabs.gem.view.control.chart
 
+import javafx.beans.InvalidationListener
 import javafx.beans.NamedArg
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.geometry.Side
+import javafx.util.StringConverter
+import ru.nucodelabs.gem.extensions.fx.tickMarksTextNodes
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.round
 
 class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 0.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
 
+    class DefaultConverter : StringConverter<Number>() {
+        override fun toString(obj: Number?): String = obj.toString()
+
+        override fun fromString(string: String?): Number = string?.toDouble() ?: 0.0
+    }
+
     init {
-        // bugfix: autoRanging is true by default, but it won't work until you set it manually
-        isAutoRanging = true
+        animated = false
+        tickLabelFormatter = DefaultConverter()
+    }
+
+    override fun layoutChildren() {
+        super.layoutChildren()
+        checkOverlapsNearBounds()
+        scale = calculateNewScale(
+            if (side.isHorizontal) width else height,
+            lowerBound,
+            upperBound
+        )
+    }
+
+    private fun checkOverlapsNearBounds() {
+        val tick1 = tickMarks[0].apply { isTextVisible = true }
+        val tick2 = tickMarks[1].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tick1, tick2, tickLabelGap)) {
+                tick2.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tick2, tick1, tickLabelGap)) {
+                tick2.isTextVisible = false
+            }
+        }
+
+        val tickPreLast = tickMarks[tickMarks.lastIndex - 1].apply { isTextVisible = true }
+        val tickLast = tickMarks[tickMarks.lastIndex].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tickPreLast, tickLast, tickLabelGap)) {
+                tickPreLast.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tickLast, tickPreLast, tickLabelGap)) {
+                tickPreLast.isTextVisible = false
+            }
+        }
+
+        tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
+    }
+
+    private fun isTickLabelsOverlap(side: Side, m1: TickMark<Number>, m2: TickMark<Number>, gap: Double): Boolean {
+        if (!m1.isTextVisible || !m2.isTextVisible) return false
+        val m1Size: Double = measureTickMarkSize(m1.value, side)
+        val m2Size: Double = measureTickMarkSize(m2.value, side)
+        val m1Start = m1.position - m1Size / 2
+        val m1End = m1.position + m1Size / 2
+        val m2Start = m2.position - m2Size / 2
+        val m2End = m2.position + m2Size / 2
+        return if (side.isVertical) m1Start - m2End <= gap else m2Start - m1End <= gap
+    }
+
+    private fun measureTickMarkSize(value: Number, side: Side): Double {
+        val size = measureTickMarkSize(value, tickLabelRotation)
+        return if (side.isVertical) size.height else size.width
     }
 
     private val _tickUnit = SimpleDoubleProperty(10.0)
@@ -22,22 +85,31 @@ class NucodeNumberAxis @JvmOverloads constructor(
         get() = _tickUnit.get()
         set(value) = _tickUnit.set(value)
 
+    init {
+        tickUnitProperty().addListener(InvalidationListener {
+            if (!isAutoRanging) {
+                invalidateRange()
+                requestAxisLayout()
+            }
+        })
+    }
+
     override fun getDisplayPosition(value: Number): Double {
-        val interval = upperBound - lowerBound
         val intervalToVal = value.toDouble() - lowerBound
-        val proportion = intervalToVal / interval
+        val res = intervalToVal * scale
+        // scale is negative if vertical axis
         return when {
-            side.isVertical -> if (!inverted) {
-                height - height * proportion
-            } else {
-                height * proportion
-            }
-            side.isHorizontal -> if (!inverted) {
-                width * proportion
-            } else {
-                width - width * proportion
-            }
+            side.isVertical -> if (!inverted) height + res else -res
+            side.isHorizontal -> if (!inverted) res else width - res
             else -> throw IllegalStateException("что-то пошло не так")
+        }
+    }
+
+    override fun getValueForDisplay(displayPosition: Double): Number {
+        return when {
+            side.isVertical -> if (!inverted) (displayPosition - height / scale) + lowerBound else (-displayPosition / scale) + lowerBound
+            side.isHorizontal -> if (!inverted) (displayPosition / scale) + lowerBound else ((width - displayPosition) / scale + lowerBound)
+            else -> throw IllegalStateException()
         }
     }
 
@@ -83,15 +155,8 @@ class NucodeNumberAxis @JvmOverloads constructor(
                     )
                 } else {
                     if (lowerBound + tickUnit < upperBound) {
-                        // If tickUnit is integer, start with the nearest integer
-                        var major = if (round(tickUnit) == tickUnit) {
-                            ceil(lowerBound)
-                        } else {
-                            lowerBound + tickUnit
-                        }
-
+                        var major = if (tickUnit % 1 == 0.0) lowerBound + tickUnit else ceil(lowerBound)
                         val count = ceil((upperBound - major) / tickUnit).toInt()
-
                         for (i in 1..count) {
                             if (major >= upperBound) {
                                 break
@@ -129,7 +194,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
                 )
                 return minorTicks
             }
-            val tickUnitIsInteger = round(tickUnit) == tickUnit
+            val tickUnitIsInteger = tickUnit % 1 == 0.0
             if (tickUnitIsInteger) {
                 var minor = floor(lowerBound) + minorUnit
                 val count = ceil((ceil(lowerBound) - minor) / minorUnit).toInt()
@@ -159,7 +224,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
                 i++
             }
         }
-        return minorTicks
+        return if (!inverted) minorTicks else minorTicks.reversed()
     }
 
     override fun getTickMarkLabel(value: Number?): String = tickLabelFormatter?.toString(value) ?: value.toString()
