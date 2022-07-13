@@ -12,11 +12,15 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
-import ru.nucodelabs.gem.extensions.fx.*
+import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
+import ru.nucodelabs.gem.view.control.chart.rangeBinding
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences
