@@ -3,7 +3,9 @@ package ru.nucodelabs.gem.view.control.chart
 import javafx.beans.InvalidationListener
 import javafx.beans.NamedArg
 import javafx.beans.property.SimpleDoubleProperty
-import ru.nucodelabs.gem.extensions.fx.childrenTextNodes
+import javafx.geometry.Side
+import javafx.util.StringConverter
+import ru.nucodelabs.gem.extensions.fx.tickMarksTextNodes
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -12,20 +14,69 @@ class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
 
+    class DefaultConverter : StringConverter<Number>() {
+        override fun toString(obj: Number?): String = obj.toString()
+
+        override fun fromString(string: String?): Number = string?.toDouble() ?: 0.0
+    }
+
     init {
         animated = false
+        tickLabelFormatter = DefaultConverter()
     }
 
     override fun layoutChildren() {
         super.layoutChildren()
-        tickMarks.forEach { it.isTextVisible = true }
-        childrenTextNodes.forEachIndexed { i, text -> text.isVisible = tickMarks.getOrNull(i)?.isTextVisible ?: false }
-
+        checkOverlapsNearBounds()
         scale = calculateNewScale(
             if (side.isHorizontal) width else height,
             lowerBound,
             upperBound
         )
+    }
+
+    private fun checkOverlapsNearBounds() {
+        val tick1 = tickMarks[0].apply { isTextVisible = true }
+        val tick2 = tickMarks[1].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tick1, tick2, tickLabelGap)) {
+                tick2.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tick2, tick1, tickLabelGap)) {
+                tick2.isTextVisible = false
+            }
+        }
+
+        val tickPreLast = tickMarks[tickMarks.lastIndex - 1].apply { isTextVisible = true }
+        val tickLast = tickMarks[tickMarks.lastIndex].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tickPreLast, tickLast, tickLabelGap)) {
+                tickPreLast.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tickLast, tickPreLast, tickLabelGap)) {
+                tickPreLast.isTextVisible = false
+            }
+        }
+
+        tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
+    }
+
+    private fun isTickLabelsOverlap(side: Side, m1: TickMark<Number>, m2: TickMark<Number>, gap: Double): Boolean {
+        if (!m1.isTextVisible || !m2.isTextVisible) return false
+        val m1Size: Double = measureTickMarkSize(m1.value, side)
+        val m2Size: Double = measureTickMarkSize(m2.value, side)
+        val m1Start = m1.position - m1Size / 2
+        val m1End = m1.position + m1Size / 2
+        val m2Start = m2.position - m2Size / 2
+        val m2End = m2.position + m2Size / 2
+        return if (side.isVertical) m1Start - m2End <= gap else m2Start - m1End <= gap
+    }
+
+    private fun measureTickMarkSize(value: Number, side: Side): Double {
+        val size = measureTickMarkSize(value, tickLabelRotation)
+        return if (side.isVertical) size.height else size.width
     }
 
     private val _tickUnit = SimpleDoubleProperty(10.0)
