@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.value.ObservableObjectValue
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import ru.nucodelabs.data.ves.Section
@@ -11,6 +10,7 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class PseudoSectionController @Inject constructor(
 ) : AbstractController() {
 
     @FXML
-    private lateinit var xAxis: NumberAxis
+    private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
     private lateinit var chart: InterpolationMap
