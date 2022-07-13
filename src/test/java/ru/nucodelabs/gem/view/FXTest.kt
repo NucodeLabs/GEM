@@ -7,6 +7,11 @@ abstract class FXTest {
     companion object JfxRuntimeInitializer {
         @BeforeAll
         @JvmStatic
-        fun initJfxRunTime() = Platform.startup {}
+        fun initJfxRunTime() {
+            try {
+                Platform.startup {}
+            } catch (_: Exception) {
+            }
+        }
     }
 }

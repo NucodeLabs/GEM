@@ -46,7 +46,7 @@ ext {
     javaHome = Jvm.current().javaHome
 
     // For deps
-    var osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linus"
+    var osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
     var archName = "x86_64"
     platform = "$osName-$archName"
 
@@ -112,6 +112,7 @@ dependencies {
     implementation "org.bytedeco:openblas:0.3.13-1.5.5:$platform"
     implementation "org.bytedeco:javacpp:1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
+    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
