@@ -25,8 +25,6 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.math.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.DragViewSupport
-import ru.nucodelabs.gem.view.control.chart.LinearAxisZoomSupport
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
@@ -78,9 +76,6 @@ class VesCurvesController @Inject constructor(
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
     private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
-
-    private lateinit var dragViewSupport: DragViewSupport
-    private lateinit var zoomSupport: LinearAxisZoomSupport
 
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 

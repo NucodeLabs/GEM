@@ -4,12 +4,11 @@ import javafx.beans.property.ObjectProperty
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.scene.chart.ValueAxis
-import javafx.scene.chart.XYChart
+import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.input.MouseEvent
 import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.gem.view.control.chart.valueForMouseCoordinates
-import ru.nucodelabs.gem.view.control.chart.valueForSceneCoordinates
+import ru.nucodelabs.gem.view.control.chart.getValueForScene
 import kotlin.properties.Delegates
 
 /**
@@ -26,18 +25,16 @@ class ModelCurveDragger
     private val vesCurvesData: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val modelCurveIndex: Int,
     private val lowerLimitY: Double,
-    xAxis: ValueAxis<Number>,
-    yAxis: ValueAxis<Number>
+    val xAxis: ValueAxis<Number>,
+    val yAxis: ValueAxis<Number>
 ) {
-    private val axes: Pair<ValueAxis<Number>, ValueAxis<Number>> = xAxis to yAxis
-
     // mapping: point on chart --> index of the value in data model arrays
-    private lateinit var pointResistanceMap: MutableMap<XYChart.Data<*, *>, Int>
-    private lateinit var pointPowerMap: MutableMap<XYChart.Data<*, *>, Int>
+    private lateinit var pointResistanceMap: MutableMap<Data<*, *>, Int>
+    private lateinit var pointPowerMap: MutableMap<Data<*, *>, Int>
 
     // ends of line to be dragged
-    private var point1: XYChart.Data<Number, Number>? = null
-    private var point2: XYChart.Data<Number, Number>? = null
+    private var point1: Data<Number, Number>? = null
+    private var point2: Data<Number, Number>? = null
 
     // for vertical line dragging
     private var leftLimitX by Delegates.notNull<Double>()
@@ -127,7 +124,7 @@ class ModelCurveDragger
             if (point1!!.xValue == point2!!.xValue
                 && leftLimitX < mouseXLeftBound && mouseXRightBound < rightLimitX
             ) {
-                val index1 = pointPowerMap[point1 as XYChart.Data<*, *>]!!
+                val index1 = pointPowerMap[point1 as Data<*, *>]!!
                 val index2 = index1 + 1 // neighbor
 
                 if (!modelData[index1].isFixedPower
@@ -157,8 +154,7 @@ class ModelCurveDragger
                 if (!modelData[index].isFixedResistance) {
                     point1!!.yValue = mouseY
                     point2!!.yValue = mouseY
-                    val newValue = mouseY
-                    mutableModelData[index] = mutableModelData[index].withResistance(newValue)
+                    mutableModelData[index] = mutableModelData[index].withResistance(mouseY)
                 }
             }
         }
@@ -171,7 +167,7 @@ class ModelCurveDragger
      * @param modelData model data that match curve
      */
     private fun mapModelData(modelData: List<ModelLayer>) {
-        val E_MSG = "ModelData array size: %d does not match mapping size: %d"
+        val errMsg = "ModelData array size: %d does not match mapping size: %d"
         pointResistanceMap = HashMap()
         val points = vesCurvesData.get()[modelCurveIndex].data
         run {
@@ -186,7 +182,7 @@ class ModelCurveDragger
         }
         require(pointResistanceMap.values.stream().distinct().count() == modelData.size.toLong()) {
             String.format(
-                E_MSG,
+                errMsg,
                 pointResistanceMap.values.stream().distinct().count(),
                 modelData.size
             )
@@ -202,7 +198,7 @@ class ModelCurveDragger
         }
         require(pointPowerMap.values.stream().distinct().count() == (modelData.size - 1).toLong()) {
             String.format(
-                E_MSG,
+                errMsg,
                 pointPowerMap.values.stream().distinct().count(),
                 modelData.size
             )
@@ -215,11 +211,17 @@ class ModelCurveDragger
      * @param mouseEvent mouse pressed/dragged event
      * @return point with valid X and Y values
      */
-    private fun coordinatesToValues(mouseEvent: MouseEvent): XYChart.Data<Double, Double> =
-        axes.valueForMouseCoordinates(mouseEvent)
+    private fun coordinatesToValues(mouseEvent: MouseEvent): Data<Double, Double> =
+        Data(
+            xAxis.getValueForScene(mouseEvent.sceneX).toDouble(),
+            yAxis.getValueForScene(mouseEvent.sceneX).toDouble()
+        )
 
-    private fun coordinatesToValues(pointInScene: Point2D): XYChart.Data<Double, Double> =
-        axes.valueForSceneCoordinates(pointInScene)
+    private fun coordinatesToValues(pointInScene: Point2D): Data<Double, Double> =
+        Data(
+            xAxis.getValueForScene(pointInScene.x).toDouble(),
+            yAxis.getValueForScene(pointInScene.y).toDouble()
+        )
 
     fun resetStyle() {
         if (point1 != null && point2 != null) {

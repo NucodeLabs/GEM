@@ -1,47 +1,36 @@
 package ru.nucodelabs.gem.view.control.chart
 
+import javafx.beans.binding.DoubleBinding
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
+import javafx.scene.Group
+import javafx.scene.chart.Axis
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
-import javafx.scene.input.MouseEvent
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 
-/**
- * First = X axis
- * Second = Y Axis
- */
-fun Pair<ValueAxis<Number>, ValueAxis<Number>>.valueForMouseCoordinates(mouseEvent: MouseEvent): Data<Double, Double> =
-    valueForSceneCoordinates(mouseEvent.sceneX, mouseEvent.sceneY)
-
-/**
- * First = X axis
- * Second = Y Axis
- */
-fun Pair<ValueAxis<Number>, ValueAxis<Number>>.valueForSceneCoordinates(
-    sceneX: Double,
-    sceneY: Double
-): Data<Double, Double> {
-    val pointInScene = Point2D(sceneX, sceneY)
-
-    return Data(
-        first.getValueForDisplay(
-            first.sceneToLocal(pointInScene).x
-        ) as Double,
-        second.getValueForDisplay(
-            second.sceneToLocal(pointInScene).y
-        ) as Double
+fun <T> Axis<T>.getValueForScene(sceneCoordinate: Double): T {
+    val local = sceneToLocal(
+        if (side.isVertical) Point2D(0.0, sceneCoordinate) else Point2D(sceneCoordinate, 0.0)
     )
+    val displayPosition = if (side.isVertical) local.y else local.x
+    return getValueForDisplay(displayPosition)
 }
 
-/**
- * First = X axis
- * Second = Y Axis
- */
-fun Pair<ValueAxis<Number>, ValueAxis<Number>>.valueForSceneCoordinates(pointInScene: Point2D) =
-    valueForSceneCoordinates(pointInScene.x, pointInScene.y)
+fun <T> Axis<T>.getValueForScreen(screenCoordinate: Double): T {
+    val local = screenToLocal(
+        if (side.isVertical) Point2D(0.0, screenCoordinate) else Point2D(screenCoordinate, 0.0)
+    )
+    val displayPosition = if (side.isVertical) local.y else local.x
+    return getValueForDisplay(displayPosition)
+}
+
+
 
 fun <X, Y> XYChart<X, Y>.installTooltips(factory: (series: Series<X, Y>, point: Data<X, Y>) -> Tooltip) {
     for (series in data) {
@@ -59,4 +48,47 @@ fun <X, Y> XYChart<X, Y>.installTooltips(factory: (series: Series<X, Y>, point: 
             }
         }
     })
+}
+
+/**
+ * `upperBound - lowerBound`
+ */
+fun ValueAxis<Number>.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
+
+val XYChart<*, *>.plotContentNode: Group
+    get() = lookup(".plot-content") as Group
+
+val Axis<*>.labelNode: Label
+    get() = childrenUnmodifiable.filterIsInstance<Label>().first()
+
+val Axis<*>.childrenTextNodes: List<Text>
+    get() = childrenUnmodifiable.filterIsInstance<Text>()
+
+val <T : Number> ValueAxis<T>.tickMarksTextNodes: Map<Axis.TickMark<T>, Text>
+    get() = buildMap {
+        val textNodes = childrenTextNodes
+        tickMarks.forEach { tick ->
+            textNodes.find { node -> node.text == tickLabelFormatter.toString(tick.value) }?.let { node ->
+                put(tick, node)
+            }
+        }
+    }
+
+fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, maxFontSize: Double = 13.0) {
+    val correctFontSize = {
+        val nodes = childrenTextNodes
+        val maxTickWidth = nodes.maxOfOrNull { it.layoutBounds.width } ?: maxWidth
+        val currentFont = tickLabelFont
+        tickLabelFont = if (maxTickWidth >= maxWidth) {
+            Font.font((currentFont.size - 1).coerceAtLeast(minFontSize))
+        } else {
+            Font.font((currentFont.size + 1).coerceAtMost(maxFontSize))
+        }
+    }
+    tickMarks.addListener(ListChangeListener { c ->
+        if (c.next()) {
+            correctFontSize()
+        }
+    })
+    widthProperty().addListener { _, _, _ -> correctFontSize() }
 }
