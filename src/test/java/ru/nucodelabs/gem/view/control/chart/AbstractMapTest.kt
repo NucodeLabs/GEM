@@ -8,6 +8,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.view.FXTest
 
 internal class AbstractMapTest : FXTest() {
@@ -19,7 +20,17 @@ internal class AbstractMapTest : FXTest() {
                     NumberAxis(),
                     NumberAxis()
                 ) {
-                    override fun draw(canvas: Canvas) {
+                    override fun layoutPlotChildren() {
+                        super.layoutPlotChildren()
+                        canvas.clear()
+                        draw(canvas)
+                    }
+
+                    override fun layoutChildren() {
+                        super.layoutChildren()
+                    }
+
+                    fun draw(canvas: Canvas) {
                         canvas.run {
                             graphicsContext2D.fill = Color.RED
                             graphicsContext2D.fillOval(0.0, 0.0, canvas.width, canvas.height)
