@@ -107,6 +107,9 @@ class InterpolationMap @JvmOverloads constructor(
             for (y in 0..canvas.height.toInt()) {
                 val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
                 val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
+                if (xValue.isNaN() || yValue.isNaN()) {
+                    continue
+                }
                 try {
                     val fValue = if (preparedData.size == 1)
                         interpolator.getValue(yValue)
@@ -115,6 +118,7 @@ class InterpolationMap @JvmOverloads constructor(
                     val color = colorMapper?.colorFor(fValue)
                     pw.setColor(x, y, color)
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     continue
                 }
             }
