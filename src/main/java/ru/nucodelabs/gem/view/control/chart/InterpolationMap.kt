@@ -50,13 +50,16 @@ class InterpolationMap @JvmOverloads constructor(
             for (y in 0..canvas.height.toInt()) {
                 val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
                 val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
-                if (yValue < 1.5) continue
-                val fValue = if (section.size == 1)
-                    interpolator.getValue(yValue)
-                else
-                    interpolator.getValue(xValue, yValue)
-                val color = colorMapper?.colorFor(fValue)
-                pw.setColor(x, y, color)
+                try {
+                    val fValue = if (section.size == 1)
+                        interpolator.getValue(yValue)
+                    else
+                        interpolator.getValue(xValue, yValue)
+                    val color = colorMapper?.colorFor(fValue)
+                    pw.setColor(x, y, color)
+                } catch (e: Exception) {
+                    continue
+                }
             }
         }
     }

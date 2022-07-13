@@ -1,6 +1,7 @@
 package ru.nucodelabs.algorithms.interpolation
 
 import javafx.scene.chart.XYChart
+import kotlin.math.log10
 
 class InterpolationParser (private val inputImmutableData: List<List<XYChart.Data<Double, Double>>>) : InterpolationDataParser {
 
@@ -31,6 +32,14 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         parseSpatial()
         copyData(grid, missedPoints)
         checkMissedPoints()
+    }
+
+    fun gridToLogValues(grid: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
+        for (picketIdx in grid.indices) {
+            for (abIdx in grid[picketIdx].indices) {
+                grid[picketIdx][abIdx].extraValue = log10(grid[picketIdx][abIdx].extraValue as Double)
+            }
+        }
     }
 
     fun getMissedPositions(): MutableList<Pair<Int, Int>> {

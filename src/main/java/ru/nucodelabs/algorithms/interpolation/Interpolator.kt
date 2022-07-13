@@ -3,6 +3,7 @@ package ru.nucodelabs.algorithms.interpolation
 import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
+import ru.nucodelabs.gem.extensions.math.exp10
 
 class Interpolator(
     private val inputData: List<List<XYChart.Data<Double, Double>>>,
@@ -23,11 +24,16 @@ class Interpolator(
     init {
         initGrid()
         adjustGrid()
+        interpolationParser.gridToLogValues(adjustedGrid)
         leftSideSplineFunction = interpolateSide(grid[0])
         if (adjustedGrid.size != 1) {
             interpolateGrid()
             rightSideSplineFunction = interpolateSide(grid.last())
         }
+    }
+
+    private fun gridValuesToLog() {
+
     }
 
     private fun initGrid() {
@@ -43,12 +49,8 @@ class Interpolator(
             interpolationParser.getF()
         )
         interpolationParser.copyData(grid, adjustedGrid)
+
         val missedPoints = interpolationParser.getMissedPositions()
-//        for (picket in missedPoints) {
-//            for (point in picket) {
-//                val f = spatialInterpolator.interpolate(point.xValue, point.yValue)
-//            }
-//        }
         for (point in missedPoints) {
             val xyPoint = adjustedGrid[point.first][point.second]
             if (xyPoint.extraValue != -1.0)
@@ -83,14 +85,14 @@ class Interpolator(
 
     fun getValue(x: Double, y: Double): Double {
         return when (getRange(x)) {
-            Side.LEFT -> interpolateSidePoint(y, leftSideSplineFunction)
-            Side.MIDDLE -> bicubicInterpolatingFunction.value(x, y)
-            Side.RIGHT -> interpolateSidePoint(y, rightSideSplineFunction)
+            Side.LEFT -> exp10(interpolateSidePoint(y, leftSideSplineFunction))
+            Side.MIDDLE -> exp10(bicubicInterpolatingFunction.value(x, y))
+            Side.RIGHT -> exp10(interpolateSidePoint(y, rightSideSplineFunction))
         }
     }
 
     fun getValue(y: Double): Double {
-        return leftSideSplineFunction.value(y)
+        return exp10(leftSideSplineFunction.value(y))
     }
 
     private fun getRange(x: Double): Side {
