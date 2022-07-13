@@ -13,6 +13,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.Axis
+import javafx.scene.chart.Axis.TickMark
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
@@ -100,6 +101,16 @@ val Label.textNode: Text
 
 val Axis<*>.childrenTextNodes: List<Text>
     get() = childrenUnmodifiable.filterIsInstance<Text>()
+
+val <T : Number> ValueAxis<T>.tickMarksTextNodes: Map<TickMark<T>, Text>
+    get() = buildMap {
+        val textNodes = childrenTextNodes
+        tickMarks.forEach { tick ->
+            textNodes.find { node -> node.text == tickLabelFormatter.toString(tick.value) }?.let { node ->
+                put(tick, node)
+            }
+        }
+    }
 
 fun Axis<*>.applyForEachTickMarkLabel(config: Text.() -> Unit) {
     childrenUnmodifiable.forEach { (it as? Text)?.config() }
