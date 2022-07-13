@@ -8,7 +8,7 @@ import java.text.DecimalFormat
 import java.text.ParseException
 
 
-const val DEFAULT_FONT_SIZE = 12;
+const val DEFAULT_FONT_SIZE = 13;
 fun indexCellFactory(fromOne: Boolean = true): Callback<TableColumn<Any?, Int?>, TableCell<Any, Int>> =
     Callback { _: TableColumn<Any?, Int?> ->
         TableCell<Any, Int>().also {

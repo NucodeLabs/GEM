@@ -1,7 +1,7 @@
-#lineChart {
-    -fx-legend-visible: false;
-    -fx-padding: 0 0 0 9;
-}
+/*#lineChart {*/
+/*    -fx-legend-visible: false;*/
+/*    -fx-padding: 0 0 0 9;*/
+/*}*/
 
 #lineChart .chart-series-line {
     -fx-stroke: Crimson;
