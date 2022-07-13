@@ -12,6 +12,10 @@ class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
 
+    init {
+        animated = false
+    }
+
     override fun layoutChildren() {
         super.layoutChildren()
         tickMarks.forEach { it.isTextVisible = true }
