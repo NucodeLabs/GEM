@@ -5,7 +5,6 @@ import javafx.beans.NamedArg
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Side
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.extensions.fx.tickMarksTextNodes
 import kotlin.math.ceil
 import kotlin.math.floor
 

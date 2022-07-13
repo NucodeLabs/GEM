@@ -30,13 +30,13 @@ class LogarithmicAxis @JvmOverloads constructor(
     private fun bindLogBoundsToDefaultBounds() {
         logLowerBound.bind(
             createDoubleBinding(
-                { log10(lowerBoundProperty().get()) },
+                { log10(lowerBound) },
                 lowerBoundProperty()
             )
         )
         logUpperBound.bind(
             createDoubleBinding(
-                { log10(upperBoundProperty().get()) },
+                { log10(upperBound) },
                 upperBoundProperty()
             )
         )
@@ -173,7 +173,7 @@ class LogarithmicAxis @JvmOverloads constructor(
     }
 
     override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any =
-        arrayOf<Number>(lowerBoundProperty().get(), upperBoundProperty().get())
+        arrayOf<Number>(minValue, maxValue)
 
 
     companion object {
