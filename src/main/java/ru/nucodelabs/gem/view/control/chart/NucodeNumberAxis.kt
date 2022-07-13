@@ -54,6 +54,14 @@ class NucodeNumberAxis @JvmOverloads constructor(
         }
     }
 
+    override fun getValueForDisplay(displayPosition: Double): Number {
+        return when {
+            side.isVertical -> if (!inverted) (displayPosition - height / scale) + lowerBound else (-displayPosition / scale) + lowerBound
+            side.isHorizontal -> if (!inverted) (displayPosition / scale) + lowerBound else ((width - displayPosition) / scale + lowerBound)
+            else -> throw IllegalStateException()
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun setRange(range: Any?, animate: Boolean) {
         range as List<Double>
