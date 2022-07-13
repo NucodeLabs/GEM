@@ -4,11 +4,12 @@ import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 
-class Interpolator (
+class Interpolator(
     private val inputData: List<List<XYChart.Data<Double, Double>>>,
     private var interpolationParser: InterpolationParser = InterpolationParser(inputData)
 ) {
     private lateinit var grid: List<List<XYChart.Data<Double, Double>>>
+
     private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
 
     private lateinit var adjustedGrid: MutableList<MutableList<XYChart.Data<Double, Double>>>
@@ -17,15 +18,18 @@ class Interpolator (
 
     private var leftSideSplineFunction: PolynomialSplineFunction
 
-    private var rightSideSplineFunction: PolynomialSplineFunction
+    private lateinit var rightSideSplineFunction: PolynomialSplineFunction
 
     init {
         initGrid()
         adjustGrid()
-        interpolateGrid()
         leftSideSplineFunction = interpolateSide(grid[0])
-        rightSideSplineFunction = interpolateSide(grid.last())
+        if (adjustedGrid.size != 1) {
+            interpolateGrid()
+            rightSideSplineFunction = interpolateSide(grid.last())
+        }
     }
+
     private fun initGrid() {
         interpolationParser.parse()
         grid = interpolationParser.getGrid()
@@ -55,7 +59,7 @@ class Interpolator (
     }
 
     private fun interpolateGrid() {
-        interpolationParser = InterpolationParser(adjustedGrid) //Добавить bool
+        interpolationParser = InterpolationParser(adjustedGrid)
         val regularGridInterpolator = ApacheInterpolator2D()
         bicubicInterpolatingFunction = regularGridInterpolator.interpolate(
             interpolationParser.getGridX(),
@@ -82,6 +86,10 @@ class Interpolator (
             Side.MIDDLE -> bicubicInterpolatingFunction.value(x, y)
             Side.RIGHT -> interpolateSidePoint(y, rightSideSplineFunction)
         }
+    }
+
+    fun getValue(y: Double): Double {
+        return leftSideSplineFunction.value(y)
     }
 
     private fun getRange(x: Double): Side {
