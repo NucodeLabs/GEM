@@ -60,12 +60,20 @@ class ModelSectionController @Inject constructor(
 
         val lowerBoundZ = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
 
-        for (picket in section.pickets) {
+        for ((index, picket) in section.pickets.withIndex()) {
             if (picket.modelData.isEmpty()) {
                 continue
             }
 
-            val (leftX, rightX) = section.picketBoundsOrNull(picket) ?: (-0.1 to +0.1)
+            var (leftX, rightX) = section.picketBoundsOrNull(picket) ?: (-0.1 to +0.1)
+
+            val offset by lazy { picket.experimentalData.maxOfOrNull { it.ab2 } ?: 0.0 }
+            if (index == 0) {
+                leftX -= offset
+            }
+            if (index == section.pickets.lastIndex) {
+                rightX += offset
+            }
 
             val zList = picket.zOfModelLayers()
             for (i in zList.indices) {
@@ -104,9 +112,10 @@ class ModelSectionController @Inject constructor(
                 xAxis.upperBound = 4.0
             }
             else -> {
-                val visibleOnPseudo = section.pickets.filter { it.experimentalData.isNotEmpty() }
-                xAxis.lowerBound = section.xOfPicket(visibleOnPseudo.first())
-                xAxis.upperBound = section.xOfPicket(visibleOnPseudo.last())
+                val pickets = section.pickets.filter { it.experimentalData.isNotEmpty() }
+                xAxis.lowerBound =
+                    section.xOfPicket(pickets.first()) - pickets.first().experimentalData.maxOf { it.ab2 }
+                xAxis.upperBound = section.xOfPicket(pickets.last()) + pickets.last().experimentalData.maxOf { it.ab2 }
             }
         }
     }

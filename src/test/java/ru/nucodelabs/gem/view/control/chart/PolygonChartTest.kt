@@ -32,7 +32,7 @@ internal class PolygonChartTest : FXTest() {
                     tickUnit = 1.0
                     inverted = true
                 },
-                yAxis = LogarithmicAxis(10.0, 50.0).apply {
+                yAxis = LogarithmicAxis(10.0, 1000.0).apply {
                     label = "Y Axis"
                     inverted = true
                 }

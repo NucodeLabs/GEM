@@ -2,24 +2,17 @@ package ru.nucodelabs.gem.extensions.fx
 
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
-import javafx.beans.binding.DoubleBinding
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
-import javafx.scene.chart.Axis
-import javafx.scene.chart.Axis.TickMark
-import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.scene.text.Text
 import java.lang.String.format
 import java.util.*
@@ -83,66 +76,10 @@ fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
     boundsInLocalProperty()
 )
 
-/**
- * `upperBound - lowerBound`
- */
-fun ValueAxis<Number>.rangeBinding(): DoubleBinding = upperBoundProperty().subtract(lowerBoundProperty())
-
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
-
-val XYChart<*, *>.plotContentNode: Group
-    get() = lookup(".plot-content") as Group
-
-val Axis<*>.labelNode: Label
-    get() = childrenUnmodifiable.filterIsInstance<Label>().first()
 
 val Label.textNode: Text
     get() = childrenUnmodifiable.filterIsInstance<Text>().first()
-
-val Axis<*>.childrenTextNodes: List<Text>
-    get() = childrenUnmodifiable.filterIsInstance<Text>()
-
-val <T : Number> ValueAxis<T>.tickMarksTextNodes: Map<TickMark<T>, Text>
-    get() = buildMap {
-        val textNodes = childrenTextNodes
-        tickMarks.forEach { tick ->
-            textNodes.find { node -> node.text == tickLabelFormatter.toString(tick.value) }?.let { node ->
-                put(tick, node)
-            }
-        }
-    }
-
-fun Axis<*>.applyForEachTickMarkLabel(config: Text.() -> Unit) {
-    childrenUnmodifiable.forEach { (it as? Text)?.config() }
-    childrenUnmodifiable.addListener(ListChangeListener { c ->
-        while (c.next()) {
-            if (c.wasAdded()) {
-                for (mark in c.addedSubList) {
-                    (mark as? Text)?.config()
-                }
-            }
-        }
-    })
-}
-
-fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, maxFontSize: Double = 13.0) {
-    val correctFontSize = {
-        val nodes = childrenTextNodes
-        val maxTickWidth = nodes.maxOfOrNull { it.layoutBounds.width } ?: maxWidth
-        val currentFont = tickLabelFont
-        tickLabelFont = if (maxTickWidth >= maxWidth) {
-            Font.font((currentFont.size - 1).coerceAtLeast(minFontSize))
-        } else {
-            Font.font((currentFont.size + 1).coerceAtMost(maxFontSize))
-        }
-    }
-    tickMarks.addListener(ListChangeListener { c ->
-        if (c.next()) {
-            correctFontSize()
-        }
-    })
-    widthProperty().addListener { _, _, _ -> correctFontSize() }
-}
 
 fun Node.flipHorizontally() {
     scaleX *= -1.0

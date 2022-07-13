@@ -39,7 +39,7 @@
                styleClass="padded-chart">
         <xAxis>
             <LogarithmicAxis fx:id="xAxis"
-                             label="AB/2 (m)"
+                             label="%ab2"
                              side="BOTTOM"
                              autoRanging="false"
                              lowerBound="0.01" upperBound="1e4"
@@ -52,7 +52,7 @@
         </xAxis>
         <yAxis>
             <LogarithmicAxis fx:id="yAxis"
-                             label="ρₐ (Ω‧m)"
+                             label="%resistanceApparent"
                              side="LEFT"
                              autoRanging="false"
                              lowerBound="0" upperBound="10e4"

@@ -5,7 +5,6 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.ValueAxis
 import javafx.scene.layout.Region
-import ru.nucodelabs.gem.extensions.fx.clear
 
 abstract class AbstractMap(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
@@ -24,12 +23,4 @@ abstract class AbstractMap(
         canvas.heightProperty().bind(plotArea.heightProperty())
         canvas.viewOrder = 1.0
     }
-
-    override fun layoutPlotChildren() {
-        super.layoutPlotChildren()
-        canvas.clear()
-        draw(canvas)
-    }
-
-    abstract fun draw(canvas: Canvas)
 }
