@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import ru.nucodelabs.gem.view.control.chart.InterpolationMap?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
 <?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
@@ -24,12 +25,12 @@
             <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"/>
         </xAxis>
         <yAxis>
-            <NucodeNumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
-                              tickUnit="25" inverted="true" autoRanging="true">
+            <LogarithmicAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
+                             inverted="true" autoRanging="true">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
-            </NucodeNumberAxis>
+            </LogarithmicAxis>
         </yAxis>
     </InterpolationMap>
 </VBox>

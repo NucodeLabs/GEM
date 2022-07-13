@@ -15,13 +15,18 @@ class InterpolationMap @JvmOverloads constructor(
 ) : AbstractMap(xAxis, yAxis) {
 
     private val _colorMapper = SimpleObjectProperty<ColorMapper?>(colorMapper)
-    //fun colorMapperProperty() = _colorMapper
+    fun colorMapperProperty() = _colorMapper
     var colorMapper: ColorMapper?
         set(value) = _colorMapper.set(value)
         get() = _colorMapper.get()
 
+    override fun layoutPlotChildren() {
+        super.layoutPlotChildren()
+        draw(canvas)
+    }
+
     @Suppress("UNCHECKED_CAST")
-    override fun draw(canvas: Canvas) {
+    fun draw(canvas: Canvas) {
         if (data.isEmpty()) {
             canvas.clear()
             return
