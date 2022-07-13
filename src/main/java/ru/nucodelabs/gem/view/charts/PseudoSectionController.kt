@@ -83,9 +83,10 @@ class PseudoSectionController @Inject constructor(
                 xAxis.upperBound = 4.0
             }
             else -> {
-                val visibleOnPseudo = section.pickets.filter { it.experimentalData.isNotEmpty() }
-                xAxis.lowerBound = section.xOfPicket(visibleOnPseudo.first())
-                xAxis.upperBound = section.xOfPicket(visibleOnPseudo.last())
+                val pickets = section.pickets.filter { it.experimentalData.isNotEmpty() }
+                xAxis.lowerBound =
+                    section.xOfPicket(pickets.first()) - pickets.first().experimentalData.maxOf { it.ab2 }
+                xAxis.upperBound = section.xOfPicket(pickets.last()) + pickets.last().experimentalData.maxOf { it.ab2 }
             }
         }
     }
