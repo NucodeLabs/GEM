@@ -22,6 +22,7 @@ class LogarithmicAxis @JvmOverloads constructor(
     private val logLowerBound: DoubleProperty = SimpleDoubleProperty()
 
     init {
+        animated = false
         validateBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
