@@ -12,11 +12,10 @@
       maxHeight="Infinity" maxWidth="70" minWidth="70" stylesheets="@ModelSection.css"
       onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -10;">
     <fx:define>
-        <Stage fx:id="configWindow" resizable="false">
+        <Stage fx:id="configWindow" resizable="false" title="Настройки цветовой шкалы">
             <scene>
                 <Scene stylesheets="@../common.css">
                     <VBox spacing="10" style="-fx-padding: 15;">
-                        <Label text="Настройки цветовой шкалы" styleClass="window-header"/>
                         <Label text="Минимальное значение"/>
                         <Spinner promptText="Минимальное значение" fx:id="minValueSpinner" editable="true"/>
                         <Label text="Максимальное значение"/>
