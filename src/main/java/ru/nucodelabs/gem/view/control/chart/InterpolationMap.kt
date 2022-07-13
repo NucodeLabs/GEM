@@ -4,6 +4,8 @@ import javafx.beans.NamedArg
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
+import ru.nucodelabs.algorithms.interpolation.Interpolator
+import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.view.color.ColorMapper
 
 class InterpolationMap @JvmOverloads constructor(
@@ -13,35 +15,52 @@ class InterpolationMap @JvmOverloads constructor(
 ) : AbstractMap(xAxis, yAxis) {
 
     private val _colorMapper = SimpleObjectProperty<ColorMapper?>(colorMapper)
-    fun colorMapperProperty() = _colorMapper
+    //fun colorMapperProperty() = _colorMapper
     var colorMapper: ColorMapper?
         set(value) = _colorMapper.set(value)
         get() = _colorMapper.get()
 
     @Suppress("UNCHECKED_CAST")
     override fun draw(canvas: Canvas) {
-//        if (data.isEmpty()) {
-//            canvas.clear()
-//            return
-//        }
-//
-//        for (series in data) {
-//            val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
-//
-//            try {
-//                groupByX[0] = groupByX[0].map {
-//                    Data(
-//                        0.0,
-//                        it.yValue,
-//                        it.extraValue
-//                    )
-//                }
-//
-//                PseudoInterpolator(groupByX as List<List<Data<Double, Double>>>, colorMapper).paint(canvas)
-//                // safe cast Double : Number
-//            } catch (e: Exception) {
-//                throw RuntimeException(e)
-//            }
-//        }
+        if (data.isEmpty()) {
+            canvas.clear()
+            return
+        }
+        var section: List<List<Data<Double, Double>>> = arrayListOf()
+        for (series in data) {
+            val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
+
+            try {
+                groupByX[0] = groupByX[0].map {
+                    Data(
+                        0.0,
+                        it.yValue,
+                        it.extraValue
+                    )
+                }
+                section = groupByX as List<List<Data<Double, Double>>>
+
+            } catch (e: Exception) {
+                throw RuntimeException(e)
+            }
+        }
+        val interpolator = Interpolator(section)
+        val pw = canvas.graphicsContext2D.pixelWriter
+        for (x in 0..canvas.width.toInt()) {
+            for (y in 0..canvas.height.toInt()) {
+                val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
+                val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
+                try {
+                    val fValue = if (section.size == 1)
+                        interpolator.getValue(yValue)
+                    else
+                        interpolator.getValue(xValue, yValue)
+                    val color = colorMapper?.colorFor(fValue)
+                    pw.setColor(x, y, color)
+                } catch (e: Exception) {
+                    continue
+                }
+            }
+        }
     }
 }
