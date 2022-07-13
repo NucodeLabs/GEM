@@ -1,6 +1,7 @@
 package ru.nucodelabs.algorithms.interpolation
 
 import javafx.scene.chart.XYChart
+import kotlin.math.log10
 
 class InterpolationParser (private val inputImmutableData: List<List<XYChart.Data<Double, Double>>>) : InterpolationDataParser {
 
@@ -19,6 +20,8 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
 
     private val grid: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
 
+    private val missedPositions: MutableList<Pair<Int, Int>> = arrayListOf()
+
     override fun parse() {
         checkData()
         copyData(inputImmutableData, inputData)
@@ -31,7 +34,19 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         checkMissedPoints()
     }
 
-    private fun copyData(listFrom: List<List<XYChart.Data<Double, Double>>>, listTo: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
+    fun gridToLogValues(grid: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
+        for (picketIdx in grid.indices) {
+            for (abIdx in grid[picketIdx].indices) {
+                grid[picketIdx][abIdx].extraValue = log10(grid[picketIdx][abIdx].extraValue as Double)
+            }
+        }
+    }
+
+    fun getMissedPositions(): MutableList<Pair<Int, Int>> {
+        return missedPositions
+    }
+
+    fun copyData(listFrom: List<List<XYChart.Data<Double, Double>>>, listTo: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
         for (picketIdx in listFrom.indices) {
             listTo.add(arrayListOf())
             for (ab in listFrom[picketIdx]) {
@@ -46,6 +61,8 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
             while (--abIdx >= 0) {
                 if (missedPoints[picketIdx][abIdx].extraValue as Double != -1.0)
                     missedPoints[picketIdx].removeAt(abIdx)
+                else
+                    missedPositions.add(Pair(picketIdx, abIdx))
             }
         }
     }
