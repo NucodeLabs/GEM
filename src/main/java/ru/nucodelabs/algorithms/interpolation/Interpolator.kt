@@ -12,7 +12,7 @@ class Interpolator(
 
     private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
 
-    private lateinit var adjustedGrid: MutableList<MutableList<XYChart.Data<Double, Double>>>
+    private var adjustedGrid: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
 
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
@@ -51,7 +51,7 @@ class Interpolator(
 //        }
         for (point in missedPoints) {
             val xyPoint = adjustedGrid[point.first][point.second]
-            if (xyPoint.extraValue != -1)
+            if (xyPoint.extraValue != -1.0)
                 throw RuntimeException("Missed point value != -1")
             val f = spatialInterpolator.interpolate(xyPoint.xValue, xyPoint.yValue)
             adjustedGrid[point.first][point.second] = XYChart.Data(xyPoint.xValue, xyPoint.yValue, f)
@@ -60,6 +60,7 @@ class Interpolator(
 
     private fun interpolateGrid() {
         interpolationParser = InterpolationParser(adjustedGrid)
+        interpolationParser.parse()
         val regularGridInterpolator = ApacheInterpolator2D()
         bicubicInterpolatingFunction = regularGridInterpolator.interpolate(
             interpolationParser.getGridX(),

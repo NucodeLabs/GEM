@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -22,12 +21,11 @@
                       minHeight="0"
                       legendVisible="false" styleClass="padded-chart">
         <xAxis>
-            <NumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
-                        forceZeroInRange="false"/>
+            <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"/>
         </xAxis>
         <yAxis>
             <NucodeNumberAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
-                              tickUnit="25" inverted="true">
+                              tickUnit="25" inverted="true" autoRanging="true">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
