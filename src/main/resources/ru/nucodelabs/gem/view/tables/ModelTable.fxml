@@ -22,9 +22,9 @@
     <!--    </HBox>-->
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
-            <VBox alignment="BASELINE_CENTER" fx:id="dragDropPlaceholder"
+            <VBox alignment="CENTER" fx:id="dragDropPlaceholder" spacing="5"
                   onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
-                <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
+                <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importMOD"/>
                         <Label text="(*.MOD)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
@@ -34,6 +34,8 @@
                     <Label text="%drag"/>
                 </HBox>
                 <Button text="Первичная модель" onAction="#makePrimaryModel"/>
+                <Button fx:id="copyFromLeftBtn" text="Использовать предыдущую" onAction="#copyFromLeft"/>
+                <Button fx:id="copyFromRightBtn" text="Использовать следующую" onAction="#copyFromRight"/>
             </VBox>
         </placeholder>
         <columns>
