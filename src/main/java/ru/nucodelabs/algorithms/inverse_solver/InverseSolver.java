@@ -11,12 +11,16 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
 import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
+import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 import ru.nucodelabs.data.ves.Picket;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class InverseSolver {
 
@@ -55,17 +59,52 @@ public class InverseSolver {
         this.forwardSolver = forwardSolver;
     }
 
+    private void setLimitValues(
+            List<Double> resistances, double minResistance, double maxResistance,
+            List<Double> powers, double minPower, double maxPower
+    ) {
+        for (int i = 0; i < resistances.size(); i++) {
+            if (resistances.get(i) < minResistance)
+                resistances.set(i ,minResistance);
+            else if (resistances.get(i) > maxResistance)
+                resistances.set(i ,maxResistance);
+        }
+        for (int i = 0; i < powers.size(); i++) {
+            if (powers.get(i) != 0 && powers.get(i) < minPower)
+                powers.set(i, minPower);
+            else if (powers.get(i) > maxPower)
+                powers.set(i, maxPower);
+        }
+    }
+
     public List<ModelLayer> getOptimizedModelData(Picket inputPicket) {
-        final int MAX_EVAL = 1000000;
+        final int MAX_EVAL = 100000;
         this.picket = inputPicket;
 
         List<ModelLayer> modelData = picket.getModelData();
 
         //Изменяемые сопротивления и мощности
         List<Double> modelResistance = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).toList();
+                .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).collect(Collectors.toList());
         List<Double> modelPower = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).toList();
+                .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
+
+        //Установка ограничений для адекватности обратной задачи
+        double minPower = picket.getSortedExperimentalData().stream()
+                .map(ExperimentalData::getAb2)
+                .mapToDouble(Double::doubleValue)
+                .min()
+                .orElseThrow(NoSuchElementException::new);
+        double maxPower = picket.getSortedExperimentalData().stream()
+                .map(ExperimentalData::getAb2)
+                .mapToDouble(Double::doubleValue)
+                .max()
+                .orElseThrow(NoSuchElementException::new);
+
+        setLimitValues(
+                modelResistance, 0.1, 1e5,
+                modelPower, minPower, maxPower
+        );
 
         //Неизменяемые сопротивления и мощности
         List<Double> fixedModelResistance = modelData.stream()
