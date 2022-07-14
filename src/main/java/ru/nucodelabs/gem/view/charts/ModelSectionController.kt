@@ -7,10 +7,13 @@ import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
 import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.data.ves.ModelLayer
+import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.picketsBounds
 import ru.nucodelabs.data.ves.zOfModelLayers
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.net.URL
@@ -25,6 +28,23 @@ class ModelSectionController @Inject constructor(
     private val colorMapper: ColorMapper
 ) : AbstractController() {
 
+    /**
+     * Used for comparing pickets only by data on which chart is dependent
+     */
+    data class PicketDependencies(
+        val modelData: List<ModelLayer>,
+        val offsetX: Double,
+        val z: Double
+    ) {
+        companion object Factory {
+            fun dependenciesOf(picket: Picket) = PicketDependencies(
+                modelData = picket.modelData,
+                offsetX = picket.offsetX,
+                z = picket.z
+            )
+        }
+    }
+
     @FXML
     private lateinit var yAxis: NumberAxis
 
@@ -38,9 +58,17 @@ class ModelSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        observableSection.pickets.addListener(ListChangeListener {
-            if (it.next()) {
-                update()
+        observableSection.pickets.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                if (c.wasReplaced()) {
+                    if (c.removed.map { dependenciesOf(it) } != c.addedSubList.map { dependenciesOf(it) }) {
+                        update()
+                    }
+                } else {
+                    if (c.wasRemoved() || c.wasAdded() || c.wasPermutated()) {
+                        update()
+                    }
+                }
             }
         })
 
@@ -73,7 +101,15 @@ class ModelSectionController @Inject constructor(
                 val x = leftX
                 val y = if (i == 0) picket.z else zList[i - 1]
                 val width = rightX - leftX
-                val height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
+                val height = if (i == zList.lastIndex) {
+                    if (zList.size == 1) {
+                        picket.z - lowerBoundZ
+                    } else {
+                        abs(zList[i - 1] - lowerBoundZ)
+                    }
+                } else {
+                    picket.modelData[i].power
+                }
 
                 val series: Series<Number, Number> = Series(
                     observableListOf(

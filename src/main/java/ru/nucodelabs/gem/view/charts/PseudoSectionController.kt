@@ -6,10 +6,13 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.picketsBounds
 import ru.nucodelabs.data.ves.xOfPicket
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.charts.PseudoSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
@@ -21,6 +24,23 @@ class PseudoSectionController @Inject constructor(
     private val observableSection: ObservableSection,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
+
+    /**
+     * Used for comparing pickets only by data on which chart is dependent
+     */
+    data class PicketDependencies(
+        val experimentalData: List<ExperimentalData>,
+        val offsetX: Double,
+        val z: Double
+    ) {
+        companion object Factory {
+            fun dependenciesOf(picket: Picket) = PicketDependencies(
+                experimentalData = picket.effectiveExperimentalData,
+                offsetX = picket.offsetX,
+                z = picket.z
+            )
+        }
+    }
 
     @FXML
     private lateinit var xAxis: NucodeNumberAxis
@@ -34,8 +54,16 @@ class PseudoSectionController @Inject constructor(
     override fun initialize(location: URL, resources: ResourceBundle) {
         chart.colorMapper = colorMapper
         observableSection.pickets.addListener(ListChangeListener { c ->
-            if (c.next()) {
-                update()
+            while (c.next()) {
+                if (c.wasReplaced()) {
+                    if (c.removed.map { dependenciesOf(it) } != c.addedSubList.map { dependenciesOf(it) }) {
+                        update()
+                    }
+                } else {
+                    if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                        update()
+                    }
+                }
             }
         })
     }
