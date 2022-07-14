@@ -16,14 +16,6 @@ internal fun zOfPower(modelData: List<ModelLayer>, picketZ: Double): List<Double
     return heightList
 }
 
-internal fun xOfPicket(section: Section, index: Int): Double {
-    var x = 0.0
-    for (i in 0..index) {
-        x += section.pickets[i].offsetX
-    }
-    return x
-}
-
 
 internal fun resistanceApparent(ab2: Double, mn2: Double, amperage: Double, voltage: Double) =
     k(ab2, mn2) * (voltage / amperage)
@@ -36,55 +28,7 @@ private fun k(ab2: Double, mn2: Double): Double {
             + 1 / am))
 }
 
-fun Section.picketsWidths(): List<Double> = when (pickets.size) {
-    0 -> listOf()
-    1 -> listOf(length())
-    else -> {
-        pickets.map { picket ->
-            val (leftX, rightX) = picketBounds(picket)
-            rightX - leftX
-        }
-    }
-}
-
-
-fun Section.picketBounds(picket: Picket): Pair<Double, Double> {
-    val index = pickets.indexOf(picket).also { if (it < 0) throw IllegalArgumentException() }
-
-    if (pickets.size == 1) {
-        val maxAb2 = picket.experimentalData.maxOf { it.ab2 }
-        return -maxAb2 to +maxAb2
-    }
-
-    val leftX: Double = if (index == 0) {
-        xOfPicket(picket)
-    } else {
-        xOfPicket(pickets[index - 1]) + (picket.offsetX / 2)
-    }
-
-    val rightX: Double = if (index == pickets.lastIndex) {
-        xOfPicket(picket)
-    } else {
-        xOfPicket(picket) + (pickets[index + 1].offsetX / 2)
-    }
-
-    return Pair(leftX, rightX)
-}
-
-fun Section.picketBoundsOrNull(picket: Picket): Pair<Double, Double>? = try {
-    picketBounds(picket)
-} catch (_: NoSuchElementException) {
-    null
-}
-
-fun Section.length() = when (pickets.size) {
-    0 -> 0.0
-    1 -> (pickets.first().experimentalData.maxOfOrNull { it.ab2 } ?: 0.0) * 2
-    else -> xOfPicket(pickets.last()) - xOfPicket(pickets.first())
-}
-
-fun Section.lengthOrNull() = try {
-    length()
-} catch (_: NoSuchElementException) {
-    null
+fun Section.length(): Double {
+    val bounds = picketsBounds()
+    return bounds.last().rightX - bounds.first().leftX
 }

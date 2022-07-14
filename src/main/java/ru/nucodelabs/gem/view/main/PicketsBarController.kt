@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.main
 
 import javafx.beans.property.IntegerProperty
-import javafx.beans.value.ObservableObjectValue
+import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.Button
@@ -9,20 +9,20 @@ import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
+import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.length
-import ru.nucodelabs.data.ves.picketsWidths
-import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.data.ves.picketsBounds
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.std.swap
 import ru.nucodelabs.gem.view.AbstractController
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
 
 class PicketsBarController @Inject constructor(
-    private val sectionObservable: ObservableObjectValue<Section>,
     private val picketIndex: IntegerProperty,
-    private val sectionManager: SectionManager,
+    private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>
 ) : AbstractController() {
     @FXML
@@ -32,12 +32,14 @@ class PicketsBarController @Inject constructor(
         get() = container.scene.window as Stage?
 
     private val section: Section
-        get() = sectionObservable.get()!!
+        get() = observableSection.asSection()
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        sectionObservable.addListener { _, _, newValue: Section? ->
-            newValue?.let { update() }
-        }
+        observableSection.pickets.addListener(ListChangeListener { c ->
+            if (c.next()) {
+                update()
+            }
+        })
         picketIndex.addListener { _, _, _ -> update() }
     }
 
@@ -46,14 +48,14 @@ class PicketsBarController @Inject constructor(
 
         val buttons = mutableListOf<Button>()
 
-        val widthsOfPickets = section.picketsWidths()
+        val widths = section.picketsBounds().map { it.rightX - it.leftX }
         for ((index, picket) in pickets.withIndex()) {
             // TODO использовать UI Properties
             val contextMenu = ContextMenu(
                 MenuItem("Переместить влево").apply {
                     onAction = EventHandler {
                         historyManager.snapshotAfter {
-                            sectionManager.swap(index, index - 1)
+                            observableSection.pickets.swap(index, index - 1)
                         }
                     }
                     if (index == 0) {
@@ -63,7 +65,7 @@ class PicketsBarController @Inject constructor(
                 MenuItem("Переместить вправо").apply {
                     onAction = EventHandler {
                         historyManager.snapshotAfter {
-                            sectionManager.swap(index, index + 1)
+                            observableSection.pickets.swap(index, index + 1)
                         }
                     }
                     if (index == pickets.lastIndex) {
@@ -73,7 +75,7 @@ class PicketsBarController @Inject constructor(
                 MenuItem("Удалить").apply {
                     onAction = EventHandler {
                         historyManager.snapshotAfter {
-                            sectionManager.remove(index)
+                            observableSection.pickets.removeAt(index)
                         }
                     }
                     if (pickets.size == 1) {
@@ -92,7 +94,7 @@ class PicketsBarController @Inject constructor(
                     container.widthProperty()
                         .multiply(
                             if (section.length() > 0) {
-                                widthsOfPickets[index] / section.length()
+                                widths[index] / section.length()
                             } else {
                                 1.0
                             }

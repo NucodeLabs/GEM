@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.tables
 
 import jakarta.validation.Validator
 import javafx.beans.binding.Bindings.createStringBinding
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.FXCollections
@@ -17,13 +18,15 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.primaryModel.PrimaryModel
+import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ModelLayer
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.data.ves.zOfModelLayers
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.extensions.std.removeAllAt
 import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -43,8 +46,9 @@ class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
     private val fileImporterProvider: Provider<FileImporter>,
     private val alertsFactory: AlertsFactory,
+    private val observableSection: ObservableSection,
+    private val _picketIndex: IntegerProperty,
     private val validator: Validator,
-    private val sectionManager: SectionManager,
     private val historyManager: HistoryManager<Section>,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat
@@ -80,6 +84,9 @@ class ModelTableController @Inject constructor(
     private val picket: Picket
         get() = picketObservable.get()!!
 
+    private val picketIndex
+        get() = _picketIndex.get()
+
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue, newValue ->
             newValue?.let {
@@ -108,7 +115,7 @@ class ModelTableController @Inject constructor(
     private fun fixPowerForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].withFixedPower(true)
+            modelData[index] = modelData[index].copy(isFixedPower = true)
         }
         updateIfValidElseAlert(modelData)
     }
@@ -116,7 +123,7 @@ class ModelTableController @Inject constructor(
     private fun fixResistanceForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].withFixedResistance(true)
+            modelData[index] = modelData[index].copy(isFixedResistance = true)
         }
         updateIfValidElseAlert(modelData)
     }
@@ -124,7 +131,7 @@ class ModelTableController @Inject constructor(
     private fun unfixPowerForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].withFixedPower(false)
+            modelData[index] = modelData[index].copy(isFixedPower = false)
         }
         updateIfValidElseAlert(modelData)
     }
@@ -132,7 +139,7 @@ class ModelTableController @Inject constructor(
     private fun unfixResistanceForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].withFixedResistance(false)
+            modelData[index] = modelData[index].copy(isFixedResistance = false)
         }
         updateIfValidElseAlert(modelData)
     }
@@ -269,8 +276,8 @@ class ModelTableController @Inject constructor(
         val oldValue: ModelLayer = event.rowValue
         val newInputValue: Double = event.newValue
         val newValue: ModelLayer = when (event.tableColumn) {
-            powerCol -> oldValue.withPower(newInputValue)
-            resistanceCol -> oldValue.withResistance(newInputValue)
+            powerCol -> oldValue.copy(power = newInputValue)
+            resistanceCol -> oldValue.copy(resistance = newInputValue)
             else -> throw RuntimeException("Something went wrong!")
         }
         if (!event.newValue.isNaN()) {
@@ -300,7 +307,7 @@ class ModelTableController @Inject constructor(
             }
             updateIfValidElseAlert(
                 picket.modelData.toMutableList().apply {
-                    add(index, ModelLayer.createNotFixed(newPowerValue, newResistanceValue))
+                    add(index, ModelLayer(newPowerValue, newResistanceValue))
                 }
             )
         }
@@ -316,13 +323,13 @@ class ModelTableController @Inject constructor(
     }
 
     private fun updateIfValidElseAlert(newModelData: List<ModelLayer>) {
-        val modified = picket.withModelData(newModelData)
+        val modified = picket.copy(modelData = newModelData)
         val violations = validator.validate(modified)
         if (violations.isNotEmpty()) {
             alertsFactory.violationsAlert(violations, stage).show()
             table.refresh()
         } else {
-            historyManager.snapshotAfter { sectionManager.update(modified) }
+            historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
             FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField)
         }
     }
@@ -356,8 +363,8 @@ class ModelTableController @Inject constructor(
 
     @FXML
     fun makePrimaryModel() {
-        val primaryModel = PrimaryModel(picket.experimentalData)
+        val primaryModel = PrimaryModel(picket.sortedExperimentalData)
         val newModelData = primaryModel.get3LayersPrimaryModel()
-        historyManager.snapshotAfter { sectionManager.update(picket.withModelData(newModelData)) }
+        historyManager.snapshotAfter { observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData) }
     }
 }

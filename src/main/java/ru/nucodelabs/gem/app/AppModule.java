@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -13,6 +15,7 @@ import javafx.util.StringConverter;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.files.color_palette.ClrParser;
 import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.FileChoosersModule;
@@ -31,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+
+import static com.fasterxml.jackson.module.kotlin.ExtensionsKt.jacksonObjectMapper;
 
 /**
  * Зависимости приложения, которое, по сути, создает MainView
@@ -84,8 +89,8 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private JsonFileManager provideJsonFileManager() {
-        return JsonFileManager.createDefault();
+    private JsonFileManager provideJsonFileManager(ObjectMapper objectMapper) {
+        return new JacksonJsonFileManager(objectMapper);
     }
 
     @Provides
@@ -166,5 +171,10 @@ public class AppModule extends AbstractModule {
     @Singleton
     ForwardSolver forwardSolver() {
         return ForwardSolver.createDefault();
+    }
+
+    @Provides
+    ObjectMapper objectMapper() {
+        return jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 }
