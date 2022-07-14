@@ -23,7 +23,7 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.std.removeAllAt
-import ru.nucodelabs.gem.utils.FXUtils
+import ru.nucodelabs.gem.util.FXUtils
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import java.net.URL

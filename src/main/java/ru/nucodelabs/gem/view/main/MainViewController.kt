@@ -27,8 +27,9 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.utils.FXUtils
-import ru.nucodelabs.gem.utils.OS.isMacOS
+import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.util.FXUtils
+import ru.nucodelabs.gem.util.OS.isMacOS
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.charts.MisfitStacksController
@@ -139,10 +140,14 @@ class MainViewController @Inject constructor(
         }
         bind()
         initConfig()
-        setupValidationOnPicketXZ(picketOffsetX)
-        setupValidationOnPicketXZ(picketZ)
+        setupTextFields()
         syncMisfitAndVesXAxes()
         setupInverseBtn()
+    }
+
+    private fun setupTextFields() {
+        picketOffsetX.isValidBy { validateDoubleInput(it) }
+        picketZ.isValidBy { validateDoubleInput(it) }
     }
 
     private fun setupInverseBtn() {
@@ -167,13 +172,6 @@ class MainViewController @Inject constructor(
         misfitStacksController.lineChartXAxis.upperBoundProperty().bind(
             vesCurvesController.xAxis.upperBoundProperty()
         )
-    }
-
-    private fun setupValidationOnPicketXZ(tf: TextField?): BooleanProperty {
-        return FXUtils.TextFieldValidationSetup.of(tf)
-            .validateWith { s: String -> validateDoubleInput(s) }
-            .applyStyleIfInvalid("-fx-background-color: LightPink")
-            .done()
     }
 
     private fun validateDoubleInput(s: String): Boolean {
