@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.tables
 
 import jakarta.validation.Validator
+import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -42,6 +43,7 @@ private const val STYLE_FOR_FIXED = """
     -fx-text-fill: White;
     -fx-background-color: Gray;
 """
+
 class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
     private val fileImporterProvider: Provider<FileImporter>,
@@ -53,6 +55,12 @@ class ModelTableController @Inject constructor(
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
+
+    @FXML
+    private lateinit var copyFromRightBtn: Button
+
+    @FXML
+    private lateinit var copyFromLeftBtn: Button
 
     @FXML
     private lateinit var zCol: TableColumn<ModelLayer, Double>
@@ -105,6 +113,7 @@ class ModelTableController @Inject constructor(
         setupCellFactories()
         setupValidation()
         setupRowFactory()
+        setupButtons()
 
         table.itemsProperty().addListener { _, _, newValue: ObservableList<ModelLayer> ->
             newValue.addListener(ListChangeListener { table.refresh() })
@@ -251,6 +260,21 @@ class ModelTableController @Inject constructor(
 
     }
 
+    private fun setupButtons() {
+        copyFromLeftBtn.disableProperty().bind(
+            createBooleanBinding(
+                { observableSection.pickets.size <= 1 || picketIndex == 0 },
+                observableSection.pickets, _picketIndex
+            )
+        )
+        copyFromRightBtn.disableProperty().bind(
+            createBooleanBinding(
+                { observableSection.pickets.size <= 1 || picketIndex == observableSection.pickets.lastIndex },
+                observableSection.pickets, _picketIndex
+            )
+        )
+    }
+
     private fun setupValidation() {
         val validInput = indexTextField.isValidBy { validateIndexInput(it) }
             .and(resistanceTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
@@ -334,6 +358,10 @@ class ModelTableController @Inject constructor(
         }
     }
 
+    private fun justUpdate(newModelData: List<ModelLayer>) {
+        historyManager.snapshotAfter { observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData) }
+    }
+
     @FXML
     private fun dragOverHandle(dragEvent: DragEvent) {
         if (dragEvent.dragboard.hasFiles()) {
@@ -366,5 +394,15 @@ class ModelTableController @Inject constructor(
         val primaryModel = PrimaryModel(picket.sortedExperimentalData)
         val newModelData = primaryModel.get3LayersPrimaryModel()
         historyManager.snapshotAfter { observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData) }
+    }
+
+    @FXML
+    private fun copyFromLeft() {
+        justUpdate(observableSection.pickets[picketIndex - 1].modelData)
+    }
+
+    @FXML
+    private fun copyFromRight() {
+        justUpdate(observableSection.pickets[picketIndex + 1].modelData)
     }
 }
