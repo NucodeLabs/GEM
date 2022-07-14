@@ -229,12 +229,12 @@ class ExperimentalTableController @Inject constructor(
                 add(
                     index,
                     ExperimentalData(
-                        newAb2Value,
-                        newMn2Value,
-                        newResAppValue,
-                        newErrResAppValue,
-                        newAmperageValue,
-                        newVoltageValue
+                        ab2 = newAb2Value,
+                        mn2 = newMn2Value,
+                        resistanceApparent = newResAppValue,
+                        errorResistanceApparent = newErrResAppValue,
+                        amperage = newAmperageValue,
+                        voltage = newVoltageValue
                     )
                 )
             })
