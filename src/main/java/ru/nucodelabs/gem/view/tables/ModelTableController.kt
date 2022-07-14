@@ -20,21 +20,14 @@ import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.primaryModel.PrimaryModel
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.isNotBlank
-import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.std.removeAllAt
-import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
 import java.net.URL
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -75,18 +68,6 @@ class ModelTableController @Inject constructor(
     private lateinit var resistanceCol: TableColumn<ModelLayer, Double>
 
     @FXML
-    private lateinit var powerTextField: TextField
-
-    @FXML
-    private lateinit var resistanceTextField: TextField
-
-    @FXML
-    private lateinit var indexTextField: TextField
-
-    @FXML
-    private lateinit var addBtn: Button
-
-    @FXML
     private lateinit var table: TableView<ModelLayer>
 
     private val picket: Picket
@@ -111,7 +92,6 @@ class ModelTableController @Inject constructor(
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         setupCellFactories()
-        setupValidation()
         setupRowFactory()
         setupButtons()
 
@@ -161,6 +141,9 @@ class ModelTableController @Inject constructor(
                         MenuItem("Удалить").apply {
                             onAction = EventHandler { deleteSelected() }
                         },
+                        MenuItem("Разделить").apply {
+                            onAction = EventHandler { divideSelected() }
+                        }
                     ).apply {
                         if (table.selectionModel.selectedItems.size == 1) {
                             items += MenuItem().apply {
@@ -204,6 +187,24 @@ class ModelTableController @Inject constructor(
                 onContextMenuRequested = EventHandler { createContextMenu().show(this, it.screenX, it.screenY) }
             }
         }
+    }
+
+    private fun divideSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            if (modelData.size == 1) {
+                modelData += modelData[index].copy(power = 10.0)
+            } else {
+                if (index == modelData.lastIndex) {
+                    modelData.add(index, modelData[index - 1].copy(resistance = modelData.last().resistance))
+                } else {
+                    val (fst, snd) = modelData[index].divide()
+                    modelData[index] = fst
+                    modelData[index + 1] = snd
+                }
+            }
+        }
+        justUpdate(modelData)
     }
 
     private fun setupCellFactories() {
@@ -275,17 +276,6 @@ class ModelTableController @Inject constructor(
         )
     }
 
-    private fun setupValidation() {
-        val validInput = indexTextField.isValidBy { validateIndexInput(it) }
-            .and(resistanceTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
-            .and(powerTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
-
-        val allRequiredNotBlank = powerTextField.textProperty().isNotBlank()
-            .and(resistanceTextField.textProperty().isNotBlank())
-
-        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
-    }
-
     override val stage: Stage?
         get() = table.scene.window as Stage?
 
@@ -312,32 +302,6 @@ class ModelTableController @Inject constructor(
     }
 
     @FXML
-    private fun addLayer() {
-        if (!addBtn.isDisable) {
-            val newResistanceValue: Double = try {
-                decimalFormat.parse(resistanceTextField.text).toDouble()
-            } catch (_: ParseException) {
-                return
-            }
-            val newPowerValue: Double = try {
-                decimalFormat.parse(powerTextField.text).toDouble()
-            } catch (_: ParseException) {
-                return
-            }
-            val index = try {
-                indexTextField.text.toInt().coerceAtMost(picket.modelData.lastIndex + 1)
-            } catch (_: NumberFormatException) {
-                picket.modelData.lastIndex + 1
-            }
-            updateIfValidElseAlert(
-                picket.modelData.toMutableList().apply {
-                    add(index, ModelLayer(newPowerValue, newResistanceValue))
-                }
-            )
-        }
-    }
-
-    @FXML
     private fun deleteSelected() {
         picket.modelData.toMutableList().apply {
             removeAllAt(table.selectionModel.selectedIndices)
@@ -354,7 +318,6 @@ class ModelTableController @Inject constructor(
             table.refresh()
         } else {
             historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
-            FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField)
         }
     }
 

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -74,19 +72,4 @@
             </TableColumn>
         </columns>
     </TableView>
-    <HBox spacing="5" style="-fx-padding: 5">
-        <TextField fx:id="indexTextField" promptText="N"
-                   prefWidth="45" minWidth="45" onAction="#addLayer"/>
-        <TextField fx:id="powerTextField" promptText="%power"
-                   maxWidth="Infinity" onAction="#addLayer"/>
-        <TextField fx:id="resistanceTextField" promptText="%resistance"
-                   maxWidth="Infinity" onAction="#addLayer"/>
-        <Button fx:id="addBtn" text="Добавить слой" onAction="#addLayer" minWidth="150" disable="true">
-            <graphic>
-                <ImageView fitWidth="15" fitHeight="15">
-                    <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-    </HBox>
 </VBox>
