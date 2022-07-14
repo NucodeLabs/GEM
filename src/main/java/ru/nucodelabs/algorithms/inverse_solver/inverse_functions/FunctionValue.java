@@ -19,6 +19,8 @@ public class FunctionValue implements MultivariateFunction {
     private final List<ModelLayer> modelLayers;
     private final ForwardSolver forwardSolver;
 
+    private double diffMinValue = Double.MAX_VALUE;
+
     public FunctionValue(List<ExperimentalData> experimentalData,
                          BiFunction<List<Double>, List<Double>, Double> inverseFunction,
                          List<ModelLayer> modelLayers,
@@ -78,7 +80,21 @@ public class FunctionValue implements MultivariateFunction {
 
         List<Double> solvedResistance = forwardSolver.invoke(experimentalData, newModelLayers);
 
-        return inverseFunction.apply(solvedResistance,
+        double diffValue = inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
+
+        diffMinValue = Math.min(diffValue, diffMinValue);
+
+        for (ModelLayer modelLayer : modelLayers) {
+            if (modelLayer.getResistance() < 0.1 ||
+                    modelLayer.getResistance() > 1e5 ||
+                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < experimentalData.get(0).getAb2()) ||
+                    modelLayer.getPower() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
+                diffValue = diffMinValue * 1.1;
+                break;
+            }
+        }
+
+        return diffValue;
     }
 }
