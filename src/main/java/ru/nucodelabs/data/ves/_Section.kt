@@ -36,3 +36,8 @@ fun Section.picketsBounds(): List<Bounds> {
 
     return res
 }
+
+fun Section.length(): Double {
+    val bounds = picketsBounds()
+    return bounds.last().rightX - bounds.first().leftX
+}
