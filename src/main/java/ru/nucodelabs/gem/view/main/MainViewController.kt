@@ -438,7 +438,10 @@ class MainViewController @Inject constructor(
     @FXML
     private fun inverseSolve() {
         try {
-            historyManager.snapshotAfter { inverseSolver.getOptimizedModelData(picket) }
+            historyManager.snapshotAfter {
+                observableSection.pickets[picketIndex] =
+                    picket.copy(modelData = inverseSolver.getOptimizedModelData(picket))
+            }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }
