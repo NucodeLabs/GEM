@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.extensions.math
+package ru.nucodelabs.gem.extensions.std
 
 import kotlin.math.pow
 

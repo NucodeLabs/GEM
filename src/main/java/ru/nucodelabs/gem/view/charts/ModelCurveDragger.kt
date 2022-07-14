@@ -127,35 +127,32 @@ class ModelCurveDragger
                 val index1 = pointPowerMap[point1 as Data<*, *>]!!
                 val index2 = index1 + 1 // neighbor
 
-                if (!modelData[index1].isFixedPower
-                    && !modelData[index2].isFixedPower
-                ) {
-                    val diff = mouseX - point1!!.xValue.toDouble()
 
-                    point1!!.xValue = mouseX
-                    point2!!.xValue = mouseX
+                val diff = mouseX - point1!!.xValue.toDouble()
 
-                    val initialValue1 = mutableModelData[index1].power
-                    val newValue1 = initialValue1 + diff
+                point1!!.xValue = mouseX
+                point2!!.xValue = mouseX
 
-                    mutableModelData[index1] = mutableModelData[index1].withPower(newValue1)
+                val initialValue1 = mutableModelData[index1].power
+                val newValue1 = initialValue1 + diff
 
-                    if (index2 < mutableModelData.lastIndex) {
-                        val initialValue2 = mutableModelData[index2].power
-                        val newValue2 = initialValue2 - diff
-                        mutableModelData[index2] = mutableModelData[index2].withPower(newValue2)
-                    }
+                mutableModelData[index1] = mutableModelData[index1].copy(power = newValue1)
+
+                if (index2 < mutableModelData.lastIndex) {
+                    val initialValue2 = mutableModelData[index2].power
+                    val newValue2 = initialValue2 - diff
+                    mutableModelData[index2] = mutableModelData[index2].copy(power = newValue2)
                 }
+
             } else if (point1!!.yValue == point2!!.yValue // горизонтальная линия
                 && mouseY > lowerLimitY
             ) {
                 val index = pointResistanceMap[point1!!]!!
 
-                if (!modelData[index].isFixedResistance) {
-                    point1!!.yValue = mouseY
-                    point2!!.yValue = mouseY
-                    mutableModelData[index] = mutableModelData[index].withResistance(mouseY)
-                }
+                point1!!.yValue = mouseY
+                point2!!.yValue = mouseY
+                mutableModelData[index] = mutableModelData[index].copy(resistance = mouseY)
+
             }
         }
         return mutableModelData
@@ -214,7 +211,7 @@ class ModelCurveDragger
     private fun coordinatesToValues(mouseEvent: MouseEvent): Data<Double, Double> =
         Data(
             xAxis.getValueForScene(mouseEvent.sceneX).toDouble(),
-            yAxis.getValueForScene(mouseEvent.sceneX).toDouble()
+            yAxis.getValueForScene(mouseEvent.sceneY).toDouble()
         )
 
     private fun coordinatesToValues(pointInScene: Point2D): Data<Double, Double> =

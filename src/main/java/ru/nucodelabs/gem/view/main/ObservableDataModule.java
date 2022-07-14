@@ -3,35 +3,20 @@ package ru.nucodelabs.gem.view.main;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
+import ru.nucodelabs.data.fx.ObservableSection;
 import ru.nucodelabs.data.ves.Picket;
-import ru.nucodelabs.data.ves.Section;
-import ru.nucodelabs.gem.app.model.AbstractSectionObserver;
-import ru.nucodelabs.gem.app.model.SectionManager;
+
+import static javafx.beans.binding.Bindings.createObjectBinding;
 
 /**
  * Используются для коммуникации между контроллерами и удобного отслеживания изменений в данных.
  */
 public class ObservableDataModule extends AbstractModule {
-    @Provides
-    @Singleton
-    private ObservableObjectValue<Section> sectionObservableObjectValue(SectionManager sectionManager) {
-        ObjectProperty<Section> sectionObjectProperty = new SimpleObjectProperty<>(sectionManager.snapshot().getValue());
-        sectionManager.getSectionObservable().subscribe(new AbstractSectionObserver() {
-            @Override
-            public void onNext(Section item) {
-                sectionObjectProperty.set(item);
-            }
-        });
-
-        return sectionObjectProperty;
-    }
-
     /**
      * Индекс текущего отображаемого пикета для контроллеров, которые с ним взаимодействуют
      */
@@ -49,28 +34,21 @@ public class ObservableDataModule extends AbstractModule {
     @Singleton
     private ObservableObjectValue<Picket> provideBoundCurrentPicket(
             IntegerProperty picketIndex,
-            ObservableObjectValue<Section> section) {
-
+            ObservableSection section) {
         ObjectProperty<Picket> picket = new SimpleObjectProperty<>();
-        picket.bind(new ObjectBinding<>() {
-            {
-                super.bind(picketIndex, section);
-            }
-
-            @Override
-            protected Picket computeValue() {
-                if (section.get().getPickets().isEmpty()) {
-                    return null;
-                } else {
-                    if (picketIndex.get() >= section.get().getPickets().size()) {
-                        picketIndex.set(section.get().getPickets().size() - 1);
+        picket.bind(createObjectBinding(
+                () -> {
+                    if (section.getPickets().isEmpty()) {
+                        return null;
+                    } else {
+                        if (picketIndex.get() >= section.getPickets().size()) {
+                            picketIndex.set(section.getPickets().size() - 1);
+                        }
+                        return section.getPickets().get(picketIndex.get());
                     }
-                    return section.get().getPickets().get(picketIndex.get());
-                }
-            }
-        });
-
-
+                },
+                picketIndex, section.getPickets()
+        ));
         return picket;
     }
 }

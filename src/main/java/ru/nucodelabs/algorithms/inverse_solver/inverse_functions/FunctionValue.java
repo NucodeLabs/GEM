@@ -2,7 +2,6 @@ package ru.nucodelabs.algorithms.inverse_solver.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolverKt;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
 
@@ -74,10 +73,10 @@ public class FunctionValue implements MultivariateFunction {
 
         List<ModelLayer> newModelLayers = new ArrayList<>();
         for (int i = 0; i < modelLayers.size(); i++) {
-            newModelLayers.add(ModelLayer.createNotFixed(newModelPower.get(i), newModelResistance.get(i)));
+            newModelLayers.add(new ModelLayer(newModelPower.get(i), newModelResistance.get(i), false, false));
         }
 
-        List<Double> solvedResistance = (List<Double>) forwardSolver.invoke(experimentalData, newModelLayers);
+        List<Double> solvedResistance = forwardSolver.invoke(experimentalData, newModelLayers);
 
         return inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));

@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.tables
 
 import jakarta.validation.Validator
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.FXCollections.observableList
@@ -13,13 +14,15 @@ import javafx.scene.control.cell.TextFieldTableCell
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
+import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.data.ves.withCalculatedResistanceApparent
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.extensions.std.removeAllAt
 import ru.nucodelabs.gem.utils.FXUtils
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -32,7 +35,8 @@ import javax.inject.Inject
 class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val validator: Validator,
-    private val sectionManager: SectionManager,
+    private val observableSection: ObservableSection,
+    private val _picketIndex: IntegerProperty,
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
@@ -93,12 +97,15 @@ class ExperimentalTableController @Inject constructor(
     private val picket: Picket
         get() = picketObservable.get()!!
 
+    private val picketIndex
+        get() = _picketIndex.get()
+
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 if (oldValue != null
-                    && oldValue.experimentalData != newValue.experimentalData
+                    && oldValue.sortedExperimentalData != newValue.sortedExperimentalData
                 ) {
                     update()
                 } else if (oldValue == null) {
@@ -181,14 +188,14 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun update() {
-        table.itemsProperty().value = observableList(picket.experimentalData)
+        table.itemsProperty().value = observableList(picket.sortedExperimentalData)
         table.refresh()
     }
 
     @FXML
     private fun deleteSelected() {
         updateIfValidElseAlert(
-            picket.experimentalData.toMutableList().apply { removeAllAt(table.selectionModel.selectedIndices) }
+            picket.sortedExperimentalData.toMutableList().apply { removeAllAt(table.selectionModel.selectedIndices) }
         )
     }
 
@@ -213,14 +220,15 @@ class ExperimentalTableController @Inject constructor(
             }
 
             val index = try {
-                indexTextField.text.toInt().coerceAtMost(picket.experimentalData.size)
+                indexTextField.text.toInt().coerceAtMost(picket.sortedExperimentalData.size)
             } catch (_: NumberFormatException) {
-                picket.experimentalData.size
+                picket.sortedExperimentalData.size
             }
 
-            updateIfValidElseAlert(picket.experimentalData.toMutableList().apply {
+            updateIfValidElseAlert(picket.sortedExperimentalData.toMutableList().apply {
                 add(
-                    index, ExperimentalData.create(
+                    index,
+                    ExperimentalData(
                         newAb2Value,
                         newMn2Value,
                         newResAppValue,
@@ -234,13 +242,13 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun updateIfValidElseAlert(newExpData: List<ExperimentalData>) {
-        val modified = picket.withExperimentalData(newExpData)
+        val modified = picket.copy(experimentalData = newExpData)
         val violations = validator.validate(modified)
         if (violations.isNotEmpty()) {
             alertsFactory.violationsAlert(violations, stage).show()
             table.refresh()
         } else {
-            historyManager.snapshotAfter { sectionManager.update(modified) }
+            historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
             FXUtils.unfocus(
                 indexTextField,
                 ab2TextField,
@@ -260,17 +268,17 @@ class ExperimentalTableController @Inject constructor(
         val oldValue = event.rowValue
 
         val newValue: ExperimentalData = when (event.tableColumn) {
-            ab2Col -> oldValue.withAb2(newInputValue)
-            mn2Col -> oldValue.withMn2(newInputValue)
-            resistanceApparentCol -> oldValue.withResistanceApparent(newInputValue)
-            errorResistanceCol -> oldValue.withErrorResistanceApparent(newInputValue)
-            amperageCol -> oldValue.withAmperage(newInputValue)
-            voltageCol -> oldValue.withVoltage(newInputValue)
+            ab2Col -> oldValue.copy(ab2 = newInputValue)
+            mn2Col -> oldValue.copy(ab2 = newInputValue)
+            resistanceApparentCol -> oldValue.copy(resistanceApparent = newInputValue)
+            errorResistanceCol -> oldValue.copy(errorResistanceApparent = newInputValue)
+            amperageCol -> oldValue.copy(amperage = newInputValue)
+            voltageCol -> oldValue.copy(voltage = newInputValue)
             else -> throw RuntimeException("Something went wrong!")
         }
 
         if (!event.newValue.isNaN()) {
-            updateIfValidElseAlert(picket.experimentalData.toMutableList().also { it[index] = newValue })
+            updateIfValidElseAlert(picket.sortedExperimentalData.toMutableList().also { it[index] = newValue })
         } else {
             table.refresh()
         }
@@ -278,18 +286,18 @@ class ExperimentalTableController @Inject constructor(
 
     @FXML
     private fun recalculateSelected() {
-        val experimentalData: MutableList<ExperimentalData> = picket.experimentalData.toMutableList()
+        val experimentalData: MutableList<ExperimentalData> = picket.sortedExperimentalData.toMutableList()
 
         val ind: List<Int> = table.selectionModel.selectedIndices
 
         for (i in experimentalData.indices) {
             if (i in ind) {
-                experimentalData[i] = experimentalData[i].recalculateResistanceApparent()
+                experimentalData[i] = experimentalData[i].withCalculatedResistanceApparent()
             }
         }
 
         historyManager.snapshotAfter {
-            sectionManager.update(picket.withExperimentalData(experimentalData))
+            observableSection.pickets[picketIndex] = picket.copy(experimentalData = experimentalData)
         }
     }
 }

@@ -123,7 +123,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // https://mvnrepository.com/artifact/org.tinfour/TinfourCore
     implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
-
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3'
 }
 
 task forwardSolver(type: Exec) {
