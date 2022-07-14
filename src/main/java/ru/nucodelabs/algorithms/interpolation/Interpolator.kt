@@ -25,15 +25,11 @@ class Interpolator(
         initGrid()
         adjustGrid()
         interpolationParser.gridToLogValues(adjustedGrid)
-        leftSideSplineFunction = interpolateSide(grid[0])
+        leftSideSplineFunction = interpolateSide(adjustedGrid[0])
         if (adjustedGrid.size != 1) {
             interpolateGrid()
-            rightSideSplineFunction = interpolateSide(grid.last())
+            rightSideSplineFunction = interpolateSide(adjustedGrid.last())
         }
-    }
-
-    private fun gridValuesToLog() {
-
     }
 
     private fun initGrid() {
@@ -96,8 +92,10 @@ class Interpolator(
     }
 
     private fun getRange(x: Double): Side {
-        if (x < adjustedGrid[0][0].xValue) return Side.LEFT
-        if (x > adjustedGrid.last()[0].xValue) return Side.RIGHT
+        if (x < adjustedGrid[0][0].xValue)
+            return Side.LEFT
+        if (x > adjustedGrid.last()[0].xValue)
+            return Side.RIGHT
         return Side.MIDDLE
     }
 }
