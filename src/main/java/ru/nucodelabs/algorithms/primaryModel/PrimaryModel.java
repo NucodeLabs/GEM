@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nucodelabs.data.ves.JavaApiKt.replaceAb2;
-import static ru.nucodelabs.data.ves.JavaApiKt.replacePower;
+import static ru.nucodelabs.data.ves.JavaApiKt.copy;
 
 public class PrimaryModel {
 
@@ -24,7 +23,7 @@ public class PrimaryModel {
         }
 
         List<ExperimentalData> logExperimentalData = experimentalData.stream()
-                .map(experimentalData -> replaceAb2(experimentalData, Math.log(experimentalData.getAb2())))
+                .map(experimentalData -> copy(experimentalData).ab2(Math.log(experimentalData.getAb2())).build())
                 .toList();
         int pointsCnt = logExperimentalData.size();
         double ab2max = logExperimentalData.get(pointsCnt - 1).getAb2();
@@ -61,7 +60,7 @@ public class PrimaryModel {
             //От последнего в этом слою отнимаем последний в прошлом
             modelLayers.add(new ModelLayer(Math.exp(list.get(list.size() - 1).getAb2()) - prevLast, avg, false, false));
         }
-        modelLayers.set(modelLayers.size() - 1, replacePower(modelLayers.get(modelLayers.size() - 1), 0));
+        modelLayers.set(modelLayers.size() - 1, copy(modelLayers.get(modelLayers.size() - 1)).power(0).build());
         return modelLayers;
     }
 }
