@@ -90,12 +90,12 @@ public class InverseSolver {
                 .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
-        double minPower = picket.getExperimentalData().stream()
+        double minPower = picket.getSortedExperimentalData().stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .min()
                 .orElseThrow(NoSuchElementException::new);
-        double maxPower = picket.getExperimentalData().stream()
+        double maxPower = picket.getSortedExperimentalData().stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
