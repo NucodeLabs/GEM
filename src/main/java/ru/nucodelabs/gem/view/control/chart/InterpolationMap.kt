@@ -119,10 +119,11 @@ class InterpolationMap @JvmOverloads constructor(
                     continue
                 }
                 try {
-                    val fValue = if (preparedData.size == 1)
+                    val fValue = if (preparedData.size == 1) {
                         interpolator.getValue(yValue)
-                    else
+                    } else {
                         interpolator.getValue(xValue, yValue)
+                    }
                     val color = colorMapper?.colorFor(fValue)
                     pw.setColor(x, y, color)
                 } catch (_: Exception) {
