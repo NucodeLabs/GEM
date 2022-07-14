@@ -69,7 +69,9 @@ class InterpolationMap @JvmOverloads constructor(
 
     override fun seriesRemoved(series: Series<Number, Number>?) {
         super.seriesRemoved(series)
-        if (data.getOrNull(interpolateSeriesIndex) == null) {
+        if (data.getOrNull(interpolateSeriesIndex) == null
+            || data[interpolateSeriesIndex].data.isEmpty()
+        ) {
             canvas.clear()
         }
     }
@@ -84,7 +86,11 @@ class InterpolationMap @JvmOverloads constructor(
     override fun dataItemRemoved(item: Data<Number, Number>?, series: Series<Number, Number>?) {
         super.dataItemRemoved(item, series)
         if (series == data[interpolateSeriesIndex]) {
-            initInterpolator()
+            if (series?.data?.isNotEmpty() == true) {
+                initInterpolator()
+            } else {
+                canvas.clear()
+            }
         }
     }
 
@@ -97,7 +103,9 @@ class InterpolationMap @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     fun draw(canvas: Canvas) {
-        if (data.isEmpty()) {
+        if (data.isEmpty()
+            || data[interpolateSeriesIndex].data.isEmpty()
+        ) {
             canvas.clear()
             return
         }
