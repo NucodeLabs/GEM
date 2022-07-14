@@ -35,6 +35,10 @@ class NucodeNumberAxis @JvmOverloads constructor(
     }
 
     private fun checkOverlapsNearBounds() {
+        if (tickMarks.size <= 1) {
+            return
+        }
+
         val tick1 = tickMarks[0].apply { isTextVisible = true }
         val tick2 = tickMarks[1].apply { isTextVisible = true }
         if (!inverted) {

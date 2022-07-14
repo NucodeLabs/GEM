@@ -16,7 +16,7 @@ fun Section.xOfPicket(index: Int): Double {
 data class Bounds(val leftX: Double, val rightX: Double)
 
 fun Section.picketsBounds(): List<Bounds> {
-    val maxAb2 = pickets[0].sortedExperimentalData.maxOfOrNull { it.ab2 } ?: 0.0
+    val maxAb2 = pickets.getOrNull(0)?.sortedExperimentalData?.maxOfOrNull { it.ab2 } ?: 0.0
     if (pickets.size == 1) {
         return listOf(Bounds(-maxAb2, +maxAb2))
     }
