@@ -3,7 +3,7 @@ package ru.nucodelabs.algorithms.interpolation
 import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
-import ru.nucodelabs.gem.extensions.math.exp10
+import ru.nucodelabs.gem.extensions.std.exp10
 
 class Interpolator(
     private val inputData: List<List<XYChart.Data<Double, Double>>>,

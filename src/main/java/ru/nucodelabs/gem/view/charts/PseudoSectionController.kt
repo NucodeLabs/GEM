@@ -1,11 +1,12 @@
 package ru.nucodelabs.gem.view.charts
 
-import javafx.beans.value.ObservableObjectValue
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.picketBoundsOrNull
+import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.data.ves.picketsBounds
+import ru.nucodelabs.data.ves.xOfPicket
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -16,7 +17,7 @@ import java.util.*
 import javax.inject.Inject
 
 class PseudoSectionController @Inject constructor(
-    private val sectionObservable: ObservableObjectValue<Section>,
+    private val observableSection: ObservableSection,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
 
@@ -31,25 +32,21 @@ class PseudoSectionController @Inject constructor(
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         chart.colorMapper = colorMapper
-        sectionObservable.addListener { _, oldValue: Section?, newValue: Section? ->
-            if (newValue != null
-                && (newValue.pickets.map { it.experimentalData } != oldValue?.pickets?.map { it.experimentalData }
-                        || newValue.pickets.map { it.offsetX } != oldValue.pickets.map { it.offsetX }
-                        || newValue.pickets.map { it.z } != oldValue.pickets.map { it.z })
-            ) {
+        observableSection.pickets.addListener(ListChangeListener { c ->
+            if (c.next()) {
                 update()
             }
-        }
+        })
     }
 
     private fun update() {
         setupXAxisBounds()
 
-        val section = sectionObservable.get()
+        val section = observableSection.asSection()
         val data: MutableList<XYChart.Data<Number, Number>> = mutableListOf()
 
         for (picket in section.pickets) {
-            for (expData in picket.experimentalData) {
+            for (expData in picket.sortedExperimentalData) {
                 data.add(
                     XYChart.Data(
                         section.xOfPicket(picket),
@@ -61,33 +58,11 @@ class PseudoSectionController @Inject constructor(
         }
 
         chart.data.setAll(XYChart.Series(data.toObservableList()))
-
-        // force
-        if (section.pickets.size <= 1) {
-            val maxAb2 = section.pickets.first().experimentalData.maxOfOrNull { it.ab2 } ?: 0.1
-            xAxis.lowerBound = -maxAb2
-            xAxis.upperBound = +maxAb2
-        }
     }
 
     private fun setupXAxisBounds() {
-        val section = sectionObservable.value
-        when (section.pickets.size) {
-            1 -> {
-                val (leftX, rightX) = section.picketBoundsOrNull(section.pickets.first()) ?: (-0.1 to +0.1)
-                xAxis.lowerBound = leftX
-                xAxis.upperBound = rightX
-            }
-            0 -> {
-                xAxis.lowerBound = -3.0
-                xAxis.upperBound = 4.0
-            }
-            else -> {
-                val pickets = section.pickets.filter { it.experimentalData.isNotEmpty() }
-                xAxis.lowerBound =
-                    section.xOfPicket(pickets.first()) - pickets.first().experimentalData.maxOf { it.ab2 }
-                xAxis.upperBound = section.xOfPicket(pickets.last()) + pickets.last().experimentalData.maxOf { it.ab2 }
-            }
-        }
+        val bounds = observableSection.asSection().picketsBounds()
+        xAxis.lowerBound = bounds.first().leftX
+        xAxis.upperBound = bounds.last().rightX
     }
 }

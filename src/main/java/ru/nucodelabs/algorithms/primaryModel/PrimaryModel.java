@@ -7,20 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.nucodelabs.data.ves.JavaApiKt.replaceAb2;
+import static ru.nucodelabs.data.ves.JavaApiKt.replacePower;
+
 public class PrimaryModel {
 
     private final List<ExperimentalData> experimentalData;
+
     public PrimaryModel(List<ExperimentalData> experimentalData) {
         this.experimentalData = experimentalData;
     }
 
     public List<ModelLayer> get3LayersPrimaryModel() {
         if (experimentalData.size() <= 3) {
-           return new ArrayList<>();
+            return new ArrayList<>();
         }
 
         List<ExperimentalData> logExperimentalData = experimentalData.stream()
-                .map(experimentalData -> experimentalData.withAb2(Math.log(experimentalData.getAb2())))
+                .map(experimentalData -> replaceAb2(experimentalData, Math.log(experimentalData.getAb2())))
                 .toList();
         int pointsCnt = logExperimentalData.size();
         double ab2max = logExperimentalData.get(pointsCnt - 1).getAb2();
@@ -39,7 +43,7 @@ public class PrimaryModel {
         for (int i = 0; i < logSplitData.size(); i++) {
 
             if (logSplitData.get(i).size() == 0) {
-               return new ArrayList<>();
+                return new ArrayList<>();
             }
 
             double prevLast;
@@ -55,9 +59,9 @@ public class PrimaryModel {
                 prevLast = 0;
             }
             //От последнего в этом слою отнимаем последний в прошлом
-            modelLayers.add(ModelLayer.createNotFixed(Math.exp(list.get(list.size() - 1).getAb2()) - prevLast, avg));
+            modelLayers.add(new ModelLayer(Math.exp(list.get(list.size() - 1).getAb2()) - prevLast, avg, false, false));
         }
-        modelLayers.set(modelLayers.size() - 1, modelLayers.get(modelLayers.size() - 1).withPower(0));
+        modelLayers.set(modelLayers.size() - 1, replacePower(modelLayers.get(modelLayers.size() - 1), 0));
         return modelLayers;
     }
 }

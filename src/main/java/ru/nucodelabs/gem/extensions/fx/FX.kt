@@ -23,14 +23,30 @@ typealias Line<X, Y> = XYChart.Series<X, Y>
 
 typealias Point<X, Y> = XYChart.Data<X, Y>
 
+/**
+ * Returns binding that tells if list empty
+ */
 fun ObservableList<*>.emptyBinding(): BooleanBinding = createBooleanBinding({ isEmpty() }, this)
 
+/**
+ * Same as `getString()`
+ */
 operator fun ResourceBundle.get(key: String): String = this.getString(key)
 
+/**
+ * Returns new mutable observable list with elements of this
+ */
 fun <T> List<T>.toObservableList(): ObservableList<T> = FXCollections.observableList(this.toMutableList())
 
+/**
+ * Returns new mutable observable list with items
+ */
 fun <T> observableListOf(vararg items: T): ObservableList<T> = FXCollections.observableList(mutableListOf(*items))
 
+/**
+ * Returns CSS color string `rgba(r, g, b, a)`
+ * where `r`, `g`, `b` is integer representation, and `a` is float 0.0-1.0
+ */
 fun Color.toCss(): String = format(
     "rgba(%d, %d, %d, %f)",
     ceil(red * 255).toInt(),
@@ -61,8 +77,14 @@ fun TextField.isValidBy(
     return property
 }
 
+/**
+ * Returns boolean binding that tells if string is blank
+ */
 fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
 
+/**
+ * Returns boolean binding that tells if string is not blank
+ */
 fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
 
 /**
@@ -70,21 +92,33 @@ fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
  */
 fun <X, Y> line(point1: Point<X, Y>, point2: Point<X, Y>): Line<X, Y> = Line(observableListOf(point1, point2))
 
+/**
+ * Returns array of all bounds properties of nodes, so it can be passed in `create*Binding()` function as dependencies
+ */
 fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
     layoutBoundsProperty(),
     boundsInParentProperty(),
     boundsInLocalProperty()
 )
 
+/**
+ * Clears whole canvas
+ */
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
 
 val Label.textNode: Text
     get() = childrenUnmodifiable.filterIsInstance<Text>().first()
 
+/**
+ * Flips node horizontally by multiplying its scale by -1
+ */
 fun Node.flipHorizontally() {
     scaleX *= -1.0
 }
 
+/**
+ * Flips node vertically by multiplying its scale by -1
+ */
 fun Node.flipVertically() {
     scaleY *= -1.0
 }

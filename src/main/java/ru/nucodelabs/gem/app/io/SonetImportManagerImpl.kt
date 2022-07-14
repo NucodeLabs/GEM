@@ -7,20 +7,7 @@ import ru.nucodelabs.files.sonet.*
 import java.io.File
 
 internal class SonetImportManagerImpl : SonetImportManager {
-    @Throws(Exception::class)
-    override fun loadNameAndExperimentalDataFromEXPFile(expFile: File, target: Picket): Picket {
-        val fileName = expFile.name
 
-        val picketName = if (fileName.endsWith(".exp", ignoreCase = true)) {
-            fileName.substring(0, fileName.length - ".exp".length)
-        } else {
-            fileName
-        }
-
-        return loadExperimentalDataFromEXPFile(expFile, target).withName(picketName)
-    }
-
-    @Throws(Exception::class)
     private fun parseExpWithStt(expFile: File): Pair<EXPFile, STTFile> {
         val expParsed = EXPFileParser(expFile).parse()
         val expFilePath = expFile.toPath()
@@ -29,8 +16,7 @@ internal class SonetImportManagerImpl : SonetImportManager {
         ).parse()
     }
 
-    @Throws(Exception::class)
-    override fun loadExperimentalDataFromEXPFile(expFile: File, target: Picket): Picket {
+    private fun parseExperimentalData(expFile: File): List<ExperimentalData> {
         val (expParsed, sttParsed) = parseExpWithStt(expFile)
 
         val minSize = listOf(
@@ -44,21 +30,34 @@ internal class SonetImportManagerImpl : SonetImportManager {
 
         val expData: MutableList<ExperimentalData> = mutableListOf()
         for (i in 0 until minSize) {
-            expData += ExperimentalData.create(
-                sttParsed.aB_2[i],
-                sttParsed.mN_2[i],
-                expParsed.resistanceApparent[i],
-                expParsed.errorResistanceApparent[i],
-                expParsed.amperage[i],
-                expParsed.voltage[i]
+            expData += ExperimentalData(
+                ab2 = sttParsed.aB_2[i],
+                mn2 = sttParsed.mN_2[i],
+                resistanceApparent = expParsed.resistanceApparent[i],
+                errorResistanceApparent = expParsed.errorResistanceApparent[i],
+                amperage = expParsed.amperage[i],
+                voltage = expParsed.voltage[i]
             )
         }
-
-        return target.withExperimentalData(expData)
+        return expData
     }
 
-    @Throws(Exception::class)
-    override fun loadModelDataFromMODFile(modFile: File, target: Picket): Picket {
+    override fun fromEXPFile(expFile: File): Picket {
+        val fileName = expFile.name
+
+        val picketName = if (fileName.endsWith(".exp", ignoreCase = true)) {
+            fileName.substring(0, fileName.length - ".exp".length)
+        } else {
+            fileName
+        }
+
+        return Picket(
+            name = picketName,
+            experimentalData = parseExperimentalData(expFile)
+        )
+    }
+
+    override fun fromMODFile(modFile: File): List<ModelLayer> {
         val modParsed = MODFileParser(modFile).parse()
 
         val minSize = listOf(
@@ -68,11 +67,11 @@ internal class SonetImportManagerImpl : SonetImportManager {
 
         val modelData: MutableList<ModelLayer> = mutableListOf()
         for (i in 0 until minSize) {
-            modelData += ModelLayer.createNotFixed(
-                modParsed.power[i],
-                modParsed.resistance[i]
+            modelData += ModelLayer(
+                power = modParsed.power[i],
+                resistance = modParsed.resistance[i]
             )
         }
-        return target.withModelData(modelData)
+        return modelData
     }
 }

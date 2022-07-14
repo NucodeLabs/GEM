@@ -74,7 +74,7 @@ public class InverseSolver {
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
         MultivariateFunction multivariateFunction = new FunctionValue(
-                picket.getExperimentalData(), new SquaresDiff(), modelData, forwardSolver
+                picket.getSortedExperimentalData(), new SquaresDiff(), modelData, forwardSolver
         );
 
         //anyArray = resistance.size...(model.size - 1)
@@ -137,8 +137,11 @@ public class InverseSolver {
         List<ModelLayer> resultModel = new ArrayList<>();
 
         for (int i = 0; i < modelData.size(); i++) {
-            resultModel.add(ModelLayer.create(
-                    newModelPower.get(i), newModelResistance.get(i), modelData.get(i).isFixedPower(), modelData.get(i).isFixedResistance())
+            resultModel.add(new ModelLayer(
+                    newModelPower.get(i),
+                    newModelResistance.get(i),
+                    modelData.get(i).isFixedPower(),
+                    modelData.get(i).isFixedResistance())
             );
         }
 
