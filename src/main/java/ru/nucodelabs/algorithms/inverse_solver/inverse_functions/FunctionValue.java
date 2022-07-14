@@ -87,11 +87,11 @@ public class FunctionValue implements MultivariateFunction {
         diffMinValue = Math.min(diffValue, diffMinValue);
 
         for (ModelLayer modelLayer : modelLayers) {
-            if ((modelLayer.getPower() != 0.0 &&modelLayer.getPower() < 0.1) ||
-                    modelLayer.getPower() > 1e5 ||
-                    modelLayer.getResistance() < experimentalData.get(0).getAb2() ||
-                    modelLayer.getResistance() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
-                diffValue = diffMinValue * 1.05;
+            if (modelLayer.getResistance() < 0.1 ||
+                    modelLayer.getResistance() > 1e5 ||
+                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < experimentalData.get(0).getAb2()) ||
+                    modelLayer.getPower() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
+                diffValue = diffMinValue * 1.1;
                 break;
             }
         }
