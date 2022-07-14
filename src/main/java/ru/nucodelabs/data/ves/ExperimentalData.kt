@@ -19,7 +19,7 @@ data class ExperimentalData(
     @field:Positive val mn2: Double,
     @field:Min(0) val amperage: Double,
     @field:Min(0) val voltage: Double,
-    @field:Min(1) val resistanceApparent: Double = resistanceApparent(ab2, mn2, amperage, voltage),
+    @field:Min(1) val resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
     @field:Min(0) @Max(100) val errorResistanceApparent: Double = 5.0,
     val isHidden: Boolean = false
 )
