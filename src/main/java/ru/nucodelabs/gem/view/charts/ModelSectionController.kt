@@ -101,7 +101,15 @@ class ModelSectionController @Inject constructor(
                 val x = leftX
                 val y = if (i == 0) picket.z else zList[i - 1]
                 val width = rightX - leftX
-                val height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
+                val height = if (i == zList.lastIndex) {
+                    if (zList.size == 1) {
+                        picket.z - lowerBoundZ
+                    } else {
+                        abs(zList[i - 1] - lowerBoundZ)
+                    }
+                } else {
+                    picket.modelData[i].power
+                }
 
                 val series: Series<Number, Number> = Series(
                     observableListOf(
