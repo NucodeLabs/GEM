@@ -130,15 +130,21 @@ class VesCurvesController @Inject constructor(
         bound * exp10(range * padding) - bound
 
     private fun setupXAxisBounds() {
-        xAxis.lowerBound = min(
-            picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
-            picket.sortedExperimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
-        )
-
-        xAxis.upperBound = max(
-            picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
-            picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
-        )
+        if (picket.modelData.isNotEmpty()
+            || picket.sortedExperimentalData.isNotEmpty()
+        ) {
+            xAxis.lowerBound = min(
+                picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
+                picket.sortedExperimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
+            )
+            xAxis.upperBound = max(
+                picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
+                picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
+            )
+        } else {
+            xAxis.lowerBound = 1.0
+            xAxis.upperBound = 1000.0
+        }
 
         val range = xAxisRangeLog()
         xAxis.lowerBound -= paddingLowerBound(xAxis.lowerBound, range, X_AXIS_PADDING_LOG)
@@ -146,15 +152,21 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun setupYAxisBounds() {
-        yAxis.lowerBound = min(
-            picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
-            picket.sortedExperimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
-        )
-
-        yAxis.upperBound = max(
-            picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
-            picket.sortedExperimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
-        )
+        if (picket.modelData.isNotEmpty()
+            || picket.sortedExperimentalData.isNotEmpty()
+        ) {
+            yAxis.lowerBound = min(
+                picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
+                picket.sortedExperimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
+            )
+            yAxis.upperBound = max(
+                picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
+                picket.sortedExperimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
+            )
+        } else {
+            yAxis.lowerBound = 1.0
+            yAxis.upperBound = 1000.0
+        }
 
         val range = yAxisRangeLog()
         yAxis.lowerBound -= paddingLowerBound(yAxis.lowerBound, range, Y_AXIS_PADDING_LOG)

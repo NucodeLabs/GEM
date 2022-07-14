@@ -50,6 +50,9 @@ class ModelSectionController @Inject constructor(
     }
 
     private fun update() {
+        setupXAxisBounds()
+        setupYAxisBounds()
+
         chart.data.clear()
 
         if (observableSection.pickets.isEmpty()) {
@@ -85,19 +88,20 @@ class ModelSectionController @Inject constructor(
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
-
-        setupXAxisBounds()
-        setupYAxisBounds()
     }
 
     private fun setupXAxisBounds() {
         val bounds = observableSection.asSection().picketsBounds()
-        xAxis.lowerBound = bounds.first().leftX
-        xAxis.upperBound = bounds.last().rightX
+        xAxis.lowerBound = bounds.firstOrNull()?.leftX ?: 0.0
+        xAxis.upperBound = bounds.lastOrNull()?.rightX?.takeIf { it > 0.0 } ?: 100.0
     }
 
     private fun setupYAxisBounds() {
-        yAxis.upperBound = observableSection.pickets.maxOf { it.z }
+        if (observableSection.pickets.any { it.modelData.isNotEmpty() }) {
+            yAxis.upperBound = observableSection.pickets.maxOfOrNull { it.z } ?: 100.0
+        } else {
+            yAxis.upperBound = 100.0
+        }
         yAxis.lowerBound = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
     }
 

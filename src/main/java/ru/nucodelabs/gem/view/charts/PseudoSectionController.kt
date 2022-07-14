@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
+import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import ru.nucodelabs.data.fx.ObservableSection
@@ -41,6 +42,7 @@ class PseudoSectionController @Inject constructor(
 
     private fun update() {
         setupXAxisBounds()
+        setupYAxisBounds()
 
         val section = observableSection.asSection()
         val data: MutableList<XYChart.Data<Number, Number>> = mutableListOf()
@@ -60,9 +62,16 @@ class PseudoSectionController @Inject constructor(
         chart.data.setAll(XYChart.Series(data.toObservableList()))
     }
 
+    private fun setupYAxisBounds() {
+        if (observableSection.pickets.none { it.sortedExperimentalData.isNotEmpty() }) {
+            (chart.yAxis as ValueAxis<Number>).lowerBound = 1.0
+            (chart.yAxis as ValueAxis<Number>).upperBound = 1000.0
+        }
+    }
+
     private fun setupXAxisBounds() {
         val bounds = observableSection.asSection().picketsBounds()
-        xAxis.lowerBound = bounds.first().leftX
-        xAxis.upperBound = bounds.last().rightX
+        xAxis.lowerBound = bounds.firstOrNull()?.leftX ?: 0.0
+        xAxis.upperBound = bounds.lastOrNull()?.rightX?.takeIf { it > 0.0 } ?: 100.0
     }
 }
