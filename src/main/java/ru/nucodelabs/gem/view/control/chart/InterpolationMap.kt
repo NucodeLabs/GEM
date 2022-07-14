@@ -126,8 +126,10 @@ class InterpolationMap @JvmOverloads constructor(
 
     private fun initInterpolator() {
         val series = data[interpolateSeriesIndex]
-        if (series.data.isEmpty())
+        if (series.data.isEmpty()) {
+            canvas.clear()
             return
+        }
         val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
 
         try {
