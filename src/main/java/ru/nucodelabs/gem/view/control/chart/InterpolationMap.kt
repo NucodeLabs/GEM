@@ -117,8 +117,7 @@ class InterpolationMap @JvmOverloads constructor(
                         interpolator.getValue(xValue, yValue)
                     val color = colorMapper?.colorFor(fValue)
                     pw.setColor(x, y, color)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } catch (_: Exception) {
                     continue
                 }
             }

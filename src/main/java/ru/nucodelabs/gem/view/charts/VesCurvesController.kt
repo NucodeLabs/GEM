@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import com.google.inject.name.Named
 import javafx.beans.property.BooleanProperty
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
@@ -16,13 +17,14 @@ import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import javafx.util.Duration
 import ru.nucodelabs.algorithms.charts.VesCurvesConverter
+import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.gem.app.model.SectionManager
+import ru.nucodelabs.data.ves.zOfModelLayers
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.toObservableList
-import ru.nucodelabs.gem.extensions.math.exp10
+import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
@@ -50,12 +52,16 @@ private const val ZOOM_DELTA_REL = 0.1
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
+    private val _picketIndex: IntegerProperty,
     private val alertsFactory: AlertsFactory,
-    private val sectionManager: SectionManager,
+    private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val vesCurvesConverter: VesCurvesConverter,
     private val decimalFormat: DecimalFormat
 ) : AbstractController() {
+
+    private val picketIndex
+        get() = _picketIndex.get()
 
     @FXML
     private lateinit var lineChart: LineChart<Number, Number>
@@ -69,7 +75,7 @@ class VesCurvesController @Inject constructor(
     override val stage: Stage
         get() = lineChart.scene.window as Stage
 
-    private val picket: Picket
+    private val picket
         get() = picketObservable.get()!!
 
     private lateinit var uiProperties: ResourceBundle
@@ -102,7 +108,6 @@ class VesCurvesController @Inject constructor(
             modelCurveIndex = MOD_CURVE_SERIES_INDEX,
             lowerLimitY = 1.0
         )
-
     }
 
     private fun update() {
@@ -127,12 +132,12 @@ class VesCurvesController @Inject constructor(
     private fun setupXAxisBounds() {
         xAxis.lowerBound = min(
             picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
-            picket.experimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
+            picket.sortedExperimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
         )
 
         xAxis.upperBound = max(
             picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
-            picket.experimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
+            picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
         )
 
         val range = xAxisRangeLog()
@@ -143,12 +148,12 @@ class VesCurvesController @Inject constructor(
     private fun setupYAxisBounds() {
         yAxis.lowerBound = min(
             picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
-            picket.experimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
+            picket.sortedExperimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
         )
 
         yAxis.upperBound = max(
             picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
-            picket.experimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
+            picket.sortedExperimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
         )
 
         val range = yAxisRangeLog()
@@ -169,7 +174,7 @@ class VesCurvesController @Inject constructor(
         val theorCurveSeries = Series<Number, Number>()
         try {
             theorCurveSeries.data.addAll(
-                vesCurvesConverter.theoreticalCurveOf(picket.experimentalData, picket.modelData)
+                vesCurvesConverter.theoreticalCurveOf(picket.sortedExperimentalData, picket.modelData)
                     .mapIndexed { i, (x, y) ->
                         Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
                     }
@@ -207,11 +212,8 @@ class VesCurvesController @Inject constructor(
         }
         modelCurveSeries.node.onMouseDragged = EventHandler { e: MouseEvent ->
             isDraggingModel = true
-            sectionManager.update(
-                picket.withModelData(
-                    modelCurveDragger.handleMouseDragged(e, picket.modelData)
-                )
-            )
+            observableSection.pickets[picketIndex] =
+                picket.copy(modelData = modelCurveDragger.handleMouseDragged(e, picket.modelData.toMutableList()))
         }
         modelCurveSeries.node.onMouseReleased = EventHandler {
             historyManager.snapshot()
@@ -225,7 +227,7 @@ class VesCurvesController @Inject constructor(
 
     private fun updateExpCurves() {
         val expCurveSeries = Series(
-            vesCurvesConverter.experimentalCurveOf(picket.experimentalData).mapIndexed { i, (x, y) ->
+            vesCurvesConverter.experimentalCurveOf(picket.sortedExperimentalData).mapIndexed { i, (x, y) ->
                 Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
             }.toObservableList()
         )
@@ -233,7 +235,7 @@ class VesCurvesController @Inject constructor(
 
         val errUpperExp = Series(
             vesCurvesConverter.experimentalCurveErrorBoundOf(
-                picket.experimentalData,
+                picket.sortedExperimentalData,
                 VesCurvesConverter.BoundType.UPPER_BOUND
             ).mapIndexed { i, (x, y) ->
                 Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
@@ -243,7 +245,7 @@ class VesCurvesController @Inject constructor(
 
         val errLowerExp = Series(
             vesCurvesConverter.experimentalCurveErrorBoundOf(
-                picket.experimentalData,
+                picket.sortedExperimentalData,
                 VesCurvesConverter.BoundType.LOWER_BOUND
             ).mapIndexed { i, (x, y) ->
                 Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }

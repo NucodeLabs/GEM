@@ -62,14 +62,14 @@ class MisfitStacksController @Inject constructor(
     private fun update() {
         var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
         try {
-            val values = misfitValuesFactory(picket.experimentalData, picket.modelData)
-            val expPoints = vesCurvesConverter.experimentalCurveOf(picket.experimentalData).map {
+            val values = misfitValuesFactory(picket.sortedExperimentalData, picket.modelData)
+            val expPoints = vesCurvesConverter.experimentalCurveOf(picket.sortedExperimentalData).map {
                 Point(it.x, it.y)
             }
 
             misfitStacksSeriesList = observableList(mutableListOf())
 
-            if (picket.experimentalData.isNotEmpty() && picket.modelData.isNotEmpty()
+            if (picket.sortedExperimentalData.isNotEmpty() && picket.modelData.isNotEmpty()
             ) {
                 check(values.size == expPoints.size)
                 for ((index, expPoint) in expPoints.withIndex()) {
