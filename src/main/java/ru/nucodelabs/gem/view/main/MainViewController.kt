@@ -220,10 +220,12 @@ class MainViewController @Inject constructor(
             )
         )
         observableSection.pickets.addListener(ListChangeListener {
-            if (storageManager.savedSnapshot != observableSection.snapshot()) {
-                dirtyAsterisk.set("*")
-            } else {
-                dirtyAsterisk.set("")
+            if (it.next()) {
+                if (storageManager.savedSnapshot != observableSection.snapshot()) {
+                    dirtyAsterisk.set("*")
+                } else {
+                    dirtyAsterisk.set("")
+                }
             }
         })
         stage.titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle))
@@ -317,7 +319,7 @@ class MainViewController @Inject constructor(
                 return
             }
             observableSection.restoreFromSnapshot(snapshotOf(loadedSection))
-            _picketIndex.set(0)
+            picketIndex = 0
             historyManager.clear()
             historyManager.snapshot()
             setWindowFileTitle(file)
@@ -399,7 +401,7 @@ class MainViewController @Inject constructor(
         try {
             val loadedPicket = storageManager.loadFromJson(file, Picket::class.java)
             historyManager.snapshotAfter { observableSection.pickets.add(loadedPicket) }
-            _picketIndex.set(observableSection.pickets.lastIndex)
+            picketIndex = observableSection.pickets.lastIndex
         } catch (e: Exception) {
             alertsFactory.incorrectFileAlert(e, stage).show()
         }
@@ -424,14 +426,14 @@ class MainViewController @Inject constructor(
     @FXML
     private fun switchToNextPicket() {
         if (picketIndex + 1 <= observableSection.pickets.lastIndex && !observableSection.pickets.isEmpty()) {
-            _picketIndex.set(picketIndex + 1)
+            picketIndex++
         }
     }
 
     @FXML
     private fun switchToPrevPicket() {
         if (picketIndex >= 1 && !observableSection.pickets.isEmpty()) {
-            _picketIndex.set(picketIndex - 1)
+            picketIndex--
         }
     }
 
@@ -519,7 +521,7 @@ class MainViewController @Inject constructor(
     @FXML
     override fun addNewPicket() {
         historyManager.snapshotAfter { observableSection.pickets += Picket() }
-        _picketIndex.set(observableSection.pickets.lastIndex)
+        picketIndex = observableSection.pickets.lastIndex
     }
 
     @FXML
