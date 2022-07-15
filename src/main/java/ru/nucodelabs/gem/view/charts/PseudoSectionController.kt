@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import javafx.util.StringConverter
@@ -101,8 +100,13 @@ class PseudoSectionController @Inject constructor(
 
     private fun setupYAxisBounds() {
         if (observableSection.pickets.none { it.sortedExperimentalData.isNotEmpty() }) {
-            (chart.yAxis as ValueAxis<Number>).lowerBound = 1.0
-            (chart.yAxis as ValueAxis<Number>).upperBound = 1000.0
+            yAxis.lowerBound = 1.0
+            yAxis.upperBound = 1000.0
+        } else {
+            yAxis.upperBound =
+                observableSection.pickets.maxOfOrNull { it.sortedExperimentalData.lastOrNull()?.ab2 ?: 1.0 } ?: 1.0
+            yAxis.lowerBound =
+                observableSection.pickets.minOfOrNull { it.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0 } ?: 1.0
         }
     }
 
