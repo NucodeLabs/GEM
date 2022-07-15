@@ -6,6 +6,7 @@ import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ModelLayer
 import ru.nucodelabs.data.ves.Picket
@@ -27,7 +28,8 @@ private const val LAST_COEF = 0.5
 
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
-    private val colorMapper: ColorMapper
+    private val colorMapper: ColorMapper,
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
     /**
@@ -60,6 +62,9 @@ class ModelSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        yAxis.tickLabelFormatter = formatter
+        xAxis.tickLabelFormatter = formatter
+
         observableSection.pickets.addListener(ListChangeListener { c ->
             while (c.next()) {
                 if (c.wasReplaced()) {

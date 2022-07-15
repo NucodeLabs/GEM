@@ -5,6 +5,7 @@ import javafx.fxml.FXML
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.Picket
@@ -16,13 +17,15 @@ import ru.nucodelabs.gem.view.charts.PseudoSectionController.PicketDependencies.
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
 
 class PseudoSectionController @Inject constructor(
     private val observableSection: ObservableSection,
-    private val colorMapper: ColorMapper
+    private val colorMapper: ColorMapper,
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
     /**
@@ -43,6 +46,9 @@ class PseudoSectionController @Inject constructor(
     }
 
     @FXML
+    private lateinit var yAxis: LogarithmicAxis
+
+    @FXML
     private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
@@ -52,6 +58,9 @@ class PseudoSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        xAxis.tickLabelFormatter = formatter
+        yAxis.tickLabelFormatter = formatter
+
         chart.colorMapper = colorMapper
         observableSection.pickets.addListener(ListChangeListener { c ->
             while (c.next()) {
