@@ -20,7 +20,7 @@
     <!--    </HBox>-->
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
-            <VBox alignment="CENTER" fx:id="dragDropPlaceholder" spacing="5"
+            <VBox alignment="CENTER" fx:id="dragDropPlaceholder" spacing="5" minHeight="0"
                   onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">

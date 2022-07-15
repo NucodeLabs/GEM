@@ -16,6 +16,8 @@ import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import java.math.MathContext
+import java.math.RoundingMode
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -146,6 +148,11 @@ class ModelSectionController @Inject constructor(
             if (zList.size >= 2) {
                 zList[zList.lastIndex] = zList[zList.lastIndex - 1]
                 zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+                zList[zList.lastIndex] =
+                    zList[zList.lastIndex]
+                        .toBigDecimal()
+                        .round(MathContext(3, RoundingMode.UP))
+                        .toDouble()
             }
         }
     }.filter { it.isNotEmpty() }
