@@ -62,10 +62,19 @@ class MainViewController @Inject constructor(
     private val fxPreferences: FXPreferences,
     private val inverseSolver: InverseSolver
 ) : AbstractController(), FileImporter, FileOpener {
-    private val vesNumber: StringProperty = SimpleStringProperty()
-    private val noFileOpened: BooleanProperty = SimpleBooleanProperty(true)
+
     private val windowTitle: StringProperty = SimpleStringProperty("GEM")
     private val dirtyAsterisk: StringProperty = SimpleStringProperty("")
+
+    private val _noFileOpened: BooleanProperty = SimpleBooleanProperty(true)
+    fun noFileOpenedProperty(): BooleanProperty = _noFileOpened
+    val noFileOpened: Boolean
+        get() = _noFileOpened.get()
+
+    private val _vesNumber: StringProperty = SimpleStringProperty()
+    fun vesNumberProperty(): StringProperty = _vesNumber
+    val vesNumber: String?
+        get() = _vesNumber.get()
 
     private val picket
         get() = _picket.get()!!
@@ -95,9 +104,6 @@ class MainViewController @Inject constructor(
     @FXML
     private lateinit var root: Stage
 
-    override val stage: Stage
-        get() = root
-
     @FXML
     private lateinit var menuBar: MenuBar
 
@@ -112,6 +118,9 @@ class MainViewController @Inject constructor(
 
     @FXML
     private lateinit var misfitStacksController: MisfitStacksController
+
+    override val stage: Stage
+        get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         stage.onCloseRequest = EventHandler { event: WindowEvent -> askToSave(event) }
@@ -196,9 +205,9 @@ class MainViewController @Inject constructor(
     }
 
     private fun bind() {
-        noFileScreenController.visibleProperty().bind(noFileOpened)
+        noFileScreenController.visibleProperty().bind(_noFileOpened)
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
-        vesNumber.bind(
+        _vesNumber.bind(
             Bindings.createStringBinding(
                 { (picketIndex + 1).toString() + "/" + observableSection.pickets.size },
                 _picketIndex, observableSection.pickets
@@ -211,7 +220,7 @@ class MainViewController @Inject constructor(
                 picketName.text = "-"
             }
         }
-        noFileOpened.bind(
+        _noFileOpened.bind(
             Bindings.createBooleanBinding(
                 { observableSection.pickets.isEmpty() },
                 observableSection.pickets
@@ -335,9 +344,11 @@ class MainViewController @Inject constructor(
     private fun saveSection() {
         if (storageManager.savedSnapshot != observableSection.snapshot()) {
             saveSection(
-                if (storageManager.savedSnapshotFile != null) storageManager.savedSnapshotFile else jsonFileChooser.showSaveDialog(
-                    stage
-                )
+                if (storageManager.savedSnapshotFile != null) {
+                    storageManager.savedSnapshotFile
+                } else {
+                    jsonFileChooser.showSaveDialog(stage)
+                }
             )
         }
     }
@@ -538,21 +549,5 @@ class MainViewController @Inject constructor(
 
     private fun resetWindowTitle() {
         windowTitle.set("GEM")
-    }
-
-    fun getNoFileOpened(): Boolean {
-        return noFileOpened.get()
-    }
-
-    fun noFileOpenedProperty(): BooleanProperty {
-        return noFileOpened
-    }
-
-    fun getVesNumber(): String? {
-        return vesNumber.get()
-    }
-
-    fun vesNumberProperty(): StringProperty {
-        return vesNumber
     }
 }
