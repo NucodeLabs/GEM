@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.extensions.fx
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.Node
@@ -80,12 +80,12 @@ fun TextField.isValidBy(
 /**
  * Returns boolean binding that tells if string is blank
  */
-fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
+fun ObservableValue<String>.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
 
 /**
  * Returns boolean binding that tells if string is not blank
  */
-fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
+fun ObservableValue<String>.isNotBlank(): BooleanBinding = isBlank().not()
 
 /**
  * Creates series with 2 data points

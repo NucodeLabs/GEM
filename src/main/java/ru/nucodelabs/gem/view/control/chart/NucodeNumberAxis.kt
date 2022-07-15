@@ -5,6 +5,8 @@ import javafx.beans.NamedArg
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.geometry.Side
 import javafx.util.StringConverter
+import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -12,6 +14,19 @@ class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 0.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
+
+    private val tickUnitProperty = SimpleDoubleProperty(10.0)
+    fun tickUnitProperty() = tickUnitProperty
+    var tickUnit by tickUnitProperty
+
+    init {
+        tickUnitProperty().addListener(InvalidationListener {
+            if (!isAutoRanging) {
+                invalidateRange()
+                requestAxisLayout()
+            }
+        })
+    }
 
     class DefaultConverter : StringConverter<Number>() {
         override fun toString(obj: Number?): String = obj.toString()
@@ -80,21 +95,6 @@ class NucodeNumberAxis @JvmOverloads constructor(
     private fun measureTickMarkSize(value: Number, side: Side): Double {
         val size = measureTickMarkSize(value, tickLabelRotation)
         return if (side.isVertical) size.height else size.width
-    }
-
-    private val _tickUnit = SimpleDoubleProperty(10.0)
-    fun tickUnitProperty() = _tickUnit
-    var tickUnit
-        get() = _tickUnit.get()
-        set(value) = _tickUnit.set(value)
-
-    init {
-        tickUnitProperty().addListener(InvalidationListener {
-            if (!isAutoRanging) {
-                invalidateRange()
-                requestAxisLayout()
-            }
-        })
     }
 
     override fun getDisplayPosition(value: Number): Double {

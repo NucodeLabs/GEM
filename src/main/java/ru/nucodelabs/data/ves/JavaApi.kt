@@ -1,3 +1,4 @@
+@file:JvmName("JavaApi")
 package ru.nucodelabs.data.ves
 
 class ExperimentalDataBuilder(source: ExperimentalData) {

@@ -13,7 +13,7 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 class LogarithmicAxis @JvmOverloads constructor(
-    @NamedArg("lowerBound") lowerBound: Double = 0.0,
+    @NamedArg("lowerBound") lowerBound: Double = 1.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
     private val lowerRangeTimeline = Timeline()
@@ -43,7 +43,7 @@ class LogarithmicAxis @JvmOverloads constructor(
     }
 
     private fun validateBounds(lowerBound: Double, upperBound: Double) =
-        require(lowerBound >= 0 && upperBound >= 0 && lowerBound <= upperBound)
+        require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
 
 
     override fun calculateMinorTickMarks(): List<Number> {
