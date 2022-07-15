@@ -6,7 +6,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.util.converter.DoubleStringConverter?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
@@ -45,9 +44,6 @@
                              lowerBound="0.01" upperBound="1e4"
                              minorTickVisible="false"
                              tickLabelRotation="-45">
-                <tickLabelFormatter>
-                    <DoubleStringConverter/>
-                </tickLabelFormatter>
             </LogarithmicAxis>
         </xAxis>
         <yAxis>
@@ -57,9 +53,6 @@
                              autoRanging="false"
                              lowerBound="0" upperBound="10e4"
                              minorTickVisible="false">
-                <tickLabelFormatter>
-                    <DoubleStringConverter/>
-                </tickLabelFormatter>
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>

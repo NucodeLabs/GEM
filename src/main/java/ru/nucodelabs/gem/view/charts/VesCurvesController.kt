@@ -16,6 +16,7 @@ import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import javafx.util.Duration
+import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.VesCurvesConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
@@ -57,7 +58,8 @@ class VesCurvesController @Inject constructor(
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val vesCurvesConverter: VesCurvesConverter,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
     private val picketIndex
@@ -88,6 +90,9 @@ class VesCurvesController @Inject constructor(
     private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        xAxis.tickLabelFormatter = formatter
+        yAxis.tickLabelFormatter = formatter
+
         picketObservable.addListener { _, _, newValue: Picket? ->
             if (isDraggingModel) {
                 updateTheoreticalCurve()
