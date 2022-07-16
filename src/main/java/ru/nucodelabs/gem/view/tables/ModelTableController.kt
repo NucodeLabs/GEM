@@ -200,7 +200,7 @@ class ModelTableController @Inject constructor(
                 } else {
                     val (fst, snd) = modelData[index].divide()
                     modelData[index] = fst
-                    modelData[index + 1] = snd
+                    modelData.add(index + 1, snd)
                 }
             }
         }
