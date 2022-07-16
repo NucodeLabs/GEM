@@ -27,7 +27,9 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
+import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.extensions.fx.setValue
 import ru.nucodelabs.gem.util.FXUtils
 import ru.nucodelabs.gem.util.OS.isMacOS
 import ru.nucodelabs.gem.view.AbstractController
@@ -50,8 +52,8 @@ class MainViewController @Inject constructor(
     @Named("MOD") private val modFileChooser: FileChooser,
     @Named("JSON") private val jsonFileChooser: FileChooser,
     @Named("Save") private val saveDialogProvider: Provider<Dialog<ButtonType>>,
-    private val _picket: ObservableObjectValue<Picket>,
-    private val _picketIndex: IntegerProperty,
+    private val picketObservable: ObservableObjectValue<Picket>,
+    private val picketIndexProperty: IntegerProperty,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
@@ -66,22 +68,18 @@ class MainViewController @Inject constructor(
     private val windowTitle: StringProperty = SimpleStringProperty("GEM")
     private val dirtyAsterisk: StringProperty = SimpleStringProperty("")
 
-    private val _noFileOpened: BooleanProperty = SimpleBooleanProperty(true)
-    fun noFileOpenedProperty(): BooleanProperty = _noFileOpened
-    val noFileOpened: Boolean
-        get() = _noFileOpened.get()
+    private val noFileOpenedProperty: BooleanProperty = SimpleBooleanProperty(true)
+    fun noFileOpenedProperty(): BooleanProperty = noFileOpenedProperty
+    val noFileOpened: Boolean by noFileOpenedProperty
 
-    private val _vesNumber: StringProperty = SimpleStringProperty()
-    fun vesNumberProperty(): StringProperty = _vesNumber
-    val vesNumber: String?
-        get() = _vesNumber.get()
+    private val vesNumberProperty: StringProperty = SimpleStringProperty()
+    fun vesNumberProperty(): StringProperty = vesNumberProperty
+    val vesNumber: String? by vesNumberProperty
+
+    private var picketIndex by picketIndexProperty
 
     private val picket
-        get() = _picket.get()!!
-
-    private var picketIndex
-        get() = _picketIndex.get()
-        set(value) = _picketIndex.set(value)
+        get() = picketObservable.get()!!
 
     @FXML
     private lateinit var inverseBtn: Button
@@ -163,13 +161,13 @@ class MainViewController @Inject constructor(
         inverseBtn.disableProperty().bind(
             Bindings.createBooleanBinding(
                 {
-                    if (_picket.get() != null) {
+                    if (picketObservable.get() != null) {
                         picket.modelData.isEmpty() || picket.sortedExperimentalData.isEmpty()
                     } else {
                         false
                     }
                 },
-                _picket
+                picketObservable
             )
         )
     }
@@ -205,22 +203,22 @@ class MainViewController @Inject constructor(
     }
 
     private fun bind() {
-        noFileScreenController.visibleProperty().bind(_noFileOpened)
+        noFileScreenController.visibleProperty().bind(noFileOpenedProperty)
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
-        _vesNumber.bind(
+        vesNumberProperty.bind(
             Bindings.createStringBinding(
                 { (picketIndex + 1).toString() + "/" + observableSection.pickets.size },
-                _picketIndex, observableSection.pickets
+                picketIndexProperty, observableSection.pickets
             )
         )
-        _picket.addListener { _: ObservableValue<out Picket?>?, _: Picket?, newValue: Picket? ->
+        picketObservable.addListener { _: ObservableValue<out Picket?>?, _: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 picketName.text = newValue.name
             } else {
                 picketName.text = "-"
             }
         }
-        _noFileOpened.bind(
+        noFileOpenedProperty.bind(
             Bindings.createBooleanBinding(
                 { observableSection.pickets.isEmpty() },
                 observableSection.pickets
@@ -236,7 +234,7 @@ class MainViewController @Inject constructor(
             }
         })
         stage.titleProperty().bind(Bindings.concat(dirtyAsterisk, windowTitle))
-        _picket.addListener { _: ObservableValue<out Picket?>?, _: Picket?, newValue: Picket? ->
+        picketObservable.addListener { _: ObservableValue<out Picket?>?, _: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 picketOffsetX.text = decimalFormat.format(newValue.offsetX)
                 picketZ.text = decimalFormat.format(newValue.z)
