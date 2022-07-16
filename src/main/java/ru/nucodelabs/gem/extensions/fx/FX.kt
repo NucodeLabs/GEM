@@ -57,17 +57,23 @@ fun Color.toCss(): String = format(
 
 fun TextField.isValidBy(
     styleIfInvalid: String = "-fx-background-color: LightPink",
-    validate: (String) -> Boolean
+    blankIsValid: Boolean = true,
+    validate: (String) -> Boolean,
 ): ReadOnlyBooleanProperty {
     val property = SimpleBooleanProperty()
 
     fun run() {
-        if (!validate(text)) {
-            property.set(false)
-            style = styleIfInvalid
-        } else {
-            property.set(true)
+        if (text.isBlank()) {
+            property.set(blankIsValid)
             style = ""
+        } else {
+            if (!validate(text)) {
+                property.set(false)
+                style = styleIfInvalid
+            } else {
+                property.set(true)
+                style = ""
+            }
         }
     }
     run()

@@ -25,11 +25,8 @@ class ObservableExperimentalData(
         experimentalData.isHidden
     )
 
-    private val experimentalDataView by lazy {
+    fun toExperimentalData() =
         ExperimentalData(ab2, mn2, amperage, voltage, resistanceApparent, errorResistanceApparent, isHidden)
-    }
-
-    fun asExperimentalData() = experimentalDataView
 
     private val ab2Property = SimpleDoubleProperty(ab2)
     fun ab2Property() = ab2Property

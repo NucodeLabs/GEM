@@ -24,8 +24,7 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.fx.toObservableList
-import ru.nucodelabs.gem.extensions.std.removeAllAt
-import ru.nucodelabs.gem.util.FXUtils
+import ru.nucodelabs.gem.extensions.std.toNumberOrNull
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import java.net.URL
@@ -105,13 +104,12 @@ class ExperimentalTableController @Inject constructor(
     private val picketIndex
         get() = _picketIndex.get()
 
-
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
+                val items = table.items
                 if (oldValue != null
-                    && oldValue.sortedExperimentalData != newValue.sortedExperimentalData
-                    && newValue.sortedExperimentalData != table.items.map { it.asExperimentalData() }
+                    && newValue.sortedExperimentalData != table.items.map { it.toExperimentalData() }
                 ) {
                     update()
                 } else if (oldValue == null) {
@@ -159,14 +157,22 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun setupValidation() {
-        val validateDataInput = { s: String -> validateDoubleInput(s, decimalFormat) }
-        val validInput = ab2TextField.isValidBy { validateDataInput(it) }
-            .and(mn2TextField.isValidBy { validateDataInput(it) })
-            .and(resAppTextField.isValidBy { validateDataInput(it) })
-            .and(errResAppTextField.isValidBy { validateDataInput(it) })
-            .and(voltageTextField.isValidBy { validateDataInput(it) })
-            .and(amperageTextField.isValidBy { validateDataInput(it) })
-            .and(indexTextField.isValidBy { validateIndexInput(it) })
+        fun validate(value: Any?, prop: String): Boolean {
+            if (value == null) {
+                return false
+            }
+            return validator.validateValue(ExperimentalData::class.java, prop, value).isEmpty()
+        }
+
+        fun String.parseDouble() = toNumberOrNull(decimalFormat)?.toDouble()
+
+        val validInput = ab2TextField.isValidBy { validate(it.parseDouble(), "ab2") }
+            .and(mn2TextField.isValidBy { validate(it.parseDouble(), "mn2") })
+            .and(resAppTextField.isValidBy { validate(it.parseDouble(), "resistanceApparent") })
+            .and(errResAppTextField.isValidBy { validate(it.parseDouble(), "errorResistanceApparent") })
+            .and(voltageTextField.isValidBy { validate(it.parseDouble(), "voltage") })
+            .and(amperageTextField.isValidBy { validate(it.parseDouble(), "amperage") })
+            .and(indexTextField.isValidBy { it.isIndexOrBlank() })
 
         val allRequiredNotBlank = ab2TextField.textProperty().isNotBlank()
             .and(mn2TextField.textProperty().isNotBlank())
@@ -198,103 +204,119 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun update() {
-        table.itemsProperty().value =
-            picket.sortedExperimentalData.map { it.toObservable() }.toObservableList()
+        mapItems()
+        addListenersToItems()
+        addListenerToItemsList()
+        table.refresh()
+    }
+
+    private fun addListenerToItemsList() {
+        table.items.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                when {
+                    c.wasReplaced() -> commitChanges()
+                    c.wasAdded() -> commitChanges()
+                    c.wasRemoved() -> commitChanges()
+                    c.wasPermutated() -> commitChanges()
+                }
+            }
+        })
+    }
+
+    private fun mapItems() {
+        table.items = picket.sortedExperimentalData.map { it.toObservable() }.toObservableList()
+    }
+
+    private fun addListenersToItems() {
         table.items.forEachIndexed { index, expData ->
             expData.ab2Property().addListener { _, oldAb2, newAb2 ->
-                if (validator.validateValue(ExperimentalData::class.java, "ab2", newAb2).isEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(index, expData.asExperimentalData().copy(ab2 = newAb2.toDouble()))
-                            })
-                    }
+                val violations = validator.validateValue(ExperimentalData::class.java, "ab2", newAb2)
+                if (violations.isEmpty()) {
+                    commitChanges()
                 } else {
                     expData.ab2 = oldAb2.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.mn2Property().addListener { _, oldMn2, newMn2 ->
-                if (validator.validateValue(ExperimentalData::class.java, "mn2", newMn2).isEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(index, expData.asExperimentalData().copy(mn2 = newMn2.toDouble()))
-                            })
-                    }
+                val violations = validator.validateValue(ExperimentalData::class.java, "mn2", newMn2)
+                if (violations.isEmpty()) {
+                    commitChanges()
                 } else {
                     expData.mn2 = oldMn2.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.errorResistanceApparentProperty().addListener { _, oldErr, newErr ->
-                if (validator.validateValue(ExperimentalData::class.java, "errorResistanceApparent", newErr)
-                        .isEmpty()
+                val violations = validator.validateValue(
+                    ExperimentalData::class.java,
+                    "errorResistanceApparent",
+                    newErr
+                )
+                if (violations.isEmpty()
                 ) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(
-                                    index,
-                                    expData.asExperimentalData().copy(errorResistanceApparent = newErr.toDouble())
-                                )
-                            })
-                    }
+                    commitChanges()
                 } else {
                     expData.errorResistanceApparent = oldErr.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.amperageProperty().addListener { _, oldAmp, newAmp ->
-                if (validator.validateValue(ExperimentalData::class.java, "amperage", newAmp).isEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(index, expData.asExperimentalData().copy(amperage = newAmp.toDouble()))
-                            })
-                    }
+                val violations = validator.validateValue(ExperimentalData::class.java, "amperage", newAmp)
+                if (violations.isEmpty()) {
+                    commitChanges()
                 } else {
                     expData.amperage = oldAmp.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.voltageProperty().addListener { _, oldVolt, newVolt ->
-                if (validator.validateValue(ExperimentalData::class.java, "voltage", newVolt).isEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(index, expData.asExperimentalData().copy(voltage = newVolt.toDouble()))
-                            })
-                    }
+                val violations = validator.validateValue(ExperimentalData::class.java, "voltage", newVolt)
+                if (violations.isEmpty()) {
+                    commitChanges()
                 } else {
                     expData.voltage = oldVolt.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.resistanceApparentProperty().addListener { _, oldRes, newRes ->
-                if (validator.validateValue(ExperimentalData::class.java, "resistanceApparent", newRes).isEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] =
-                            picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                                set(index, expData.asExperimentalData().copy(resistanceApparent = newRes.toDouble()))
-                            })
-                    }
+                val violations = validator.validateValue(
+                    ExperimentalData::class.java,
+                    "resistanceApparent",
+                    newRes
+                )
+                if (violations.isEmpty()
+                ) {
+                    commitChanges()
                 } else {
                     expData.resistanceApparent = oldRes.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
             expData.hiddenProperty().addListener { _, _, newHidden ->
                 historyManager.snapshotAfter {
                     observableSection.pickets[picketIndex] =
                         picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                            set(index, expData.asExperimentalData().copy(isHidden = newHidden))
+                            set(index, expData.toExperimentalData().copy(isHidden = newHidden))
                         })
                 }
             }
         }
-        table.refresh()
+    }
+
+    private fun commitChanges() {
+        val experimentalDataInTable = table.items.map { it.toExperimentalData() }
+        if (experimentalDataInTable != picket.sortedExperimentalData) {
+            historyManager.snapshotAfter {
+                observableSection.pickets[picketIndex] =
+                    picket.copy(experimentalData = experimentalDataInTable)
+            }
+        }
     }
 
     @FXML
     private fun deleteSelected() {
-        updateIfValidElseAlert(
-            picket.sortedExperimentalData.toMutableList().apply { removeAllAt(table.selectionModel.selectedIndices) }
-        )
+        table.items.removeAll(table.selectionModel.selectedItems)
     }
 
     @FXML
@@ -323,52 +345,29 @@ class ExperimentalTableController @Inject constructor(
                 picket.sortedExperimentalData.size
             }
 
-            updateIfValidElseAlert(picket.sortedExperimentalData.toMutableList().apply {
-                add(
-                    index,
-                    ExperimentalData(
-                        ab2 = newAb2Value,
-                        mn2 = newMn2Value,
-                        resistanceApparent = newResAppValue,
-                        errorResistanceApparent = newErrResAppValue,
-                        amperage = newAmperageValue,
-                        voltage = newVoltageValue
-                    )
-                )
-            })
-        }
-    }
 
-    private fun updateIfValidElseAlert(newExpData: List<ExperimentalData>) {
-        val modified = picket.copy(experimentalData = newExpData)
-        val violations = validator.validate(modified)
-        if (violations.isNotEmpty()) {
-            alertsFactory.violationsAlert(violations, stage).show()
-            table.refresh()
-        } else {
-            historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
-            FXUtils.unfocus(
-                indexTextField,
-                ab2TextField,
-                mn2TextField,
-                resAppTextField,
-                errResAppTextField,
-                amperageTextField,
-                voltageTextField
+            table.items.add(
+                index,
+                ExperimentalData(
+                    ab2 = newAb2Value,
+                    mn2 = newMn2Value,
+                    resistanceApparent = newResAppValue,
+                    errorResistanceApparent = newErrResAppValue,
+                    amperage = newAmperageValue,
+                    voltage = newVoltageValue
+                ).toObservable()
             )
         }
     }
 
     @FXML
     private fun recalculateSelected() {
-        val experimentalData = picket.sortedExperimentalData.toMutableList()
+        val experimentalData = table.items.map { it.toExperimentalData() }.toMutableList()
 
         for (i in table.selectionModel.selectedIndices) {
-            experimentalData[i] = table.items[i].asExperimentalData().withCalculatedResistanceApparent()
+            experimentalData[i] = experimentalData[i].withCalculatedResistanceApparent()
         }
 
-        historyManager.snapshotAfter {
-            observableSection.pickets[picketIndex] = picket.copy(experimentalData = experimentalData)
-        }
+        table.items.setAll(experimentalData.map { it.toObservable() })
     }
 }
