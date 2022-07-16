@@ -21,6 +21,7 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.withCalculatedResistanceApparent
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.isNotBlank
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.fx.toObservableList
@@ -37,7 +38,7 @@ class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val validator: Validator,
     private val observableSection: ObservableSection,
-    private val _picketIndex: IntegerProperty,
+    private val picketIndexProperty: IntegerProperty,
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
@@ -101,13 +102,11 @@ class ExperimentalTableController @Inject constructor(
     private val picket: Picket
         get() = picketObservable.get()!!
 
-    private val picketIndex
-        get() = _picketIndex.get()
+    private val picketIndex by picketIndexProperty
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
-                val items = table.items
                 if (oldValue != null
                     && newValue.sortedExperimentalData != table.items.map { it.toExperimentalData() }
                 ) {
@@ -118,14 +117,23 @@ class ExperimentalTableController @Inject constructor(
             }
         }
 
+        table.itemsProperty().addListener { _, _, _ -> listenToItemsList() }
+
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         setupCellFactories()
         setupRowFactory()
         setupValidation()
+        setupAutoRefreshTable()
+    }
 
+    private fun setupAutoRefreshTable() {
         table.itemsProperty().addListener { _, _, newValue: ObservableList<ObservableExperimentalData> ->
-            newValue.addListener(ListChangeListener { table.refresh() })
+            newValue.addListener(ListChangeListener {
+                while (it.next()) {
+                    table.refresh()
+                }
+            })
             table.refresh()
         }
     }
@@ -205,17 +213,19 @@ class ExperimentalTableController @Inject constructor(
 
     private fun update() {
         mapItems()
-        addListenersToItems()
-        addListenerToItemsList()
+        listenToItemsProperties(table.items)
+        listenToItemsList()
         table.refresh()
     }
 
-    private fun addListenerToItemsList() {
+    private fun listenToItemsList() {
         table.items.addListener(ListChangeListener { c ->
             while (c.next()) {
                 when {
-                    c.wasReplaced() -> commitChanges()
-                    c.wasAdded() -> commitChanges()
+                    c.wasAdded() -> {
+                        listenToItemsProperties(c.addedSubList)
+                        commitChanges()
+                    }
                     c.wasRemoved() -> commitChanges()
                     c.wasPermutated() -> commitChanges()
                 }
@@ -227,8 +237,8 @@ class ExperimentalTableController @Inject constructor(
         table.items = picket.sortedExperimentalData.map { it.toObservable() }.toObservableList()
     }
 
-    private fun addListenersToItems() {
-        table.items.forEachIndexed { index, expData ->
+    private fun listenToItemsProperties(items: List<ObservableExperimentalData>) {
+        items.forEach { expData ->
             expData.ab2Property().addListener { _, oldAb2, newAb2 ->
                 val violations = validator.validateValue(ExperimentalData::class.java, "ab2", newAb2)
                 if (violations.isEmpty()) {
@@ -293,14 +303,7 @@ class ExperimentalTableController @Inject constructor(
                     alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
-            expData.hiddenProperty().addListener { _, _, newHidden ->
-                historyManager.snapshotAfter {
-                    observableSection.pickets[picketIndex] =
-                        picket.copy(experimentalData = picket.sortedExperimentalData.toMutableList().apply {
-                            set(index, expData.toExperimentalData().copy(isHidden = newHidden))
-                        })
-                }
-            }
+            expData.hiddenProperty().addListener { _, _, _ -> commitChanges() }
         }
     }
 
