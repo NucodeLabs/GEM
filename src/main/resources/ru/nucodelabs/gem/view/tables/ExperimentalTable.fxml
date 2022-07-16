@@ -33,8 +33,8 @@
         <columns>
             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№" styleClass="centered-column"
                          resizable="false" editable="false" fx:id="indexCol"/>
-            <TableColumn fx:id="ab2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="isHiddenCol" sortable="false" text="Отключить"/>
+            <TableColumn fx:id="ab2Col" sortable="false">
                 <graphic>
                     <Label text="%ab2">
                         <tooltip>
@@ -43,8 +43,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="mn2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="mn2Col" sortable="false">
                 <graphic>
                     <Label text="%mn2">
                         <tooltip>
@@ -53,9 +52,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="resistanceApparentCol" sortable="false">
                 <graphic>
                     <Label text="%resistanceApparent">
                         <tooltip>
@@ -64,9 +61,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="errorResistanceCol" sortable="false">
                 <graphic>
                     <Label text="%errorResistanceApparent">
                         <tooltip>
@@ -75,9 +70,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="amperageCol" sortable="false">
                 <graphic>
                     <Label text="%amperage">
                         <tooltip>
@@ -86,8 +79,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="voltageCol" sortable="false">
                 <graphic>
                     <Label text="%voltage">
                         <tooltip>
@@ -108,7 +100,7 @@
                    onAction="#add"/>
         <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%amperage" onAction="#add"/>
         <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%voltage" onAction="#add"/>
-        <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
+        <Button fx:id="addBtn" text="Добавить измерение" onAction="#add" minWidth="150" disable="true">
             <graphic>
                 <ImageView fitWidth="15" fitHeight="15">
                     <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>

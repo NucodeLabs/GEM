@@ -30,24 +30,50 @@ fun <T> Axis<T>.getValueForScreen(screenCoordinate: Double): T {
     return getValueForDisplay(displayPosition)
 }
 
-
-
-fun <X, Y> XYChart<X, Y>.installTooltips(factory: (series: Series<X, Y>, point: Data<X, Y>) -> Tooltip) {
-    for (series in data) {
-        for (point in series.data) {
-            Tooltip.install(point.node, factory(series, point))
+/**
+ * Installs tooltips for each point in each series,
+ * then listens to updates and adds tooltips on newly added Points.
+ * @param factory takes index of series in data and index of point in series and returns tooltip instance
+ */
+fun <X, Y> XYChart<X, Y>.installTooltips(factory: (seriesIndex: Int, series: Series<X, Y>, pointIndex: Int, point: Data<X, Y>) -> Tooltip?) {
+    for ((sIdx, series) in data.withIndex()) {
+        for ((pIdx, point) in series.data.withIndex()) {
+            Tooltip.install(point.node, factory(sIdx, series, pIdx, point))
         }
     }
 
-    data.addListener(ListChangeListener {
-        while (it.next()) {
-            for (series in it.addedSubList) {
-                for (point in series.data) {
-                    Tooltip.install(point.node, factory(series, point))
+    val dataChangeListener = ListChangeListener<Series<X, Y>> { c ->
+        while (c.next()) {
+            val added = c.addedSubList
+            val sIdxMap = List(added.size) { data.indexOf(added[it]) }
+            for ((sIdx, series) in added.withIndex()) {
+                for ((pIdx, point) in series.data.withIndex()) {
+                    Tooltip.install(point.node, factory(sIdxMap[sIdx], series, pIdx, point))
                 }
             }
         }
-    })
+    }
+
+    fun listenEachSeries() {
+        data.forEachIndexed { sIdx, series ->
+            series.data.addListener(ListChangeListener { c ->
+                while (c.next()) {
+                    val added = c.addedSubList
+                    val pIdxMap = List(added.size) { series.data.indexOf(added[it]) }
+                    for ((pIdx, point) in added.withIndex()) {
+                        Tooltip.install(point.node, factory(sIdx, series, pIdxMap[pIdx], point))
+                    }
+                }
+            })
+        }
+    }
+
+    data.addListener(dataChangeListener)
+    listenEachSeries()
+    dataProperty().addListener { _, _, newData ->
+        newData.addListener(dataChangeListener)
+        listenEachSeries()
+    }
 }
 
 /**

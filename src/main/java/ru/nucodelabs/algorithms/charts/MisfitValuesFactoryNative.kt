@@ -6,16 +6,18 @@ import ru.nucodelabs.data.ves.ModelLayer
 import kotlin.math.abs
 import kotlin.math.sign
 
-internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : MisfitValuesFactory {
+internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : MisfitsFunction {
 
     override fun invoke(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Double> {
-        val resistanceApparent = experimentalData.map { obj: ExperimentalData -> obj.resistanceApparent }
-        val errorResistanceApparent = experimentalData.map { obj: ExperimentalData -> obj.errorResistanceApparent }
         if (experimentalData.isEmpty() || modelData.isEmpty()) {
             return listOf()
         }
+
+        val resistanceApparent = experimentalData.map { it.resistanceApparent }
+        val errorResistanceApparent = experimentalData.map { it.errorResistanceApparent }
+
         val solvedResistance = forwardSolver(experimentalData, modelData)
-        val res: MutableList<Double> = ArrayList()
+        val res = mutableListOf<Double>()
         for (i in experimentalData.indices) {
             val value = abs(
                 MisfitFunctions.calculateRelativeDeviationWithError(
@@ -24,6 +26,7 @@ internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : Mis
                     solvedResistance[i]
                 )
             ) * sign(solvedResistance[i] - resistanceApparent[i]) * 100f
+
             res.add(value)
         }
         return res

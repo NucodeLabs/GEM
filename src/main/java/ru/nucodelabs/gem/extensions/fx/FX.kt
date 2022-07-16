@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.extensions.fx
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.Node
@@ -57,17 +57,23 @@ fun Color.toCss(): String = format(
 
 fun TextField.isValidBy(
     styleIfInvalid: String = "-fx-background-color: LightPink",
-    validate: (String) -> Boolean
+    blankIsValid: Boolean = true,
+    validate: (String) -> Boolean,
 ): ReadOnlyBooleanProperty {
     val property = SimpleBooleanProperty()
 
     fun run() {
-        if (!validate(text)) {
-            property.set(false)
-            style = styleIfInvalid
-        } else {
-            property.set(true)
+        if (text.isBlank()) {
+            property.set(blankIsValid)
             style = ""
+        } else {
+            if (!validate(text)) {
+                property.set(false)
+                style = styleIfInvalid
+            } else {
+                property.set(true)
+                style = ""
+            }
         }
     }
     run()
@@ -80,12 +86,12 @@ fun TextField.isValidBy(
 /**
  * Returns boolean binding that tells if string is blank
  */
-fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
+fun ObservableValue<String>.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
 
 /**
  * Returns boolean binding that tells if string is not blank
  */
-fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
+fun ObservableValue<String>.isNotBlank(): BooleanBinding = isBlank().not()
 
 /**
  * Creates series with 2 data points

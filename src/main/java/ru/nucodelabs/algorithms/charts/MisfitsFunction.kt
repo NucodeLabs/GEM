@@ -4,7 +4,7 @@ import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.ModelLayer
 
-interface MisfitValuesFactory {
+interface MisfitsFunction {
     /**
      * Returns list of misfits between experimental and theoretical curves
      */
@@ -12,8 +12,8 @@ interface MisfitValuesFactory {
 
     companion object Factory {
         @JvmStatic
-        fun createDefault(forwardSolver: ForwardSolver): MisfitValuesFactory = MisfitValuesFactory(forwardSolver)
+        fun createDefault(forwardSolver: ForwardSolver): MisfitsFunction = MisfitsFunction(forwardSolver)
     }
 }
 
-fun MisfitValuesFactory(forwardSolver: ForwardSolver): MisfitValuesFactory = MisfitValuesFactoryNative(forwardSolver)
+fun MisfitsFunction(forwardSolver: ForwardSolver): MisfitsFunction = MisfitValuesFactoryNative(forwardSolver)

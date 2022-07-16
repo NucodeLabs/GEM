@@ -6,6 +6,7 @@ import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ModelLayer
 import ru.nucodelabs.data.ves.Picket
@@ -16,6 +17,8 @@ import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import java.math.MathContext
+import java.math.RoundingMode
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -25,7 +28,8 @@ private const val LAST_COEF = 0.5
 
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
-    private val colorMapper: ColorMapper
+    private val colorMapper: ColorMapper,
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
     /**
@@ -58,6 +62,9 @@ class ModelSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        yAxis.tickLabelFormatter = formatter
+        xAxis.tickLabelFormatter = formatter
+
         observableSection.pickets.addListener(ListChangeListener { c ->
             while (c.next()) {
                 if (c.wasReplaced()) {
@@ -146,6 +153,11 @@ class ModelSectionController @Inject constructor(
             if (zList.size >= 2) {
                 zList[zList.lastIndex] = zList[zList.lastIndex - 1]
                 zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+                zList[zList.lastIndex] =
+                    zList[zList.lastIndex]
+                        .toBigDecimal()
+                        .round(MathContext(3, RoundingMode.UP))
+                        .toDouble()
             }
         }
     }.filter { it.isNotEmpty() }

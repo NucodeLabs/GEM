@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.utils
+package ru.nucodelabs.gem.util
 
 object OS {
     private val osNameNormalized = System.getProperty("os.name").lowercase()
