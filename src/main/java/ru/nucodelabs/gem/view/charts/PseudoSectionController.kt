@@ -84,7 +84,7 @@ class PseudoSectionController @Inject constructor(
         val data: MutableList<XYChart.Data<Number, Number>> = mutableListOf()
 
         for (picket in section.pickets) {
-            for (expData in picket.sortedExperimentalData) {
+            for (expData in picket.effectiveExperimentalData) {
                 data.add(
                     XYChart.Data(
                         section.xOfPicket(picket),

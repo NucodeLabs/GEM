@@ -1,4 +1,5 @@
 .root {
+    -fx-background-color: rgb(251, 251, 253);
     -fx-accent: ForestGreen;
     -fx-focus-color: ForestGreen;
 }

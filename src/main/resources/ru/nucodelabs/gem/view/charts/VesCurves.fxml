@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
@@ -17,22 +14,22 @@
     <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
         <Label styleClass="uclabel" text="%ves" VBox.vgrow="NEVER"/>
         <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-        <HBox spacing="5" style="-fx-padding: 5">
-            <Button contentDisplay="GRAPHIC_ONLY">
-                <graphic>
-                    <ImageView fitHeight="15" fitWidth="15">
-                        <Image url="@../../../../../img/ui_icons/zoom_in.png"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-            <Button contentDisplay="GRAPHIC_ONLY">
-                <graphic>
-                    <ImageView fitHeight="15" fitWidth="15">
-                        <Image url="@../../../../../img/ui_icons/zoom_out.png"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-        </HBox>
+        <!--        <HBox spacing="5" style="-fx-padding: 5">-->
+        <!--            <Button contentDisplay="GRAPHIC_ONLY">-->
+        <!--                <graphic>-->
+        <!--                    <ImageView fitHeight="15" fitWidth="15">-->
+        <!--                        <Image url="@../../../../../img/ui_icons/zoom_in.png"/>-->
+        <!--                    </ImageView>-->
+        <!--                </graphic>-->
+        <!--            </Button>-->
+        <!--            <Button contentDisplay="GRAPHIC_ONLY">-->
+        <!--                <graphic>-->
+        <!--                    <ImageView fitHeight="15" fitWidth="15">-->
+        <!--                        <Image url="@../../../../../img/ui_icons/zoom_out.png"/>-->
+        <!--                    </ImageView>-->
+        <!--                </graphic>-->
+        <!--            </Button>-->
+        <!--        </HBox>-->
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
                styleClass="padded-chart">
