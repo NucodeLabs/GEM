@@ -4,8 +4,6 @@ import javafx.beans.binding.Bindings
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableColumn
 import javafx.util.Callback
-import java.text.DecimalFormat
-import java.text.ParseException
 
 
 const val DEFAULT_FONT_SIZE = 13
@@ -21,35 +19,11 @@ fun indexCellFactory(fromOne: Boolean = true): Callback<TableColumn<Any?, Int?>,
     }
 
 /**
- * Validating string containing index in array
- *
- * @param s string
+ * Validating string containing index for list/array
  * @return true if string represents valid index
  */
-fun validateIndexInput(s: String): Boolean {
-    return if (s.isBlank()) {
-        true
-    } else try {
-        val number = s.toInt()
-        number >= 0
-    } catch (e: NumberFormatException) {
-        false
-    }
-}
 
-/**
- * Validating string containing double value
- *
- * @param s string
- * @return true if string represents valid double value
- */
-fun validateDoubleInput(s: String, decimalFormat: DecimalFormat): Boolean {
-    return if (s.isBlank()) {
-        true
-    } else try {
-        decimalFormat.parse(s).toDouble()
-        true
-    } catch (e: ParseException) {
-        false
-    }
-}
+fun String.isIndexOrBlank() =
+    takeIf { it.isBlank() }?.let { true } ?: toIntOrNull()?.takeIf { it >= 0 }?.let { true } ?: false
+
+fun String.isIndex() = toIntOrNull()?.takeIf { it >= 0 }?.let { true } ?: false

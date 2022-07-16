@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nucodelabs.data.ves.JavaApiKt.copy;
+import static ru.nucodelabs.data.ves.JavaApi.copy;
 
 public class PrimaryModel {
 

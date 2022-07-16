@@ -26,7 +26,7 @@
         </xAxis>
         <yAxis>
             <LogarithmicAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
-                             inverted="true" autoRanging="true">
+                             inverted="true" autoRanging="false" lowerBound="1" upperBound="100">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
