@@ -6,3 +6,9 @@ fun orderByDistances() =
 
 fun ExperimentalData.withCalculatedResistanceApparent() =
     this.copy(resistanceApparent = rhoA(ab2, mn2, amperage, voltage))
+
+val ExperimentalData.resistanceApparentUpperBoundByError
+    get() = (resistanceApparent + resistanceApparent * errorResistanceApparent / 100).coerceAtLeast(1.0)
+
+val ExperimentalData.resistanceApparentLowerBoundByError
+    get() = (resistanceApparent - resistanceApparent * errorResistanceApparent / 100).coerceAtLeast(1.0)

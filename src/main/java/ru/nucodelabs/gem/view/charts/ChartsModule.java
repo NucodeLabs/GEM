@@ -2,20 +2,18 @@ package ru.nucodelabs.gem.view.charts;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.algorithms.charts.MisfitValuesFactory;
-import ru.nucodelabs.algorithms.charts.VesCurvesConverter;
+import ru.nucodelabs.algorithms.charts.MisfitsFunction;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 
 import java.util.ArrayList;
 
-import static ru.nucodelabs.gem.view.charts.VesCurvesController.MOD_CURVE_SERIES_INDEX;
+import static ru.nucodelabs.gem.view.charts.VesCurvesController.TOTAL_COUNT;
 
 public class ChartsModule extends AbstractModule {
     @Provides
@@ -29,20 +27,14 @@ public class ChartsModule extends AbstractModule {
     private ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> provideVESCurvesData() {
         ObjectProperty<ObservableList<XYChart.Series<Number, Number>>> dataProperty =
                 new SimpleObjectProperty<>(FXCollections.observableArrayList());
-        for (int i = 0; i < MOD_CURVE_SERIES_INDEX + 1; i++) {
+        for (int i = 0; i < TOTAL_COUNT; i++) {
             dataProperty.get().add(new XYChart.Series<>());
         }
         return dataProperty;
     }
 
     @Provides
-    @Singleton
-    private VesCurvesConverter vesChartsConverter(ForwardSolver forwardSolver) {
-        return new VesCurvesConverter(forwardSolver);
-    }
-
-    @Provides
-    MisfitValuesFactory misfitValuesFactory(ForwardSolver forwardSolver) {
-        return MisfitValuesFactory.createDefault(forwardSolver);
+    MisfitsFunction misfitValuesFactory(ForwardSolver forwardSolver) {
+        return MisfitsFunction.createDefault(forwardSolver);
     }
 }
