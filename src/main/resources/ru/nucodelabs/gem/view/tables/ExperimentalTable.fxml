@@ -91,7 +91,6 @@
         </columns>
     </TableView>
     <HBox spacing="5" style="-fx-padding: 5">
-        <TextField fx:id="indexTextField" promptText="N" prefWidth="45" minWidth="45" onAction="#add"/>
         <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%ab2" onAction="#add"/>
         <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%mn2" onAction="#add"/>
         <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%resistanceApparent"
