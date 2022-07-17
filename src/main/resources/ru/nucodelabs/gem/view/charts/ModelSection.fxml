@@ -14,7 +14,7 @@
       fx:controller="ru.nucodelabs.gem.view.charts.ModelSectionController"
       stylesheets="@ModelSection.css">
     <HBox alignment="CENTER_LEFT">
-        <Label text="Модель, разрез" styleClass="uclabel"/>
+        <Label text="Модель, разрез" styleClass="chart-label"/>
     </HBox>
     <PolygonChart fx:id="chart" maxWidth="Infinity"
                   maxHeight="Infinity" animated="false" legendVisible="false" styleClass="padded-chart"

@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: rgb(251, 251, 253);
+    /*-fx-background-color: rgb(251, 251, 253);*/
     -fx-accent: ForestGreen;
     -fx-focus-color: ForestGreen;
 }
@@ -7,6 +7,21 @@
 .debug {
     -fx-border-color: red;
     -fx-border-width: 1;
+}
+
+.check-box:selected .mark {
+    -fx-shape: "m20 27.9 12.5-12.5q.45-.45 1.05-.45.6 0 1.05.45.45.45.45 1.05 0 .6-.45 1.05L21.05 31.05q-.45.45-1.05.45-.6 0-1.05-.45L13.4 25.5q-.45-.45-.45-1.05 0-.6.45-1.05.45-.45 1.05-.45.6 0 1.05.45Z";
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-pref-height: 3;
+    -fx-pref-width: 3;
+    -fx-scale-shape: true;
+}
+
+.check-box:selected {
+    -fx-background-insets: 0;
+    -fx-background-size: 5;
 }
 
 .button {
@@ -73,12 +88,12 @@
 }
 
 .split-pane-divider:hover {
-    -fx-background-color: Gray;
+    -fx-background-color: GainsBoro;
     -fx-border-width: 1px;
 }
 
 .split-pane-divider:pressed {
-    -fx-background-color: LightGreen;
+    -fx-background-color: -fx-accent;
 }
 
 .chart-legend {
@@ -169,7 +184,7 @@
     -fx-background-color: LightGray;
 }
 
-.uclabel {
+.chart-label {
     -fx-text-fill: Gray;
     -fx-font-size: 12;
     -fx-padding: 5;
