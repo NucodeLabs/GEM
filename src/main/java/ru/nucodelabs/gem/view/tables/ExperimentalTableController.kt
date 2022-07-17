@@ -70,9 +70,6 @@ class ExperimentalTableController @Inject constructor(
     private lateinit var voltageCol: TableColumn<ObservableExperimentalData, Double>
 
     @FXML
-    private lateinit var indexTextField: TextField
-
-    @FXML
     private lateinit var ab2TextField: TextField
 
     @FXML
@@ -180,7 +177,6 @@ class ExperimentalTableController @Inject constructor(
             .and(errResAppTextField.isValidBy { validate(it.parseDouble(), "errorResistanceApparent") })
             .and(voltageTextField.isValidBy { validate(it.parseDouble(), "voltage") })
             .and(amperageTextField.isValidBy { validate(it.parseDouble(), "amperage") })
-            .and(indexTextField.isValidBy { it.isIndexOrBlank() })
 
         val allRequiredNotBlank = ab2TextField.textProperty().isNotBlank()
             .and(mn2TextField.textProperty().isNotBlank())
@@ -342,15 +338,7 @@ class ExperimentalTableController @Inject constructor(
                 return
             }
 
-            val index = try {
-                indexTextField.text.toInt().coerceAtMost(picket.sortedExperimentalData.size)
-            } catch (_: NumberFormatException) {
-                picket.sortedExperimentalData.size
-            }
-
-
-            table.items.add(
-                index,
+            table.items +=
                 ExperimentalData(
                     ab2 = newAb2Value,
                     mn2 = newMn2Value,
@@ -359,7 +347,6 @@ class ExperimentalTableController @Inject constructor(
                     amperage = newAmperageValue,
                     voltage = newVoltageValue
                 ).toObservable()
-            )
         }
     }
 
