@@ -289,7 +289,6 @@ class VesCurvesController @Inject constructor(
         return when (seriesIndex) {
             EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
                 """
-                    №$pointIndex
                     AB/2 = ${decimalFormat.format(point.xValue)} m
                     ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
                 """.trimIndent()
