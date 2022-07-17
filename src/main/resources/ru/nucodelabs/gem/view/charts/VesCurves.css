@@ -27,21 +27,19 @@
 }
 
 .exp-upper-symbol {
+    -fx-shape: "M0,0 L10,0 L5,8 Z";
     -fx-pref-width: 8;
     -fx-pref-height: 4;
     -fx-background-color: LightCoral;
     -fx-border-color: FireBrick;
-    -fx-background-radius: 100px 100px 0 0;
-    -fx-border-radius: 100px 100px 0 0;
 }
 
 .exp-lower-symbol {
+    -fx-shape: "M5,0 L10,8 L0,8 Z";
     -fx-pref-width: 8;
     -fx-pref-height: 4;
     -fx-background-color: LightBlue;
     -fx-border-color: CornflowerBlue;
-    -fx-background-radius: 0 0 100px 100px;
-    -fx-border-radius: 0 0 100px 100px;
 }
 
 .theor-symbol {
