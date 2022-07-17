@@ -16,7 +16,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
     <HBox alignment="CENTER_LEFT">
-        <Label text="%pseudoSection" styleClass="uclabel"/>
+        <Label text="%pseudoSection" styleClass="chart-label"/>
     </HBox>
     <InterpolationMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0"
                       minHeight="0"
