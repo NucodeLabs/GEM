@@ -108,14 +108,19 @@ class PseudoSectionController @Inject constructor(
     }
 
     private fun setupYAxisBounds() {
-        if (observableSection.pickets.none { it.sortedExperimentalData.isNotEmpty() }) {
+        if (observableSection.pickets.none { it.effectiveExperimentalData.isNotEmpty() }
+            || observableSection.pickets.isEmpty()) {
             yAxis.lowerBound = 1.0
             yAxis.upperBound = 1000.0
         } else {
             yAxis.upperBound =
-                observableSection.pickets.maxOfOrNull { it.sortedExperimentalData.lastOrNull()?.ab2 ?: 1.0 } ?: 1.0
+                observableSection.pickets.filter { it.effectiveExperimentalData.isNotEmpty() }.maxOf {
+                    it.effectiveExperimentalData.last().ab2
+                }
             yAxis.lowerBound =
-                observableSection.pickets.minOfOrNull { it.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0 } ?: 1.0
+                observableSection.pickets.filter { it.effectiveExperimentalData.isNotEmpty() }.minOf {
+                    it.effectiveExperimentalData.first().ab2
+                }
         }
     }
 
