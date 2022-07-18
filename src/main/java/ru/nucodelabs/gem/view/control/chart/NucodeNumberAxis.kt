@@ -2,10 +2,13 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.InvalidationListener
 import javafx.beans.NamedArg
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.collections.ListChangeListener
 import javafx.geometry.Side
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.extensions.fx.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -14,6 +17,20 @@ class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 0.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
+
+    private val forceMarksOnlyProperty = SimpleBooleanProperty(false)
+    fun forceMarksOnlyProperty() = forceMarksOnlyProperty
+    var isForceMarksOnly by forceMarksOnlyProperty
+
+    val forceMarks = observableListOf<Double>()
+
+    init {
+        forceMarks.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                tickMarksUpdated()
+            }
+        })
+    }
 
     private val tickUnitProperty = SimpleDoubleProperty(10.0)
     fun tickUnitProperty() = tickUnitProperty
@@ -41,7 +58,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
 
     override fun layoutChildren() {
         super.layoutChildren()
-        checkOverlapsNearBounds()
+        checkOverlaps()
         scale = calculateNewScale(
             if (side.isHorizontal) width else height,
             lowerBound,
@@ -49,7 +66,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
         )
     }
 
-    private fun checkOverlapsNearBounds() {
+    private fun checkOverlaps() {
         if (tickMarks.size <= 1) {
             return
         }
@@ -139,6 +156,11 @@ class NucodeNumberAxis @JvmOverloads constructor(
         val upperBound = range[1]
         val tickUnit = range[2]
         val ticks = mutableListOf<Number>()
+        ticks += forceMarks
+
+        if (isForceMarksOnly) {
+            return ticks
+        }
 
         when {
             lowerBound == upperBound -> ticks += upperBound

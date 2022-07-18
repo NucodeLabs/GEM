@@ -78,6 +78,7 @@ class PseudoSectionController @Inject constructor(
 
     private fun update() {
         setupXAxisBounds()
+        setupXAxisMarks()
         setupYAxisBounds()
 
         val section = observableSection.asSection()
@@ -96,6 +97,14 @@ class PseudoSectionController @Inject constructor(
         }
 
         chart.data.setAll(XYChart.Series(data.toObservableList()))
+    }
+
+    private fun setupXAxisMarks() {
+        val section = observableSection.asSection()
+        xAxis.forceMarks.setAll(
+            section.picketsBounds().flatMap { listOf(it.leftX, it.rightX) }.distinct()
+                    + section.pickets.indices.map { section.xOfPicket(it) }.distinct()
+        )
     }
 
     private fun setupYAxisBounds() {
