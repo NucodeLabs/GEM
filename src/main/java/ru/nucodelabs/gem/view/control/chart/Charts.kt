@@ -90,16 +90,6 @@ val Axis<*>.labelNode: Label
 val Axis<*>.childrenTextNodes: List<Text>
     get() = childrenUnmodifiable.filterIsInstance<Text>()
 
-val <T : Number> ValueAxis<T>.tickMarksTextNodes: Map<Axis.TickMark<T>, Text>
-    get() = buildMap {
-        val textNodes = childrenTextNodes
-        tickMarks.forEach { tick ->
-            textNodes.find { node -> node.text == tickLabelFormatter.toString(tick.value) }?.let { node ->
-                put(tick, node)
-            }
-        }
-    }
-
 fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, maxFontSize: Double = 13.0) {
     val correctFontSize = {
         val nodes = childrenTextNodes

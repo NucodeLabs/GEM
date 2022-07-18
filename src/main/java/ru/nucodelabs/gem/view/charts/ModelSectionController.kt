@@ -2,20 +2,17 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.picketsBounds
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.math.MathContext
 import java.math.RoundingMode
@@ -50,10 +47,10 @@ class ModelSectionController @Inject constructor(
     }
 
     @FXML
-    private lateinit var yAxis: NumberAxis
+    private lateinit var yAxis: NucodeNumberAxis
 
     @FXML
-    private lateinit var xAxis: NumberAxis
+    private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
     private lateinit var chart: PolygonChart
@@ -86,6 +83,7 @@ class ModelSectionController @Inject constructor(
 
     private fun update() {
         setupXAxisBounds()
+        setupXAxisMarks()
         setupYAxisBounds()
 
         chart.data.clear()
@@ -131,6 +129,14 @@ class ModelSectionController @Inject constructor(
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
+    }
+
+    private fun setupXAxisMarks() {
+        val section = observableSection.asSection()
+        xAxis.forceMarks.setAll(
+            section.picketsBounds().flatMap { listOf(it.leftX, it.rightX) }.distinct()
+                    + section.pickets.indices.map { section.xOfPicket(it) }.distinct()
+        )
     }
 
     private fun setupXAxisBounds() {

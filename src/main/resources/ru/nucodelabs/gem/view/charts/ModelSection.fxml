@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
@@ -20,16 +20,16 @@
                   maxHeight="Infinity" animated="false" legendVisible="false" styleClass="padded-chart"
                   VBox.vgrow="ALWAYS">
         <xAxis>
-            <NumberAxis fx:id="xAxis" label="%x" side="BOTTOM" autoRanging="false"
-                        minorTickVisible="false" tickUnit="25"/>
+            <NucodeNumberAxis fx:id="xAxis" label="%x" side="BOTTOM" autoRanging="false"
+                              minorTickVisible="false" tickUnit="25" forceMarksOnly="true"/>
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" label="%z" side="LEFT"
-                        autoRanging="false" minorTickVisible="false" tickUnit="25">
+            <NucodeNumberAxis fx:id="yAxis" label="%z" side="LEFT"
+                              autoRanging="false" minorTickVisible="false" tickUnit="25">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
-            </NumberAxis>
+            </NucodeNumberAxis>
         </yAxis>
     </PolygonChart>
 </VBox>

@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.chart.ValueAxis
+import javafx.scene.text.Text
 
 abstract class InvertibleValueAxis<N : Number>(
     lowerBound: Double,
@@ -13,4 +14,14 @@ abstract class InvertibleValueAxis<N : Number>(
         set(value) = _inverted.set(value)
 
     fun invertedProperty() = _inverted
+
+    val tickMarksTextNodes: Map<TickMark<N>, Text>
+        get() = buildMap {
+            val textNodes = childrenTextNodes
+            tickMarks.forEach { tick ->
+                textNodes.find { node -> node.text == getTickMarkLabel(tick.value) }?.let { node ->
+                    put(tick, node)
+                }
+            }
+        }
 }
