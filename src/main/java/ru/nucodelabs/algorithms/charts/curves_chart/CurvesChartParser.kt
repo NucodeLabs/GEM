@@ -1,27 +1,54 @@
 package ru.nucodelabs.algorithms.charts.curves_chart
 
 import ru.nucodelabs.algorithms.charts.Point
-import ru.nucodelabs.algorithms.charts.VesCurvesConverter
 import ru.nucodelabs.data.ves.Bounds
-import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.picketsBounds
 import javax.inject.Inject
-import kotlin.properties.Delegates
+import kotlin.math.log10
+import kotlin.math.min
 
-class CurvesChartParser @Inject constructor(inputSection: Section, private val vesCurvesConverter: VesCurvesConverter) {
+class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private val section = inputSection.copy()
 
     private val rightK = 0.95
 
-    private var resistanceK by Delegates.notNull<Double>()
+    private var resistanceK = 1.0
 
     private val resistances: MutableList<MutableList<Double>> = arrayListOf()
 
-    fun getPoints(): List<List<Point>> {
+    init {
+        initResistances()
+        shiftResistances()
+        setK()
+        recalculateResistances()
+        addXValues()
+    }
 
-        return arrayListOf()
+    fun getPoints(): List<List<Point>> {
+        val pointsList: MutableList<MutableList<Point>> = arrayListOf()
+        for (picketIdx in section.pickets.indices) {
+            pointsList.add(arrayListOf())
+            for (abIdx in resistances[picketIdx].indices) {
+                val xValue = resistances[picketIdx][abIdx]
+                val yValue = log10(section.pickets[picketIdx].effectiveExperimentalData[abIdx].ab2)
+                pointsList[picketIdx].add(Point(xValue, yValue))
+            }
+        }
+        return pointsList
+    }
+
+    private fun addXValues() {
+        for (picketIdx in resistances.indices) {
+            resistances[picketIdx].map { e -> e + log10(section.picketsBounds()[picketIdx].leftX) }
+        }
+    }
+
+    private fun recalculateResistances() {
+        for (picketIdx in resistances.indices) {
+            resistances[picketIdx].map { e -> log10(e * resistanceK * rightK) }
+        }
     }
 
     private fun initResistances() {
@@ -35,18 +62,14 @@ class CurvesChartParser @Inject constructor(inputSection: Section, private val v
 
     private fun shiftResistances() {
         for (picket in resistances) {
-            for (resistance in picket) {
-
-            }
+            val minResistance = picket.min()
+            picket.map { e -> e - minResistance }
         }
     }
 
     private fun setK() {
-        val bounds = section.picketsBounds()
-        var k = 1.0
         for (picketIdx in section.pickets.indices) {
-            val resistances = section.pickets[picketIdx].sortedExperimentalData.map { it.resistanceApparent }
-
+            resistanceK = min(resistanceK, getKFor(resistances[picketIdx], section.picketsBounds()[picketIdx]))
         }
     }
 
