@@ -5,7 +5,6 @@ import javafx.beans.NamedArg
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.collections.ListChangeListener
-import javafx.geometry.Side
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -98,22 +97,6 @@ class NucodeNumberAxis @JvmOverloads constructor(
         tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
     }
 
-    private fun isTickLabelsOverlap(side: Side, m1: TickMark<Number>, m2: TickMark<Number>, gap: Double): Boolean {
-        if (!m1.isTextVisible || !m2.isTextVisible) return false
-        val m1Size: Double = measureTickMarkSize(m1.value, side)
-        val m2Size: Double = measureTickMarkSize(m2.value, side)
-        val m1Start = m1.position - m1Size / 2
-        val m1End = m1.position + m1Size / 2
-        val m2Start = m2.position - m2Size / 2
-        val m2End = m2.position + m2Size / 2
-        return if (side.isVertical) m1Start - m2End <= gap else m2Start - m1End <= gap
-    }
-
-    private fun measureTickMarkSize(value: Number, side: Side): Double {
-        val size = measureTickMarkSize(value, tickLabelRotation)
-        return if (side.isVertical) size.height else size.width
-    }
-
     override fun getDisplayPosition(value: Number): Double {
         val intervalToVal = value.toDouble() - lowerBound
         val res = intervalToVal * scale
@@ -159,7 +142,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
         ticks += forceMarks
 
         if (isForceMarksOnly) {
-            return ticks
+            return ticks.sortedBy { it.toDouble() }
         }
 
         when {
@@ -196,7 +179,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
                 ticks += upperBound
             }
         }
-        return ticks
+        return ticks.sortedBy { it.toDouble() }
     }
 
     // How to extend final class?
