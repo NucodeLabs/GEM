@@ -8,7 +8,7 @@ import ru.nucodelabs.gem.extensions.std.exp10
 class Interpolator(
     private var interpolationParser: InterpolationParser
 ) {
-    private lateinit var grid: List<List<XYChart.Data<Double, Double>>>
+    private lateinit var grid: MutableList<MutableList<XYChart.Data<Double, Double>>>
 
     private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
 
@@ -26,9 +26,9 @@ class Interpolator(
 
     init {
         initGrid()
+        interpolationParser.gridToLogValues(grid)
         adjustGrid()
         checkInterpolated()
-        interpolationParser.gridToLogValues(adjustedGrid)
         if (leftSideInterpolated) leftSideSplineFunction = interpolateSide(adjustedGrid[0])
         if (adjustedGrid.size != 1) {
             interpolateGrid()
@@ -37,7 +37,11 @@ class Interpolator(
     }
 
     fun getValue(y: Double): Double {
-        return exp10(leftSideSplineFunction.value(y))
+        return if (leftSideInterpolated) {
+            exp10(leftSideSplineFunction.value(y))
+        } else {
+            -1.0
+        }
     }
 
     fun getValue(x: Double, y: Double): Double {
@@ -64,7 +68,6 @@ class Interpolator(
     }
 
     private fun initGrid() {
-        interpolationParser.parse()
         grid = interpolationParser.getGrid()
         missedPoints = interpolationParser.getMissedPoints()
     }
@@ -89,7 +92,6 @@ class Interpolator(
 
     private fun interpolateGrid() {
         interpolationParser = InterpolationParser(adjustedGrid)
-        interpolationParser.parse()
         val regularGridInterpolator = ApacheInterpolator2D()
         bicubicInterpolatingFunction = regularGridInterpolator.interpolate(
             interpolationParser.getGridX(),
