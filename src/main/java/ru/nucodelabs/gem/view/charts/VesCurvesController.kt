@@ -114,12 +114,12 @@ class VesCurvesController @Inject constructor(
         lineChart.installTooltips(::tooltipFactory)
 
         picketObservable.addListener { _, _, newValue: Picket? ->
-            vesCurvesContext = picket.vesCurvesContext
-            if (isDraggingModel) {
-                updateTheoreticalCurve()
-                applyStyle()
-            } else {
-                if (newValue != null) {
+            if (newValue != null) {
+                vesCurvesContext = picket.vesCurvesContext
+                if (isDraggingModel) {
+                    updateTheoreticalCurve()
+                    applyStyle()
+                } else {
                     update()
                 }
             }
@@ -289,16 +289,15 @@ class VesCurvesController @Inject constructor(
         return when (seriesIndex) {
             EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
                 """
-                    №$pointIndex
                     AB/2 = ${decimalFormat.format(point.xValue)} m
                     ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
                 """.trimIndent()
-            ).halfSecondDelay()
+            ).shortDelay()
             else -> null
         }
     }
 
-    private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
+    private fun Tooltip.shortDelay() = apply { showDelay = Duration.ZERO }
 
     private fun applyStyle() {
         fun Series<*, *>.lineStyle(style: String) {

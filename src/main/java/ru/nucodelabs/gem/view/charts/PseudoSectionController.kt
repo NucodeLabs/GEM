@@ -30,7 +30,7 @@ class PseudoSectionController @Inject constructor(
     /**
      * Used for comparing pickets only by data on which chart is dependent
      */
-    data class PicketDependencies(
+    private data class PicketDependencies(
         val experimentalData: List<ExperimentalData>,
         val offsetX: Double,
         val z: Double
