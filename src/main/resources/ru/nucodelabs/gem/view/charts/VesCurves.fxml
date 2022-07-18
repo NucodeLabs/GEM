@@ -38,9 +38,7 @@
                              label="%ab2"
                              side="BOTTOM"
                              autoRanging="false"
-                             lowerBound="0.01" upperBound="1e4"
-                             minorTickVisible="false"
-                             tickLabelRotation="-45">
+                             lowerBound="1" upperBound="1e4">
             </LogarithmicAxis>
         </xAxis>
         <yAxis>
@@ -48,8 +46,7 @@
                              label="%resistanceApparent"
                              side="LEFT"
                              autoRanging="false"
-                             lowerBound="0" upperBound="10e4"
-                             minorTickVisible="false">
+                             lowerBound="1" upperBound="10e4">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>
