@@ -22,7 +22,8 @@
                       minHeight="0"
                       legendVisible="false" styleClass="padded-chart">
         <xAxis>
-            <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"/>
+            <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
+                              forceMarksOnly="true"/>
         </xAxis>
         <yAxis>
             <LogarithmicAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
