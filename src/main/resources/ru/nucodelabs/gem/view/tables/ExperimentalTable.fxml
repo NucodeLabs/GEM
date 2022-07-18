@@ -31,9 +31,18 @@
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
         <columns>
+            <TableColumn fx:id="isHiddenCol" sortable="false" maxWidth="35" prefWidth="35" minWidth="35"
+                         resizable="false">
+                <graphic>
+                    <Label text="    ">
+                        <tooltip>
+                            <Tooltip text="%effectivePoints"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№" styleClass="centered-column"
                          resizable="false" editable="false" fx:id="indexCol"/>
-            <TableColumn fx:id="isHiddenCol" sortable="false" text="Отключить"/>
             <TableColumn fx:id="ab2Col" sortable="false">
                 <graphic>
                     <Label text="%ab2">
