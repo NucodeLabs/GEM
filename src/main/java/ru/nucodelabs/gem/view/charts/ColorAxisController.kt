@@ -4,6 +4,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
@@ -47,6 +48,9 @@ class ColorAxisController @Inject constructor(
 
     @FXML
     private lateinit var numberOfSegmentsSpinner: Spinner<Int>
+
+    @FXML
+    private lateinit var isLogChkBox: CheckBox
 
     @FXML
     private lateinit var ctxMenu: ContextMenu
@@ -131,6 +135,8 @@ class ColorAxisController @Inject constructor(
         colorMapper.minValueProperty().bind(minValueSpinner.valueProperty())
         colorMapper.maxValueProperty().bind(maxValueSpinner.valueProperty())
         colorMapper.numberOfSegmentsProperty().bind(numberOfSegmentsSpinner.valueProperty())
+        isLogChkBox.isSelected = colorMapper.isLogScale
+        colorMapper.logScaleProperty().bind(isLogChkBox.selectedProperty())
 
         yAxis.lowerBoundProperty().bind(colorMapper.minValueProperty())
         yAxis.upperBoundProperty().bind(colorMapper.maxValueProperty())
