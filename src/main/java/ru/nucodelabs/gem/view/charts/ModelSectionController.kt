@@ -8,10 +8,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.picketsBounds
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
@@ -38,13 +35,15 @@ class ModelSectionController @Inject constructor(
     private data class PicketDependencies(
         val modelData: List<ModelLayer>,
         val offsetX: Double,
-        val z: Double
+        val z: Double,
+        val experimentalData: List<ExperimentalData>
     ) {
         companion object Factory {
             fun dependenciesOf(picket: Picket) = PicketDependencies(
                 modelData = picket.modelData,
                 offsetX = picket.offsetX,
-                z = picket.z
+                z = picket.z,
+                experimentalData = picket.effectiveExperimentalData
             )
         }
     }
