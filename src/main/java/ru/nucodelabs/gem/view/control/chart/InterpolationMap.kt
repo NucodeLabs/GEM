@@ -10,6 +10,8 @@ import ru.nucodelabs.algorithms.interpolation.InterpolationParser
 import ru.nucodelabs.algorithms.interpolation.Interpolator
 import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.view.color.ColorMapper
+import java.lang.Double.max
+import kotlin.math.min
 
 class InterpolationMap @JvmOverloads constructor(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
@@ -124,10 +126,12 @@ class InterpolationMap @JvmOverloads constructor(
 
         val pw = canvas.graphicsContext2D.pixelWriter
         val maxR = interpolationParser.maxResistance()
+        val minR = interpolationParser.minResistance()
         for (x in 0..canvas.width.toInt()) {
             for (y in 0..canvas.height.toInt()) {
                 val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
-                val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
+                var yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
+                yValue = min(max(yValue, minR), maxR)
                 if (xValue.isNaN() || yValue.isNaN()) {
                     continue
                 }
