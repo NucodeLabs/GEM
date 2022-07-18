@@ -1,9 +1,6 @@
 package ru.nucodelabs.gem.view.color;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
@@ -18,6 +15,8 @@ public class ColorPalette implements ColorMapper {
     private final DoubleProperty minValue = new SimpleDoubleProperty();
     private final DoubleProperty maxValue = new SimpleDoubleProperty();
     private final IntegerProperty blocksCount = new SimpleIntegerProperty();
+
+    private final BooleanProperty logScaleProperty = new SimpleBooleanProperty(false);
 
     private final List<Segment> segmentList = new ArrayList<>();
 
@@ -208,6 +207,22 @@ public class ColorPalette implements ColorMapper {
     @Override
     public List<ColorMapper.Segment> getSegments() {
         return segmentList;
+    }
+
+    @NotNull
+    @Override
+    public BooleanProperty logScaleProperty() {
+        return logScaleProperty;
+    }
+
+    @Override
+    public boolean isLogScale() {
+        return logScaleProperty.get();
+    }
+
+    @Override
+    public void setLogScale(boolean value) {
+        logScaleProperty.set(value);
     }
 }
 

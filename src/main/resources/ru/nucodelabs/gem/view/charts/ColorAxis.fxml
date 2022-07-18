@@ -22,6 +22,7 @@
                         <Spinner promptText="Максимальное значение" fx:id="maxValueSpinner" editable="true"/>
                         <Label text="Число сегментов"/>
                         <Spinner promptText="Число сегментов" fx:id="numberOfSegmentsSpinner" editable="true"/>
+                        <CheckBox fx:id="isLogChkBox" text="Логарифмический масштаб"/>
                     </VBox>
                 </Scene>
             </scene>
