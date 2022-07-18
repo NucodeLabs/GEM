@@ -35,7 +35,7 @@ class ModelSectionController @Inject constructor(
     /**
      * Used for comparing pickets only by data on which chart is dependent
      */
-    data class PicketDependencies(
+    private data class PicketDependencies(
         val modelData: List<ModelLayer>,
         val offsetX: Double,
         val z: Double
