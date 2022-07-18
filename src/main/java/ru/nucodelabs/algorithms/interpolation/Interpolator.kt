@@ -6,10 +6,9 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 import ru.nucodelabs.gem.extensions.std.exp10
 
 class Interpolator(
-    private val inputData: List<List<XYChart.Data<Double, Double>>>,
-    private var interpolationParser: InterpolationParser = InterpolationParser(inputData)
+    private var interpolationParser: InterpolationParser
 ) {
-    private lateinit var grid: List<List<XYChart.Data<Double, Double>>>
+    private lateinit var grid: MutableList<MutableList<XYChart.Data<Double, Double>>>
 
     private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
 
@@ -17,23 +16,58 @@ class Interpolator(
 
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
-    private var leftSideSplineFunction: PolynomialSplineFunction
+    private lateinit var leftSideSplineFunction: PolynomialSplineFunction
 
     private lateinit var rightSideSplineFunction: PolynomialSplineFunction
 
+    private var leftSideInterpolated = true
+
+    private var rightSideInterpolated = true
+
     init {
         initGrid()
+        interpolationParser.gridToLogValues(grid)
         adjustGrid()
-        interpolationParser.gridToLogValues(adjustedGrid)
-        leftSideSplineFunction = interpolateSide(adjustedGrid[0])
+        checkInterpolated()
+        if (leftSideInterpolated) leftSideSplineFunction = interpolateSide(adjustedGrid[0])
         if (adjustedGrid.size != 1) {
             interpolateGrid()
-            rightSideSplineFunction = interpolateSide(adjustedGrid.last())
+            if (rightSideInterpolated) rightSideSplineFunction = interpolateSide(adjustedGrid.last())
         }
     }
 
+    fun getValue(y: Double): Double {
+        return if (leftSideInterpolated) {
+            exp10(leftSideSplineFunction.value(y))
+        } else {
+            -1.0
+        }
+    }
+
+    fun getValue(x: Double, y: Double): Double {
+        return when (getRange(x)) {
+            Side.LEFT ->
+                if (leftSideInterpolated) {
+                    exp10(interpolateSidePoint(y, leftSideSplineFunction))
+                } else {
+                    -1.0
+                }
+            Side.MIDDLE -> exp10(bicubicInterpolatingFunction.value(x, y))
+            Side.RIGHT ->
+                if (rightSideInterpolated) {
+                exp10(interpolateSidePoint(y, rightSideSplineFunction))
+            } else {
+                -1.0
+            }
+        }
+    }
+
+    private fun checkInterpolated() {
+        if (adjustedGrid[0].size < 3) leftSideInterpolated = false
+        if (adjustedGrid.last().size < 3) rightSideInterpolated = false
+    }
+
     private fun initGrid() {
-        interpolationParser.parse()
         grid = interpolationParser.getGrid()
         missedPoints = interpolationParser.getMissedPoints()
     }
@@ -58,7 +92,6 @@ class Interpolator(
 
     private fun interpolateGrid() {
         interpolationParser = InterpolationParser(adjustedGrid)
-        interpolationParser.parse()
         val regularGridInterpolator = ApacheInterpolator2D()
         bicubicInterpolatingFunction = regularGridInterpolator.interpolate(
             interpolationParser.getGridX(),
@@ -77,18 +110,6 @@ class Interpolator(
 
     private fun interpolateSidePoint(y: Double, function: PolynomialSplineFunction): Double {
         return function.value(y)
-    }
-
-    fun getValue(x: Double, y: Double): Double {
-        return when (getRange(x)) {
-            Side.LEFT -> exp10(interpolateSidePoint(y, leftSideSplineFunction))
-            Side.MIDDLE -> exp10(bicubicInterpolatingFunction.value(x, y))
-            Side.RIGHT -> exp10(interpolateSidePoint(y, rightSideSplineFunction))
-        }
-    }
-
-    fun getValue(y: Double): Double {
-        return exp10(leftSideSplineFunction.value(y))
     }
 
     private fun getRange(x: Double): Side {
