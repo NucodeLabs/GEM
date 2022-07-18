@@ -23,7 +23,7 @@ class LogarithmicAxis @JvmOverloads constructor(
 
     init {
         animated = false
-        validateBounds(lowerBound, upperBound)
+        checkBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
 
@@ -42,7 +42,7 @@ class LogarithmicAxis @JvmOverloads constructor(
         )
     }
 
-    private fun validateBounds(lowerBound: Double, upperBound: Double) =
+    private fun checkBounds(lowerBound: Double, upperBound: Double) =
         require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
 
 
@@ -87,7 +87,9 @@ class LogarithmicAxis @JvmOverloads constructor(
         return tickPositions
     }
 
-    override fun getRange(): Array<Number> = arrayOf(lowerBoundProperty().get(), upperBoundProperty().get())
+    override fun getRange(): Array<Number> {
+        return arrayOf(lowerBound, upperBound)
+    }
 
     override fun getTickMarkLabel(value: Number): String = tickLabelFormatter?.toString(value) ?: value.toString()
 
@@ -97,7 +99,7 @@ class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            validateBounds(lowerBound.toDouble(), upperBound.toDouble())
+            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             if (animate) {
                 try {
@@ -172,8 +174,9 @@ class LogarithmicAxis @JvmOverloads constructor(
         }
     }
 
-    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any =
-        arrayOf<Number>(minValue, maxValue)
+    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any {
+        return arrayOf<Number>(minValue.coerceAtLeast(Double.MIN_VALUE), maxValue.coerceAtLeast(Double.MAX_VALUE))
+    }
 
 
     companion object {

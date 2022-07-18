@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
+import javafx.stage.Screen
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver
@@ -27,11 +28,12 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
+import ru.nucodelabs.gem.extensions.fx.get
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.fx.setValue
 import ru.nucodelabs.gem.util.FXUtils
-import ru.nucodelabs.gem.util.OS.isMacOS
+import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.charts.MisfitStacksController
@@ -123,8 +125,8 @@ class MainViewController @Inject constructor(
     override fun initialize(location: URL, resources: ResourceBundle) {
         stage.onCloseRequest = EventHandler { event: WindowEvent -> askToSave(event) }
         stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
-        if (isMacOS) {
-            val useSystemMenu = CheckMenuItem(resources.getString("useSystemMenu"))
+        macOS {
+            val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
             menuView.items.add(0, useSystemMenu)
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty())
             val prefKey = "USE_SYSTEM_MENU"
@@ -192,9 +194,11 @@ class MainViewController @Inject constructor(
 
     private fun initConfig() {
         stage.width = fxPreferences.bind(stage.widthProperty(), MAIN_WINDOW_W.key, MAIN_WINDOW_W.def)
+            .coerceAtMost(Screen.getPrimary().bounds.width)
         stage.height = fxPreferences.bind(stage.heightProperty(), MAIN_WINDOW_H.key, MAIN_WINDOW_H.def)
-        stage.x = fxPreferences.bind(stage.xProperty(), MAIN_WINDOW_X.key, MAIN_WINDOW_X.def)
-        stage.y = fxPreferences.bind(stage.yProperty(), MAIN_WINDOW_Y.key, MAIN_WINDOW_Y.def)
+            .coerceAtMost(Screen.getPrimary().bounds.height)
+        stage.x = fxPreferences.bind(stage.xProperty(), MAIN_WINDOW_X.key, MAIN_WINDOW_X.def).coerceAtLeast(0.0)
+        stage.y = fxPreferences.bind(stage.yProperty(), MAIN_WINDOW_Y.key, MAIN_WINDOW_Y.def).coerceAtLeast(0.0)
         fxPreferences.bind(
             menuViewVESCurvesLegend.selectedProperty(),
             VES_CURVES_LEGEND_VISIBLE.key,
