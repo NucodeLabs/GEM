@@ -153,25 +153,32 @@ class VesCurvesController @Inject constructor(
         bound * exp10(range * padding) - bound
 
     private fun setupXAxisBounds() {
+        val xMin: Double
+        val xMax: Double
         if (picket.modelData.isNotEmpty()
             || picket.sortedExperimentalData.isNotEmpty()
         ) {
-            xAxis.lowerBound = min(
+            xMin = min(
                 picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
                 picket.sortedExperimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
             )
-            xAxis.upperBound = max(
-                picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
+            xMax = max(
+                picket.z - (picket.zOfModelLayers().getOrElse(picket.modelData.lastIndex - 1) { 1e4 }),
                 picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
             )
+        } else if (picket.modelData.size == 1) {
+            xMin = picket.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0
+            xMax = picket.sortedExperimentalData.lastOrNull()?.ab2 ?: 100.0
         } else {
-            xAxis.lowerBound = 1.0
-            xAxis.upperBound = 1000.0
+            xMin = 1.0
+            xMax = 1000.0
         }
 
         val range = xAxisRangeLog()
-        xAxis.lowerBound -= paddingLowerBound(xAxis.lowerBound, range, X_AXIS_PADDING_LOG)
-        xAxis.upperBound += paddingUpperBound(xAxis.upperBound, range, X_AXIS_PADDING_LOG)
+        xAxis.lowerBound =
+            (xMin - paddingLowerBound(xMin, range, X_AXIS_PADDING_LOG)).coerceAtLeast(1e-3)
+        xAxis.upperBound =
+            (xMax + paddingUpperBound(xMax, range, X_AXIS_PADDING_LOG))
     }
 
     private fun setupYAxisBounds() {
