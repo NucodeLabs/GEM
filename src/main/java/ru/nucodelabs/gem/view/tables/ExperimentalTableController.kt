@@ -21,13 +21,13 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.withCalculatedResistanceApparent
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.*
-import ru.nucodelabs.gem.extensions.std.toNumberOrNull
+import ru.nucodelabs.gem.extensions.fx.bidirectionalNot
+import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import java.net.URL
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 
@@ -67,27 +67,6 @@ class ExperimentalTableController @Inject constructor(
     private lateinit var voltageCol: TableColumn<ObservableExperimentalData, Double>
 
     @FXML
-    private lateinit var ab2TextField: TextField
-
-    @FXML
-    private lateinit var mn2TextField: TextField
-
-    @FXML
-    private lateinit var resAppTextField: TextField
-
-    @FXML
-    private lateinit var errResAppTextField: TextField
-
-    @FXML
-    private lateinit var amperageTextField: TextField
-
-    @FXML
-    private lateinit var voltageTextField: TextField
-
-    @FXML
-    private lateinit var addBtn: Button
-
-    @FXML
     private lateinit var table: TableView<ObservableExperimentalData>
 
     override val stage: Stage
@@ -117,7 +96,6 @@ class ExperimentalTableController @Inject constructor(
 
         setupCellFactories()
         setupRowFactory()
-        setupValidation()
         setupAutoRefreshTable()
     }
 
@@ -156,33 +134,6 @@ class ExperimentalTableController @Inject constructor(
             voltageCol
         )
         editableColumns.forEach { it.cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter) }
-    }
-
-    private fun setupValidation() {
-        fun validate(value: Any?, prop: String): Boolean {
-            if (value == null) {
-                return false
-            }
-            return validator.validateValue(ExperimentalData::class.java, prop, value).isEmpty()
-        }
-
-        fun String.parseDouble() = toNumberOrNull(decimalFormat)?.toDouble()
-
-        val validInput = ab2TextField.isValidBy { validate(it.parseDouble(), "ab2") }
-            .and(mn2TextField.isValidBy { validate(it.parseDouble(), "mn2") })
-            .and(resAppTextField.isValidBy { validate(it.parseDouble(), "resistanceApparent") })
-            .and(errResAppTextField.isValidBy { validate(it.parseDouble(), "errorResistanceApparent") })
-            .and(voltageTextField.isValidBy { validate(it.parseDouble(), "voltage") })
-            .and(amperageTextField.isValidBy { validate(it.parseDouble(), "amperage") })
-
-        val allRequiredNotBlank = ab2TextField.textProperty().isNotBlank()
-            .and(mn2TextField.textProperty().isNotBlank())
-            .and(resAppTextField.textProperty().isNotBlank())
-            .and(errResAppTextField.textProperty().isNotBlank())
-            .and(voltageTextField.textProperty().isNotBlank())
-            .and(amperageTextField.textProperty().isNotBlank())
-
-        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
     }
 
     private fun setupRowFactory() {
@@ -313,38 +264,6 @@ class ExperimentalTableController @Inject constructor(
     @FXML
     private fun deleteSelected() {
         table.items.removeAll(table.selectionModel.selectedItems)
-    }
-
-    @FXML
-    private fun add() {
-        if (!addBtn.isDisable) {
-            val newAb2Value: Double
-            val newMn2Value: Double
-            val newResAppValue: Double
-            val newErrResAppValue: Double
-            val newAmperageValue: Double
-            val newVoltageValue: Double
-            try {
-                newAb2Value = decimalFormat.parse(ab2TextField.text).toDouble()
-                newMn2Value = decimalFormat.parse(mn2TextField.text).toDouble()
-                newResAppValue = decimalFormat.parse(resAppTextField.text).toDouble()
-                newErrResAppValue = decimalFormat.parse(errResAppTextField.text).toDouble()
-                newAmperageValue = decimalFormat.parse(amperageTextField.text).toDouble()
-                newVoltageValue = decimalFormat.parse(voltageTextField.text).toDouble()
-            } catch (e: ParseException) {
-                return
-            }
-
-            table.items +=
-                ExperimentalData(
-                    ab2 = newAb2Value,
-                    mn2 = newMn2Value,
-                    resistanceApparent = newResAppValue,
-                    errorResistanceApparent = newErrResAppValue,
-                    amperage = newAmperageValue,
-                    voltage = newVoltageValue
-                ).toObservable()
-        }
     }
 
     @FXML

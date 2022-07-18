@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -99,21 +96,4 @@
             </TableColumn>
         </columns>
     </TableView>
-    <HBox spacing="5" style="-fx-padding: 5">
-        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%ab2" onAction="#add"/>
-        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%mn2" onAction="#add"/>
-        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%resistanceApparent"
-                   onAction="#add"/>
-        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%errorResistanceApparent"
-                   onAction="#add"/>
-        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%amperage" onAction="#add"/>
-        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%voltage" onAction="#add"/>
-        <Button fx:id="addBtn" text="Добавить измерение" onAction="#add" minWidth="150" disable="true">
-            <graphic>
-                <ImageView fitWidth="15" fitHeight="15">
-                    <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-    </HBox>
 </VBox>
