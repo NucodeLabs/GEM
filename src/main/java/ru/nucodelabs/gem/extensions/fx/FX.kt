@@ -13,10 +13,14 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.control.TextFormatter.Change
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import java.lang.String.format
+import java.text.DecimalFormat
+import java.text.ParsePosition
 import java.util.*
+import java.util.function.UnaryOperator
 import kotlin.math.ceil
 
 
@@ -133,4 +137,19 @@ fun Node.flipHorizontally() {
  */
 fun Node.flipVertically() {
     scaleY *= -1.0
+}
+
+fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
+    if (c.controlNewText.isEmpty()) {
+        return@UnaryOperator c
+    }
+
+    val parsePosition = ParsePosition(0)
+    val obj = decimalFormat.parse(c.controlNewText, parsePosition)
+
+    if (obj == null || parsePosition.index < c.controlNewText.length) {
+        null
+    } else {
+        c
+    }
 }

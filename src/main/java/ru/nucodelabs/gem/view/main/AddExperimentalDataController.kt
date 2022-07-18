@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.main
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.validation.Validator
 import javafx.beans.property.IntegerProperty
 import javafx.fxml.FXML
 import javafx.scene.control.TextField
@@ -22,7 +23,8 @@ class AddExperimentalDataController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val picketIndex: IntegerProperty,
     private val observableSection: ObservableSection,
-    private val historyManager: HistoryManager<Section>
+    private val historyManager: HistoryManager<Section>,
+    private val validator: Validator
 ) : AbstractController() {
     @FXML
     private lateinit var amperageTextField: TextField
@@ -90,13 +92,18 @@ class AddExperimentalDataController @Inject constructor(
             return
         }
 
-        historyManager.snapshotAfter {
-            val picket = observableSection.pickets[picketIndex.value]
-            val expData = picket.sortedExperimentalData
-            observableSection.pickets[picketIndex.value] =
-                picket.copy(experimentalData = expData.toMutableList().apply {
-                    add(newExpDataItem)
-                })
+        val violations = validator.validate(newExpDataItem)
+        if (violations.isEmpty()) {
+            historyManager.snapshotAfter {
+                val picket = observableSection.pickets[picketIndex.value]
+                val expData = picket.sortedExperimentalData
+                observableSection.pickets[picketIndex.value] =
+                    picket.copy(experimentalData = expData.toMutableList().apply {
+                        add(newExpDataItem)
+                    })
+            }
+        } else {
+            alertsFactory.violationsAlert(violations, stage).show()
         }
     }
 }
