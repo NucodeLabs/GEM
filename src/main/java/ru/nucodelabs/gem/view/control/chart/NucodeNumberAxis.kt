@@ -57,7 +57,9 @@ class NucodeNumberAxis @JvmOverloads constructor(
 
     override fun layoutChildren() {
         super.layoutChildren()
-        checkOverlaps()
+        if (isTickLabelsVisible) {
+            checkOverlaps()
+        }
         scale = calculateNewScale(
             if (side.isHorizontal) width else height,
             lowerBound,

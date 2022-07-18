@@ -50,7 +50,9 @@ class LogarithmicAxis @JvmOverloads constructor(
 
     override fun layoutChildren() {
         super.layoutChildren()
-        checkOverlaps()
+        if (isTickLabelsVisible) {
+            checkOverlaps()
+        }
     }
 
     private fun checkOverlaps() {
