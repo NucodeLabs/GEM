@@ -33,7 +33,7 @@ class ObservableExperimentalData(
     var ab2 by ab2Property
 
     private val mn2Property = SimpleDoubleProperty(mn2)
-    fun mn2Property() = ab2Property
+    fun mn2Property() = mn2Property
     var mn2 by mn2Property
 
     private val amperageProperty = SimpleDoubleProperty(amperage)

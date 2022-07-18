@@ -23,9 +23,12 @@ class VesCurvesContext(val picket: Picket) {
     }
 
     fun theoreticalCurveBy(forwardSolver: ForwardSolver): List<Point> {
-        val solvedResistance = forwardSolver(picket.effectiveExperimentalData, picket.modelData)
-        return List(picket.effectiveExperimentalData.size) { i ->
-            Point(picket.effectiveExperimentalData[i].ab2, solvedResistance[i])
+        if (picket.sortedExperimentalData.isEmpty() || picket.modelData.isEmpty()) {
+            return listOf()
+        }
+        val solvedResistance = forwardSolver(picket.sortedExperimentalData, picket.modelData)
+        return List(picket.sortedExperimentalData.size) { i ->
+            Point(picket.sortedExperimentalData[i].ab2, solvedResistance[i])
         }
     }
 
