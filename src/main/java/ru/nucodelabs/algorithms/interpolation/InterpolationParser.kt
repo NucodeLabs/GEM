@@ -34,6 +34,22 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         checkMissedPoints()
     }
 
+    fun minResistance(): Double {
+        return grid[0][0].yValue
+    }
+
+    fun maxResistance(): Double {
+        return grid[0].last().yValue
+    }
+
+    fun minAB(): Double {
+        return grid[0][0].xValue
+    }
+
+    fun maxAB(): Double {
+        return grid.last()[0].xValue
+    }
+
     fun gridToLogValues(grid: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
         for (picketIdx in grid.indices) {
             for (abIdx in grid[picketIdx].indices) {
