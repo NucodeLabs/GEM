@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.extensions.fx
 
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.ObservableValue
@@ -92,6 +93,11 @@ fun ObservableValue<String>.isBlank(): BooleanBinding = createBooleanBinding({ v
  * Returns boolean binding that tells if string is not blank
  */
 fun ObservableValue<String>.isNotBlank(): BooleanBinding = isBlank().not()
+
+fun BooleanProperty.bidirectionalNot(): BooleanProperty = SimpleBooleanProperty(!value).also {
+    it.addListener { _, _, new -> this.set(!new) }
+    this.addListener { _, _, new -> it.set(!new) }
+}
 
 /**
  * Creates series with 2 data points

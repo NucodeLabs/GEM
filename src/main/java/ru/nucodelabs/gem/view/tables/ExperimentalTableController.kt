@@ -21,10 +21,7 @@ import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.withCalculatedResistanceApparent
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.isNotBlank
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.extensions.std.toNumberOrNull
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -138,7 +135,7 @@ class ExperimentalTableController @Inject constructor(
     private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
 
-        isHiddenCol.cellValueFactory = Callback { features -> features.value.hiddenProperty() }
+        isHiddenCol.cellValueFactory = Callback { features -> features.value.hiddenProperty().bidirectionalNot() }
         isHiddenCol.cellFactory = CheckBoxTableCell.forTableColumn(isHiddenCol)
 
         ab2Col.cellValueFactory = Callback { features -> features.value.ab2Property().asObject() }
