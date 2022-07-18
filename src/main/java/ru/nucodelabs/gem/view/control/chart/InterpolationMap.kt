@@ -5,6 +5,8 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
+import javafx.scene.paint.Color
+import ru.nucodelabs.algorithms.interpolation.InterpolationParser
 import ru.nucodelabs.algorithms.interpolation.Interpolator
 import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -16,6 +18,9 @@ class InterpolationMap @JvmOverloads constructor(
 ) : AbstractMap(xAxis, yAxis) {
 
     private val _interpolateSeriesIndex = SimpleIntegerProperty(0)
+
+    private lateinit var interpolationParser: InterpolationParser
+
     fun interpolateSeriesIndexProperty() = _interpolateSeriesIndex
     var interpolateSeriesIndex
         get() = _interpolateSeriesIndex.get()
@@ -111,6 +116,7 @@ class InterpolationMap @JvmOverloads constructor(
         }
 
         val pw = canvas.graphicsContext2D.pixelWriter
+        val maxR = interpolationParser.maxResistance()
         for (x in 0..canvas.width.toInt()) {
             for (y in 0..canvas.height.toInt()) {
                 val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
@@ -118,17 +124,15 @@ class InterpolationMap @JvmOverloads constructor(
                 if (xValue.isNaN() || yValue.isNaN()) {
                     continue
                 }
-                try {
-                    val fValue = if (preparedData.size == 1) {
-                        interpolator.getValue(yValue)
-                    } else {
-                        interpolator.getValue(xValue, yValue)
-                    }
-                    val color = colorMapper?.colorFor(fValue)
-                    pw.setColor(x, y, color)
-                } catch (_: Exception) {
-                    continue
+                if (yValue > maxR) continue
+                val fValue = if (preparedData.size == 1) {
+                    interpolator.getValue(yValue)
+                } else {
+                    interpolator.getValue(xValue, yValue)
                 }
+                var color = Color.WHITE
+                if (fValue != -1.0) color = colorMapper?.colorFor(fValue)
+                pw.setColor(x, y, color)
             }
         }
     }
@@ -154,6 +158,7 @@ class InterpolationMap @JvmOverloads constructor(
         }
         groupByX as List<List<Data<Double, Double>>>
         preparedData = groupByX
-        interpolator = Interpolator(preparedData)
+        interpolationParser = InterpolationParser(preparedData)
+        interpolator = Interpolator(interpolationParser)
     }
 }
