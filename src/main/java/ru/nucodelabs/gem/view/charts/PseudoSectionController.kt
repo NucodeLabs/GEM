@@ -105,12 +105,12 @@ class PseudoSectionController @Inject constructor(
             yAxis.upperBound = 1000.0
         } else {
             yAxis.upperBound =
-                observableSection.pickets.maxOf {
-                    it.effectiveExperimentalData.lastOrNull()?.ab2 ?: Double.NEGATIVE_INFINITY
+                observableSection.pickets.filter { it.effectiveExperimentalData.isNotEmpty() }.maxOf {
+                    it.effectiveExperimentalData.last().ab2
                 }
             yAxis.lowerBound =
-                observableSection.pickets.minOf {
-                    it.effectiveExperimentalData.firstOrNull()?.ab2 ?: Double.POSITIVE_INFINITY
+                observableSection.pickets.filter { it.effectiveExperimentalData.isNotEmpty() }.minOf {
+                    it.effectiveExperimentalData.first().ab2
                 }
         }
     }
