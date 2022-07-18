@@ -21,6 +21,8 @@ class InterpolationMap @JvmOverloads constructor(
 
     private lateinit var interpolationParser: InterpolationParser
 
+    private var canBeInterpolated = true
+
     fun interpolateSeriesIndexProperty() = _interpolateSeriesIndex
     var interpolateSeriesIndex
         get() = _interpolateSeriesIndex.get()
@@ -115,6 +117,11 @@ class InterpolationMap @JvmOverloads constructor(
             return
         }
 
+        if (!canBeInterpolated) {
+            canvas.clear()
+            return
+        }
+
         val pw = canvas.graphicsContext2D.pixelWriter
         val maxR = interpolationParser.maxResistance()
         for (x in 0..canvas.width.toInt()) {
@@ -131,7 +138,11 @@ class InterpolationMap @JvmOverloads constructor(
                     interpolator.getValue(xValue, yValue)
                 }
                 var color = Color.WHITE
-                if (fValue != -1.0) color = colorMapper?.colorFor(fValue)
+                try {
+                    if (fValue != -1.0) color = colorMapper?.colorFor(fValue)
+                } catch (e: RuntimeException) {
+                    println(fValue)
+                }
                 pw.setColor(x, y, color)
             }
         }
@@ -159,6 +170,12 @@ class InterpolationMap @JvmOverloads constructor(
         groupByX as List<List<Data<Double, Double>>>
         preparedData = groupByX
         interpolationParser = InterpolationParser(preparedData)
+        if (interpolationParser.getGrid()[0].size < 2) {
+            canBeInterpolated = false
+            return
+        } else {
+            canBeInterpolated = true
+        }
         interpolator = Interpolator(interpolationParser)
     }
 }
