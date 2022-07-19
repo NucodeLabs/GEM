@@ -10,8 +10,8 @@ class TextToTableParser(
     }
 
     val parsedTable by lazy { convertToNullableArray(parseTabulation(text)) }
-    val columnsCount by lazy { parsedTable.size }
-    val rowsCount by lazy { parsedTable[0].size }
+    val columnsCount by lazy { parsedTable[0].size }
+    val rowsCount by lazy { parsedTable.size }
 
     private fun convertToNullableArray(rows: List<List<String>>): Array<Array<String?>> {
         val maxRowLength = rows.maxOf { it.size }

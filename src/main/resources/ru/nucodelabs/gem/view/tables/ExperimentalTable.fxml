@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -27,6 +27,17 @@
     <!--    </HBox>-->
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
+        <placeholder>
+            <VBox alignment="CENTER" spacing="5">
+                <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
+                    <VBox alignment="BASELINE_CENTER">
+                        <Button text="%import" onAction="#importEXP"/>
+                        <Label text="(*.EXP)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
+                    </VBox>
+                </HBox>
+                <Button fx:id="pasteBtn" text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
+            </VBox>
+        </placeholder>
         <columns>
             <TableColumn fx:id="isHiddenCol" sortable="false" maxWidth="35" prefWidth="35" minWidth="35"
                          resizable="false">
