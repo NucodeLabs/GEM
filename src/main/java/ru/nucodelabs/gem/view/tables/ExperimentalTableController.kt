@@ -10,26 +10,27 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.input.Clipboard
+import javafx.scene.input.DataFormat
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableExperimentalData
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.fx.toObservable
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.withCalculatedResistanceApparent
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.bidirectionalNot
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.main.FileImporter
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
@@ -39,11 +40,15 @@ class ExperimentalTableController @Inject constructor(
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
-    private val decimalFormat: DecimalFormat
-) : AbstractController() {
+    private val decimalFormat: DecimalFormat,
+    fileImporterProvider: Provider<FileImporter>
+) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
-    lateinit var isHiddenCol: TableColumn<ObservableExperimentalData, Boolean>
+    private lateinit var pasteBtn: Button
+
+    @FXML
+    private lateinit var isHiddenCol: TableColumn<ObservableExperimentalData, Boolean>
 
     @FXML
     private lateinit var indexCol: TableColumn<Any, Int>
@@ -93,6 +98,16 @@ class ExperimentalTableController @Inject constructor(
         table.itemsProperty().addListener { _, _, _ -> listenToItemsList() }
 
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+
+        table.sceneProperty().addListener { _, _, newScene ->
+            newScene.windowProperty().addListener { _, _, newStage ->
+                newStage.focusedProperty().addListener { _, _, isFocused ->
+                    if (isFocused) {
+                        pasteBtn.isDisable = !Clipboard.getSystemClipboard().hasContent(DataFormat.PLAIN_TEXT)
+                    }
+                }
+            }
+        }
 
         setupCellFactories()
         setupRowFactory()
@@ -247,7 +262,10 @@ class ExperimentalTableController @Inject constructor(
                     alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
-            expData.hiddenProperty().addListener { _, _, _ -> commitChanges() }
+            expData.hiddenProperty().addListener { _, _, isHidden ->
+                table.selectionModel.selectedItems.forEach { it.isHidden = isHidden }
+                commitChanges()
+            }
         }
     }
 
@@ -275,5 +293,68 @@ class ExperimentalTableController @Inject constructor(
         }
 
         table.items.setAll(experimentalData.map { it.toObservable() })
+    }
+
+    @FXML
+    private fun pasteFromClipboard() {
+        val parser = TextToTableParser(Clipboard.getSystemClipboard().string)
+        try {
+            val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
+            val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
+                3 -> parser.parsedTable.mapIndexed { i, row ->
+                    val ab2 = row[0]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
+                    val mn2 = row[1]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}")
+                    val resApp = row[2]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[2]}${i + 1}} - Ожидалось ρₐ, было ${row[2]}")
+                    val amp = 100.0
+                    val volt = u(100.0, k(ab2, mn2))
+                    ExperimentalData(
+                        ab2 = ab2,
+                        mn2 = mn2,
+                        resistanceApparent = resApp,
+                        amperage = amp,
+                        voltage = volt
+                    )
+                }
+                4 -> parser.parsedTable.mapIndexed { i, row ->
+                    ExperimentalData(
+                        ab2 = row[0]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
+                        mn2 = row[1]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
+                        voltage = row[2]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
+                        amperage = row[3]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
+                    )
+                }
+                5 -> parser.parsedTable.mapIndexed { i, row ->
+                    ExperimentalData(
+                        ab2 = row[0]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
+                        mn2 = row[1]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
+                        voltage = row[2]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
+                        amperage = row[3]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
+                        resistanceApparent = row[4]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
+                    )
+                }
+                else -> throw IllegalStateException("Допустимые числа колонок: 3, 4, 5")
+            }
+            for (item in pastedItems) {
+                val violations = validator.validate(item)
+                if (violations.isNotEmpty()) {
+                    alertsFactory.violationsAlert(violations, stage).show()
+                    return
+                }
+            }
+        } catch (e: Exception) {
+            alertsFactory.simpleExceptionAlert(e, stage).show()
+        }
     }
 }

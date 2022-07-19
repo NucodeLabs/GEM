@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test
 internal class TextToTableParserTest {
     @Test
     fun parse() {
-        val testString = """
-            123.3 324234.5 123124
-            124234 32434 434343
-        """.trimIndent()
+        val testString = "123\t12\t123\n" +
+                "3212\t4512\t43"
 
-        TextToTableParser(testString).parseTabulation(testString).also { println(it) }
+        val textToTableParser = TextToTableParser(testString)
+        val result = textToTableParser.parsedTable
     }
 }
