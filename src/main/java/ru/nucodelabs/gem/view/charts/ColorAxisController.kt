@@ -1,7 +1,5 @@
 package ru.nucodelabs.gem.view.charts
 
-import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
@@ -24,6 +22,7 @@ import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.net.URL
 import java.util.*
@@ -38,7 +37,7 @@ class ColorAxisController @Inject constructor(
     private val stringConverter: StringConverter<Number>
 ) : AbstractController() {
 
-    private val minAndMaxRange = 0.0..100_000.0
+    private val minAndMaxRange = 0.1..100_000.0
     private val segmentsRange = 2..100
 
     @FXML
@@ -77,12 +76,6 @@ class ColorAxisController @Inject constructor(
     override val stage: Stage?
         get() = root.scene.window as Stage?
 
-    private val formatterProperty: ReadOnlyObjectProperty<StringConverter<Number>> =
-        SimpleObjectProperty(stringConverter)
-
-    fun formatterProperty() = formatterProperty
-    val formatter = formatterProperty
-
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
@@ -92,17 +85,20 @@ class ColorAxisController @Inject constructor(
 
         setupControls()
         setupCharts()
-        setupAxisBounds()
+        setupAxes()
     }
 
-    private fun setupAxisBounds() {
+    private fun setupAxes() {
         linearYAxis.lowerBoundProperty() bindTo colorMapper.minValueProperty()
         linearYAxis.upperBoundProperty() bindTo colorMapper.maxValueProperty()
 
         logYAxis.lowerBoundProperty() bindTo linearYAxis.lowerBoundProperty()
         logYAxis.upperBoundProperty() bindTo linearYAxis.upperBoundProperty()
 
-//        linearYAxis.tickUnitProperty().bind(linearYAxis.rangeBinding().divide(colorMapper.numberOfSegmentsProperty()))
+        linearYAxis.tickLabelFormatter = stringConverter
+        logYAxis.tickLabelFormatter = stringConverter
+        linearYAxis.limitTickLabelsWidth(35.0)
+        logYAxis.limitTickLabelsWidth(35.0)
     }
 
     private fun lazyConfigWindowInitOwner() {
@@ -123,7 +119,7 @@ class ColorAxisController @Inject constructor(
         val step = 10.0
         val doubleValueFactory = { pref: Preference<Double> ->
             SpinnerValueFactory.DoubleSpinnerValueFactory(
-                0.0,
+                0.1,
                 100_000.0,
                 preferences.getDouble(pref.key, pref.def),
                 step
