@@ -296,11 +296,15 @@ class ExperimentalTableController @Inject constructor(
     private fun pasteFromClipboard() {
         val parser = TextToTableParser(Clipboard.getSystemClipboard().string)
         try {
+            val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
             when (parser.columnsCount) {
-                3 -> table.items += parser.parsedTable.map { row ->
-                    val ab2 = row[0]!!.toDouble()
-                    val mn2 = row[1]!!.toDouble()
-                    val resApp = row[2]!!.toDouble()
+                3 -> table.items += parser.parsedTable.mapIndexed { i, row ->
+                    val ab2 = row[0]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
+                    val mn2 = row[1]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}")
+                    val resApp = row[2]?.toDoubleOrNull()
+                        ?: throw IllegalStateException("${a[2]}${i + 1}} - Ожидалось ρₐ, было ${row[2]}")
                     val amp = 100.0
                     val volt = u(100.0, k(ab2, mn2))
                     ExperimentalData(
@@ -311,21 +315,30 @@ class ExperimentalTableController @Inject constructor(
                         voltage = volt
                     ).toObservable()
                 }
-                4 -> table.items += parser.parsedTable.map { row ->
+                4 -> table.items += parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]!!.toDouble(),
-                        mn2 = row[1]!!.toDouble(),
-                        voltage = row[3]!!.toDouble(),
-                        amperage = row[4]!!.toDouble()
+                        ab2 = row[0]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
+                        mn2 = row[1]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
+                        voltage = row[2]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
+                        amperage = row[3]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
                     ).toObservable()
                 }
-                5 -> table.items += parser.parsedTable.map { row ->
+                5 -> table.items += parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]!!.toDouble(),
-                        mn2 = row[1]!!.toDouble(),
-                        voltage = row[2]!!.toDouble(),
-                        amperage = row[3]!!.toDouble(),
-                        resistanceApparent = row[4]!!.toDouble()
+                        ab2 = row[0]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
+                        mn2 = row[1]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
+                        voltage = row[2]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
+                        amperage = row[3]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
+                        resistanceApparent = row[4]?.toDoubleOrNull()
+                            ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
                     ).toObservable()
                 }
                 else -> throw IllegalStateException("Допустимые числа колонок: 3, 4, 5")
