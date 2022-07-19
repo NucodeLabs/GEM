@@ -11,10 +11,12 @@ import javafx.collections.ListChangeListener
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -54,6 +56,7 @@ class MainViewController @Inject constructor(
     @Named("MOD") private val modFileChooser: FileChooser,
     @Named("JSON") private val jsonFileChooser: FileChooser,
     @Named("Save") private val saveDialogProvider: Provider<Dialog<ButtonType>>,
+    @Named("CSS") private val stylesheet: String,
     private val picketObservable: ObservableObjectValue<Picket>,
     private val picketIndexProperty: IntegerProperty,
     private val observableSection: ObservableSection,
@@ -82,6 +85,9 @@ class MainViewController @Inject constructor(
 
     private val picket
         get() = picketObservable.get()!!
+
+    @FXML
+    private lateinit var addExperimentalData: VBox
 
     @FXML
     private lateinit var inverseBtn: Button
@@ -551,5 +557,20 @@ class MainViewController @Inject constructor(
 
     private fun resetWindowTitle() {
         windowTitle.set("GEM")
+    }
+
+    @FXML
+    private fun openAddExpData() {
+        if (addExperimentalData.scene == null) {
+            Stage().apply {
+                title = "Добавить измерение"
+                initOwner(this@MainViewController.stage)
+                addExperimentalData.stylesheets += stylesheet
+                scene = Scene(addExperimentalData)
+                isResizable = false
+            }.show()
+        } else {
+            (addExperimentalData.scene.window as Stage).show()
+        }
     }
 }

@@ -45,6 +45,11 @@
                     <Menu text="%edit">
                         <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
                         <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
+                        <MenuItem text="Добавить измерение" onAction="#openAddExpData"
+                                  disable="${controller.noFileOpened}"/>
+                        <fx:define>
+                            <fx:include fx:id="addExperimentalData" source="AddExperimentalData.fxml"/>
+                        </fx:define>
                     </Menu>
                     <Menu fx:id="menuView" text="%view">
                         <Menu text="%legend">

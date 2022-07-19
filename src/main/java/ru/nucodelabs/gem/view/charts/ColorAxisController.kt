@@ -8,6 +8,7 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
+import javafx.scene.control.TextFormatter
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
@@ -15,6 +16,10 @@ import javafx.stage.StageStyle
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.extensions.fx.*
+import ru.nucodelabs.gem.extensions.fx.decimalFilter
+import ru.nucodelabs.gem.extensions.fx.isValidBy
+import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
@@ -22,6 +27,7 @@ import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
@@ -31,7 +37,8 @@ class ColorAxisController @Inject constructor(
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val preferences: Preferences,
-    private val stringConverter: StringConverter<Number>
+    private val stringConverter: StringConverter<Number>,
+    private val decimalFormat: DecimalFormat
 ) : AbstractController() {
 
     private val minAndMaxRange = 0.1..100_000.0
@@ -129,6 +136,7 @@ class ColorAxisController @Inject constructor(
 
         // TODO: Исправить NPE при вводе не цифровых символов в спиннерах. Он вызывает commitValue() при потере фокуса
         with(minValueSpinner) {
+            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
             valueFactory = doubleValueFactory(COLOR_MIN_VALUE)
             val valid = editor.isValidBy {
                 it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
@@ -136,6 +144,7 @@ class ColorAxisController @Inject constructor(
             editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
         with(maxValueSpinner) {
+            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
             valueFactory = doubleValueFactory(COLOR_MAX_VALUE)
             val valid = editor.isValidBy {
                 it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
@@ -143,6 +152,7 @@ class ColorAxisController @Inject constructor(
             editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
         with(numberOfSegmentsSpinner) {
+            // FIXME: 19.07.2022 Из-за бага в JavaFX надо сделать свой спиннер
             valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
                 2,
                 100,
