@@ -4,13 +4,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
-<?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<?import ru.nucodelabs.gem.view.control.chart.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.charts.ColorAxisController"
       maxHeight="Infinity" maxWidth="70" minWidth="70" stylesheets="@ModelSection.css"
-      onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -10;">
+      onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -10;" fx:id="root">
     <fx:define>
         <Stage fx:id="configWindow" resizable="false" title="Настройки цветовой шкалы">
             <scene>
@@ -33,16 +33,29 @@
             </items>
         </ContextMenu>
     </fx:define>
-    <PolygonChart fx:id="chart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
-                  VBox.vgrow="ALWAYS">
+
+    <PolygonChart fx:id="linearChart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
+                  VBox.vgrow="ALWAYS" animated="false">
         <xAxis>
             <NucodeNumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
                               minorTickVisible="false"
                               opacity="0"/>
         </xAxis>
         <yAxis>
-            <NucodeNumberAxis fx:id="yAxis" autoRanging="false" minorTickVisible="false" prefWidth="35"
+            <NucodeNumberAxis fx:id="linearYAxis" autoRanging="false" minorTickVisible="false" prefWidth="35"
                               side="RIGHT" inverted="true"/>
+        </yAxis>
+    </PolygonChart>
+    <PolygonChart fx:id="logChart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
+                  VBox.vgrow="ALWAYS" animated="false">
+        <xAxis>
+            <NucodeNumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
+                              minorTickVisible="false"
+                              opacity="0"/>
+        </xAxis>
+        <yAxis>
+            <LogarithmicAxis fx:id="logYAxis" autoRanging="false" prefWidth="35"
+                             side="RIGHT" inverted="true"/>
         </yAxis>
     </PolygonChart>
 </VBox>
