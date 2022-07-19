@@ -4,10 +4,12 @@ import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.gem.extensions.std.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ColorPalette implements ColorMapper {
 
@@ -230,7 +232,33 @@ public class ColorPalette implements ColorMapper {
     @NotNull
     @Override
     public List<ColorMapper.Segment> getSegments() {
-        return segmentList;
+        if (!logScaleProperty.get()) return segmentList
+                .stream()
+                .map(s -> new Segment(
+                        s.getFrom() * (maxValue - minValue) + minValue,
+                        s.getTo() * (maxValue - minValue) + minValue,
+                        s.getColor()
+                )).collect(Collectors.toList());
+        else return segmentList
+                .stream()
+                .map(s -> new Segment(
+                        logValue(valueFor(s.getFrom(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                        logValue(valueFor(s.getTo(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                        s.getColor()
+                )).collect(Collectors.toList());
+    }
+
+    private Double valueFor(double percentage, double minValue, double maxValue) {
+        return percentage * (maxValue - minValue) + minValue;
+    }
+
+    private Double logValue(double value, double minValue, double maxValue) {
+        double logRange = Math.log10(maxValue) * (1.0 - (minValue / maxValue));
+        double range = maxValue - minValue;
+        double rDiv = range / logRange;
+        double logMin = Math.log10(maxValue) - logRange;
+        double logValue = (value - minValue) / rDiv + logMin;
+        return MathKt.exp10(logValue);
     }
 
     @NotNull
