@@ -56,9 +56,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     /**
-     *
-     * @param c1 Первый цвет
-     * @param c2 Второй цвет
+     * @param c1         Первый цвет
+     * @param c2         Второй цвет
      * @param percentage Процент отступа от c1
      * @return Возвращает цвет
      */
@@ -81,8 +80,9 @@ public class ColorPalette implements ColorMapper {
 
     /**
      * Ищет цвет в точке интерполяции между vc1 и vc2
-     * @param vc1 vc1.percentage() < vc2.percentage()
-     * @param vc2 vc2.percentage() > vc1.percentage()
+     *
+     * @param vc1        vc1.percentage() < vc2.percentage()
+     * @param vc2        vc2.percentage() > vc1.percentage()
      * @param percentage vc1.percentage() < percentage < vc2.percentage()
      * @return Interpolated rgba color between vc1.color() and vc2.color()
      */
@@ -138,20 +138,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     private Segment blockFor(double percentage) {
-        int low = 0;
-        int high = segmentList.size() - 1;
-        int mid;
-        while (low <= high) {
-            mid = low + (high - low) / 2;
-            Segment block = segmentList.get(mid);
-            if (block.getFrom() <= percentage && percentage <= block.getTo()) return block;
-            else if (block.getTo() < percentage) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        throw new RuntimeException("Блок не найден бинарным поиском");
+        if (percentage == 1.0) return segmentList.get(segmentList.size() - 1);
+        return segmentList.get((int) Math.floor(percentage / (1.0 / segmentList.size())));
     }
 
     private double percentageFor(double resistance) {
