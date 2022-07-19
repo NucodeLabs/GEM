@@ -253,7 +253,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     private Double logValue(double value, double minValue, double maxValue) {
-        double logRange = Math.log10(maxValue) * (1.0 - (minValue / maxValue));
+        double k = minValue / maxValue;
+        double logRange = Math.log10(maxValue) - Math.log10(maxValue * k);
         double range = maxValue - minValue;
         double rDiv = range / logRange;
         double logMin = Math.log10(maxValue) - logRange;
