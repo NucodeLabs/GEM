@@ -77,6 +77,7 @@ class ColorAxisController @Inject constructor(
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
+        colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
 
         linearChart.data = observableListOf()
 
@@ -174,21 +175,22 @@ class ColorAxisController @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun update() {
-        val range = colorMapper.maxValue - colorMapper.minValue
-        linearChart.data.setAll(colorMapper.segments.map {
-            Series(
-                observableListOf(
-                    Data(0.0, colorMapper.minValue + it.from),
-                    Data(100.0, colorMapper.minValue + it.from),
-                    Data(100.0, colorMapper.minValue + it.to),
-                    Data(0.0, colorMapper.minValue + it.to)
-                )
-            ) as Series<Number, Number>
-            // safe upcast Double : Number
-        }.toObservableList())
+        with(if (isLogChkBox.isSelected) logChart else linearChart) {
+            data.setAll(colorMapper.segments.map {
+                Series(
+                    observableListOf(
+                        Data(0.0, it.from),
+                        Data(100.0, it.from),
+                        Data(100.0, it.to),
+                        Data(0.0, it.to)
+                    )
+                ) as Series<Number, Number>
+                // safe upcast Double : Number
+            }.toObservableList())
 
-        linearChart.data.forEachIndexed { index, series ->
-            linearChart.seriesPolygons[series]?.apply { fill = colorMapper.segments[index].color }
+            data.forEachIndexed { index, series ->
+                seriesPolygons[series]?.apply { fill = colorMapper.segments[index].color }
+            }
         }
     }
 
