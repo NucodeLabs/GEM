@@ -86,6 +86,7 @@ class ColorAxisController @Inject constructor(
         setupControls()
         setupCharts()
         setupAxes()
+        update()
     }
 
     private fun setupAxes() {
@@ -175,7 +176,7 @@ class ColorAxisController @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     private fun update() {
         val range = colorMapper.maxValue - colorMapper.minValue
-        linearChart.data = colorMapper.segments.map {
+        linearChart.data.setAll(colorMapper.segments.map {
             Series(
                 observableListOf(
                     Data(0.0, colorMapper.minValue + it.from * range),
@@ -185,7 +186,7 @@ class ColorAxisController @Inject constructor(
                 )
             ) as Series<Number, Number>
             // safe upcast Double : Number
-        }.toObservableList()
+        }.toObservableList())
 
         linearChart.data.forEachIndexed { index, series ->
             linearChart.seriesPolygons[series]?.apply { fill = colorMapper.segments[index].color }
