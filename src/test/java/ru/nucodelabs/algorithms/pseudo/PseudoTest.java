@@ -7,16 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.algorithms.interpolation.PseudoInterpolator;
 import ru.nucodelabs.gem.app.AppModule;
-import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PseudoTest extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         primaryStage.setTitle("Drawing Test");
         Group root = new Group();
         double axisX = 800;
@@ -52,8 +50,6 @@ public class PseudoTest extends Application {
         list2.add(new XYChart.Data<>(100d, 42d, 24d));
 
         var injector = Guice.createInjector(new AppModule());
-        PseudoInterpolator interpolator = new PseudoInterpolator(listList, injector.getInstance(ColorPalette.class));
-        interpolator.paint(canvas);
 
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root));
