@@ -170,7 +170,6 @@ class ColorAxisController @Inject constructor(
 
         logChart.visibleProperty() bindTo !linearChart.visibleProperty()
         logChart.managedProperty() bindTo !linearChart.managedProperty()
-        logChart.dataProperty() bindTo linearChart.dataProperty()
     }
 
     @Suppress("UNCHECKED_CAST")
