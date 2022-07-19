@@ -300,8 +300,8 @@ class ExperimentalTableController @Inject constructor(
         val parser = TextToTableParser(Clipboard.getSystemClipboard().string)
         try {
             val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
-            when (parser.columnsCount) {
-                3 -> table.items += parser.parsedTable.mapIndexed { i, row ->
+            val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
+                3 -> parser.parsedTable.mapIndexed { i, row ->
                     val ab2 = row[0]?.toDoubleOrNull()
                         ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
                     val mn2 = row[1]?.toDoubleOrNull()
@@ -316,9 +316,9 @@ class ExperimentalTableController @Inject constructor(
                         resistanceApparent = resApp,
                         amperage = amp,
                         voltage = volt
-                    ).toObservable()
+                    )
                 }
-                4 -> table.items += parser.parsedTable.mapIndexed { i, row ->
+                4 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
                         ab2 = row[0]?.toDoubleOrNull()
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
@@ -328,9 +328,9 @@ class ExperimentalTableController @Inject constructor(
                             ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
                         amperage = row[3]?.toDoubleOrNull()
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
-                    ).toObservable()
+                    )
                 }
-                5 -> table.items += parser.parsedTable.mapIndexed { i, row ->
+                5 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
                         ab2 = row[0]?.toDoubleOrNull()
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
@@ -342,9 +342,16 @@ class ExperimentalTableController @Inject constructor(
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
                         resistanceApparent = row[4]?.toDoubleOrNull()
                             ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
-                    ).toObservable()
+                    )
                 }
                 else -> throw IllegalStateException("Допустимые числа колонок: 3, 4, 5")
+            }
+            for (item in pastedItems) {
+                val violations = validator.validate(item)
+                if (violations.isNotEmpty()) {
+                    alertsFactory.violationsAlert(violations, stage).show()
+                    return
+                }
             }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
