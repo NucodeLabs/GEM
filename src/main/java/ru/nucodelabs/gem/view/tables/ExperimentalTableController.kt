@@ -262,7 +262,10 @@ class ExperimentalTableController @Inject constructor(
                     alertsFactory.violationsAlert(violations, stage).show()
                 }
             }
-            expData.hiddenProperty().addListener { _, _, _ -> commitChanges() }
+            expData.hiddenProperty().addListener { _, _, isHidden ->
+                table.selectionModel.selectedItems.forEach { it.isHidden = isHidden }
+                commitChanges()
+            }
         }
     }
 
