@@ -30,7 +30,7 @@ class PropertyDelegate<T>(val fxProperty: Property<T>) : ReadWriteProperty<Any, 
 /**
  * Binds this property to an observable, automatically unbinding it before if already bound.
  */
-infix fun <T> Property<T>.rebindTo(observable: ObservableValue<T>) {
+infix fun <T> Property<T>.bindTo(observable: ObservableValue<T>) {
     unbind()
     bind(observable)
 }
