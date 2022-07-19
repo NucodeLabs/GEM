@@ -178,10 +178,10 @@ class ColorAxisController @Inject constructor(
         linearChart.data.setAll(colorMapper.segments.map {
             Series(
                 observableListOf(
-                    Data(0.0, colorMapper.minValue + it.from * range),
-                    Data(100.0, colorMapper.minValue + it.from * range),
-                    Data(100.0, colorMapper.minValue + it.to * range),
-                    Data(0.0, colorMapper.minValue + it.to * range)
+                    Data(0.0, colorMapper.minValue + it.from),
+                    Data(100.0, colorMapper.minValue + it.from),
+                    Data(100.0, colorMapper.minValue + it.to),
+                    Data(0.0, colorMapper.minValue + it.to)
                 )
             ) as Series<Number, Number>
             // safe upcast Double : Number
