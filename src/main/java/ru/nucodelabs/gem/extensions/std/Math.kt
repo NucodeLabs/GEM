@@ -8,13 +8,12 @@ fun exp10(a: Double) = 10.0.pow(a)
 fun exp10(a: Int) = 10.0.pow(a)
 
 fun String.toNumber(decimalFormat: DecimalFormat) = decimalFormat.parse(this)
-fun String?.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
-    if (this == null) {
-        return null
-    }
+fun String.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
     return try {
         decimalFormat.parse(this)
     } catch (_: Exception) {
         null
     }
 }
+
+fun String.toDoubleOrNullBy(decimalFormat: DecimalFormat) = toNumberOrNull(decimalFormat)?.toDouble()

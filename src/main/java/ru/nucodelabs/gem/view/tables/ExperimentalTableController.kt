@@ -23,6 +23,7 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.bidirectionalNot
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
@@ -302,11 +303,11 @@ class ExperimentalTableController @Inject constructor(
             val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
             val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
                 3 -> parser.parsedTable.mapIndexed { i, row ->
-                    val ab2 = row[0]?.toDoubleOrNull()
+                    val ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
-                    val mn2 = row[1]?.toDoubleOrNull()
+                    val mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}")
-                    val resApp = row[2]?.toDoubleOrNull()
+                    val resApp = row[2]?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[2]}${i + 1}} - Ожидалось ρₐ, было ${row[2]}")
                     val amp = 100.0
                     val volt = u(100.0, k(ab2, mn2))
@@ -320,27 +321,27 @@ class ExperimentalTableController @Inject constructor(
                 }
                 4 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.toDoubleOrNull()
+                        ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.toDoubleOrNull()
+                        mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.toDoubleOrNull()
+                        voltage = row[2]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.toDoubleOrNull()
+                        amperage = row[3]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
                     )
                 }
                 5 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.toDoubleOrNull()
+                        ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.toDoubleOrNull()
+                        mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.toDoubleOrNull()
+                        voltage = row[2]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.toDoubleOrNull()
+                        amperage = row[3]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
-                        resistanceApparent = row[4]?.toDoubleOrNull()
+                        resistanceApparent = row[4]?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
                     )
                 }
