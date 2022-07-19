@@ -353,6 +353,7 @@ class ExperimentalTableController @Inject constructor(
                     return
                 }
             }
+            table.items += pastedItems.map { it.toObservable() }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }
