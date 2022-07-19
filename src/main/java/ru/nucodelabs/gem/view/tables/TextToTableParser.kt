@@ -3,12 +3,27 @@ package ru.nucodelabs.gem.view.tables
 class TextToTableParser(
     text: String
 ) {
-    val parsedTable by lazy { parseTabulation(text) }
+    init {
+        if (text.isBlank()) {
+            throw IllegalArgumentException("String is blank")
+        }
+    }
 
-    fun parseTabulation(text: String): List<List<String>> {
+    val parsedTable by lazy { convertToNullableArray(parseTabulation(text)) }
+    val columnsCount by lazy { parsedTable.size }
+    val rowsCount by lazy { parsedTable[0].size }
+
+    private fun convertToNullableArray(rows: List<List<String>>): Array<Array<String?>> {
+        val maxRowLength = rows.maxOf { it.size }
+        return Array(rows.size) { rIdx -> Array(maxRowLength) { cIdx -> rows[rIdx].getOrNull(cIdx) } }
+    }
+
+    private fun parseTabulation(text: String): List<List<String>> {
         val rows = mutableListOf<List<String>>()
-        for (row in text.split("\n")) {
-            rows += row.split(regex = "\\s+".toRegex())
+        for (row in text.split("\n").filter { it.isNotBlank() }) {
+
+            rows += row.split(regex = "\\s+".toRegex()).filter { it.isNotBlank() }
+
         }
         return rows
     }
