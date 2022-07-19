@@ -28,7 +28,7 @@
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
         <placeholder>
-            <VBox alignment="CENTER" spacing="5">
+            <VBox alignment="CENTER" spacing="25">
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importEXP"/>
