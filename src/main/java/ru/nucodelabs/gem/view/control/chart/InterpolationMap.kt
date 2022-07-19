@@ -55,6 +55,7 @@ class InterpolationMap @JvmOverloads constructor(
         colorMapper?.minValueProperty()?.addListener { _, _, _ -> draw(canvas) }
         colorMapper?.maxValueProperty()?.addListener { _, _, _ -> draw(canvas) }
         colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> draw(canvas) }
+        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> draw(canvas) }
     }
 
     private lateinit var interpolator: Interpolator

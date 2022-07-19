@@ -81,6 +81,7 @@ class ModelSectionController @Inject constructor(
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
+        colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
     }
 
     private fun update() {
