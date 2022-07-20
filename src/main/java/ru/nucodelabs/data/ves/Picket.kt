@@ -2,6 +2,7 @@ package ru.nucodelabs.data.ves
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Size
 import java.util.*
@@ -17,8 +18,8 @@ import java.util.*
 data class Picket(
     @JsonIgnore val id: UUID = UUID.randomUUID(),
     val name: String = "Пикет",
-    private val experimentalData: List<ExperimentalData> = listOf(),
-    @field:Size(max = 40) val modelData: List<ModelLayer> = listOf(),
+    private val experimentalData: List<@Valid ExperimentalData> = emptyList(),
+    @field:Size(max = 40) val modelData: List<@Valid ModelLayer> = emptyList(),
     @field:Min(0) val offsetX: Double = 100.0,
     val z: Double = 0.0
 ) {

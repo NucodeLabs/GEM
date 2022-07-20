@@ -2,9 +2,10 @@ package ru.nucodelabs.gem.extensions.fx
 
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.ReadOnlyBooleanProperty
-import javafx.beans.property.ReadOnlyStringProperty
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.Node
@@ -12,10 +13,14 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.control.TextFormatter.Change
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import java.lang.String.format
+import java.text.DecimalFormat
+import java.text.ParsePosition
 import java.util.*
+import java.util.function.UnaryOperator
 import kotlin.math.ceil
 
 
@@ -57,17 +62,23 @@ fun Color.toCss(): String = format(
 
 fun TextField.isValidBy(
     styleIfInvalid: String = "-fx-background-color: LightPink",
-    validate: (String) -> Boolean
+    blankIsValid: Boolean = true,
+    validate: (String) -> Boolean,
 ): ReadOnlyBooleanProperty {
     val property = SimpleBooleanProperty()
 
     fun run() {
-        if (!validate(text)) {
-            property.set(false)
-            style = styleIfInvalid
-        } else {
-            property.set(true)
+        if (text.isBlank()) {
+            property.set(blankIsValid)
             style = ""
+        } else {
+            if (!validate(text)) {
+                property.set(false)
+                style = styleIfInvalid
+            } else {
+                property.set(true)
+                style = ""
+            }
         }
     }
     run()
@@ -80,12 +91,17 @@ fun TextField.isValidBy(
 /**
  * Returns boolean binding that tells if string is blank
  */
-fun ReadOnlyStringProperty.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
+fun ObservableValue<String>.isBlank(): BooleanBinding = createBooleanBinding({ value.isBlank() }, this)
 
 /**
  * Returns boolean binding that tells if string is not blank
  */
-fun ReadOnlyStringProperty.isNotBlank(): BooleanBinding = isBlank().not()
+fun ObservableValue<String>.isNotBlank(): BooleanBinding = isBlank().not()
+
+fun BooleanProperty.bidirectionalNot(): BooleanProperty = SimpleBooleanProperty(!value).also {
+    it.addListener { _, _, new -> this.set(!new) }
+    this.addListener { _, _, new -> it.set(!new) }
+}
 
 /**
  * Creates series with 2 data points
@@ -121,4 +137,19 @@ fun Node.flipHorizontally() {
  */
 fun Node.flipVertically() {
     scaleY *= -1.0
+}
+
+fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
+    if (c.controlNewText.isEmpty()) {
+        return@UnaryOperator c
+    }
+
+    val parsePosition = ParsePosition(0)
+    val obj = decimalFormat.parse(c.controlNewText, parsePosition)
+
+    if (obj == null || parsePosition.index < c.controlNewText.length) {
+        null
+    } else {
+        c
+    }
 }

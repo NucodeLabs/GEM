@@ -4,14 +4,19 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
+import javafx.scene.control.TextFormatter
 import javafx.scene.input.ContextMenuEvent
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
+import ru.nucodelabs.gem.extensions.fx.*
+import ru.nucodelabs.gem.extensions.fx.decimalFilter
 import ru.nucodelabs.gem.extensions.fx.isValidBy
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.extensions.fx.toObservableList
@@ -20,21 +25,27 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
-import ru.nucodelabs.gem.view.control.chart.rangeBinding
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
+
 
 class ColorAxisController @Inject constructor(
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val preferences: Preferences,
-    private val stringConverter: StringConverter<Number>
+    private val stringConverter: StringConverter<Number>,
+    private val decimalFormat: DecimalFormat
 ) : AbstractController() {
 
-    private val minAndMaxRange = 0.0..100_000.0
+    private val minAndMaxRange = 0.1..100_000.0
     private val segmentsRange = 2..100
+
+    @FXML
+    private lateinit var root: VBox
 
     @FXML
     private lateinit var configWindow: Stage
@@ -49,30 +60,53 @@ class ColorAxisController @Inject constructor(
     private lateinit var numberOfSegmentsSpinner: Spinner<Int>
 
     @FXML
+    private lateinit var isLogChkBox: CheckBox
+
+    @FXML
     private lateinit var ctxMenu: ContextMenu
 
     @FXML
-    private lateinit var yAxis: NucodeNumberAxis
+    private lateinit var linearYAxis: NucodeNumberAxis
 
     @FXML
-    private lateinit var chart: PolygonChart
+    private lateinit var logYAxis: LogarithmicAxis
+
+    @FXML
+    private lateinit var linearChart: PolygonChart
+
+    @FXML
+    private lateinit var logChart: PolygonChart
+
     override val stage: Stage?
-        get() = chart.scene.window as Stage?
+        get() = root.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
+        colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
+
+        linearChart.data = observableListOf()
 
         setupControls()
-        setupAxis()
+        setupCharts()
+        setupAxes()
         update()
     }
 
-    private fun setupAxis() {
-        yAxis.tickLabelFormatter = stringConverter
-        yAxis.tickUnitProperty().bind(yAxis.rangeBinding().divide(colorMapper.numberOfSegmentsProperty()))
-        yAxis.limitTickLabelsWidth(35.0)
+    private fun setupAxes() {
+        linearYAxis.lowerBoundProperty() bindTo colorMapper.minValueProperty()
+        linearYAxis.upperBoundProperty() bindTo colorMapper.maxValueProperty()
+
+        logYAxis.lowerBoundProperty() bindTo linearYAxis.lowerBoundProperty()
+        logYAxis.upperBoundProperty() bindTo linearYAxis.upperBoundProperty()
+
+        linearYAxis.tickLabelFormatter = stringConverter
+        logYAxis.tickLabelFormatter = stringConverter
+        linearYAxis.limitTickLabelsWidth(35.0)
+        logYAxis.limitTickLabelsWidth(35.0)
+
+        linearYAxis.tickUnitProperty() bindTo (colorMapper.maxValueProperty() - colorMapper.minValueProperty()) / colorMapper.numberOfSegmentsProperty()
     }
 
     private fun lazyConfigWindowInitOwner() {
@@ -93,7 +127,7 @@ class ColorAxisController @Inject constructor(
         val step = 10.0
         val doubleValueFactory = { pref: Preference<Double> ->
             SpinnerValueFactory.DoubleSpinnerValueFactory(
-                0.0,
+                0.1,
                 100_000.0,
                 preferences.getDouble(pref.key, pref.def),
                 step
@@ -102,6 +136,7 @@ class ColorAxisController @Inject constructor(
 
         // TODO: Исправить NPE при вводе не цифровых символов в спиннерах. Он вызывает commitValue() при потере фокуса
         with(minValueSpinner) {
+            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
             valueFactory = doubleValueFactory(COLOR_MIN_VALUE)
             val valid = editor.isValidBy {
                 it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
@@ -109,6 +144,7 @@ class ColorAxisController @Inject constructor(
             editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
         with(maxValueSpinner) {
+            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
             valueFactory = doubleValueFactory(COLOR_MAX_VALUE)
             val valid = editor.isValidBy {
                 it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
@@ -116,6 +152,7 @@ class ColorAxisController @Inject constructor(
             editor.onAction = EventHandler { if (valid.get()) commitValue() }
         }
         with(numberOfSegmentsSpinner) {
+            // FIXME: 19.07.2022 Из-за бага в JavaFX надо сделать свой спиннер
             valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
                 2,
                 100,
@@ -128,33 +165,41 @@ class ColorAxisController @Inject constructor(
             editor.onAction = EventHandler { if (valid.get()) numberOfSegmentsSpinner.commitValue() }
         }
 
+        initConfig()
+    }
+
+    private fun setupCharts() {
         colorMapper.minValueProperty().bind(minValueSpinner.valueProperty())
         colorMapper.maxValueProperty().bind(maxValueSpinner.valueProperty())
         colorMapper.numberOfSegmentsProperty().bind(numberOfSegmentsSpinner.valueProperty())
+        isLogChkBox.isSelected = colorMapper.isLogScale
+        colorMapper.logScaleProperty().bind(isLogChkBox.selectedProperty())
 
-        yAxis.lowerBoundProperty().bind(colorMapper.minValueProperty())
-        yAxis.upperBoundProperty().bind(colorMapper.maxValueProperty())
+        linearChart.visibleProperty() bindTo !isLogChkBox.selectedProperty()
+        linearChart.managedProperty() bindTo linearChart.visibleProperty()
 
-        initConfig()
+        logChart.visibleProperty() bindTo !linearChart.visibleProperty()
+        logChart.managedProperty() bindTo !linearChart.managedProperty()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun update() {
-        val range = colorMapper.maxValue - colorMapper.minValue
-        chart.data = colorMapper.segments.map {
-            Series(
-                observableListOf(
-                    Data(0.0, colorMapper.minValue + it.from * range),
-                    Data(100.0, colorMapper.minValue + it.from * range),
-                    Data(100.0, colorMapper.minValue + it.to * range),
-                    Data(0.0, colorMapper.minValue + it.to * range)
-                )
-            ) as Series<Number, Number>
-            // safe upcast Double : Number
-        }.toObservableList()
+        with(if (isLogChkBox.isSelected) logChart else linearChart) {
+            data.setAll(colorMapper.segments.map {
+                Series(
+                    observableListOf(
+                        Data(0.0, it.from),
+                        Data(100.0, it.from),
+                        Data(100.0, it.to),
+                        Data(0.0, it.to)
+                    )
+                ) as Series<Number, Number>
+                // safe upcast Double : Number
+            }.toObservableList())
 
-        chart.data.forEachIndexed { index, series ->
-            chart.seriesPolygons[series]?.apply { fill = colorMapper.segments[index].color }
+            data.forEachIndexed { index, series ->
+                seriesPolygons[series]?.apply { fill = colorMapper.segments[index].color }
+            }
         }
     }
 

@@ -8,12 +8,15 @@ import javafx.beans.binding.Bindings.createDoubleBinding
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.util.Duration
+import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
 class LogarithmicAxis @JvmOverloads constructor(
-    @NamedArg("lowerBound") lowerBound: Double = 0.0,
+    @NamedArg("lowerBound") lowerBound: Double = 1.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
     private val lowerRangeTimeline = Timeline()
@@ -21,9 +24,12 @@ class LogarithmicAxis @JvmOverloads constructor(
     private val logUpperBound: DoubleProperty = SimpleDoubleProperty()
     private val logLowerBound: DoubleProperty = SimpleDoubleProperty()
 
+    private val length
+        get() = if (side.isVertical) height else width
+
     init {
         animated = false
-        validateBounds(lowerBound, upperBound)
+        checkBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
 
@@ -42,52 +48,96 @@ class LogarithmicAxis @JvmOverloads constructor(
         )
     }
 
-    private fun validateBounds(lowerBound: Double, upperBound: Double) =
-        require(lowerBound >= 0 && upperBound >= 0 && lowerBound <= upperBound)
+    override fun layoutChildren() {
+        super.layoutChildren()
+        if (isTickLabelsVisible) {
+            checkOverlaps()
+        }
+    }
+
+    private fun checkOverlaps() {
+        if (tickMarks.size <= 1) {
+            return
+        }
+
+        val tick1 = tickMarks[0].apply { isTextVisible = true }
+        val tick2 = tickMarks[1].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tick1, tick2, tickLabelGap)) {
+                tick1.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tick2, tick1, tickLabelGap)) {
+                tick1.isTextVisible = false
+            }
+        }
+
+        val tickPreLast = tickMarks[tickMarks.lastIndex - 1].apply { isTextVisible = true }
+        val tickLast = tickMarks[tickMarks.lastIndex].apply { isTextVisible = true }
+        if (!inverted) {
+            if (isTickLabelsOverlap(side, tickPreLast, tickLast, tickLabelGap)) {
+                tickLast.isTextVisible = false
+            }
+        } else {
+            if (isTickLabelsOverlap(side, tickLast, tickPreLast, tickLabelGap)) {
+                tickLast.isTextVisible = false
+            }
+        }
+
+        tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
+    }
+
+    private fun checkBounds(lowerBound: Double, upperBound: Double) =
+        require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound)
 
 
     override fun calculateMinorTickMarks(): List<Number> {
         val range = range
-        val minorTickMarksPositions = mutableListOf<Number>()
-        val upperBound = range[1]
-        val logUpperBound = log10(upperBound.toDouble())
 
-        var i = 0.0
-        while (i <= logUpperBound) {
-            var j = 0.0
-            while (j <= 9) {
-                val value = j * 10.0.pow(i)
-                minorTickMarksPositions += value
-                j += 1.0 / minorTickCount
+        val majorTicks = calculateTickValues(length, range)
+        val minorTicks = mutableListOf<Number>()
+
+        for (m in majorTicks) {
+            val exp = log10(m.toDouble()).toInt()
+            val r = 10.0.pow(exp - 1)
+            for (i in 2..9) {
+                minorTicks += (r * i)
             }
-            i += 1.0
         }
 
-        return minorTickMarksPositions
+        return minorTicks
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun calculateTickValues(length: Double, range: Any?): List<Number> {
-        val tickPositions: MutableList<Number> = mutableListOf()
+        val ticks: MutableList<Number> = mutableListOf()
+
         if (range != null) {
             // Number lowerBound = ((Number[]) range)[0];
             range as Array<Number>
+            val lowerBound = range[0]
             val upperBound = range[1]
-            // double logLowerBound = Math.log10(lowerBound.doubleValue());
+            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+
+            ticks += lowerBound
+
+            val logLowerBound = log10(lowerBound.toDouble())
             val logUpperBound = log10(upperBound.toDouble())
-            var i = 0.0
-            while (i <= logUpperBound) {
-                for (j in 1..9) {
-                    val value = j * 10.0.pow(i)
-                    tickPositions.add(value)
-                }
-                i += 1.0
+            val first = ceil(logLowerBound).toInt()
+            val last = floor(logUpperBound).toInt()
+
+            for (i in first..last) {
+                ticks += exp10(i)
             }
+
+            ticks += upperBound
         }
-        return tickPositions
+        return ticks
     }
 
-    override fun getRange(): Array<Number> = arrayOf(lowerBoundProperty().get(), upperBoundProperty().get())
+    override fun getRange(): Array<Number> {
+        return arrayOf(lowerBound, upperBound)
+    }
 
     override fun getTickMarkLabel(value: Number): String = tickLabelFormatter?.toString(value) ?: value.toString()
 
@@ -97,7 +147,7 @@ class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            validateBounds(lowerBound.toDouble(), upperBound.toDouble())
+            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             if (animate) {
                 try {
@@ -172,8 +222,9 @@ class LogarithmicAxis @JvmOverloads constructor(
         }
     }
 
-    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any =
-        arrayOf<Number>(minValue, maxValue)
+    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any {
+        return arrayOf<Number>(minValue.coerceAtLeast(Double.MIN_VALUE), maxValue.coerceAtLeast(Double.MAX_VALUE))
+    }
 
 
     companion object {

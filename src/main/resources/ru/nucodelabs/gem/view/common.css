@@ -1,4 +1,5 @@
 .root {
+    /*-fx-background-color: rgb(251, 251, 253);*/
     -fx-accent: ForestGreen;
     -fx-focus-color: ForestGreen;
 }
@@ -8,12 +9,22 @@
     -fx-border-width: 1;
 }
 
+.check-box:selected .mark {
+    -fx-shape: "m20 27.9 12.5-12.5q.45-.45 1.05-.45.6 0 1.05.45.45.45.45 1.05 0 .6-.45 1.05L21.05 31.05q-.45.45-1.05.45-.6 0-1.05-.45L13.4 25.5q-.45-.45-.45-1.05 0-.6.45-1.05.45-.45 1.05-.45.6 0 1.05.45Z";
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-pref-height: 3;
+    -fx-pref-width: 3;
+    -fx-scale-shape: true;
+}
+
 .button {
-    -fx-border-color: LightGray;
-    -fx-border-width: 1px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-background-color: white;
+    -fx-border-color: Gray;
+    -fx-border-width: 0.5;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-background-color: Snow;
     -fx-text-fill: DarkSlateGray;
 }
 
@@ -72,12 +83,12 @@
 }
 
 .split-pane-divider:hover {
-    -fx-background-color: Gray;
+    -fx-background-color: GainsBoro;
     -fx-border-width: 1px;
 }
 
 .split-pane-divider:pressed {
-    -fx-background-color: LightGreen;
+    -fx-background-color: -fx-accent;
 }
 
 .chart-legend {
@@ -168,7 +179,7 @@
     -fx-background-color: LightGray;
 }
 
-.uclabel {
+.chart-label {
     -fx-text-fill: Gray;
     -fx-font-size: 12;
     -fx-padding: 5;
@@ -178,11 +189,11 @@
     -fx-effect: none;
     -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-text-fill: DarkSlateGray;
-    -fx-font-size: 12;
+    -fx-font-size: 13;
     -fx-border-width: 1;
     -fx-border-color: DarkSlateGray;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
 }
 
 .centered-column {
@@ -191,15 +202,15 @@
 
 .text-field {
     -fx-background-radius: 2;
-    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-color: snow;
     -fx-border-radius: 2;
-    -fx-border-width: 1;
-    -fx-border-color: LightGray;
+    -fx-border-width: 0.5;
+    -fx-border-color: Gray;
 }
 
 .text-field:focused {
-    -fx-border-color: DarkGray;
-    -fx-background-color: White;
+    -fx-background-color: white;
+    -fx-border-color: ForestGreen;
 }
 
 .wrong-input {

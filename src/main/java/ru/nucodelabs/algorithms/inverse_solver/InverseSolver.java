@@ -17,7 +17,6 @@ import ru.nucodelabs.data.ves.Picket;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -90,12 +89,12 @@ public class InverseSolver {
                 .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
-        double minPower = picket.getSortedExperimentalData().stream()
+        double minPower = picket.getEffectiveExperimentalData().stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .min()
                 .orElseThrow(NoSuchElementException::new);
-        double maxPower = picket.getSortedExperimentalData().stream()
+        double maxPower = picket.getEffectiveExperimentalData().stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
@@ -113,7 +112,7 @@ public class InverseSolver {
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
         MultivariateFunction multivariateFunction = new FunctionValue(
-                picket.getSortedExperimentalData(), new SquaresDiff(), modelData, forwardSolver
+                picket.getEffectiveExperimentalData(), new SquaresDiff(), modelData, forwardSolver
         );
 
         //anyArray = resistance.size...(model.size - 1)

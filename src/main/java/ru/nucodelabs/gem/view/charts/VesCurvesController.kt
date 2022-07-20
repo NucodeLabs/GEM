@@ -16,7 +16,10 @@ import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 import javafx.util.Duration
-import ru.nucodelabs.algorithms.charts.VesCurvesConverter
+import javafx.util.StringConverter
+import ru.nucodelabs.algorithms.charts.VesCurvesContext
+import ru.nucodelabs.algorithms.charts.vesCurvesContext
+import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
@@ -27,6 +30,7 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
@@ -56,9 +60,24 @@ class VesCurvesController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
-    private val vesCurvesConverter: VesCurvesConverter,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    private val formatter: StringConverter<Number>,
+    private val forwardSolver: ForwardSolver
 ) : AbstractController() {
+
+    // SERIES CSS STYLE CLASSES
+    private val modelLineStyle = "model-line"
+    private val theorLineStyle = "theor-line"
+    private val transparentLineStyle = "transparent-line"
+
+    // SYMBOL CSS STYLE CLASSES
+    private val modelSymbolStyle = "model-symbol"
+    private val theorSymbolStyle = "theor-symbol"
+    private val expSymbolStyle = "exp-symbol"
+    private val expUpperSymbolStyle = "exp-upper-symbol"
+    private val expLowerSymbolStyle = "exp-lower-symbol"
+    private val hiddenSymbolStyle = "hidden-symbol"
+
 
     private val picketIndex
         get() = _picketIndex.get()
@@ -78,22 +97,29 @@ class VesCurvesController @Inject constructor(
     private val picket
         get() = picketObservable.get()!!
 
+    private lateinit var vesCurvesContext: VesCurvesContext
+
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
-    private val tooltips = mutableMapOf<Data<*, *>, Tooltip>()
 
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
     private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        xAxis.tickLabelFormatter = formatter
+        yAxis.tickLabelFormatter = formatter
+
+        lineChart.installTooltips(::tooltipFactory)
+
         picketObservable.addListener { _, _, newValue: Picket? ->
-            if (isDraggingModel) {
-                updateTheoreticalCurve()
-                addTooltips()
-            } else {
-                if (newValue != null) {
+            if (newValue != null) {
+                vesCurvesContext = picket.vesCurvesContext
+                if (isDraggingModel) {
+                    updateTheoreticalCurve()
+                    applyStyle()
+                } else {
                     update()
                 }
             }
@@ -111,13 +137,10 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun update() {
-        tooltips.clear()
-
         updateExpCurves()
         updateTheoreticalCurve()
         updateModelCurve()
-
-        addTooltips()
+        applyStyle()
 
         setupXAxisBounds()
         setupYAxisBounds()
@@ -130,25 +153,32 @@ class VesCurvesController @Inject constructor(
         bound * exp10(range * padding) - bound
 
     private fun setupXAxisBounds() {
+        val xMin: Double
+        val xMax: Double
         if (picket.modelData.isNotEmpty()
             || picket.sortedExperimentalData.isNotEmpty()
         ) {
-            xAxis.lowerBound = min(
+            xMin = min(
                 picket.modelData.firstOrNull()?.power ?: Double.MAX_VALUE,
                 picket.sortedExperimentalData.firstOrNull()?.ab2 ?: Double.MAX_VALUE
             )
-            xAxis.upperBound = max(
-                picket.z - (picket.zOfModelLayers().lastOrNull() ?: picket.z),
+            xMax = max(
+                picket.z - (picket.zOfModelLayers().getOrElse(picket.modelData.lastIndex - 1) { 1e4 }),
                 picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
             )
+        } else if (picket.modelData.size == 1) {
+            xMin = picket.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0
+            xMax = picket.sortedExperimentalData.lastOrNull()?.ab2 ?: 100.0
         } else {
-            xAxis.lowerBound = 1.0
-            xAxis.upperBound = 1000.0
+            xMin = 1.0
+            xMax = 1000.0
         }
 
         val range = xAxisRangeLog()
-        xAxis.lowerBound -= paddingLowerBound(xAxis.lowerBound, range, X_AXIS_PADDING_LOG)
-        xAxis.upperBound += paddingUpperBound(xAxis.upperBound, range, X_AXIS_PADDING_LOG)
+        xAxis.lowerBound =
+            (xMin - paddingLowerBound(xMin, range, X_AXIS_PADDING_LOG)).coerceAtLeast(1e-3)
+        xAxis.upperBound =
+            (xMax + paddingUpperBound(xMax, range, X_AXIS_PADDING_LOG))
     }
 
     private fun setupYAxisBounds() {
@@ -173,23 +203,11 @@ class VesCurvesController @Inject constructor(
         yAxis.upperBound += paddingUpperBound(yAxis.upperBound, range, Y_AXIS_PADDING_LOG)
     }
 
-    // tooltips must be added after nodes shown on screen, otherwise it doesn't work
-    private fun addTooltips() {
-        for (series in lineChart.data) {
-            for (dataPoint in series.data) {
-                tooltips[dataPoint]?.let { Tooltip.install(dataPoint.node, it) }
-            }
-        }
-    }
-
     private fun updateTheoreticalCurve() {
         val theorCurveSeries = Series<Number, Number>()
         try {
             theorCurveSeries.data.addAll(
-                vesCurvesConverter.theoreticalCurveOf(picket.sortedExperimentalData, picket.modelData)
-                    .mapIndexed { i, (x, y) ->
-                        Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
-                    }
+                vesCurvesContext.theoreticalCurveBy(forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
             )
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
@@ -201,9 +219,7 @@ class VesCurvesController @Inject constructor(
     private fun updateModelCurve() {
         val modelCurveSeries = Series<Number, Number>()
         modelCurveSeries.data.addAll(
-            vesCurvesConverter.modelCurveOf(picket.modelData).map { (x, y) ->
-                Data(x as Number, y as Number).also { tooltips += it to tooltipForModel(x, y) }
-            }
+            vesCurvesContext.modelStepGraph().map { (x, y) -> Data(x as Number, y as Number) }
         )
         modelCurveSeries.name = uiProperties["modCurve"]
         dataProperty.get()[MOD_CURVE_SERIES_INDEX] = modelCurveSeries
@@ -239,53 +255,78 @@ class VesCurvesController @Inject constructor(
 
     private fun updateExpCurves() {
         val expCurveSeries = Series(
-            vesCurvesConverter.experimentalCurveOf(picket.sortedExperimentalData).mapIndexed { i, (x, y) ->
-                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
-            }.toObservableList()
+            vesCurvesContext.experimentalCurve.map { (x, y) -> Data(x as Number, y as Number) }.toObservableList()
         )
         expCurveSeries.name = uiProperties["expCurve"]
 
         val errUpperExp = Series(
-            vesCurvesConverter.experimentalCurveErrorBoundOf(
-                picket.sortedExperimentalData,
-                VesCurvesConverter.BoundType.UPPER_BOUND
-            ).mapIndexed { i, (x, y) ->
-                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
+            vesCurvesContext.experimentalCurveErrorUpperBound.map { (x, y) ->
+                Data(x as Number, y as Number)
             }.toObservableList()
         )
         errUpperExp.name = uiProperties["expCurveUpper"]
 
         val errLowerExp = Series(
-            vesCurvesConverter.experimentalCurveErrorBoundOf(
-                picket.sortedExperimentalData,
-                VesCurvesConverter.BoundType.LOWER_BOUND
-            ).mapIndexed { i, (x, y) ->
-                Data(x as Number, y as Number).also { tooltips += it to tooltip(i, x, y) }
+            vesCurvesContext.experimentalCurveErrorLowerBound.map { (x, y) ->
+                Data(x as Number, y as Number)
             }.toObservableList()
         )
         errLowerExp.name = uiProperties["expCurveLower"]
 
-        dataProperty.get()[EXP_CURVE_SERIES_INDEX] = expCurveSeries
+        val hiddenPoints = Series(
+            vesCurvesContext.experimentalHiddenPoints.map { (x, y) ->
+                Data(x as Number, y as Number)
+            }.toObservableList()
+        )
+
+        dataProperty.get()[HIDDEN_SERIES_INDEX] = hiddenPoints
         dataProperty.get()[EXP_CURVE_ERROR_UPPER_SERIES_INDEX] = errUpperExp
         dataProperty.get()[EXP_CURVE_ERROR_LOWER_SERIES_INDEX] = errLowerExp
+        dataProperty.get()[EXP_CURVE_SERIES_INDEX] = expCurveSeries
     }
 
     fun legendVisibleProperty(): BooleanProperty = lineChart.legendVisibleProperty()
 
-    private fun tooltip(n: Int, x: Double, y: Double) =
-        Tooltip(
-            """
-               №${n + 1}
-               AB/2 = ${decimalFormat.format(x)} m
-               ρₐ = ${decimalFormat.format(y)} Ω‧m
-            """.trimIndent()
-        ).halfSecondDelay()
+    private fun tooltipFactory(
+        seriesIndex: Int,
+        series: Series<Number, Number>,
+        pointIndex: Int,
+        point: Data<Number, Number>
+    ): Tooltip? {
+        return when (seriesIndex) {
+            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
+                """
+                    AB/2 = ${decimalFormat.format(point.xValue)} m
+                    ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
+                """.trimIndent()
+            ).shortDelay()
+            else -> null
+        }
+    }
 
-    private fun tooltipForModel(x: Double, y: Double) =
-        Tooltip("Z = ${decimalFormat.format(picket.z - x)} m\nρ = ${decimalFormat.format(y)} Ω‧m")
-            .halfSecondDelay()
+    private fun Tooltip.shortDelay() = apply { showDelay = Duration.ZERO }
 
-    private fun Tooltip.halfSecondDelay() = apply { showDelay = Duration.millis(500.0) }
+    private fun applyStyle() {
+        fun Series<*, *>.lineStyle(style: String) {
+            node.lookup(".chart-series-line").styleClass += style
+        }
+        lineChart.data[EXP_CURVE_SERIES_INDEX].lineStyle(transparentLineStyle)
+        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].lineStyle(transparentLineStyle)
+        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].lineStyle(transparentLineStyle)
+        lineChart.data[HIDDEN_SERIES_INDEX].lineStyle(transparentLineStyle)
+        lineChart.data[THEOR_CURVE_SERIES_INDEX].lineStyle(theorLineStyle)
+        lineChart.data[MOD_CURVE_SERIES_INDEX].lineStyle(modelLineStyle)
+
+        fun Series<*, *>.symbolStyle(style: String) {
+            data.forEach { it.node.lookup(".chart-line-symbol").styleClass += style }
+        }
+        lineChart.data[EXP_CURVE_SERIES_INDEX].symbolStyle(expSymbolStyle)
+        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].symbolStyle(expUpperSymbolStyle)
+        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].symbolStyle(expLowerSymbolStyle)
+        lineChart.data[HIDDEN_SERIES_INDEX].symbolStyle(hiddenSymbolStyle)
+        lineChart.data[THEOR_CURVE_SERIES_INDEX].symbolStyle(theorSymbolStyle)
+        lineChart.data[MOD_CURVE_SERIES_INDEX].symbolStyle(modelSymbolStyle)
+    }
 
 //    @FXML
 //    private fun chartOnMouseDragged(mouseEvent: MouseEvent) {
@@ -328,10 +369,21 @@ class VesCurvesController @Inject constructor(
 
 
     companion object Order {
-        const val EXP_CURVE_SERIES_INDEX = 0
-        const val EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 1
-        const val EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 2
-        const val THEOR_CURVE_SERIES_INDEX = 3
-        const val MOD_CURVE_SERIES_INDEX = 4
+        const val EXP_CURVE_SERIES_INDEX = 3
+        const val EXP_CURVE_ERROR_UPPER_SERIES_INDEX = 2
+        const val EXP_CURVE_ERROR_LOWER_SERIES_INDEX = 1
+        const val THEOR_CURVE_SERIES_INDEX = 4
+        const val MOD_CURVE_SERIES_INDEX = 5
+        const val HIDDEN_SERIES_INDEX = 0
+
+        @JvmField
+        val TOTAL_COUNT = maxOf(
+            EXP_CURVE_SERIES_INDEX,
+            EXP_CURVE_ERROR_LOWER_SERIES_INDEX,
+            EXP_CURVE_ERROR_UPPER_SERIES_INDEX,
+            THEOR_CURVE_SERIES_INDEX,
+            MOD_CURVE_SERIES_INDEX,
+            HIDDEN_SERIES_INDEX
+        ) + 1
     }
 }

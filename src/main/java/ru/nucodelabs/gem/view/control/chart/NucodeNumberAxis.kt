@@ -2,9 +2,13 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.InvalidationListener
 import javafx.beans.NamedArg
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.geometry.Side
+import javafx.collections.ListChangeListener
 import javafx.util.StringConverter
+import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.extensions.fx.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -12,6 +16,33 @@ class NucodeNumberAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 0.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
+
+    private val forceMarksOnlyProperty = SimpleBooleanProperty(false)
+    fun forceMarksOnlyProperty() = forceMarksOnlyProperty
+    var isForceMarksOnly by forceMarksOnlyProperty
+
+    val forceMarks = observableListOf<Double>()
+
+    init {
+        forceMarks.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                tickMarksUpdated()
+            }
+        })
+    }
+
+    private val tickUnitProperty = SimpleDoubleProperty(10.0)
+    fun tickUnitProperty() = tickUnitProperty
+    var tickUnit by tickUnitProperty
+
+    init {
+        tickUnitProperty().addListener(InvalidationListener {
+            if (!isAutoRanging) {
+                invalidateRange()
+                requestAxisLayout()
+            }
+        })
+    }
 
     class DefaultConverter : StringConverter<Number>() {
         override fun toString(obj: Number?): String = obj.toString()
@@ -26,7 +57,9 @@ class NucodeNumberAxis @JvmOverloads constructor(
 
     override fun layoutChildren() {
         super.layoutChildren()
-        checkOverlapsNearBounds()
+        if (isTickLabelsVisible) {
+            checkOverlaps()
+        }
         scale = calculateNewScale(
             if (side.isHorizontal) width else height,
             lowerBound,
@@ -34,7 +67,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
         )
     }
 
-    private fun checkOverlapsNearBounds() {
+    private fun checkOverlaps() {
         if (tickMarks.size <= 1) {
             return
         }
@@ -64,37 +97,6 @@ class NucodeNumberAxis @JvmOverloads constructor(
         }
 
         tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
-    }
-
-    private fun isTickLabelsOverlap(side: Side, m1: TickMark<Number>, m2: TickMark<Number>, gap: Double): Boolean {
-        if (!m1.isTextVisible || !m2.isTextVisible) return false
-        val m1Size: Double = measureTickMarkSize(m1.value, side)
-        val m2Size: Double = measureTickMarkSize(m2.value, side)
-        val m1Start = m1.position - m1Size / 2
-        val m1End = m1.position + m1Size / 2
-        val m2Start = m2.position - m2Size / 2
-        val m2End = m2.position + m2Size / 2
-        return if (side.isVertical) m1Start - m2End <= gap else m2Start - m1End <= gap
-    }
-
-    private fun measureTickMarkSize(value: Number, side: Side): Double {
-        val size = measureTickMarkSize(value, tickLabelRotation)
-        return if (side.isVertical) size.height else size.width
-    }
-
-    private val _tickUnit = SimpleDoubleProperty(10.0)
-    fun tickUnitProperty() = _tickUnit
-    var tickUnit
-        get() = _tickUnit.get()
-        set(value) = _tickUnit.set(value)
-
-    init {
-        tickUnitProperty().addListener(InvalidationListener {
-            if (!isAutoRanging) {
-                invalidateRange()
-                requestAxisLayout()
-            }
-        })
     }
 
     override fun getDisplayPosition(value: Number): Double {
@@ -139,6 +141,11 @@ class NucodeNumberAxis @JvmOverloads constructor(
         val upperBound = range[1]
         val tickUnit = range[2]
         val ticks = mutableListOf<Number>()
+        ticks += forceMarks
+
+        if (isForceMarksOnly) {
+            return ticks.sortedBy { it.toDouble() }
+        }
 
         when {
             lowerBound == upperBound -> ticks += upperBound
@@ -174,7 +181,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
                 ticks += upperBound
             }
         }
-        return ticks
+        return ticks.sortedBy { it.toDouble() }
     }
 
     // How to extend final class?
