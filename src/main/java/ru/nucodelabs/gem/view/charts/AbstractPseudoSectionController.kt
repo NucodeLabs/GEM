@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.chart.XYChart
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
@@ -10,27 +9,21 @@ import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.picketsBounds
 import ru.nucodelabs.data.ves.xOfPicket
-import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
-import ru.nucodelabs.gem.view.charts.PseudoSectionController.PicketDependencies.Factory.dependenciesOf
-import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.InterpolationMap
+import ru.nucodelabs.gem.view.charts.AbstractPseudoSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.net.URL
 import java.util.*
-import javax.inject.Inject
 
-class PseudoSectionController @Inject constructor(
-    private val observableSection: ObservableSection,
-    private val colorMapper: ColorMapper,
-    private val formatter: StringConverter<Number>
+abstract class AbstractPseudoSectionController constructor(
+    protected val observableSection: ObservableSection,
+    protected val formatter: StringConverter<Number>
 ) : AbstractController() {
-
     /**
      * Used for comparing pickets only by data on which chart is dependent
      */
-    private data class PicketDependencies(
+    protected data class PicketDependencies(
         val experimentalData: List<ExperimentalData>,
         val offsetX: Double,
         val z: Double
@@ -45,30 +38,32 @@ class PseudoSectionController @Inject constructor(
     }
 
     @FXML
-    private lateinit var yAxis: LogarithmicAxis
+    protected lateinit var yAxis: LogarithmicAxis
 
     @FXML
-    private lateinit var xAxis: NucodeNumberAxis
-
-    @FXML
-    private lateinit var chart: InterpolationMap
+    protected lateinit var xAxis: NucodeNumberAxis
 
     override val stage: Stage?
-        get() = chart.scene.window as Stage?
+        get() = xAxis.scene.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         xAxis.tickLabelFormatter = formatter
         yAxis.tickLabelFormatter = formatter
 
-        chart.colorMapper = colorMapper
         observableSection.pickets.addListener(ListChangeListener { c ->
             while (c.next()) {
                 if (c.wasReplaced()) {
                     if (c.removed.map { dependenciesOf(it) } != c.addedSubList.map { dependenciesOf(it) }) {
+                        setupXAxisBounds()
+                        setupXAxisMarks()
+                        setupYAxisBounds()
                         update()
                     }
                 } else {
                     if (c.wasAdded() || c.wasRemoved() || c.wasPermutated()) {
+                        setupXAxisBounds()
+                        setupXAxisMarks()
+                        setupYAxisBounds()
                         update()
                     }
                 }
@@ -76,30 +71,9 @@ class PseudoSectionController @Inject constructor(
         })
     }
 
-    private fun update() {
-        setupXAxisBounds()
-        setupXAxisMarks()
-        setupYAxisBounds()
+    abstract fun update()
 
-        val section = observableSection.asSection()
-        val data: MutableList<XYChart.Data<Number, Number>> = mutableListOf()
-
-        for (picket in section.pickets) {
-            for (expData in picket.effectiveExperimentalData) {
-                data.add(
-                    XYChart.Data(
-                        section.xOfPicket(picket),
-                        expData.ab2,
-                        expData.resistanceApparent
-                    )
-                )
-            }
-        }
-
-        chart.data.setAll(XYChart.Series(data.toObservableList()))
-    }
-
-    private fun setupXAxisMarks() {
+    protected fun setupXAxisMarks() {
         val section = observableSection.asSection()
         xAxis.forceMarks.setAll(
             section.picketsBounds().flatMap { listOf(it.leftX, it.rightX) }.distinct()
@@ -107,7 +81,7 @@ class PseudoSectionController @Inject constructor(
         )
     }
 
-    private fun setupYAxisBounds() {
+    protected fun setupYAxisBounds() {
         if (observableSection.pickets.none { it.effectiveExperimentalData.isNotEmpty() }
             || observableSection.pickets.isEmpty()) {
             yAxis.lowerBound = 1.0
@@ -124,7 +98,7 @@ class PseudoSectionController @Inject constructor(
         }
     }
 
-    private fun setupXAxisBounds() {
+    protected fun setupXAxisBounds() {
         val bounds = observableSection.asSection().picketsBounds()
         xAxis.lowerBound = bounds.firstOrNull()?.leftX ?: 0.0
         xAxis.upperBound = bounds.lastOrNull()?.rightX?.takeIf { it > 0.0 } ?: 100.0
