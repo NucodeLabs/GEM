@@ -83,17 +83,21 @@ public class FunctionValue implements MultivariateFunction {
         double diffValue = inverseFunction.apply(solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
 
-        diffMinValue = Math.min(diffValue, diffMinValue);
+        boolean flag = false;
 
-        for (ModelLayer modelLayer : modelLayers) {
+        for (ModelLayer modelLayer : newModelLayers) {
             if (modelLayer.getResistance() < 0.1 ||
                     modelLayer.getResistance() > 1e5 ||
-                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < experimentalData.get(0).getAb2()) ||
+                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < experimentalData.get(0).getAb2() / 2.0) ||
                     modelLayer.getPower() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
-                diffValue = diffMinValue * 1.1;
+                diffValue = Math.max(diffMinValue * 1.1, diffValue);
+                flag = true;
                 break;
             }
         }
+
+        if (!flag)
+            diffMinValue = Math.min(diffValue, diffMinValue);
 
         return diffValue;
     }
