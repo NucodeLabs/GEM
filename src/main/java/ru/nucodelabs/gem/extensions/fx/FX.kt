@@ -16,6 +16,7 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter.Change
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import javafx.util.StringConverter
 import java.lang.String.format
 import java.text.DecimalFormat
 import java.text.ParsePosition
@@ -152,4 +153,26 @@ fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
     } else {
         c
     }
+}
+
+fun intFilter() = UnaryOperator<Change> { c ->
+    if (c.controlNewText.isEmpty() || c.controlNewText == "-") {
+        return@UnaryOperator c
+    }
+    c.controlNewText.toIntOrNull()?.let { c }
+}
+
+class DoubleValidationConverter(
+    private val decimalFormat: DecimalFormat = DecimalFormat(),
+    private val validate: (Double) -> Boolean
+) : StringConverter<Double>() {
+    override fun toString(o: Double?): String = decimalFormat.format(o)
+    override fun fromString(string: String?): Double =
+        decimalFormat.parse(string).toDouble().takeIf(validate) ?: throw IllegalArgumentException()
+}
+
+class IntValidationConverter(val validate: (Int) -> Boolean) : StringConverter<Int>() {
+    override fun toString(o: Int?): String = o?.toString() ?: ""
+    override fun fromString(string: String?): Int =
+        string?.toInt()?.takeIf(validate) ?: throw IllegalArgumentException()
 }

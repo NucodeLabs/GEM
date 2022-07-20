@@ -13,6 +13,7 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
     fun simpleExceptionAlert(e: Exception, owner: Stage? = null): Alert =
         Alert(Alert.AlertType.ERROR, e.message).apply {
             title = uiProperties["error"]
+            headerText = title
             initOwner(owner)
         }
 

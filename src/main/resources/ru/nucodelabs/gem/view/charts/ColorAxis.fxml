@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
@@ -16,13 +16,23 @@
             <scene>
                 <Scene stylesheets="@../common.css">
                     <VBox spacing="10" style="-fx-padding: 15;">
-                        <Label text="Минимальное значение"/>
-                        <Spinner promptText="Минимальное значение" fx:id="minValueSpinner" editable="true"/>
-                        <Label text="Максимальное значение"/>
-                        <Spinner promptText="Максимальное значение" fx:id="maxValueSpinner" editable="true"/>
-                        <Label text="Число сегментов"/>
-                        <Spinner promptText="Число сегментов" fx:id="numberOfSegmentsSpinner" editable="true"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="5">
+                            <Label text="Минимальное значение"/>
+                            <Label text="[0.1 - 100 000]" styleClass="sub-label"/>
+                        </HBox>
+                        <TextField promptText="Минимальное значение" fx:id="minValueTf"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="5">
+                            <Label text="Максимальное значение"/>
+                            <Label text="[0.1 - 100 000]" styleClass="sub-label"/>
+                        </HBox>
+                        <TextField promptText="Максимальное значение" fx:id="maxValueTf"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="5">
+                            <Label text="Число сегментов"/>
+                            <Label text="[2 - 100]" styleClass="sub-label"/>
+                        </HBox>
+                        <TextField promptText="Число сегментов" fx:id="numberOfSegmentsTf"/>
                         <CheckBox fx:id="isLogChkBox" text="Логарифмический масштаб"/>
+                        <Label fx:id="fileLbl" styleClass="sub-label"/>
                     </VBox>
                 </Scene>
             </scene>
@@ -55,7 +65,7 @@
         </xAxis>
         <yAxis>
             <LogarithmicAxis fx:id="logYAxis" autoRanging="false" prefWidth="35"
-                             side="RIGHT" inverted="true"/>
+                             side="RIGHT" inverted="true" lowerBound="0.1"/>
         </yAxis>
     </PolygonChart>
 </VBox>
