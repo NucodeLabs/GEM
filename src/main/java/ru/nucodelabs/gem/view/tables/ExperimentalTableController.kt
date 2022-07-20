@@ -264,7 +264,9 @@ class ExperimentalTableController @Inject constructor(
                 }
             }
             expData.hiddenProperty().addListener { _, _, isHidden ->
-                table.selectionModel.selectedItems.forEach { it.isHidden = isHidden }
+                if (expData in table.selectionModel.selectedItems) {
+                    table.selectionModel.selectedItems.forEach { it.isHidden = isHidden }
+                }
                 commitChanges()
             }
         }
