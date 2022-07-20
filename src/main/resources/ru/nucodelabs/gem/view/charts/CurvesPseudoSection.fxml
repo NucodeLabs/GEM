@@ -18,7 +18,7 @@
     <HBox alignment="CENTER_LEFT">
         <Label text="%pseudoSection" styleClass="chart-label"/>
     </HBox>
-    <LineChart fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0"
+    <LineChart fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0" animated="false"
                minHeight="0"
                legendVisible="false" styleClass="padded-chart">
         <xAxis>
