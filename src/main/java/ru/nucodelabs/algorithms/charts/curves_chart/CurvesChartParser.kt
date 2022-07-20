@@ -5,7 +5,6 @@ import ru.nucodelabs.data.ves.Bounds
 import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.data.ves.picketsBounds
 import javax.inject.Inject
-import kotlin.math.log10
 import kotlin.math.min
 
 class CurvesChartParser @Inject constructor(inputSection: Section) {
@@ -32,7 +31,7 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
             pointsList.add(arrayListOf())
             for (abIdx in resistances[picketIdx].indices) {
                 val xValue = resistances[picketIdx][abIdx]
-                val yValue = log10(section.pickets[picketIdx].effectiveExperimentalData[abIdx].ab2)
+                val yValue = section.pickets[picketIdx].effectiveExperimentalData[abIdx].ab2
                 pointsList[picketIdx].add(Point(xValue, yValue))
             }
         }
@@ -41,29 +40,31 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private fun addXValues() {
         for (picketIdx in resistances.indices) {
-            resistances[picketIdx].map { e -> e + log10(section.picketsBounds()[picketIdx].leftX) }
+            resistances[picketIdx] =
+                resistances[picketIdx].map { e -> e + section.picketsBounds()[picketIdx].leftX } as MutableList<Double>
         }
     }
 
     private fun recalculateResistances() {
         for (picketIdx in resistances.indices) {
-            resistances[picketIdx].map { e -> log10(e * resistanceK * rightK) }
+            resistances[picketIdx] =
+                resistances[picketIdx].map { e -> e * resistanceK * rightK } as MutableList<Double>
         }
     }
 
     private fun initResistances() {
         for (picketIdx in section.pickets.indices) {
             resistances.add(arrayListOf())
-            for (ab in section.pickets[picketIdx].sortedExperimentalData) {
+            for (ab in section.pickets[picketIdx].effectiveExperimentalData) {
                 resistances[picketIdx].add(ab.resistanceApparent)
             }
         }
     }
 
     private fun shiftResistances() {
-        for (picket in resistances) {
-            val minResistance = picket.min()
-            picket.map { e -> e - minResistance }
+        for (picketIdx in resistances.indices) {
+            val minResistance = resistances[picketIdx].min()
+            resistances[picketIdx] = resistances[picketIdx].map { e -> e - minResistance } as MutableList<Double>
         }
     }
 
