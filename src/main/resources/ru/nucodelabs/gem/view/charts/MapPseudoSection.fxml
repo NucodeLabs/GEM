@@ -14,7 +14,7 @@
       maxWidth="Infinity"
       stylesheets="@../common.css, @PseudoSection.css"
       VBox.vgrow="ALWAYS"
-      fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionController">
+      fx:controller="ru.nucodelabs.gem.view.charts.MapPseudoSectionController">
     <HBox alignment="CENTER_LEFT">
         <Label text="%pseudoSection" styleClass="chart-label"/>
     </HBox>
