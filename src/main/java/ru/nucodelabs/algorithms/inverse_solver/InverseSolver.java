@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class InverseSolver {
 
     //Размер симплекса (по каждому измерению)
-    private static final double SIDE_LENGTH_DEFAULT = 0.1;
+    private static final double SIDE_LENGTH_DEFAULT = 0.02;
 
     //Какие-то константы для SimplexOptimize
     private static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
