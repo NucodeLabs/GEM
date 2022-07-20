@@ -1,5 +1,4 @@
 import io.github.fvarrui.javapackager.gradle.PackageTask
-import io.github.fvarrui.javapackager.model.FileAssociation
 import io.github.fvarrui.javapackager.model.SetupMode
 import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
@@ -67,6 +66,28 @@ ext {
     ]
 
     jniArgs = prepareJNIArgs()
+}
+
+task prepareDir() {
+    File runDir = new File("build/run/")
+    runDir.mkdirs()
+    File colorMapDir = new File("build/run/colormap")
+    colorMapDir.mkdirs()
+}
+
+task copyClr(type: Copy) {
+    dependsOn prepareDir
+    from 'data/clr/002_ERT_Rainbow_2.clr'
+    into 'build/run/colormap'
+    rename('002_ERT_Rainbow_2.clr', 'default.clr')
+}
+
+task distClr(type: Copy) {
+    doFirst {
+        file('build/GEM/colormap').mkdirs()
+    }
+    from 'colormap'
+    into 'build/GEM/colormap'
 }
 
 def prepareJNIArgs() {
@@ -221,22 +242,6 @@ javapackager {
             file("lib/${libPrefix}forwardsolver.${libExt}"),
             file("lib/${libPrefix}misfit.${libExt}")
     ]
-    fileAssociations = [
-            new FileAssociation() {
-                {
-                    mimeType = "text/plain"
-                    extension = "EXP"
-                    description = "Exp Data"
-                }
-            },
-            new FileAssociation() {
-                {
-                    mimeType = "application/json"
-                    extension = "json"
-                    description = "Section or Picket"
-                }
-            }
-    ]
 }
 
 task packageMacApp(type: PackageTask, dependsOn: build) {
@@ -246,6 +251,7 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
         generateDmg = false
         generatePkg = false
     }
+    finalizedBy distClr
 }
 
 task packageWindowsExe(type: PackageTask, dependsOn: build) {
@@ -262,6 +268,7 @@ task packageWindowsExe(type: PackageTask, dependsOn: build) {
         disableWelcomePage = false
         createDesktopIconTask = false
     }
+    finalizedBy distClr
 }
 
 task packageLinuxApplication(type: PackageTask, dependsOn: build) {
@@ -272,7 +279,9 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
         wrapJar = true
         pngFile = file("src/main/resources/img/gem.png")
     }
+    finalizedBy distClr
 }
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
