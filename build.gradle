@@ -69,6 +69,20 @@ ext {
     jniArgs = prepareJNIArgs()
 }
 
+task prepareDir() {
+    File runDir = new File("build/run/")
+    runDir.mkdirs()
+    File colorMapDir = new File("build/run/colormap")
+    colorMapDir.mkdirs()
+}
+
+task copyClr(type: Copy) {
+    dependsOn prepareDir
+    from 'data/clr/002_ERT_Rainbow_2.clr'
+    into 'build/run/colormap'
+    rename('002_ERT_Rainbow_2.clr', 'default.clr')
+}
+
 def prepareJNIArgs() {
     def jniArgs = new ArrayList()
     jniArgs.add(compiler)

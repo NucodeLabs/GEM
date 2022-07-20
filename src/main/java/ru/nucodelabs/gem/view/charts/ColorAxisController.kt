@@ -4,10 +4,7 @@ import javafx.beans.property.ObjectProperty
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.TextField
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
@@ -25,19 +22,19 @@ import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import java.util.prefs.Preferences
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class ColorAxisController @Inject constructor(
+    @Named("CLR") private val clrFile: File,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
-    private val preferences: Preferences,
     private val stringConverter: StringConverter<Number>,
-    private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat
 ) : AbstractController() {
 
@@ -49,6 +46,9 @@ class ColorAxisController @Inject constructor(
 
     @FXML
     private lateinit var configWindow: Stage
+
+    @FXML
+    private lateinit var fileLbl: Label
 
     @FXML
     private lateinit var minValueTf: TextField
@@ -81,6 +81,7 @@ class ColorAxisController @Inject constructor(
         get() = root.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        fileLbl.text = "Цветовая схема: ${clrFile.path}"
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
@@ -116,6 +117,7 @@ class ColorAxisController @Inject constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun initConfig() {
         maxValueTf.textFormatter.value = fxPreferences.bind(
             maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
@@ -158,6 +160,7 @@ class ColorAxisController @Inject constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setupCharts() {
         colorMapper.minValueProperty().bind(minValueTf.textFormatter.valueProperty() as ObjectProperty<Double>)
         colorMapper.maxValueProperty().bind(maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>)

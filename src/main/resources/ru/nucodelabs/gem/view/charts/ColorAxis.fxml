@@ -32,6 +32,7 @@
                         </HBox>
                         <TextField promptText="Число сегментов" fx:id="numberOfSegmentsTf"/>
                         <CheckBox fx:id="isLogChkBox" text="Логарифмический масштаб"/>
+                        <Label fx:id="fileLbl" styleClass="sub-label"/>
                     </VBox>
                 </Scene>
             </scene>

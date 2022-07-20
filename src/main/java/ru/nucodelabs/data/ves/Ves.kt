@@ -13,4 +13,4 @@ fun k(ab2: Double, mn2: Double): Double {
 
 fun k(am: Double, bm: Double, an: Double, bn: Double) = (2 * PI) / ((1 / am) - (1 / bm) - (1 / an) + (1 / bn))
 
-fun u(amperage: Double, k: Double) = amperage / k
+fun u(rhoA: Double, amperage: Double, k: Double) = (rhoA * amperage) / k

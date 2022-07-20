@@ -303,14 +303,14 @@ class ExperimentalTableController @Inject constructor(
             val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
             val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
                 3 -> parser.parsedTable.mapIndexed { i, row ->
-                    val ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
+                    val ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
-                    val mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
+                    val mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}")
-                    val resApp = row[2]?.toDoubleOrNullBy(decimalFormat)
+                    val resApp = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                         ?: throw IllegalStateException("${a[2]}${i + 1}} - Ожидалось ρₐ, было ${row[2]}")
                     val amp = 100.0
-                    val volt = u(100.0, k(ab2, mn2))
+                    val volt = u(resApp, 100.0, k(ab2, mn2))
                     ExperimentalData(
                         ab2 = ab2,
                         mn2 = mn2,
@@ -321,31 +321,45 @@ class ExperimentalTableController @Inject constructor(
                 }
                 4 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
+                        ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
+                        mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.toDoubleOrNullBy(decimalFormat)
+                        voltage = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.toDoubleOrNullBy(decimalFormat)
+                        amperage = row[3]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
                     )
                 }
                 5 -> parser.parsedTable.mapIndexed { i, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.toDoubleOrNullBy(decimalFormat)
+                        ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.toDoubleOrNullBy(decimalFormat)
+                        mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.toDoubleOrNullBy(decimalFormat)
+                        voltage = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.toDoubleOrNullBy(decimalFormat)
+                        amperage = row[3]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
-                        resistanceApparent = row[4]?.toDoubleOrNullBy(decimalFormat)
+                        resistanceApparent = row[4]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                             ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
                     )
                 }
-                else -> throw IllegalStateException("Допустимые числа колонок: 3, 4, 5")
+                else -> throw IllegalStateException(
+                    """
+                    Допустимые числа колонок: 3, 4, 5.
+                    Соответствующий порядок:
+                    3 колонки - AB/2, MN/2 и ρₐ
+                        Берется I = 100mA, U выражается из ρₐ, I, K
+                        
+                    4 колонки - AB/2, MN/2, U, I
+                        ρₐ рассчитывается по формуле.
+                        
+                    5 колонок - AB/2, MN/2, U, I, ρₐ
+                    
+                    Погрешность берется δρₐ = 5%
+                    """.trimIndent()
+                )
             }
             for (item in pastedItems) {
                 val violations = validator.validate(item)
