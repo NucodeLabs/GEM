@@ -1,42 +1,39 @@
 package ru.nucodelabs.gem.view.charts
 
-import javafx.event.EventHandler
+import javafx.beans.property.ObjectProperty
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.Spinner
-import javafx.scene.control.SpinnerValueFactory
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.app.pref.*
+import ru.nucodelabs.gem.app.pref.COLOR_MAX_VALUE
+import ru.nucodelabs.gem.app.pref.COLOR_MIN_VALUE
+import ru.nucodelabs.gem.app.pref.COLOR_SEGMENTS
+import ru.nucodelabs.gem.app.pref.FXPreferences
 import ru.nucodelabs.gem.extensions.fx.*
-import ru.nucodelabs.gem.extensions.fx.decimalFilter
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.fx.observableListOf
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import java.util.prefs.Preferences
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class ColorAxisController @Inject constructor(
+    @Named("CLR") private val clrFile: File,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
-    private val preferences: Preferences,
     private val stringConverter: StringConverter<Number>,
     private val decimalFormat: DecimalFormat
 ) : AbstractController() {
@@ -51,13 +48,16 @@ class ColorAxisController @Inject constructor(
     private lateinit var configWindow: Stage
 
     @FXML
-    private lateinit var minValueSpinner: Spinner<Double>
+    private lateinit var fileLbl: Label
 
     @FXML
-    private lateinit var maxValueSpinner: Spinner<Double>
+    private lateinit var minValueTf: TextField
 
     @FXML
-    private lateinit var numberOfSegmentsSpinner: Spinner<Int>
+    private lateinit var maxValueTf: TextField
+
+    @FXML
+    private lateinit var numberOfSegmentsTf: TextField
 
     @FXML
     private lateinit var isLogChkBox: CheckBox
@@ -81,6 +81,7 @@ class ColorAxisController @Inject constructor(
         get() = root.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        fileLbl.text = "Цветовая схема: ${clrFile.path}"
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
@@ -89,6 +90,7 @@ class ColorAxisController @Inject constructor(
         linearChart.data = observableListOf()
 
         setupControls()
+        initConfig()
         setupCharts()
         setupAxes()
         update()
@@ -115,63 +117,55 @@ class ColorAxisController @Inject constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun initConfig() {
-        fxPreferences.bind(maxValueSpinner.valueProperty(), COLOR_MAX_VALUE.key, COLOR_MAX_VALUE.def)
-        fxPreferences.bind(minValueSpinner.valueProperty(), COLOR_MIN_VALUE.key, COLOR_MIN_VALUE.def)
-        fxPreferences.bind(numberOfSegmentsSpinner.valueProperty(), COLOR_SEGMENTS.key, COLOR_SEGMENTS.def)
+        maxValueTf.textFormatter.value = fxPreferences.bind(
+            maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
+            COLOR_MAX_VALUE.key,
+            COLOR_MAX_VALUE.def
+        )
+        minValueTf.textFormatter.value = fxPreferences.bind(
+            minValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
+            COLOR_MIN_VALUE.key,
+            COLOR_MIN_VALUE.def
+        )
+        numberOfSegmentsTf.textFormatter.value = fxPreferences.bind(
+            numberOfSegmentsTf.textFormatter.valueProperty() as ObjectProperty<Int>,
+            COLOR_SEGMENTS.key,
+            COLOR_SEGMENTS.def
+        )
     }
 
     private fun setupControls() {
         configWindow.initStyle(StageStyle.UTILITY)
 
-        val step = 10.0
-        val doubleValueFactory = { pref: Preference<Double> ->
-            SpinnerValueFactory.DoubleSpinnerValueFactory(
-                0.1,
-                100_000.0,
-                preferences.getDouble(pref.key, pref.def),
-                step
-            )
+        val doubleConverter = DoubleValidationConverter(decimalFormat) { it in minAndMaxRange }
+        with(minValueTf) {
+            textFormatter = TextFormatter(doubleConverter, COLOR_MIN_VALUE.def, decimalFilter(decimalFormat))
+            isValidBy(blankIsValid = false) {
+                it.toDoubleOrNullBy(decimalFormat)?.let { parsed -> parsed in minAndMaxRange } ?: false
+            }
+        }
+        with(maxValueTf) {
+            textFormatter = TextFormatter(doubleConverter, COLOR_MAX_VALUE.def, decimalFilter(decimalFormat))
+            isValidBy(blankIsValid = false) {
+                it.toDoubleOrNullBy(decimalFormat)?.let { parsed -> parsed in minAndMaxRange } ?: false
+            }
         }
 
-        // TODO: Исправить NPE при вводе не цифровых символов в спиннерах. Он вызывает commitValue() при потере фокуса
-        with(minValueSpinner) {
-            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
-            valueFactory = doubleValueFactory(COLOR_MIN_VALUE)
-            val valid = editor.isValidBy {
-                it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
-            }
-            editor.onAction = EventHandler { if (valid.get()) commitValue() }
+        val intConverter = IntValidationConverter { it in segmentsRange }
+        with(numberOfSegmentsTf) {
+            textFormatter = TextFormatter(intConverter, COLOR_SEGMENTS.def, intFilter())
+            isValidBy(blankIsValid = false) { it.toIntOrNull()?.let { parsed -> parsed in segmentsRange } ?: false }
         }
-        with(maxValueSpinner) {
-            editor.textFormatter = TextFormatter<Double>(decimalFilter(decimalFormat))
-            valueFactory = doubleValueFactory(COLOR_MAX_VALUE)
-            val valid = editor.isValidBy {
-                it.toDoubleOrNull()?.let { parsed -> parsed in minAndMaxRange } ?: false
-            }
-            editor.onAction = EventHandler { if (valid.get()) commitValue() }
-        }
-        with(numberOfSegmentsSpinner) {
-            // FIXME: 19.07.2022 Из-за бага в JavaFX надо сделать свой спиннер
-            valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
-                2,
-                100,
-                preferences.getInt(COLOR_SEGMENTS.key, COLOR_SEGMENTS.def),
-                1,
-            )
-            val valid = numberOfSegmentsSpinner.editor.isValidBy {
-                it.toIntOrNull()?.let { parsed -> parsed in segmentsRange } ?: false
-            }
-            editor.onAction = EventHandler { if (valid.get()) numberOfSegmentsSpinner.commitValue() }
-        }
-
-        initConfig()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setupCharts() {
-        colorMapper.minValueProperty().bind(minValueSpinner.valueProperty())
-        colorMapper.maxValueProperty().bind(maxValueSpinner.valueProperty())
-        colorMapper.numberOfSegmentsProperty().bind(numberOfSegmentsSpinner.valueProperty())
+        colorMapper.minValueProperty().bind(minValueTf.textFormatter.valueProperty() as ObjectProperty<Double>)
+        colorMapper.maxValueProperty().bind(maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>)
+        colorMapper.numberOfSegmentsProperty()
+            .bind(numberOfSegmentsTf.textFormatter.valueProperty() as ObjectProperty<Int>)
         isLogChkBox.isSelected = colorMapper.isLogScale
         colorMapper.logScaleProperty().bind(isLogChkBox.selectedProperty())
 

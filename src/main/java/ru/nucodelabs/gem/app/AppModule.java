@@ -24,9 +24,13 @@ import ru.nucodelabs.gem.view.color.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -127,7 +131,7 @@ public class AppModule extends AbstractModule {
             public String toString(Double object) {
                 try {
                     return decimalFormat.format(object);
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     return "";
                 }
             }
@@ -137,7 +141,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.parse(string).doubleValue();
                 } catch (ParseException e) {
-                    return Double.NaN;
+                    throw new RuntimeException(e);
                 }
             }
         };
@@ -160,10 +164,17 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Named("CLR")
+    File clrFile() {
+        return Paths.get("colormap/default.clr").toFile();
+    }
+
+    @Provides
     @Singleton
-    ColorMapper colorMapper() {
+    ColorMapper colorMapper(@Named("CLR") File clrFile) throws FileNotFoundException {
         ClrParser clrParser = new ClrParser();
-        List<ValueColor> valueColorList = clrParser.parse(this.getClass().getResourceAsStream("002_ERT_Rainbow_2.clr"));
+        System.out.println(clrFile.getAbsolutePath());
+        List<ValueColor> valueColorList = clrParser.parse(new FileInputStream(clrFile));
         return new ColorPalette(valueColorList, 0, 1500, 15);
     }
 
