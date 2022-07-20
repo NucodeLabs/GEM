@@ -4,6 +4,11 @@
     -fx-focus-color: ForestGreen;
 }
 
+.sub-label {
+    -fx-font-size: 10;
+    -fx-text-fill: Gray;
+}
+
 .debug {
     -fx-border-color: red;
     -fx-border-width: 1;
