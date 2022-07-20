@@ -7,8 +7,6 @@ import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.curves_chart.CurvesChartParser
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.gem.extensions.fx.toObservableList
-import java.net.URL
-import java.util.*
 import javax.inject.Inject
 
 class CurvesPseudoSectionController @Inject constructor(
@@ -17,11 +15,6 @@ class CurvesPseudoSectionController @Inject constructor(
 ) : AbstractPseudoSectionController(observableSection, formatter) {
     @FXML
     private lateinit var chart: LineChart<Number, Number>
-
-    override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
-        chart.axisSortingPolicy = LineChart.SortingPolicy.NONE
-    }
 
     override fun update() {
         chart.data.clear()
