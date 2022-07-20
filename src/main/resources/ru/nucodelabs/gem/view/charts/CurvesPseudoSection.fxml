@@ -12,7 +12,7 @@
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../common.css, @PseudoSection.css"
+      stylesheets="@../common.css, @CurvesPseudoSection.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.CurvesPseudoSectionController">
     <HBox alignment="CENTER_LEFT">
