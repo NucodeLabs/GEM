@@ -28,6 +28,8 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
     fun getPoints(): List<List<Point>> {
         val pointsList: MutableList<MutableList<Point>> = arrayListOf()
         for (picketIdx in section.pickets.indices) {
+            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty())
+                continue
             pointsList.add(arrayListOf())
             for (abIdx in resistances[picketIdx].indices) {
                 val xValue = resistances[picketIdx][abIdx]
@@ -54,6 +56,8 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private fun initResistances() {
         for (picketIdx in section.pickets.indices) {
+            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty())
+                continue
             resistances.add(arrayListOf())
             for (ab in section.pickets[picketIdx].effectiveExperimentalData) {
                 resistances[picketIdx].add(ab.resistanceApparent)
@@ -69,7 +73,7 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
     }
 
     private fun setK() {
-        for (picketIdx in section.pickets.indices) {
+        for (picketIdx in resistances.indices) {
             resistanceK = min(resistanceK, getKFor(resistances[picketIdx], section.picketsBounds()[picketIdx]))
         }
     }
