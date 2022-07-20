@@ -127,7 +127,7 @@ public class AppModule extends AbstractModule {
             public String toString(Double object) {
                 try {
                     return decimalFormat.format(object);
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     return "";
                 }
             }
@@ -137,7 +137,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.parse(string).doubleValue();
                 } catch (ParseException e) {
-                    return Double.NaN;
+                    throw new RuntimeException(e);
                 }
             }
         };
