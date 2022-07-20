@@ -102,7 +102,7 @@ public class InverseSolver {
 
         setLimitValues(
                 modelResistance, 0.1, 1e5,
-                modelPower, minPower, maxPower
+                modelPower, minPower / 2.0, maxPower
         );
 
         //Неизменяемые сопротивления и мощности
@@ -113,6 +113,7 @@ public class InverseSolver {
 
         MultivariateFunction multivariateFunction = new FunctionValue(
                 picket.getEffectiveExperimentalData(), new SquaresDiff(), modelData, forwardSolver
+                //TODO: modelData без изменений на адекватность?
         );
 
         //anyArray = resistance.size...(model.size - 1)
@@ -125,7 +126,7 @@ public class InverseSolver {
         for (int i = 0; i < modelResistance.size(); i++) {
             startPoint[i] = Math.log(modelResistance.get(i));
         }
-        for (int i = modelResistance.size(); i < modelResistance.size() + modelPower.size() - 1; i++) {
+        for (int i = modelResistance.size(); i < dimension; i++) {
             startPoint[i] = Math.log(modelPower.get(i - modelResistance.size()));
         }
 
