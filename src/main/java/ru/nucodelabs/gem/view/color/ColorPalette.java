@@ -1,23 +1,26 @@
 package ru.nucodelabs.gem.view.color;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.gem.extensions.std.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ColorPalette implements ColorMapper {
 
     private final List<ValueColor> valueColorList;
-    private final DoubleProperty minValue = new SimpleDoubleProperty();
-    private final DoubleProperty maxValue = new SimpleDoubleProperty();
+    private final DoubleProperty minValueProperty = new SimpleDoubleProperty();
+    private Double minValue;
+    private final DoubleProperty maxValueProperty = new SimpleDoubleProperty();
+    private Double maxValue;
     private final IntegerProperty blocksCount = new SimpleIntegerProperty();
+
+    private final BooleanProperty logScaleProperty = new SimpleBooleanProperty(false);
 
     private final List<Segment> segmentList = new ArrayList<>();
 
@@ -27,26 +30,34 @@ public class ColorPalette implements ColorMapper {
         setMaxValue(maxValue);
         setNumberOfSegments(blocksCount);
         if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
+        checkLog();
         blocksInit();
+        this.logScaleProperty.addListener((observable, oldValue, newValue) -> {
+            segmentList.clear();
+            checkLog();
+            blocksInit();
+        });
         this.blocksCount.addListener((observable, oldValue, newValue) -> {
             if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
             segmentList.clear();
+            checkLog();
             blocksInit();
         });
-        this.minValue.addListener((observable, oldValue, newValue) -> {
+        this.minValueProperty.addListener((observable, oldValue, newValue) -> {
             segmentList.clear();
+            checkLog();
             blocksInit();
         });
-        this.maxValue.addListener((observable, oldValue, newValue) -> {
+        this.maxValueProperty.addListener((observable, oldValue, newValue) -> {
             segmentList.clear();
+            checkLog();
             blocksInit();
         });
     }
 
     /**
-     *
-     * @param c1 Первый цвет
-     * @param c2 Второй цвет
+     * @param c1         Первый цвет
+     * @param c2         Второй цвет
      * @param percentage Процент отступа от c1
      * @return Возвращает цвет
      */
@@ -69,8 +80,9 @@ public class ColorPalette implements ColorMapper {
 
     /**
      * Ищет цвет в точке интерполяции между vc1 и vc2
-     * @param vc1 vc1.percentage() < vc2.percentage()
-     * @param vc2 vc2.percentage() > vc1.percentage()
+     *
+     * @param vc1        vc1.percentage() < vc2.percentage()
+     * @param vc2        vc2.percentage() > vc1.percentage()
      * @param percentage vc1.percentage() < percentage < vc2.percentage()
      * @return Interpolated rgba color between vc1.color() and vc2.color()
      */
@@ -126,66 +138,67 @@ public class ColorPalette implements ColorMapper {
     }
 
     private Segment blockFor(double percentage) {
-        int low = 0;
-        int high = segmentList.size() - 1;
-        int mid;
-        while (low <= high) {
-            mid = low + (high - low) / 2;
-            Segment block = segmentList.get(mid);
-            if (block.getFrom() <= percentage && percentage <= block.getTo()) return block;
-            else if (block.getTo() < percentage) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        throw new RuntimeException("Блок не найден бинарным поиском");
+        if (percentage == 1.0) return segmentList.get(segmentList.size() - 1);
+        return segmentList.get((int) Math.floor(percentage / (1.0 / segmentList.size())));
     }
 
     private double percentageFor(double resistance) {
-        if (resistance < minValue.get()) return 0.0;
-        if (resistance > maxValue.get()) return 1.0;
-        return (resistance - minValue.get()) / (maxValue.get() - minValue.get());
+        if (resistance < minValue) return 0.0;
+        if (resistance > maxValue) return 1.0;
+        return (resistance - minValue) / (maxValue - minValue);
+    }
+
+    private void checkLog() {
+        if (minValueProperty.get() < 0.1) minValue = 0.1;
+        if (logScaleProperty.get()) {
+            minValue = Math.log10(minValueProperty.get());
+            maxValue = Math.log10(maxValueProperty.get());
+        } else {
+            minValue = minValueProperty.get();
+            maxValue = maxValueProperty.get();
+        }
     }
 
     @NotNull
     @Override
     public Color colorFor(double value) {
-        double percentage = percentageFor(value);
+        double percentage;
+        if (logScaleProperty.get()) percentage = percentageFor(Math.log10(value));
+        else percentage = percentageFor(value);
         Segment block = blockFor(percentage);
         return block.getColor();
     }
 
     @Override
     public double getMinValue() {
-        return minValue.get();
+        return minValueProperty.get();
     }
 
     @Override
     public void setMinValue(double value) {
-        this.minValue.set(value);
+        this.minValueProperty.set(value);
     }
 
     @Override
     public double getMaxValue() {
-        return maxValue.get();
+        return maxValueProperty.get();
     }
 
     @Override
     public void setMaxValue(double value) {
-        this.maxValue.set(value);
+        this.maxValueProperty.set(value);
     }
 
     @NotNull
     @Override
     public DoubleProperty minValueProperty() {
-        return minValue;
+        return minValueProperty;
     }
 
     @NotNull
     @Override
     public DoubleProperty maxValueProperty() {
-        return maxValue;
+        return maxValueProperty;
     }
 
     @NotNull
@@ -207,7 +220,50 @@ public class ColorPalette implements ColorMapper {
     @NotNull
     @Override
     public List<ColorMapper.Segment> getSegments() {
-        return segmentList;
+        if (!logScaleProperty.get()) return segmentList
+                .stream()
+                .map(s -> new Segment(
+                        s.getFrom() * (maxValue - minValue) + minValue,
+                        s.getTo() * (maxValue - minValue) + minValue,
+                        s.getColor()
+                )).collect(Collectors.toList());
+        else return segmentList
+                .stream()
+                .map(s -> new Segment(
+                        logValue(valueFor(s.getFrom(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                        logValue(valueFor(s.getTo(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                        s.getColor()
+                )).collect(Collectors.toList());
+    }
+
+    private Double valueFor(double percentage, double minValue, double maxValue) {
+        return percentage * (maxValue - minValue) + minValue;
+    }
+
+    private Double logValue(double value, double minValue, double maxValue) {
+        double k = minValue / maxValue;
+        double logRange = Math.log10(maxValue) - Math.log10(maxValue * k);
+        double range = maxValue - minValue;
+        double rDiv = range / logRange;
+        double logMin = Math.log10(maxValue) - logRange;
+        double logValue = (value - minValue) / rDiv + logMin;
+        return MathKt.exp10(logValue);
+    }
+
+    @NotNull
+    @Override
+    public BooleanProperty logScaleProperty() {
+        return logScaleProperty;
+    }
+
+    @Override
+    public boolean isLogScale() {
+        return logScaleProperty.get();
+    }
+
+    @Override
+    public void setLogScale(boolean value) {
+        logScaleProperty.set(value);
     }
 }
 

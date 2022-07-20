@@ -10,7 +10,7 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
-import ru.nucodelabs.gem.utils.OS.macOS
+import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.main.MainViewController
 import java.io.File
 import java.util.logging.Logger

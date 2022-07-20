@@ -1,11 +1,10 @@
 package ru.nucodelabs.gem.view.tables
 
 import jakarta.validation.Validator
+import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.IntegerProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableObjectValue
-import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
@@ -18,22 +17,18 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.primaryModel.PrimaryModel
+import ru.nucodelabs.data.fx.ObservableModelLayer
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.fx.toObservable
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.isNotBlank
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.std.removeAllAt
-import ru.nucodelabs.gem.utils.FXUtils
+import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
 import java.net.URL
 import java.text.DecimalFormat
-import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -42,12 +37,13 @@ private const val STYLE_FOR_FIXED = """
     -fx-text-fill: White;
     -fx-background-color: Gray;
 """
+
 class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
     private val fileImporterProvider: Provider<FileImporter>,
     private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
-    private val _picketIndex: IntegerProperty,
+    private val picketIndexProperty: IntegerProperty,
     private val validator: Validator,
     private val historyManager: HistoryManager<Section>,
     private val doubleStringConverter: StringConverter<Double>,
@@ -55,43 +51,40 @@ class ModelTableController @Inject constructor(
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
-    private lateinit var zCol: TableColumn<ModelLayer, Double>
+    private lateinit var copyFromRightBtn: Button
+
+    @FXML
+    private lateinit var copyFromLeftBtn: Button
+
+    @FXML
+    private lateinit var zCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
     private lateinit var indexCol: TableColumn<Any, Int>
 
     @FXML
-    private lateinit var powerCol: TableColumn<ModelLayer, Double>
+    private lateinit var powerCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
-    private lateinit var resistanceCol: TableColumn<ModelLayer, Double>
+    private lateinit var resistanceCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
-    private lateinit var powerTextField: TextField
+    private lateinit var table: TableView<ObservableModelLayer>
 
-    @FXML
-    private lateinit var resistanceTextField: TextField
+    override val stage: Stage?
+        get() = table.scene.window as Stage?
 
-    @FXML
-    private lateinit var indexTextField: TextField
-
-    @FXML
-    private lateinit var addBtn: Button
-
-    @FXML
-    private lateinit var table: TableView<ModelLayer>
 
     private val picket: Picket
         get() = picketObservable.get()!!
 
-    private val picketIndex
-        get() = _picketIndex.get()
+    private val picketIndex by picketIndexProperty
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, oldValue, newValue ->
             newValue?.let {
                 if (oldValue != null
-                    && oldValue.modelData != it.modelData
+                    && newValue.modelData != table.items.map { it.toModelLayer() }
                 ) {
                     update()
                 } else if (oldValue == null) {
@@ -100,24 +93,33 @@ class ModelTableController @Inject constructor(
             }
         }
 
+        table.itemsProperty().addListener { _, _, _ -> listenToItemsList() }
+
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         setupCellFactories()
-        setupValidation()
         setupRowFactory()
+        setupButtons()
+        setupAutoRefreshTable()
+    }
 
-        table.itemsProperty().addListener { _, _, newValue: ObservableList<ModelLayer> ->
-            newValue.addListener(ListChangeListener { table.refresh() })
+    private fun setupAutoRefreshTable() {
+        table.itemsProperty().addListener { _, _, newValue: ObservableList<ObservableModelLayer> ->
+            newValue.addListener(ListChangeListener {
+                while (it.next()) {
+                    table.refresh()
+                }
+            })
             table.refresh()
         }
     }
 
     private fun fixPowerForSelected() {
-        val modelData = picket.modelData.toMutableList()
+        val modelData = table.items.map { it.toModelLayer() }.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedPower = true)
         }
-        updateIfValidElseAlert(modelData)
+        table.items.setAll(modelData.map { it.toObservable() })
     }
 
     private fun fixResistanceForSelected() {
@@ -125,7 +127,7 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedResistance = true)
         }
-        updateIfValidElseAlert(modelData)
+        table.items.setAll(modelData.map { it.toObservable() })
     }
 
     private fun unfixPowerForSelected() {
@@ -133,7 +135,7 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedPower = false)
         }
-        updateIfValidElseAlert(modelData)
+        table.items.setAll(modelData.map { it.toObservable() })
     }
 
     private fun unfixResistanceForSelected() {
@@ -141,17 +143,20 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedResistance = false)
         }
-        updateIfValidElseAlert(modelData)
+        table.items.setAll(modelData.map { it.toObservable() })
     }
 
     private fun setupRowFactory() {
         table.rowFactory = Callback {
-            TableRow<ModelLayer>().apply {
+            TableRow<ObservableModelLayer>().apply {
                 val createContextMenu = {
                     ContextMenu(
                         MenuItem("Удалить").apply {
                             onAction = EventHandler { deleteSelected() }
                         },
+                        MenuItem("Разделить").apply {
+                            onAction = EventHandler { divideSelected() }
+                        }
                     ).apply {
                         if (table.selectionModel.selectedItems.size == 1) {
                             items += MenuItem().apply {
@@ -197,12 +202,30 @@ class ModelTableController @Inject constructor(
         }
     }
 
+    private fun divideSelected() {
+        val modelData = picket.modelData.toMutableList()
+        for (index in table.selectionModel.selectedIndices) {
+            if (modelData.size == 1) {
+                modelData += modelData[index].copy(power = 10.0)
+            } else {
+                if (index == modelData.lastIndex) {
+                    modelData.add(index, modelData[index - 1].copy(resistance = modelData.last().resistance))
+                } else {
+                    val (fst, snd) = modelData[index].divide()
+                    modelData[index] = fst
+                    modelData.add(index + 1, snd)
+                }
+            }
+        }
+        table.items.setAll(modelData.map { it.toObservable() })
+    }
+
     private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
-        powerCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.power) }
-        resistanceCol.cellValueFactory = Callback { features -> SimpleObjectProperty(features.value.resistance) }
+        powerCol.cellValueFactory = Callback { features -> features.value.powerProperty().asObject() }
+        resistanceCol.cellValueFactory = Callback { features -> features.value.resistanceProperty().asObject() }
         zCol.cellFactory = Callback {
-            TableCell<ModelLayer, Double>().apply {
+            TableCell<ObservableModelLayer, Double>().apply {
                 textProperty().bind(
                     createStringBinding(
                         {
@@ -221,10 +244,13 @@ class ModelTableController @Inject constructor(
             }
         }
 
-        val editableColumns: List<TableColumn<ModelLayer, Double>> = listOf(powerCol, resistanceCol)
+        val editableColumns = listOf(
+            powerCol,
+            resistanceCol
+        )
         editableColumns.forEach {
             it.cellFactory = Callback { col ->
-                TextFieldTableCell.forTableColumn<ModelLayer, Double>(doubleStringConverter).call(col).apply {
+                TextFieldTableCell.forTableColumn<ObservableModelLayer, Double>(doubleStringConverter).call(col).apply {
                     when (col) {
                         powerCol -> indexProperty().addListener { _, _, _ ->
                             if (index >= 0 && index <= picket.modelData.lastIndex) {
@@ -251,87 +277,84 @@ class ModelTableController @Inject constructor(
 
     }
 
-    private fun setupValidation() {
-        val validInput = indexTextField.isValidBy { validateIndexInput(it) }
-            .and(resistanceTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
-            .and(powerTextField.isValidBy { validateDoubleInput(it, decimalFormat) })
-
-        val allRequiredNotBlank = powerTextField.textProperty().isNotBlank()
-            .and(resistanceTextField.textProperty().isNotBlank())
-
-        addBtn.disableProperty().bind(validInput.not().or(allRequiredNotBlank.not()))
+    private fun setupButtons() {
+        copyFromLeftBtn.disableProperty().bind(
+            createBooleanBinding(
+                { observableSection.pickets.size <= 1 || picketIndex == 0 },
+                observableSection.pickets, picketIndexProperty
+            )
+        )
+        copyFromRightBtn.disableProperty().bind(
+            createBooleanBinding(
+                { observableSection.pickets.size <= 1 || picketIndex == observableSection.pickets.lastIndex },
+                observableSection.pickets, picketIndexProperty
+            )
+        )
     }
 
-    override val stage: Stage?
-        get() = table.scene.window as Stage?
-
     private fun update() {
-        table.items = FXCollections.observableList(picket.modelData)
+        mapItems()
+        listenToItemsProperties(table.items)
+        listenToItemsList()
         table.refresh()
     }
 
-    @FXML
-    private fun onEditCommit(event: TableColumn.CellEditEvent<ModelLayer, Double>) {
-        val index: Int = event.tablePosition.row
-        val oldValue: ModelLayer = event.rowValue
-        val newInputValue: Double = event.newValue
-        val newValue: ModelLayer = when (event.tableColumn) {
-            powerCol -> oldValue.copy(power = newInputValue)
-            resistanceCol -> oldValue.copy(resistance = newInputValue)
-            else -> throw RuntimeException("Something went wrong!")
-        }
-        if (!event.newValue.isNaN()) {
-            updateIfValidElseAlert(picket.modelData.toMutableList().also { it[index] = newValue })
-        } else {
-            table.refresh()
+    private fun mapItems() {
+        table.items = picket.modelData.map { it.toObservable() }.toObservableList()
+    }
+
+    private fun listenToItemsList() {
+        table.items.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                when {
+                    c.wasAdded() -> {
+                        listenToItemsProperties(c.addedSubList)
+                        commitChanges()
+                    }
+                    c.wasRemoved() -> commitChanges()
+                    c.wasPermutated() -> commitChanges()
+                }
+            }
+        })
+    }
+
+    private fun listenToItemsProperties(items: List<ObservableModelLayer>) {
+        items.forEach { layer ->
+            layer.powerProperty().addListener { _, oldPow, newPow ->
+                val violations = validator.validateValue(ModelLayer::class.java, "power", newPow)
+                if (violations.isEmpty()) {
+                    commitChanges()
+                } else {
+                    layer.power = oldPow.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
+                }
+            }
+            layer.resistanceProperty().addListener { _, oldRes, newRes ->
+                val violations = validator.validateValue(ModelLayer::class.java, "resistance", newRes)
+                if (violations.isEmpty()) {
+                    commitChanges()
+                } else {
+                    layer.resistance = oldRes.toDouble()
+                    alertsFactory.violationsAlert(violations, stage).show()
+                }
+            }
+            layer.fixedPowerProperty().addListener { _, _, _ -> commitChanges() }
+            layer.fixedResistanceProperty().addListener { _, _, _ -> commitChanges() }
         }
     }
 
-    @FXML
-    private fun addLayer() {
-        if (!addBtn.isDisable) {
-            val newResistanceValue: Double = try {
-                decimalFormat.parse(resistanceTextField.text).toDouble()
-            } catch (_: ParseException) {
-                return
+    private fun commitChanges() {
+        val modelDataInTable = table.items.map { it.toModelLayer() }
+        if (modelDataInTable != picket.modelData) {
+            historyManager.snapshotAfter {
+                observableSection.pickets[picketIndex] = picket.copy(modelData = modelDataInTable)
             }
-            val newPowerValue: Double = try {
-                decimalFormat.parse(powerTextField.text).toDouble()
-            } catch (_: ParseException) {
-                return
-            }
-            val index = try {
-                indexTextField.text.toInt().coerceAtMost(picket.modelData.lastIndex + 1)
-            } catch (_: NumberFormatException) {
-                picket.modelData.lastIndex + 1
-            }
-            updateIfValidElseAlert(
-                picket.modelData.toMutableList().apply {
-                    add(index, ModelLayer(newPowerValue, newResistanceValue))
-                }
-            )
         }
     }
 
     @FXML
     private fun deleteSelected() {
-        picket.modelData.toMutableList().apply {
-            removeAllAt(table.selectionModel.selectedIndices)
-        }.also {
-            updateIfValidElseAlert(it)
-        }
-    }
-
-    private fun updateIfValidElseAlert(newModelData: List<ModelLayer>) {
-        val modified = picket.copy(modelData = newModelData)
-        val violations = validator.validate(modified)
-        if (violations.isNotEmpty()) {
-            alertsFactory.violationsAlert(violations, stage).show()
-            table.refresh()
-        } else {
-            historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
-            FXUtils.unfocus(indexTextField, powerTextField, resistanceTextField)
-        }
+        table.items.removeAll(table.selectionModel.selectedItems)
     }
 
     @FXML
@@ -366,5 +389,15 @@ class ModelTableController @Inject constructor(
         val primaryModel = PrimaryModel(picket.sortedExperimentalData)
         val newModelData = primaryModel.get3LayersPrimaryModel()
         historyManager.snapshotAfter { observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData) }
+    }
+
+    @FXML
+    private fun copyFromLeft() {
+        table.items.setAll(observableSection.pickets[picketIndex - 1].modelData.map { it.toObservable() })
+    }
+
+    @FXML
+    private fun copyFromRight() {
+        table.items.setAll(observableSection.pickets[picketIndex + 1].modelData.map { it.toObservable() })
     }
 }

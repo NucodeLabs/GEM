@@ -3,7 +3,7 @@ package ru.nucodelabs.algorithms.interpolation
 import javafx.scene.chart.XYChart
 import kotlin.math.log10
 
-class InterpolationParser (private val inputImmutableData: List<List<XYChart.Data<Double, Double>>>) : InterpolationDataParser {
+class InterpolationParser (private val inputImmutableData: List<List<XYChart.Data<Double, Double>>>) {
 
     private lateinit var gridX: DoubleArray
     private lateinit var gridY: DoubleArray
@@ -22,7 +22,7 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
 
     private val missedPositions: MutableList<Pair<Int, Int>> = arrayListOf()
 
-    override fun parse() {
+    init {
         checkData()
         copyData(inputImmutableData, inputData)
         removeSame()
@@ -34,10 +34,27 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         checkMissedPoints()
     }
 
+    fun minResistance(): Double {
+        return grid[0][0].yValue
+    }
+
+    fun maxResistance(): Double {
+        return grid[0].last().yValue
+    }
+
+    fun minAB(): Double {
+        return grid[0][0].xValue
+    }
+
+    fun maxAB(): Double {
+        return grid.last()[0].xValue
+    }
+
     fun gridToLogValues(grid: MutableList<MutableList<XYChart.Data<Double, Double>>>) {
         for (picketIdx in grid.indices) {
             for (abIdx in grid[picketIdx].indices) {
-                grid[picketIdx][abIdx].extraValue = log10(grid[picketIdx][abIdx].extraValue as Double)
+                if (grid[picketIdx][abIdx].extraValue as Double >= 0)
+                    grid[picketIdx][abIdx].extraValue = log10(grid[picketIdx][abIdx].extraValue as Double)
             }
         }
     }
@@ -77,7 +94,7 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
             for (ab in inputData[picketIdx]) {
                 x[cnt] = ab.xValue
                 y[cnt] = ab.yValue
-                f[cnt] = ab.extraValue as Double
+                f[cnt] = log10(ab.extraValue as Double)
                 cnt++
             }
         }
@@ -139,35 +156,35 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         }
     }
 
-    override fun getGridX(): DoubleArray {
+    fun getGridX(): DoubleArray {
         return gridX
     }
 
-    override fun getGridY(): DoubleArray {
+    fun getGridY(): DoubleArray {
         return gridY
     }
 
-    override fun getGridF(): Array<DoubleArray> {
+    fun getGridF(): Array<DoubleArray> {
         return gridF
     }
 
-    override fun getX(): DoubleArray {
+    fun getX(): DoubleArray {
         return x
     }
 
-    override fun getY(): DoubleArray {
+    fun getY(): DoubleArray {
         return y
     }
 
-    override fun getF(): DoubleArray {
+    fun getF(): DoubleArray {
         return f
     }
 
-    override fun getMissedPoints(): MutableList<MutableList<XYChart.Data<Double, Double>>> {
+    fun getMissedPoints(): MutableList<MutableList<XYChart.Data<Double, Double>>> {
         return missedPoints
     }
 
-    override fun getGrid(): List<List<XYChart.Data<Double, Double>>> {
+    fun getGrid(): MutableList<MutableList<XYChart.Data<Double, Double>>> {
         return grid
     }
 }

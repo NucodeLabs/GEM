@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -30,11 +27,31 @@
     <!--    </HBox>-->
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
+        <placeholder>
+            <VBox alignment="CENTER" spacing="25">
+                <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
+                    <VBox alignment="BASELINE_CENTER">
+                        <Button text="%import" onAction="#importEXP"/>
+                        <Label text="(*.EXP)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
+                    </VBox>
+                </HBox>
+                <Button fx:id="pasteBtn" text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
+            </VBox>
+        </placeholder>
         <columns>
+            <TableColumn fx:id="isHiddenCol" sortable="false" maxWidth="35" prefWidth="35" minWidth="35"
+                         resizable="false">
+                <graphic>
+                    <Label text="    ">
+                        <tooltip>
+                            <Tooltip text="%effectivePoints"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№" styleClass="centered-column"
                          resizable="false" editable="false" fx:id="indexCol"/>
-            <TableColumn fx:id="ab2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="ab2Col" sortable="false">
                 <graphic>
                     <Label text="%ab2">
                         <tooltip>
@@ -43,8 +60,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="mn2Col" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="mn2Col" sortable="false">
                 <graphic>
                     <Label text="%mn2">
                         <tooltip>
@@ -53,9 +69,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="resistanceApparentCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="resistanceApparentCol" sortable="false">
                 <graphic>
                     <Label text="%resistanceApparent">
                         <tooltip>
@@ -64,9 +78,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="errorResistanceCol" maxWidth="Infinity" minWidth="20.0"
-                         prefWidth="100.0" sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="errorResistanceCol" sortable="false">
                 <graphic>
                     <Label text="%errorResistanceApparent">
                         <tooltip>
@@ -75,9 +87,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="amperageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false"
-                         onEditCommit="#onEditCommit">
+            <TableColumn fx:id="amperageCol" sortable="false">
                 <graphic>
                     <Label text="%amperage">
                         <tooltip>
@@ -86,8 +96,7 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="voltageCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
-                         sortable="false" onEditCommit="#onEditCommit">
+            <TableColumn fx:id="voltageCol" sortable="false">
                 <graphic>
                     <Label text="%voltage">
                         <tooltip>
@@ -98,22 +107,4 @@
             </TableColumn>
         </columns>
     </TableView>
-    <HBox spacing="5" style="-fx-padding: 5">
-        <TextField fx:id="indexTextField" promptText="N" prefWidth="45" minWidth="45" onAction="#add"/>
-        <TextField fx:id="ab2TextField" maxWidth="Infinity" promptText="%ab2" onAction="#add"/>
-        <TextField fx:id="mn2TextField" maxWidth="Infinity" promptText="%mn2" onAction="#add"/>
-        <TextField fx:id="resAppTextField" maxWidth="Infinity" promptText="%resistanceApparent"
-                   onAction="#add"/>
-        <TextField fx:id="errResAppTextField" maxWidth="Infinity" promptText="%errorResistanceApparent"
-                   onAction="#add"/>
-        <TextField fx:id="amperageTextField" maxWidth="Infinity" promptText="%amperage" onAction="#add"/>
-        <TextField fx:id="voltageTextField" maxWidth="Infinity" promptText="%voltage" onAction="#add"/>
-        <Button fx:id="addBtn" text="Добавить слой" onAction="#add" minWidth="150" disable="true">
-            <graphic>
-                <ImageView fitWidth="15" fitHeight="15">
-                    <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
-                </ImageView>
-            </graphic>
-        </Button>
-    </HBox>
 </VBox>

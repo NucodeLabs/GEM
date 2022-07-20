@@ -14,7 +14,7 @@ class ObservableSection(
 
     val pickets: ObservableList<Picket> = pickets.toObservableList()
 
-    private val sectionView: Section = Section(this.pickets)
+    private val sectionView by lazy { Section(this.pickets) }
 
     fun asSection() = sectionView
     fun toSection() = Section(pickets.toList())

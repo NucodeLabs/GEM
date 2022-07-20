@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:id="root"
+      fx:controller="ru.nucodelabs.gem.view.main.AddExperimentalDataController"
+      spacing="5" style="-fx-padding: 10">
+    <TextField fx:id="ab2TextField" promptText="%ab2"/>
+    <TextField fx:id="mn2TextField" promptText="%mn2"/>
+    <TextField fx:id="resAppTextField" promptText="%resistanceApparent"/>
+    <TextField fx:id="errResAppTextField" promptText="%errorResistanceApparent"/>
+    <TextField fx:id="amperageTextField" promptText="%amperage"/>
+    <TextField fx:id="voltageTextField" promptText="%voltage"/>
+    <Button fx:id="addBtn" text="Добавить измерение" onAction="#add">
+        <graphic>
+            <ImageView fitWidth="15" fitHeight="15">
+                <Image url="@../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
+</VBox>

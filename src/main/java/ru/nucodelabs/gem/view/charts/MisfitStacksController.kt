@@ -2,18 +2,19 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
-import javafx.collections.FXCollections.observableList
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.stage.Stage
-import ru.nucodelabs.algorithms.charts.*
+import ru.nucodelabs.algorithms.charts.MisfitsFunction
+import ru.nucodelabs.algorithms.charts.vesCurvesContext
 import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.line
+import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
@@ -26,10 +27,9 @@ import kotlin.math.abs
 
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
-    private val vesCurvesConverter: VesCurvesConverter,
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
-    private val misfitValuesFactory: MisfitValuesFactory
+    private val misfitsFunction: MisfitsFunction
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
@@ -62,24 +62,22 @@ class MisfitStacksController @Inject constructor(
     private fun update() {
         var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
         try {
-            val values = misfitValuesFactory(picket.sortedExperimentalData, picket.modelData)
-            val expPoints = vesCurvesConverter.experimentalCurveOf(picket.sortedExperimentalData).map {
-                Point(it.x, it.y)
-            }
+            val misfits = picket.vesCurvesContext.misfitsBy(misfitsFunction)
+            val expPoints = picket.vesCurvesContext.experimentalCurve
 
-            misfitStacksSeriesList = observableList(mutableListOf())
+            misfitStacksSeriesList = observableListOf()
 
-            if (picket.sortedExperimentalData.isNotEmpty() && picket.modelData.isNotEmpty()
-            ) {
-                check(values.size == expPoints.size)
+            if (picket.effectiveExperimentalData.isNotEmpty() && picket.modelData.isNotEmpty()) {
+                check(misfits.size == expPoints.size)
+
                 for ((index, expPoint) in expPoints.withIndex()) {
                     misfitStacksSeriesList += line(
-                        XYChart.Data(expPoint.x as Number, 0.0 as Number),
-                        XYChart.Data(expPoint.x as Number, values[index] as Number)
+                        Point(expPoint.x as Number, 0.0 as Number),
+                        Point(expPoint.x as Number, misfits[index] as Number)
                     )
                 }
             }
-            val avg = values.map { abs(it) }.average()
+            val avg = misfits.map { abs(it) }.average()
             val decimalFormat = DecimalFormat("#.##").apply {
                 roundingMode = RoundingMode.HALF_UP
             }

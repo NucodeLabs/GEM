@@ -2,17 +2,20 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.picketsBounds
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
+import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import java.math.MathContext
+import java.math.RoundingMode
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -22,14 +25,34 @@ private const val LAST_COEF = 0.5
 
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
-    private val colorMapper: ColorMapper
+    private val colorMapper: ColorMapper,
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
-    @FXML
-    private lateinit var yAxis: NumberAxis
+    /**
+     * Used for comparing pickets only by data on which chart is dependent
+     */
+    private data class PicketDependencies(
+        val modelData: List<ModelLayer>,
+        val offsetX: Double,
+        val z: Double,
+        val experimentalData: List<ExperimentalData>
+    ) {
+        companion object Factory {
+            fun dependenciesOf(picket: Picket) = PicketDependencies(
+                modelData = picket.modelData,
+                offsetX = picket.offsetX,
+                z = picket.z,
+                experimentalData = picket.effectiveExperimentalData
+            )
+        }
+    }
 
     @FXML
-    private lateinit var xAxis: NumberAxis
+    private lateinit var yAxis: NucodeNumberAxis
+
+    @FXML
+    private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
     private lateinit var chart: PolygonChart
@@ -38,19 +61,32 @@ class ModelSectionController @Inject constructor(
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        observableSection.pickets.addListener(ListChangeListener {
-            if (it.next()) {
-                update()
+        yAxis.tickLabelFormatter = formatter
+        xAxis.tickLabelFormatter = formatter
+
+        observableSection.pickets.addListener(ListChangeListener { c ->
+            while (c.next()) {
+                if (c.wasReplaced()) {
+                    if (c.removed.map { dependenciesOf(it) } != c.addedSubList.map { dependenciesOf(it) }) {
+                        update()
+                    }
+                } else {
+                    if (c.wasRemoved() || c.wasAdded() || c.wasPermutated()) {
+                        update()
+                    }
+                }
             }
         })
 
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
+        colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
     }
 
     private fun update() {
         setupXAxisBounds()
+        setupXAxisMarks()
         setupYAxisBounds()
 
         chart.data.clear()
@@ -73,7 +109,15 @@ class ModelSectionController @Inject constructor(
                 val x = leftX
                 val y = if (i == 0) picket.z else zList[i - 1]
                 val width = rightX - leftX
-                val height = if (i == zList.lastIndex) abs(zList[i - 1] - lowerBoundZ) else picket.modelData[i].power
+                val height = if (i == zList.lastIndex) {
+                    if (zList.size == 1) {
+                        picket.z - lowerBoundZ
+                    } else {
+                        abs(zList[i - 1] - lowerBoundZ)
+                    }
+                } else {
+                    picket.modelData[i].power
+                }
 
                 val series: Series<Number, Number> = Series(
                     observableListOf(
@@ -88,6 +132,14 @@ class ModelSectionController @Inject constructor(
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
+    }
+
+    private fun setupXAxisMarks() {
+        val section = observableSection.asSection()
+        xAxis.forceMarks.setAll(
+            section.picketsBounds().flatMap { listOf(it.leftX, it.rightX) }.distinct()
+                    + section.pickets.indices.map { section.xOfPicket(it) }.distinct()
+        )
     }
 
     private fun setupXAxisBounds() {
@@ -110,6 +162,11 @@ class ModelSectionController @Inject constructor(
             if (zList.size >= 2) {
                 zList[zList.lastIndex] = zList[zList.lastIndex - 1]
                 zList[zList.lastIndex] -= it.modelData[it.modelData.lastIndex - 1].power * LAST_COEF
+                zList[zList.lastIndex] =
+                    zList[zList.lastIndex]
+                        .toBigDecimal()
+                        .round(MathContext(3, RoundingMode.UP))
+                        .toDouble()
             }
         }
     }.filter { it.isNotEmpty() }
