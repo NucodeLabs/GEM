@@ -11,7 +11,7 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private val section = inputSection.copy()
 
-    private val rightK = 0.95
+    private val rightK = 1.0
 
     private var resistanceK = 1.0
 
@@ -28,8 +28,10 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
     fun getPoints(): List<List<Point>> {
         val pointsList: MutableList<MutableList<Point>> = arrayListOf()
         for (picketIdx in section.pickets.indices) {
-            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty())
+            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
+                pointsList.add(arrayListOf())
                 continue
+            }
             pointsList.add(arrayListOf())
             for (abIdx in resistances[picketIdx].indices) {
                 val xValue = resistances[picketIdx][abIdx]
@@ -56,8 +58,10 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private fun initResistances() {
         for (picketIdx in section.pickets.indices) {
-            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty())
+            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
+                resistances.add(arrayListOf())
                 continue
+            }
             resistances.add(arrayListOf())
             for (ab in section.pickets[picketIdx].effectiveExperimentalData) {
                 resistances[picketIdx].add(ab.resistanceApparent)
@@ -67,6 +71,8 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private fun shiftResistances() {
         for (picketIdx in resistances.indices) {
+            if (resistances[picketIdx].isEmpty())
+                continue
             val minResistance = resistances[picketIdx].min()
             resistances[picketIdx] = resistances[picketIdx].map { e -> e - minResistance } as MutableList<Double>
         }
@@ -74,6 +80,8 @@ class CurvesChartParser @Inject constructor(inputSection: Section) {
 
     private fun setK() {
         for (picketIdx in resistances.indices) {
+            if (resistances[picketIdx].isEmpty())
+                continue
             resistanceK = min(resistanceK, getKFor(resistances[picketIdx], section.picketsBounds()[picketIdx]))
         }
     }
