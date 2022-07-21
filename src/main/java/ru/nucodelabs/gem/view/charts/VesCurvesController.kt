@@ -98,6 +98,7 @@ class VesCurvesController @Inject constructor(
         get() = picketObservable.get()!!
 
     private lateinit var vesCurvesContext: VesCurvesContext
+    private var effectiveToSortedMap = intArrayOf()
 
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
@@ -137,6 +138,7 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun update() {
+        mapIndices()
         updateExpCurves()
         updateTheoreticalCurve()
         updateModelCurve()
@@ -144,6 +146,12 @@ class VesCurvesController @Inject constructor(
 
         setupXAxisBounds()
         setupYAxisBounds()
+    }
+
+    private fun mapIndices() {
+        effectiveToSortedMap = IntArray(picket.effectiveExperimentalData.size) { i ->
+            picket.sortedExperimentalData.indexOf(picket.effectiveExperimentalData[i])
+        }
     }
 
     private fun paddingLowerBound(bound: Double, range: Double, padding: Double): Double =
@@ -296,6 +304,7 @@ class VesCurvesController @Inject constructor(
         return when (seriesIndex) {
             EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
                 """
+                    №${effectiveToSortedMap[pointIndex] + 1}
                     AB/2 = ${decimalFormat.format(point.xValue)} m
                     ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
                 """.trimIndent()
