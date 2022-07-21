@@ -146,6 +146,7 @@ class InterpolationParser (private val inputImmutableData: List<List<XYChart.Dat
         for (picket in inputData) {
             var size = picket.size - 1
             var abIdx = 0
+            picket.sortBy { it.yValue }
             while (abIdx < size) {
                 if (picket[abIdx].yValue == picket[abIdx + 1].yValue) {
                     picket.removeAt(abIdx + 1)
