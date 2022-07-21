@@ -113,7 +113,7 @@ fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, ma
 fun XYChart<*, *>.applyLegendStyleAccordingToSeries() {
     for (legend in childrenUnmodifiable.filterIsInstance<Legend>()) {
         for (label in legend.childrenUnmodifiable.filterIsInstance<Label>()) {
-            label.graphic.lookup(".chart-legend-item-symbol")?.styleClass
+            label.graphic?.lookup(".chart-legend-item-symbol")?.styleClass
                 ?.also { it.clear() }
                 ?.addAll(data.find { it.name == label.text }?.data?.getOrNull(0)?.node?.styleClass ?: continue)
         }
