@@ -15,7 +15,6 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
-import javafx.util.Duration
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.VesCurvesContext
 import ru.nucodelabs.algorithms.charts.vesCurvesContext
@@ -23,9 +22,11 @@ import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
 import ru.nucodelabs.data.ves.zOfModelLayers
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.get
+import ru.nucodelabs.gem.extensions.fx.noDelay
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
@@ -98,7 +99,7 @@ class VesCurvesController @Inject constructor(
         get() = picketObservable.get()!!
 
     private lateinit var vesCurvesContext: VesCurvesContext
-    private var effectiveToSortedMap = intArrayOf()
+    private var effectiveToSortedMapping = intArrayOf()
 
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
@@ -149,9 +150,7 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun mapIndices() {
-        effectiveToSortedMap = IntArray(picket.effectiveExperimentalData.size) { i ->
-            picket.sortedExperimentalData.indexOf(picket.effectiveExperimentalData[i])
-        }
+        effectiveToSortedMapping = picket.effectiveToSortedIndicesMapping()
     }
 
     private fun paddingLowerBound(bound: Double, range: Double, padding: Double): Double =
@@ -304,16 +303,14 @@ class VesCurvesController @Inject constructor(
         return when (seriesIndex) {
             EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
                 """
-                    №${effectiveToSortedMap[pointIndex] + 1}
+                    №${effectiveToSortedMapping[pointIndex] + 1}
                     AB/2 = ${decimalFormat.format(point.xValue)} m
                     ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
                 """.trimIndent()
-            ).shortDelay()
+            ).noDelay()
             else -> null
         }
     }
-
-    private fun Tooltip.shortDelay() = apply { showDelay = Duration.ZERO }
 
     private fun applyStyle() {
         fun Series<*, *>.lineStyle(style: String) {
