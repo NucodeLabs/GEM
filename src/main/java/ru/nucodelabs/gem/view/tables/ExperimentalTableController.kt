@@ -355,7 +355,7 @@ class ExperimentalTableController @Inject constructor(
                         Берется I = 100mA, U выражается из ρₐ, I, K
                         
                     4 колонки - AB/2, MN/2, U, I
-                        ρₐ рассчитывается по формуле.
+                        ρₐ рассчитывается по формуле
                         
                     5 колонок - AB/2, MN/2, U, I, ρₐ
                     
