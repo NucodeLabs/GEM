@@ -22,11 +22,11 @@
                       minHeight="0" animated="false"
                       legendVisible="false" styleClass="padded-chart">
         <xAxis>
-            <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
+            <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" tickUnit="100" minorTickVisible="false"
                               forceMarksOnly="true"/>
         </xAxis>
         <yAxis>
-            <LogarithmicAxis fx:id="yAxis" side="LEFT" label="%ab2" minorTickVisible="false"
+            <LogarithmicAxis fx:id="yAxis" side="LEFT" label="%ab2"
                              inverted="true" autoRanging="false" lowerBound="1" upperBound="100">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>

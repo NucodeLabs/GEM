@@ -8,7 +8,6 @@ import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.COLOR_MAX_VALUE
 import ru.nucodelabs.gem.app.pref.COLOR_MIN_VALUE
@@ -137,7 +136,6 @@ class ColorAxisController @Inject constructor(
     }
 
     private fun setupControls() {
-        configWindow.initStyle(StageStyle.UTILITY)
 
         val doubleConverter = DoubleValidationConverter(decimalFormat) { it in minAndMaxRange }
         with(minValueTf) {
