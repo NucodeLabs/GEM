@@ -41,6 +41,8 @@ class MapPseudoSectionController @Inject constructor(
     }
 
     override fun update() {
+        pointMap.clear()
+
         val section = observableSection.asSection()
         val data: MutableList<Data<Number, Number>> = mutableListOf()
 
@@ -68,10 +70,10 @@ class MapPseudoSectionController @Inject constructor(
     ): Tooltip {
         return Tooltip(
             """
-                    №${pointMap[point]?.plus(1)}
-                    AB/2 = ${decimalFormat.format(point.yValue)} m
-                    ρₐ = ${decimalFormat.format(point.extraValue)} Ω‧m
-                """.trimIndent()
+                №${pointMap[point]?.plus(1)}
+                AB/2 = ${decimalFormat.format(point.yValue)} m
+                ρₐ = ${decimalFormat.format(point.extraValue)} Ω‧m
+            """.trimIndent()
         ).noDelay()
     }
 }
