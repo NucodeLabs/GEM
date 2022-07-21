@@ -300,17 +300,21 @@ class ExperimentalTableController @Inject constructor(
 
     @FXML
     private fun pasteFromClipboard() {
-        val parser = TextToTableParser(Clipboard.getSystemClipboard().string)
+        val text = Clipboard.getSystemClipboard().string
+        val parser = if (text != null) TextToTableParser(text) else return
         try {
             val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
+            val parsedTable = parser.parsedTable.filter { row -> row.none { it == null } }
+
+            fun String?.process(expected: String, row: Int, col: Int) =
+                this?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
+                    ?: throw IllegalArgumentException("${a[col]}${row + 1} - Ожидалось $expected, было $this")
+
             val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
-                3 -> parser.parsedTable.mapIndexed { i, row ->
-                    val ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                        ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}")
-                    val mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                        ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}")
-                    val resApp = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                        ?: throw IllegalStateException("${a[2]}${i + 1}} - Ожидалось ρₐ, было ${row[2]}")
+                3 -> parsedTable.mapIndexed { rowIdx, row ->
+                    val ab2 = row[0].process("AB/2", rowIdx, 0)
+                    val mn2 = row[1].process("MN/2", rowIdx, 1)
+                    val resApp = row[2].process("ρₐ", rowIdx, 2)
                     val amp = 100.0
                     val volt = u(resApp, 100.0, k(ab2, mn2))
                     ExperimentalData(
@@ -321,47 +325,44 @@ class ExperimentalTableController @Inject constructor(
                         voltage = volt
                     )
                 }
-                4 -> parser.parsedTable.mapIndexed { i, row ->
+                4 -> parsedTable.mapIndexed { rowIdx, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}")
+                        ab2 = row[0].process("AB/2", rowIdx, 0),
+                        mn2 = row[1].process("MN/2", rowIdx, 1),
+                        voltage = row[2].process("U", rowIdx, 2),
+                        amperage = row[3].process("I", rowIdx, 3)
                     )
                 }
-                5 -> parser.parsedTable.mapIndexed { i, row ->
+                5 -> parsedTable.mapIndexed { rowIdx, row ->
                     ExperimentalData(
-                        ab2 = row[0]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[0]}${i + 1} - Ожидалось AB/2, было ${row[0]}"),
-                        mn2 = row[1]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[1]}${i + 1} - Ожидалось MN/2, было ${row[1]}"),
-                        voltage = row[2]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[2]}${i + 1} - Ожидалось U, было ${row[2]}"),
-                        amperage = row[3]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[3]}${i + 1} - Ожидалось I, было ${row[3]}"),
-                        resistanceApparent = row[4]?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
-                            ?: throw IllegalStateException("${a[4]}${i + 1} - Ожидалось ρₐ, было ${row[4]}")
+                        ab2 = row[0].process("AB/2", rowIdx, 0),
+                        mn2 = row[1].process("MN/2", rowIdx, 1),
+                        voltage = row[2].process("U", rowIdx, 2),
+                        amperage = row[3].process("I", rowIdx, 3),
+                        resistanceApparent = row[4].process("ρₐ", rowIdx, 4)
                     )
                 }
-                else -> throw IllegalStateException(
-                    """
+                else -> {
+                    val errorRow = parsedTable.find { row -> row.count { it != null } !in arrayOf(3, 4, 5) }
+                    val errorRowIdx = parsedTable.indexOf(errorRow)
+                    throw IllegalStateException(
+                        """
+                    Строка ${errorRowIdx + 1}: ${errorRow?.asList()}
+                    
                     Допустимые числа колонок: 3, 4, 5.
                     Соответствующий порядок:
-                    3 колонки - AB/2, MN/2 и ρₐ
+                    3 колонки - AB/2, MN/2, ρₐ
                         Берется I = 100mA, U выражается из ρₐ, I, K
                         
                     4 колонки - AB/2, MN/2, U, I
-                        ρₐ рассчитывается по формуле.
+                        ρₐ рассчитывается по формуле
                         
                     5 колонок - AB/2, MN/2, U, I, ρₐ
                     
                     Погрешность берется δρₐ = 5%
                     """.trimIndent()
-                )
+                    )
+                }
             }
             for (item in pastedItems) {
                 val violations = validator.validate(item)
