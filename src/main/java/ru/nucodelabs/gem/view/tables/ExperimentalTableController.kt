@@ -300,7 +300,8 @@ class ExperimentalTableController @Inject constructor(
 
     @FXML
     private fun pasteFromClipboard() {
-        val parser = TextToTableParser(Clipboard.getSystemClipboard().string)
+        val text = Clipboard.getSystemClipboard().string
+        val parser = if (text != null) TextToTableParser(text) else return
         try {
             val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
             val parsedTable = parser.parsedTable.filter { row -> row.none { it == null } }
@@ -357,7 +358,7 @@ class ExperimentalTableController @Inject constructor(
                     
                     Допустимые числа колонок: 3, 4, 5.
                     Соответствующий порядок:
-                    3 колонки - AB/2, MN/2 и ρₐ
+                    3 колонки - AB/2, MN/2, ρₐ
                         Берется I = 100mA, U выражается из ρₐ, I, K
                         
                     4 колонки - AB/2, MN/2, U, I
