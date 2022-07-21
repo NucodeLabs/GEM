@@ -31,6 +31,7 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
@@ -123,6 +124,7 @@ class VesCurvesController @Inject constructor(
                     applyStyle()
                 } else {
                     update()
+                    applyStyle()
                 }
             }
         }
@@ -285,6 +287,7 @@ class VesCurvesController @Inject constructor(
                 Data(x as Number, y as Number)
             }.toObservableList()
         )
+        hiddenPoints.name = uiProperties["hiddenPoints"]
 
         dataProperty.get()[HIDDEN_SERIES_INDEX] = hiddenPoints
         dataProperty.get()[EXP_CURVE_ERROR_UPPER_SERIES_INDEX] = errUpperExp
@@ -332,6 +335,8 @@ class VesCurvesController @Inject constructor(
         lineChart.data[HIDDEN_SERIES_INDEX].symbolStyle(hiddenSymbolStyle)
         lineChart.data[THEOR_CURVE_SERIES_INDEX].symbolStyle(theorSymbolStyle)
         lineChart.data[MOD_CURVE_SERIES_INDEX].symbolStyle(modelSymbolStyle)
+
+        lineChart.applyLegendStyleAccordingToSeries()
     }
 
 //    @FXML
