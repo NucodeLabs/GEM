@@ -96,7 +96,7 @@
                                     <HBox>
                                         <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                    HBox.hgrow="ALWAYS">
-                                            <fx:include source="../charts/MapPseudoSection.fxml"/>
+                                            <fx:include source="../charts/PseudoSectionSwitcher.fxml"/>
                                             <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
                                         </SplitPane>
                                         <fx:include source="../charts/ColorAxis.fxml"/>

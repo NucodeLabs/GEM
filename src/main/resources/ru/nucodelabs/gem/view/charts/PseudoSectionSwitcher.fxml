@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ru.nucodelabs.gem.view.charts.PseudoSectionSwitcherController"
+      maxHeight="Infinity" maxWidth="Infinity">
+    <fx:include fx:id="curvesPseudoSectionBox" source="CurvesPseudoSection.fxml"/>
+    <fx:include fx:id="mapPseudoSectionBox" source="MapPseudoSection.fxml"/>
+</VBox>
