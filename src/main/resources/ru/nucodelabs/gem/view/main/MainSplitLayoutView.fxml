@@ -40,7 +40,8 @@
                         <Menu text="%export">
                             <MenuItem text="%picket" onAction="#exportJsonPicket"/>
                         </Menu>
-                        <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"/>
+                        <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"
+                                  disable="${controller.noFileOpened}"/>
                     </Menu>
                     <Menu text="%edit">
                         <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
