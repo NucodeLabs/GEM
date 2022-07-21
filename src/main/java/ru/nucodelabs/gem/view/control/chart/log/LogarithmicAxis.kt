@@ -97,11 +97,20 @@ class LogarithmicAxis @JvmOverloads constructor(
         val majorTicks = calculateTickValues(length, range)
         val minorTicks = mutableListOf<Number>()
 
-        for (m in majorTicks) {
+        for ((idx, m) in majorTicks.withIndex()) {
             val exp = log10(m.toDouble()).toInt()
             val r = 10.0.pow(exp - 1)
             for (i in 2..9) {
                 minorTicks += (r * i)
+            }
+            if (idx == majorTicks.lastIndex) {
+                val rLast = 10.0.pow(exp)
+                for (i in 2..9) {
+                    if (rLast * i >= majorTicks.last().toDouble()) {
+                        break
+                    }
+                    minorTicks += rLast * i
+                }
             }
         }
 
@@ -132,7 +141,7 @@ class LogarithmicAxis @JvmOverloads constructor(
 
             ticks += upperBound
         }
-        return ticks
+        return ticks.distinct()
     }
 
     override fun getRange(): Array<Number> {
