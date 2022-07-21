@@ -19,7 +19,7 @@
         <Label text="%pseudoSection" styleClass="chart-label"/>
     </HBox>
     <InterpolationMap fx:id="chart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" minWidth="0"
-                      minHeight="0"
+                      minHeight="0" animated="false"
                       legendVisible="false" styleClass="padded-chart">
         <xAxis>
             <NucodeNumberAxis fx:id="xAxis" side="BOTTOM" label="%x" minorTickVisible="false" tickUnit="25"
