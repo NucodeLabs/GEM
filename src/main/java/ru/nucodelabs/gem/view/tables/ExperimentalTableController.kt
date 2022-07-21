@@ -12,6 +12,8 @@ import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.input.Clipboard
 import javafx.scene.input.DataFormat
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
@@ -107,6 +109,12 @@ class ExperimentalTableController @Inject constructor(
                         pasteBtn.isDisable = !Clipboard.getSystemClipboard().hasContent(DataFormat.PLAIN_TEXT)
                     }
                 }
+            }
+        }
+
+        table.addEventHandler(KeyEvent.KEY_PRESSED) { e ->
+            if (e.code == KeyCode.DELETE || e.code == KeyCode.BACK_SPACE) {
+                deleteSelected()
             }
         }
 
