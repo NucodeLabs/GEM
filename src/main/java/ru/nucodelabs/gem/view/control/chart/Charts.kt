@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.control.chart
 
+import com.sun.javafx.charts.Legend
 import javafx.beans.binding.DoubleBinding
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
@@ -107,4 +108,14 @@ fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, ma
         }
     })
     widthProperty().addListener { _, _, _ -> correctFontSize() }
+}
+
+fun XYChart<*, *>.applyLegendStyleAccordingToSeries() {
+    for (legend in childrenUnmodifiable.filterIsInstance<Legend>()) {
+        for (label in legend.childrenUnmodifiable.filterIsInstance<Label>()) {
+            label.graphic.lookup(".chart-legend-item-symbol")?.styleClass
+                ?.also { it.clear() }
+                ?.addAll(data.find { it.name == label.text }?.data?.getOrNull(0)?.node?.styleClass ?: continue)
+        }
+    }
 }
