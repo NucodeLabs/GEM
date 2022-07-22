@@ -5,6 +5,7 @@ import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
+import javafx.scene.effect.BlendMode
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
@@ -134,6 +135,7 @@ class ModelSectionController @Inject constructor(
 
                 chart.data += series
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
+                chart.seriesPolygons.values.forEach { it.blendMode = BlendMode.MULTIPLY }
             }
         }
     }
