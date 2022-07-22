@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.charts
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
+import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.stage.Stage
 import javafx.util.StringConverter
@@ -25,6 +26,9 @@ class MapPseudoSectionController @Inject constructor(
     observableSection: ObservableSection,
     private val decimalFormat: DecimalFormat
 ) : AbstractPseudoSectionController(observableSection, formatter) {
+
+    @FXML
+    lateinit var title: Label
 
     @FXML
     private lateinit var chart: InterpolationMap
