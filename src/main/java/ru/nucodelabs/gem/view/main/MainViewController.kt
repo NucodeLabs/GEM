@@ -30,10 +30,7 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.extensions.fx.get
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.util.FXUtils
 import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AbstractController
@@ -308,19 +305,20 @@ class MainViewController @Inject constructor(
 
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
 
+        noFileOpenedProperty.addListener { _, _, noFile ->
+            if (noFile) {
+                menuViewSectionInSeparateWindow.isSelected = false
+            }
+        }
         menuViewSectionInSeparateWindow.selectedProperty().addListener { _, _, isSelected ->
             if (isSelected) {
                 Stage().apply {
-                    title = "Разрез"
+                    icons += root.icons
+                    titleProperty().bind(stage.titleProperty() + " - Разрез")
                     onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
                     prepareToSeparateSection()
                     scene = Scene(sectionBox).apply {
                         stylesheets += stylesheet
-                    }
-                    noFileOpenedProperty.addListener { _, _, noFile ->
-                        if (noFile) {
-                            menuViewSectionInSeparateWindow.isSelected = false
-                        }
                     }
                 }.show()
             } else {
