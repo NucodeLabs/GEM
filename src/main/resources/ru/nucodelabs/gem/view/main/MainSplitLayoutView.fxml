@@ -53,7 +53,7 @@
                         </fx:define>
                     </Menu>
                     <Menu fx:id="menuView" text="%view">
-                        <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%ves"/>
+                        <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%vesLegend"/>
                         <CheckMenuItem fx:id="menuViewGraphTitles" text="%graphTitles"/>
                     </Menu>
                     <Menu text="%help">
