@@ -152,6 +152,9 @@ fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
 
     val parsePosition = ParsePosition(0)
     val trimmed = c.controlNewText.trim().replace(" ", "")
+    if (trimmed == "-") {
+        return@UnaryOperator c
+    }
     val obj = decimalFormat.parse(trimmed, parsePosition)
 
     if (obj == null || parsePosition.index < trimmed.length) {
