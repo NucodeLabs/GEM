@@ -21,7 +21,6 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Screen
 import javafx.stage.Stage
-import javafx.stage.WindowEvent
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
@@ -159,7 +158,11 @@ class MainViewController @Inject constructor(
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        stage.onCloseRequest = EventHandler { event: WindowEvent -> askToSave(event) }
+        stage.onCloseRequest = EventHandler { e ->
+            if (!askToSave(e).isConsumed) {
+                menuViewSectionInSeparateWindow.isSelected = false
+            }
+        }
         stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
         macOS {
             val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
@@ -313,6 +316,11 @@ class MainViewController @Inject constructor(
                     prepareToSeparateSection()
                     scene = Scene(sectionBox).apply {
                         stylesheets += stylesheet
+                    }
+                    noFileOpenedProperty.addListener { _, _, noFile ->
+                        if (noFile) {
+                            menuViewSectionInSeparateWindow.isSelected = false
+                        }
                     }
                 }.show()
             } else {
