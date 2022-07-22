@@ -103,8 +103,8 @@ class ExperimentalTableController @Inject constructor(
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         table.sceneProperty().addListener { _, _, newScene ->
-            newScene.windowProperty().addListener { _, _, newStage ->
-                newStage.focusedProperty().addListener { _, _, isFocused ->
+            newScene?.windowProperty()?.addListener { _, _, newStage ->
+                newStage?.focusedProperty()?.addListener { _, _, isFocused ->
                     if (isFocused) {
                         pasteBtn.isDisable = !Clipboard.getSystemClipboard().hasContent(DataFormat.PLAIN_TEXT)
                     }

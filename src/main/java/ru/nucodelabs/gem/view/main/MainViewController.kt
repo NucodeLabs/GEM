@@ -16,11 +16,11 @@ import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Screen
 import javafx.stage.Stage
-import javafx.stage.WindowEvent
 import ru.nucodelabs.algorithms.inverse_solver.InverseSolver
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
@@ -30,10 +30,7 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.extensions.fx.get
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.isValidBy
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.util.FXUtils
 import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AbstractController
@@ -89,6 +86,21 @@ class MainViewController @Inject constructor(
         get() = picketObservable.get()!!
 
     @FXML
+    private lateinit var vesCurvesBox: VBox
+
+    @FXML
+    private lateinit var vesSectionSplitContainer: VBox
+
+    @FXML
+    private lateinit var vesSectionSplit: SplitPane
+
+    @FXML
+    private lateinit var sectionContainer: HBox
+
+    @FXML
+    private lateinit var sectionBox: VBox
+
+    @FXML
     private lateinit var addExperimentalData: VBox
 
     @FXML
@@ -111,6 +123,9 @@ class MainViewController @Inject constructor(
 
     @FXML
     private lateinit var menuViewGraphTitles: CheckMenuItem
+
+    @FXML
+    private lateinit var menuViewSectionInSeparateWindow: CheckMenuItem
 
     @FXML
     private lateinit var root: Stage
@@ -140,7 +155,11 @@ class MainViewController @Inject constructor(
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        stage.onCloseRequest = EventHandler { event: WindowEvent -> askToSave(event) }
+        stage.onCloseRequest = EventHandler { e ->
+            if (!askToSave(e).isConsumed) {
+                menuViewSectionInSeparateWindow.isSelected = false
+            }
+        }
         stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
         macOS {
             val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
@@ -285,6 +304,42 @@ class MainViewController @Inject constructor(
             .mapPseudoSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
 
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
+
+        noFileOpenedProperty.addListener { _, _, noFile ->
+            if (noFile) {
+                menuViewSectionInSeparateWindow.isSelected = false
+            }
+        }
+        menuViewSectionInSeparateWindow.selectedProperty().addListener { _, _, isSelected ->
+            if (isSelected) {
+                Stage().apply {
+                    icons += root.icons
+                    titleProperty().bind(stage.titleProperty() + " - Разрез")
+                    onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
+                    prepareToSeparateSection()
+                    scene = Scene(sectionBox).apply {
+                        stylesheets += stylesheet
+                    }
+                }.show()
+            } else {
+                (sectionBox.scene.window as Stage).close()
+                prepareToMergeSection()
+            }
+        }
+    }
+
+    private fun prepareToMergeSection() {
+        vesSectionSplitContainer.children -= vesCurvesBox
+        vesSectionSplit.items += vesCurvesBox
+        vesSectionSplitContainer.children += vesSectionSplit
+        sectionContainer.children += sectionBox
+    }
+
+    private fun prepareToSeparateSection() {
+        sectionContainer.children -= sectionBox
+        vesSectionSplitContainer.children -= vesSectionSplit
+        vesSectionSplit.items -= vesCurvesBox
+        vesSectionSplitContainer.children += vesCurvesBox
     }
 
     @FXML
