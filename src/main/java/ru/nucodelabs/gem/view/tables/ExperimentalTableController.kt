@@ -200,7 +200,6 @@ class ExperimentalTableController @Inject constructor(
                             if (result.isPresent) {
                                 setErrorOnSelected(dialog.editor.textFormatter.value as Double)
                             }
-
                         }
                     }
                 ).apply {

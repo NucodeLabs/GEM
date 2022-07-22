@@ -4,6 +4,7 @@ import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
@@ -47,6 +48,9 @@ class ModelSectionController @Inject constructor(
             )
         }
     }
+
+    @FXML
+    lateinit var title: Label
 
     @FXML
     private lateinit var yAxis: NucodeNumberAxis
