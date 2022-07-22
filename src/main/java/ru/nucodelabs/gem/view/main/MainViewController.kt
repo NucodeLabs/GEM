@@ -16,6 +16,7 @@ import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Screen
@@ -89,6 +90,21 @@ class MainViewController @Inject constructor(
         get() = picketObservable.get()!!
 
     @FXML
+    private lateinit var vesCurvesBox: VBox
+
+    @FXML
+    private lateinit var vesSectionSplitContainer: VBox
+
+    @FXML
+    private lateinit var vesSectionSplit: SplitPane
+
+    @FXML
+    private lateinit var sectionContainer: HBox
+
+    @FXML
+    private lateinit var sectionBox: VBox
+
+    @FXML
     private lateinit var addExperimentalData: VBox
 
     @FXML
@@ -111,6 +127,9 @@ class MainViewController @Inject constructor(
 
     @FXML
     private lateinit var menuViewGraphTitles: CheckMenuItem
+
+    @FXML
+    private lateinit var menuViewSectionInSeparateWindow: CheckMenuItem
 
     @FXML
     private lateinit var root: Stage
@@ -285,6 +304,36 @@ class MainViewController @Inject constructor(
             .mapPseudoSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
 
         vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
+
+        menuViewSectionInSeparateWindow.selectedProperty().addListener { _, _, isSelected ->
+            if (isSelected) {
+                Stage().apply {
+                    title = "Разрез"
+                    onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
+                    prepareToSeparateSection()
+                    scene = Scene(sectionBox).apply {
+                        stylesheets += stylesheet
+                    }
+                }.show()
+            } else {
+                (sectionBox.scene.window as Stage).close()
+                prepareToMergeSection()
+            }
+        }
+    }
+
+    private fun prepareToMergeSection() {
+        vesSectionSplitContainer.children -= vesCurvesBox
+        vesSectionSplit.items += vesCurvesBox
+        vesSectionSplitContainer.children += vesSectionSplit
+        sectionContainer.children += sectionBox
+    }
+
+    private fun prepareToSeparateSection() {
+        sectionContainer.children -= sectionBox
+        vesSectionSplitContainer.children -= vesSectionSplit
+        vesSectionSplit.items -= vesCurvesBox
+        vesSectionSplitContainer.children += vesCurvesBox
     }
 
     @FXML
