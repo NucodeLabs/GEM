@@ -12,6 +12,7 @@ import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
@@ -83,6 +84,9 @@ class VesCurvesController @Inject constructor(
 
     private val picketIndex
         get() = _picketIndex.get()
+
+    @FXML
+    lateinit var title: Label
 
     @FXML
     private lateinit var lineChart: LineChart<Number, Number>

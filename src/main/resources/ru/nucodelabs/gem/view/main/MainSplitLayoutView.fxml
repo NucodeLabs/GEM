@@ -53,9 +53,8 @@
                         </fx:define>
                     </Menu>
                     <Menu fx:id="menuView" text="%view">
-                        <Menu text="%legend">
-                            <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%ves"/>
-                        </Menu>
+                        <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%vesLegend"/>
+                        <CheckMenuItem fx:id="menuViewGraphTitles" text="%graphTitles"/>
                     </Menu>
                     <Menu text="%help">
                         <MenuItem text="%about"/>
@@ -97,7 +96,8 @@
                                     <HBox>
                                         <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                    HBox.hgrow="ALWAYS">
-                                            <fx:include source="../charts/PseudoSectionSwitcher.fxml"/>
+                                            <fx:include fx:id="pseudoSectionSwitcher"
+                                                        source="../charts/PseudoSectionSwitcher.fxml"/>
                                             <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
                                         </SplitPane>
                                         <fx:include source="../charts/ColorAxis.fxml"/>

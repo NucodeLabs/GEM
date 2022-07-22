@@ -39,6 +39,8 @@ import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.charts.MisfitStacksController
+import ru.nucodelabs.gem.view.charts.ModelSectionController
+import ru.nucodelabs.gem.view.charts.PseudoSectionSwitcherController
 import ru.nucodelabs.gem.view.charts.VesCurvesController
 import java.io.File
 import java.net.URL
@@ -108,6 +110,9 @@ class MainViewController @Inject constructor(
     private lateinit var menuViewVESCurvesLegend: CheckMenuItem
 
     @FXML
+    private lateinit var menuViewGraphTitles: CheckMenuItem
+
+    @FXML
     private lateinit var root: Stage
 
     @FXML
@@ -124,6 +129,12 @@ class MainViewController @Inject constructor(
 
     @FXML
     private lateinit var misfitStacksController: MisfitStacksController
+
+    @FXML
+    private lateinit var pseudoSectionSwitcherController: PseudoSectionSwitcherController
+
+    @FXML
+    private lateinit var modelSectionController: ModelSectionController
 
     override val stage: Stage
         get() = root
@@ -158,6 +169,7 @@ class MainViewController @Inject constructor(
         setupTextFields()
         syncMisfitAndVesXAxes()
         setupInverseBtn()
+        setupMenuItems()
     }
 
     private fun setupTextFields() {
@@ -205,16 +217,18 @@ class MainViewController @Inject constructor(
             .coerceAtMost(Screen.getPrimary().bounds.height)
         stage.x = fxPreferences.bind(stage.xProperty(), MAIN_WINDOW_X.key, MAIN_WINDOW_X.def).coerceAtLeast(0.0)
         stage.y = fxPreferences.bind(stage.yProperty(), MAIN_WINDOW_Y.key, MAIN_WINDOW_Y.def).coerceAtLeast(0.0)
-        fxPreferences.bind(
+        fxPreferences.setAndBind(
             menuViewVESCurvesLegend.selectedProperty(),
             VES_CURVES_LEGEND_VISIBLE.key,
             VES_CURVES_LEGEND_VISIBLE.def
         )
+
+        fxPreferences.setAndBind(menuViewGraphTitles.selectedProperty(), GRAPHS_TITLES.key, GRAPHS_TITLES.def)
     }
 
     private fun bind() {
         noFileScreenController.visibleProperty().bind(noFileOpenedProperty)
-        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
+
         vesNumberProperty.bind(
             Bindings.createStringBinding(
                 { (picketIndex + 1).toString() + "/" + observableSection.pickets.size },
@@ -251,6 +265,26 @@ class MainViewController @Inject constructor(
                 xCoordLbl.text = decimalFormat.format(observableSection.asSection().xOfPicket(picket))
             }
         }
+    }
+
+    private fun setupMenuItems() {
+        vesCurvesController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        vesCurvesController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+
+        modelSectionController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        modelSectionController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+
+        pseudoSectionSwitcherController
+            .curvesPseudoSectionBoxController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        pseudoSectionSwitcherController
+            .curvesPseudoSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+
+        pseudoSectionSwitcherController
+            .mapPseudoSectionBoxController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        pseudoSectionSwitcherController
+            .mapPseudoSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+
+        vesCurvesController.legendVisibleProperty().bind(menuViewVESCurvesLegend.selectedProperty())
     }
 
     @FXML
