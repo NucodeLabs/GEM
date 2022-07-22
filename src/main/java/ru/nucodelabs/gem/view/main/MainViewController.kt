@@ -217,11 +217,13 @@ class MainViewController @Inject constructor(
             .coerceAtMost(Screen.getPrimary().bounds.height)
         stage.x = fxPreferences.bind(stage.xProperty(), MAIN_WINDOW_X.key, MAIN_WINDOW_X.def).coerceAtLeast(0.0)
         stage.y = fxPreferences.bind(stage.yProperty(), MAIN_WINDOW_Y.key, MAIN_WINDOW_Y.def).coerceAtLeast(0.0)
-        fxPreferences.bind(
+        fxPreferences.setAndBind(
             menuViewVESCurvesLegend.selectedProperty(),
             VES_CURVES_LEGEND_VISIBLE.key,
             VES_CURVES_LEGEND_VISIBLE.def
         )
+
+        fxPreferences.setAndBind(menuViewGraphTitles.selectedProperty(), GRAPHS_TITLES.key, GRAPHS_TITLES.def)
     }
 
     private fun bind() {
