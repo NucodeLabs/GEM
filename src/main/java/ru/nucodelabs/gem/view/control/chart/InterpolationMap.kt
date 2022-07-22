@@ -9,6 +9,8 @@ import javafx.scene.paint.Color
 import ru.nucodelabs.algorithms.interpolation.InterpolationParser
 import ru.nucodelabs.algorithms.interpolation.Interpolator
 import ru.nucodelabs.gem.extensions.fx.clear
+import ru.nucodelabs.gem.extensions.fx.getValue
+import ru.nucodelabs.gem.extensions.fx.setValue
 import ru.nucodelabs.gem.view.color.ColorMapper
 import java.lang.Double.max
 import kotlin.math.min
@@ -18,6 +20,8 @@ class InterpolationMap @JvmOverloads constructor(
     @NamedArg("yAxis") yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
+
+    var canvasBlendMode by canvas.blendModeProperty()
 
     private val _interpolateSeriesIndex = SimpleIntegerProperty(0)
 

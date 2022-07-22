@@ -5,6 +5,7 @@ import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.effect.BlendMode
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
@@ -42,6 +43,7 @@ class MapPseudoSectionController @Inject constructor(
         super.initialize(location, resources)
         chart.colorMapper = colorMapper
         chart.installTooltips(::tooltipFactory)
+        chart.canvasBlendMode = BlendMode.MULTIPLY
     }
 
     override fun update() {

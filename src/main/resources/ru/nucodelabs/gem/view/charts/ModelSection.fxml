@@ -25,7 +25,7 @@
         </xAxis>
         <yAxis>
             <NucodeNumberAxis fx:id="yAxis" label="%z" side="LEFT"
-                              autoRanging="false" tickUnit="100">
+                              autoRanging="false" tickUnit="25">
                 <prefWidth>
                     <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
                 </prefWidth>

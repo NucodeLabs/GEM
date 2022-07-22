@@ -8,3 +8,13 @@
     -fx-pref-height: 5;
     -fx-pref-width: 5;
 }
+
+.chart-vertical-grid-lines {
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
+}
