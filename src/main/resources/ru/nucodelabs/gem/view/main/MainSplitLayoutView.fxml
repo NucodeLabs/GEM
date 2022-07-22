@@ -55,16 +55,20 @@
                     <Menu fx:id="menuView" text="%view">
                         <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%vesLegend"/>
                         <CheckMenuItem fx:id="menuViewGraphTitles" text="%graphTitles"/>
+                        <CheckMenuItem fx:id="menuViewSectionInSeparateWindow" text="%sectionInSeparateWindow"
+                                       disable="${controller.noFileOpened}"/>
                     </Menu>
                     <Menu text="%help">
                         <MenuItem text="%about"/>
                     </Menu>
                 </MenuBar>
-                <StackPane maxWidth="Infinity" maxHeight="Infinity">
-                    <VBox maxWidth="Infinity" maxHeight="Infinity">
-                        <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity">
-                            <HBox maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
-                                <VBox HBox.hgrow="ALWAYS">
+                <StackPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                    <VBox maxWidth="Infinity" maxHeight="Infinity" fx:id="vesSectionSplitContainer" VBox.vgrow="ALWAYS">
+                        <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity"
+                                   fx:id="vesSectionSplit">
+                            <HBox fx:id="sectionContainer" maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                                <VBox fx:id="sectionBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" maxWidth="Infinity"
+                                      maxHeight="Infinity">
                                     <HBox>
                                         <HBox>
                                             <prefWidth>
@@ -93,7 +97,7 @@
                                             </Button>
                                         </HBox>
                                     </HBox>
-                                    <HBox>
+                                    <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
                                         <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                    HBox.hgrow="ALWAYS">
                                             <fx:include fx:id="pseudoSectionSwitcher"
@@ -106,7 +110,7 @@
                             </HBox>
                             <VBox maxWidth="Infinity"
                                   maxHeight="Infinity"
-                                  VBox.vgrow="ALWAYS">
+                                  VBox.vgrow="ALWAYS" fx:id="vesCurvesBox">
 
                                 <HBox alignment="CENTER_LEFT" maxWidth="Infinity"
                                       style="-fx-background-color: WhiteSmoke; -fx-padding: 5" spacing="5">
@@ -160,10 +164,12 @@
 
                                     <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
                                                VBox.vgrow="ALWAYS">
-                                        <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"/>
-                                        <fx:include fx:id="vesCurves" source="../charts/VesCurves.fxml"/>
+                                        <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"
+                                                    VBox.vgrow="ALWAYS"/>
+                                        <fx:include fx:id="vesCurves" source="../charts/VesCurves.fxml"
+                                                    VBox.vgrow="ALWAYS"/>
                                     </SplitPane>
-                                    <TabPane VBox.vgrow="ALWAYS">
+                                    <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
                                         <Tab text="%experimentalTable" closable="false">
                                             <fx:include fx:id="experimentalTable"
                                                         source="../tables/ExperimentalTable.fxml"/>
