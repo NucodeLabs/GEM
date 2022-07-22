@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.tables
 
+import com.google.inject.name.Named
 import jakarta.validation.Validator
 import javafx.beans.property.IntegerProperty
 import javafx.beans.value.ObservableObjectValue
@@ -22,9 +23,7 @@ import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.fx.toObservable
 import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.extensions.fx.bidirectionalNot
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -44,6 +43,7 @@ class ExperimentalTableController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat,
+    @Named("CSS") private val css: String,
     fileImporterProvider: Provider<FileImporter>
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
@@ -169,6 +169,39 @@ class ExperimentalTableController @Inject constructor(
                     },
                     MenuItem("Рассчитать ρₐ").apply {
                         onAction = EventHandler { recalculateSelected() }
+                    },
+                    MenuItem("Установить погрешность").apply {
+                        val dialog = TextInputDialog().apply {
+                            initOwner(stage)
+                            stylesheets += css
+                            headerText = "Введите значение погрешности [%]"
+                            contentText = "δρₐ = "
+                            editor.also { tf ->
+                                tf.textFormatter = TextFormatter(
+                                    DoubleValidationConverter(decimalFormat) { value ->
+                                        val violations = validator.validateValue(
+                                            ExperimentalData::class.java,
+                                            "errorResistanceApparent",
+                                            value
+                                        )
+                                        violations.isEmpty().also { valid ->
+                                            if (!valid) {
+                                                alertsFactory.violationsAlert(violations, stage).show()
+                                            }
+                                        }
+                                    },
+                                    5.0,
+                                    decimalFilter(decimalFormat)
+                                )
+                            }
+                        }
+                        onAction = EventHandler {
+                            val result = dialog.showAndWait()
+                            if (result.isPresent) {
+                                setErrorOnSelected(dialog.editor.textFormatter.value as Double)
+                            }
+
+                        }
                     }
                 ).apply {
                     style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
@@ -288,6 +321,14 @@ class ExperimentalTableController @Inject constructor(
                     picket.copy(experimentalData = experimentalDataInTable)
             }
         }
+    }
+
+    private fun setErrorOnSelected(error: Double) {
+        val items = table.items.map { it.toExperimentalData() }.toMutableList()
+        for (i in table.selectionModel.selectedIndices) {
+            items[i] = items[i].copy(errorResistanceApparent = error)
+        }
+        table.items.setAll(items.map { it.toObservable() })
     }
 
     @FXML
