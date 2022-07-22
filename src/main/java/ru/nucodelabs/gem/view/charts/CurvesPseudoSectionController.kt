@@ -4,6 +4,7 @@ import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
+import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.curves_chart.CurvesChartParser
@@ -23,6 +24,10 @@ class CurvesPseudoSectionController @Inject constructor(
     observableSection: ObservableSection,
     private val decimalFormat: DecimalFormat
 ) : AbstractPseudoSectionController(observableSection, formatter) {
+
+    @FXML
+    lateinit var title: Label
+
     @FXML
     private lateinit var chart: LineChart<Number, Number>
 
