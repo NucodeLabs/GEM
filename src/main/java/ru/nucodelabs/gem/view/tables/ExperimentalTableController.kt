@@ -313,6 +313,8 @@ class ExperimentalTableController @Inject constructor(
                     } else {
                         setIsHiddenOnSelected(isHidden)
                     }
+                } else {
+                    toggleSingleHidden(expData, isHidden)
                 }
             }
         }
@@ -348,6 +350,8 @@ class ExperimentalTableController @Inject constructor(
                 val all = table.items.map { it.toExperimentalData() }.toMutableList()
                 all.replaceAll { if (it in other) it.copy(isHidden = true) else it }
                 table.items.setAll(all.map { it.toObservable() })
+            } else {
+                commitChanges()
             }
         }
     }
