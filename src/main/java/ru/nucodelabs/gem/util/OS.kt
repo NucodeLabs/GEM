@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.util
 
 object OS {
-    private val osNameNormalized = System.getProperty("os.name").lowercase()
+    val osNameNormalized = System.getProperty("os.name").lowercase()
 
     @JvmStatic
     val isMacOS = osNameNormalized.contains("mac")
@@ -11,6 +11,8 @@ object OS {
 
     @JvmStatic
     val isLinuxOrOther = !isMacOS && !isWindows
+
+    val osNameClassifier = if (isWindows) "windows" else if (isMacOS) "macosx" else "linux"
 
     /**
      * `block` runs only on macOS

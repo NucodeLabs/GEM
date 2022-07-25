@@ -10,9 +10,13 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
+import ru.nucodelabs.gem.util.OS
 import ru.nucodelabs.gem.util.OS.macOS
+import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.MainViewController
 import java.io.File
+import java.time.LocalDate.now
+import java.time.format.DateTimeFormatter.ofPattern
 import java.util.logging.Logger
 import com.sun.glass.ui.Application as LowLevelApplication
 
@@ -26,6 +30,10 @@ class GemApplication : Application() {
 
     @Inject
     lateinit var logger: Logger
+
+    @Inject
+    lateinit var alertsFactory: AlertsFactory
+
 
     init {
         macOS {
@@ -58,6 +66,12 @@ class GemApplication : Application() {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
+        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            alertsFactory.simpleExceptionAlert(e).show()
+            val log =
+                File("err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}.txt").also { it.createNewFile() }
+            log.writeText(e.stackTraceToString())
+        }
         val params: List<String> = parameters.raw + macOSHandledFiles
         if (params.isNotEmpty()) {
             processParams(params)
