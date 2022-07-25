@@ -10,3 +10,16 @@ fun Picket.zOfModelLayers(): List<Double> {
     }
     return heightList    // последняя уходит в бесконечность
 }
+
+/**
+ * Пусть `a` - массив, возвращенный методом.
+ *
+ * Тогда верно следующее:
+ *
+ * `a[i] = j` `<=>` `effectiveExperimentalData[i] = sortedExperimentalData[j]`
+ */
+fun Picket.effectiveToSortedIndicesMapping(): IntArray {
+    return IntArray(effectiveExperimentalData.size) { i ->
+        sortedExperimentalData.indexOf(effectiveExperimentalData[i])
+    }
+}

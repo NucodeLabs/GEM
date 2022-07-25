@@ -18,6 +18,12 @@ class PseudoSectionSwitcherController : AbstractController() {
     @FXML
     private lateinit var curvesPseudoSectionBox: VBox
 
+    @FXML
+    lateinit var mapPseudoSectionBoxController: MapPseudoSectionController
+
+    @FXML
+    lateinit var curvesPseudoSectionBoxController: CurvesPseudoSectionController
+
     override val stage: Stage?
         get() = mapPseudoSectionBox.scene?.window as Stage?
 

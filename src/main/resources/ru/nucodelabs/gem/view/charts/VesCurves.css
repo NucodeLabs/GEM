@@ -53,9 +53,9 @@
 
 .model-symbol {
     -fx-border-color: transparent;
-    -fx-background-color: transparent;
-    -fx-pref-width: 6;
-    -fx-pref-height: 6;
+    -fx-background-color: blue;
+    -fx-pref-width: 1;
+    -fx-pref-height: 1;
     -fx-background-radius: 50%;
 }
 

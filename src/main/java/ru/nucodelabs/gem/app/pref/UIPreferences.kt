@@ -4,6 +4,9 @@ package ru.nucodelabs.gem.app.pref
 val VES_CURVES_LEGEND_VISIBLE = Preference("VES_CURVES_LEGEND", false)
 
 @JvmField
+val GRAPHS_TITLES = Preference("GRAPHS_TITLES", true)
+
+@JvmField
 val COLOR_MIN_VALUE = Preference("COLOR_MIN_VALUE", 0.1)
 
 @JvmField
