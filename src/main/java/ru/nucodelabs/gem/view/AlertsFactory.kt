@@ -9,8 +9,13 @@ import javax.inject.Inject
 
 class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle) {
 
+    fun uncaughtExceptionAlert(e: Throwable) = Alert(Alert.AlertType.ERROR, e.message).apply {
+        title = uiProperties["error"]
+        headerText = "Сохраните важные данные и перезапустите программу"
+    }
+
     @JvmOverloads
-    fun simpleExceptionAlert(e: Exception, owner: Stage? = null): Alert =
+    fun simpleExceptionAlert(e: Throwable, owner: Stage? = null): Alert =
         Alert(Alert.AlertType.ERROR, e.message).apply {
             title = uiProperties["error"]
             headerText = title

@@ -10,7 +10,7 @@ import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
 import ru.nucodelabs.data.ves.xOfPicket
-import ru.nucodelabs.gem.extensions.fx.noDelay
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
@@ -78,6 +78,6 @@ class MapPseudoSectionController @Inject constructor(
                 AB/2 = ${decimalFormat.format(point.yValue)} m
                 ρₐ = ${decimalFormat.format(point.extraValue)} Ω‧m
             """.trimIndent()
-        ).noDelay()
+        ).forCharts()
     }
 }
