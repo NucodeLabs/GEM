@@ -18,7 +18,7 @@ import java.util.*
 data class Picket(
     @JsonIgnore val id: UUID = UUID.randomUUID(),
     val name: String = "Пикет",
-    private val experimentalData: List<@Valid ExperimentalData> = emptyList(),
+    private var experimentalData: List<@Valid ExperimentalData> = emptyList(),
     @field:Size(max = 40) val modelData: List<@Valid ModelLayer> = emptyList(),
     @field:Min(0) val offsetX: Double = 100.0,
     val z: Double = 0.0
@@ -51,6 +51,10 @@ data class Picket(
         }
 
         acc.sortedWith(orderByDistances())
+    }
+
+    init {
+        experimentalData = sortedExperimentalData
     }
 
     /**
