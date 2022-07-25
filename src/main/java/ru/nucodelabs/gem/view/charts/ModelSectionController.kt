@@ -13,6 +13,7 @@ import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import java.math.MathContext
@@ -53,7 +54,7 @@ class ModelSectionController @Inject constructor(
     lateinit var title: Label
 
     @FXML
-    private lateinit var yAxis: NucodeNumberAxis
+    private lateinit var yAxis: InvertibleValueAxis<Number>
 
     @FXML
     private lateinit var xAxis: NucodeNumberAxis

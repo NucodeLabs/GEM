@@ -29,7 +29,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
 
     init {
         animated = false
-        checkBounds(lowerBound, upperBound)
+        //checkBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
 
@@ -126,7 +126,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+            //checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             ticks += lowerBound
 
@@ -156,7 +156,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+            //checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             if (animate) {
                 try {
