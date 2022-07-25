@@ -28,7 +28,29 @@ data class Picket(
      */
     @get:JsonGetter("experimentalData")
     val sortedExperimentalData: List<ExperimentalData> by lazy {
-        experimentalData.sortedWith(orderByDistances()).distinct()
+
+        val acc = mutableListOf<ExperimentalData>()
+
+        // Группируем по AB
+        val dupGroups = experimentalData.groupBy { it.ab2 }
+        for ((_, group) in dupGroups) {
+            // Если больше одного не отключенного дубликата в группе
+            acc += if (group.filter { !it.isHidden }.size > 1) {
+                val sortedGroup = group.sortedWith(orderByDistances())
+                List(sortedGroup.size) {
+                    // Отключаем все кроме последнего (с наиб. MN)
+                    if (it < sortedGroup.lastIndex) {
+                        sortedGroup[it].copy(isHidden = true)
+                    } else {
+                        sortedGroup[it].copy(isHidden = false)
+                    }
+                }
+            } else {
+                group
+            }
+        }
+
+        acc.sortedWith(orderByDistances())
     }
 
     /**
@@ -36,10 +58,6 @@ data class Picket(
      */
     @get:JsonIgnore
     val effectiveExperimentalData: List<ExperimentalData> by lazy {
-        sortedExperimentalData
-            .filter { !it.isHidden }
-            .asReversed()
-            .distinctBy { it.ab2 } // Берет *первый* элемент из всех равных, т.к. сортировка была по MN/2, можно просто развернуть список
-            .asReversed()
+        sortedExperimentalData.filter { !it.isHidden }
     }
 }

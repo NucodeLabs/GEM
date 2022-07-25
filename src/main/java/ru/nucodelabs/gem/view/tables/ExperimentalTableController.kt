@@ -304,10 +304,16 @@ class ExperimentalTableController @Inject constructor(
                 }
             }
             expData.hiddenProperty().addListener { _, _, isHidden ->
-                if (expData in table.selectionModel.selectedItems) {
-                    table.selectionModel.selectedItems.forEach { it.isHidden = isHidden }
+                if (table.selectionModel.selectedItems.isEmpty()) {
+                    toggleSingleHidden(expData, isHidden)
                 }
-                commitChanges()
+                if (expData in table.selectionModel.selectedItems) {
+                    if (table.selectionModel.selectedItems.size == 1) {
+                        toggleSingleHidden(expData, isHidden)
+                    } else {
+                        setIsHiddenOnSelected(isHidden)
+                    }
+                }
             }
         }
     }
@@ -318,6 +324,30 @@ class ExperimentalTableController @Inject constructor(
             historyManager.snapshotAfter {
                 observableSection.pickets[picketIndex] =
                     picket.copy(experimentalData = experimentalDataInTable)
+            }
+        }
+    }
+
+    private fun setIsHiddenOnSelected(isHidden: Boolean) {
+        val items = table.items.map { it.toExperimentalData() }.toMutableList()
+        for (idx in table.selectionModel.selectedIndices) {
+            items[idx] = items[idx].copy(isHidden = isHidden)
+        }
+        table.items.setAll(items.map { it.toObservable() })
+    }
+
+    private fun toggleSingleHidden(item: ObservableExperimentalData, isHidden: Boolean) {
+        if (isHidden) {
+            commitChanges()
+        } else {
+            val selected = item.toExperimentalData()
+            val dupGroups = table.items.map { it.toExperimentalData() }.groupBy { it.ab2 }.values.filter { it.size > 1 }
+            val group = dupGroups.find { selected in it }
+            if (group != null) {
+                val other = group - selected
+                val all = table.items.map { it.toExperimentalData() }.toMutableList()
+                all.replaceAll { if (it in other) it.copy(isHidden = true) else it }
+                table.items.setAll(all.map { it.toObservable() })
             }
         }
     }

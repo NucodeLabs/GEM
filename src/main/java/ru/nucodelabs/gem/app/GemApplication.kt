@@ -67,7 +67,7 @@ class GemApplication : Application() {
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
         Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            alertsFactory.simpleExceptionAlert(e).show()
+            alertsFactory.uncaughtExceptionAlert(e).show()
             if (parameters.raw.contains("--print-trace")) {
                 e.printStackTrace()
             } else {
