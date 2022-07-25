@@ -12,6 +12,8 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.input.DragEvent
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.TransferMode
 import javafx.stage.Stage
 import javafx.util.Callback
@@ -96,6 +98,12 @@ class ModelTableController @Inject constructor(
         table.itemsProperty().addListener { _, _, _ -> listenToItemsList() }
 
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+
+        table.addEventHandler(KeyEvent.KEY_PRESSED) { e ->
+            if (e.code == KeyCode.DELETE || e.code == KeyCode.BACK_SPACE) {
+                deleteSelected()
+            }
+        }
 
         setupCellFactories()
         setupRowFactory()

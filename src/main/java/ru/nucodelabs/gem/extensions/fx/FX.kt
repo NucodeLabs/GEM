@@ -14,8 +14,10 @@ import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter.Change
+import javafx.scene.control.Tooltip
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import javafx.util.Duration
 import javafx.util.StringConverter
 import java.lang.String.format
 import java.text.DecimalFormat
@@ -140,6 +142,9 @@ fun Node.flipVertically() {
     scaleY *= -1.0
 }
 
+/**
+ * Allow only decimal numbers output
+ */
 fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
     if (c.controlNewText.isEmpty()) {
         return@UnaryOperator c
@@ -147,6 +152,9 @@ fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
 
     val parsePosition = ParsePosition(0)
     val trimmed = c.controlNewText.trim().replace(" ", "")
+    if (trimmed == "-") {
+        return@UnaryOperator c
+    }
     val obj = decimalFormat.parse(trimmed, parsePosition)
 
     if (obj == null || parsePosition.index < trimmed.length) {
@@ -156,6 +164,9 @@ fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
     }
 }
 
+/**
+ * Allows only integer input
+ */
 fun intFilter() = UnaryOperator<Change> { c ->
     if (c.controlNewText.isEmpty() || c.controlNewText == "-") {
         return@UnaryOperator c
@@ -177,3 +188,5 @@ class IntValidationConverter(val validate: (Int) -> Boolean) : StringConverter<I
     override fun fromString(string: String?): Int =
         string?.toInt()?.takeIf(validate) ?: throw IllegalArgumentException()
 }
+
+fun Tooltip.noDelay() = apply { showDelay = Duration.ZERO }

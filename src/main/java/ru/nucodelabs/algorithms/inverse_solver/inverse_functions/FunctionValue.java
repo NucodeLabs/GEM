@@ -1,6 +1,7 @@
 package ru.nucodelabs.algorithms.inverse_solver.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
 import ru.nucodelabs.data.ves.ExperimentalData;
 import ru.nucodelabs.data.ves.ModelLayer;
@@ -88,9 +89,9 @@ public class FunctionValue implements MultivariateFunction {
         for (ModelLayer modelLayer : newModelLayers) {
             if (modelLayer.getResistance() < 0.1 ||
                     modelLayer.getResistance() > 1e5 ||
-                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < experimentalData.get(0).getAb2() / 2.0) ||
+                    (modelLayer.getPower() != 0.0 && modelLayer.getPower() < 0.1) ||
                     modelLayer.getPower() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
-                diffValue = Math.max(diffMinValue * 1.1, diffValue);
+                diffValue = Math.max(diffMinValue * (1.1 + 0.1 * Math.random()), diffValue);
                 flag = true;
                 break;
             }

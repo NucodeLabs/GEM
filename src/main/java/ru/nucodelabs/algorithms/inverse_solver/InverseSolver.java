@@ -3,6 +3,7 @@ package ru.nucodelabs.algorithms.inverse_solver;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class InverseSolver {
 
     //Размер симплекса (по каждому измерению)
-    private static final double SIDE_LENGTH_DEFAULT = 0.02;
+    private static final double SIDE_LENGTH_DEFAULT = 1.0;
 
     //Какие-то константы для SimplexOptimize
     private static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
@@ -64,9 +65,9 @@ public class InverseSolver {
     ) {
         for (int i = 0; i < resistances.size(); i++) {
             if (resistances.get(i) < minResistance)
-                resistances.set(i ,minResistance);
+                resistances.set(i, minResistance);
             else if (resistances.get(i) > maxResistance)
-                resistances.set(i ,maxResistance);
+                resistances.set(i, maxResistance);
         }
         for (int i = 0; i < powers.size(); i++) {
             if (powers.get(i) != 0 && powers.get(i) < minPower)
@@ -102,7 +103,7 @@ public class InverseSolver {
 
         setLimitValues(
                 modelResistance, 0.1, 1e5,
-                modelPower, minPower / 2.0, maxPower
+                modelPower, 0.1, maxPower
         );
 
         //Неизменяемые сопротивления и мощности
@@ -111,16 +112,15 @@ public class InverseSolver {
         List<Double> fixedModelPower = modelData.stream()
                 .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
 
+        SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
+
         MultivariateFunction multivariateFunction = new FunctionValue(
                 picket.getEffectiveExperimentalData(), new SquaresDiff(), modelData, forwardSolver
-                //TODO: modelData без изменений на адекватность?
         );
 
         //anyArray = resistance.size...(model.size - 1)
         int dimension = modelResistance.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
         NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength);
-
-        SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
 
         double[] startPoint = new double[dimension]; //res_1, ..., res_n, power_1, ..., power_n-1
         for (int i = 0; i < modelResistance.size(); i++) {

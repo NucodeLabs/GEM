@@ -27,7 +27,9 @@ data class Picket(
      * Полевые(экспериментальные) данные, отсортированы по AB/2 затем по MN/2
      */
     @get:JsonGetter("experimentalData")
-    val sortedExperimentalData: List<ExperimentalData> by lazy { experimentalData.sortedWith(orderByDistances()) }
+    val sortedExperimentalData: List<ExperimentalData> by lazy {
+        experimentalData.sortedWith(orderByDistances()).distinct()
+    }
 
     /**
      * Без отключенных и если одинаковые AB/2, то с наибольшим MN/2

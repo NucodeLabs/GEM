@@ -12,7 +12,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.VesCurvesController">
     <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
-        <Label styleClass="chart-label" text="%ves" VBox.vgrow="NEVER"/>
+        <Label fx:id="title" styleClass="chart-label" text="%ves" VBox.vgrow="NEVER"/>
         <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
         <!--        <HBox spacing="5" style="-fx-padding: 5">-->
         <!--            <Button contentDisplay="GRAPHIC_ONLY">-->
