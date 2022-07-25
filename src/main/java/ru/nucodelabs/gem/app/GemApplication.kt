@@ -68,12 +68,20 @@ class GemApplication : Application() {
     override fun start(primaryStage: Stage) {
         Thread.setDefaultUncaughtExceptionHandler { _, e ->
             alertsFactory.simpleExceptionAlert(e).show()
-            val log =
-                File("err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}.txt").also { it.createNewFile() }
-            log.writeText(e.stackTraceToString())
+            if (parameters.raw.contains("--print-trace")) {
+                e.printStackTrace()
+            } else {
+                val log =
+                    File("err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}.txt").also { it.createNewFile() }
+                log.writeText(e.stackTraceToString())
+            }
         }
         val params: List<String> = parameters.raw + macOSHandledFiles
-        if (params.isNotEmpty()) {
+        if (
+            params.any {
+                it.endsWith(".EXP", ignoreCase = true) || it.endsWith(".json", ignoreCase = true)
+            }
+        ) {
             processParams(params)
         } else {
             logger.info("Starting MainView without parameters")
@@ -86,19 +94,22 @@ class GemApplication : Application() {
         logger.info("Exiting")
     }
 
-    private fun processParams(params: List<String>) {
+    private fun processParams(params: List<String>): Boolean {
         logger.info("Parameters are $params")
         val expFiles = mutableListOf<File>()
         for (param in params) {
             if (param.endsWith(".EXP", ignoreCase = true)) {
                 expFiles += File(param)
-            } else if (param.endsWith("json", ignoreCase = true)) {
+            } else if (param.endsWith(".json", ignoreCase = true)) {
                 loadMainViewWithJsonFile(File(param))
+                return true
             }
         }
         if (expFiles.isNotEmpty()) {
             loadMainViewWithEXPFiles(expFiles)
+            return true
         }
+        return false
     }
 
     private fun loadMainViewWithJsonFile(jsonFile: File) =
