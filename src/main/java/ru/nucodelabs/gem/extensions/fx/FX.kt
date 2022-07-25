@@ -190,3 +190,9 @@ class IntValidationConverter(val validate: (Int) -> Boolean) : StringConverter<I
 }
 
 fun Tooltip.noDelay() = apply { showDelay = Duration.ZERO }
+
+fun Tooltip.noAutoHide() = apply { showDuration = Duration.INDEFINITE }
+
+fun Tooltip.noHideDelay() = apply { hideDelay = Duration.ZERO }
+
+fun Tooltip.forCharts() = this.noDelay().noAutoHide().noHideDelay()

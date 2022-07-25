@@ -12,7 +12,7 @@ class FXPreferences @Inject constructor(val preferences: Preferences) {
     /**
      * Restores value from preferences and then saves future changes
      */
-    fun setAndBind(property: DoubleProperty, propertyName: String?, def: Double) {
+    fun setAndBind(property: DoubleProperty, propertyName: String, def: Double) {
         property.set(preferences.getDouble(propertyName, def))
         property.addListener { _, _, newValue: Number ->
             preferences.putDouble(
@@ -25,12 +25,12 @@ class FXPreferences @Inject constructor(val preferences: Preferences) {
     /**
      * Restores value from preferences and then saves future changes
      */
-    fun setAndBind(booleanProperty: BooleanProperty, propertyName: String?, def: Boolean) {
+    fun setAndBind(booleanProperty: BooleanProperty, propertyName: String, def: Boolean) {
         booleanProperty.set(preferences.getBoolean(propertyName, def))
-        booleanProperty.addListener { _, _, newValue: Boolean? ->
+        booleanProperty.addListener { _, _, newValue: Boolean ->
             preferences.putBoolean(
                 propertyName,
-                newValue!!
+                newValue
             )
         }
     }
@@ -46,7 +46,7 @@ class FXPreferences @Inject constructor(val preferences: Preferences) {
     /**
      * Returns value that was saved in preferences and saves future changes
      */
-    fun bind(property: ReadOnlyDoubleProperty, propertyName: String?, def: Double): Double {
+    fun bind(property: ReadOnlyDoubleProperty, propertyName: String, def: Double): Double {
         property.addListener { _, _, newValue: Number ->
             preferences.putDouble(
                 propertyName,

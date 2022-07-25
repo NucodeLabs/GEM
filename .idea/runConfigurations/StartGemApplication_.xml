@@ -2,6 +2,7 @@
   <configuration default="false" name="StartGemApplication " type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ru.nucodelabs.gem.app.StartGemApplication" />
     <module name="GEM.main" />
+    <option name="PROGRAM_PARAMETERS" value="--print-trace" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ru.nucodelabs.gem.core.factory.EventBusFactory" />
