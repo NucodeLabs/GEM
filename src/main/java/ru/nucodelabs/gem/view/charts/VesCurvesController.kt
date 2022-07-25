@@ -21,13 +21,10 @@ import ru.nucodelabs.algorithms.charts.VesCurvesContext
 import ru.nucodelabs.algorithms.charts.vesCurvesContext
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.get
-import ru.nucodelabs.gem.extensions.fx.noDelay
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
@@ -308,13 +305,25 @@ class VesCurvesController @Inject constructor(
         point: Data<Number, Number>
     ): Tooltip? {
         return when (seriesIndex) {
-            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
-                """
+            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
+                val x = decimalFormat.format(point.xValue)
+                val yLower = decimalFormat.format(
+                    picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                )
+                val yUpper = decimalFormat.format(
+                    picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                )
+                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
+                Tooltip(
+                    """
                     №${effectiveToSortedMapping[pointIndex] + 1}
-                    AB/2 = ${decimalFormat.format(point.xValue)} m
-                    ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
+                    AB/2 = $x m
+                    ρₐ = $y Ω‧m
+                    min ρₐ = $yLower
+                    max ρₐ = $yUpper
                 """.trimIndent()
-            ).noDelay()
+                ).forCharts()
+            }
             else -> null
         }
     }
