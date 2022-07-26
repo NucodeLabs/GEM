@@ -18,7 +18,7 @@ import java.util.*
 data class Picket(
     @JsonIgnore val id: UUID = UUID.randomUUID(),
     val name: String = "Пикет",
-    private val experimentalData: List<@Valid ExperimentalData> = emptyList(),
+    private var experimentalData: List<@Valid ExperimentalData> = emptyList(),
     @field:Size(max = 40) val modelData: List<@Valid ModelLayer> = emptyList(),
     @field:Min(0) val offsetX: Double = 100.0,
     val z: Double = 0.0
@@ -28,7 +28,33 @@ data class Picket(
      */
     @get:JsonGetter("experimentalData")
     val sortedExperimentalData: List<ExperimentalData> by lazy {
-        experimentalData.sortedWith(orderByDistances()).distinct()
+
+        val acc = mutableListOf<ExperimentalData>()
+
+        // Группируем по AB
+        val dupGroups = experimentalData.groupBy { it.ab2 }
+        for ((_, group) in dupGroups) {
+            // Если больше одного не отключенного дубликата в группе
+            acc += if (group.filter { !it.isHidden }.size > 1) {
+                val sortedGroup = group.sortedWith(orderByDistances())
+                List(sortedGroup.size) {
+                    // Отключаем все кроме последнего (с наиб. MN)
+                    if (it < sortedGroup.lastIndex) {
+                        sortedGroup[it].copy(isHidden = true)
+                    } else {
+                        sortedGroup[it].copy(isHidden = false)
+                    }
+                }
+            } else {
+                group
+            }
+        }
+
+        acc.sortedWith(orderByDistances())
+    }
+
+    init {
+        experimentalData = sortedExperimentalData
     }
 
     /**
@@ -36,10 +62,6 @@ data class Picket(
      */
     @get:JsonIgnore
     val effectiveExperimentalData: List<ExperimentalData> by lazy {
-        sortedExperimentalData
-            .filter { !it.isHidden }
-            .asReversed()
-            .distinctBy { it.ab2 } // Берет *первый* элемент из всех равных, т.к. сортировка была по MN/2, можно просто развернуть список
-            .asReversed()
+        sortedExperimentalData.filter { !it.isHidden }
     }
 }

@@ -8,6 +8,10 @@ import javafx.application.Application;
 public class StartGemApplication {
 
     public static void main(String[] args) {
-        Application.launch(GemApplication.class, args);
+        try {
+            Application.launch(GemApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

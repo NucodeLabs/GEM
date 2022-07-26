@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart.Data
@@ -15,25 +16,25 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.VesCurvesContext
 import ru.nucodelabs.algorithms.charts.vesCurvesContext
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
-import ru.nucodelabs.data.ves.zOfModelLayers
+import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.get
-import ru.nucodelabs.gem.extensions.fx.noDelay
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
 import ru.nucodelabs.gem.view.control.chart.installTooltips
+import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
@@ -110,11 +111,17 @@ class VesCurvesController @Inject constructor(
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
 
+    private lateinit var zoom: LogarithmicChartNavigationSupport
+    private lateinit var zoomCoords: Pair<Double, Double>
+
+
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
     private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        zoom = LogarithmicChartNavigationSupport(xAxis, yAxis)
+
         xAxis.tickLabelFormatter = formatter
         yAxis.tickLabelFormatter = formatter
 
@@ -153,6 +160,36 @@ class VesCurvesController @Inject constructor(
 
         setupXAxisBounds()
         setupYAxisBounds()
+    }
+
+    @FXML
+    private fun zoom(e: ScrollEvent) {
+        val position: Pair<Double, Double> = Pair(
+            lineChart.xAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).x/lineChart.xAxis.length,
+            lineChart.yAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).y/lineChart.yAxis.length
+        )
+        val dY = e.deltaY
+        val scale = 1.0 + dY / lineChart.yAxis.length
+        zoom.zoom(scale, position)
+    }
+
+    @FXML
+    private fun pressed(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+    }
+
+    @FXML
+    private fun drugged(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        val dX = e.sceneX - zoomCoords.first
+        val dY = e.sceneY - zoomCoords.second
+
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+        val deltaCoords = Pair(dX / lineChart.xAxis.length * -1.0, dY / lineChart.yAxis.length)
+        zoom.drag(deltaCoords)
     }
 
     private fun mapIndices() {
@@ -308,13 +345,25 @@ class VesCurvesController @Inject constructor(
         point: Data<Number, Number>
     ): Tooltip? {
         return when (seriesIndex) {
-            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> Tooltip(
-                """
+            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
+                val x = decimalFormat.format(point.xValue)
+                val yLower = decimalFormat.format(
+                    picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                )
+                val yUpper = decimalFormat.format(
+                    picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                )
+                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
+                Tooltip(
+                    """
                     №${effectiveToSortedMapping[pointIndex] + 1}
-                    AB/2 = ${decimalFormat.format(point.xValue)} m
-                    ρₐ = ${decimalFormat.format(point.yValue)} Ω‧m
+                    AB/2 = $x m
+                    ρₐ = $y Ω‧m
+                    min ρₐ = $yLower
+                    max ρₐ = $yUpper
                 """.trimIndent()
-            ).noDelay()
+                ).forCharts()
+            }
             else -> null
         }
     }

@@ -10,9 +10,13 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
+import ru.nucodelabs.gem.util.OS
 import ru.nucodelabs.gem.util.OS.macOS
+import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.MainViewController
 import java.io.File
+import java.time.LocalDate.now
+import java.time.format.DateTimeFormatter.ofPattern
 import java.util.logging.Logger
 import com.sun.glass.ui.Application as LowLevelApplication
 
@@ -26,6 +30,10 @@ class GemApplication : Application() {
 
     @Inject
     lateinit var logger: Logger
+
+    @Inject
+    lateinit var alertsFactory: AlertsFactory
+
 
     init {
         macOS {
@@ -58,8 +66,22 @@ class GemApplication : Application() {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
+        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            alertsFactory.uncaughtExceptionAlert(e).show()
+            if (parameters.raw.contains("--print-trace")) {
+                e.printStackTrace()
+            } else {
+                val log =
+                    File("err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}.txt").also { it.createNewFile() }
+                log.writeText(e.stackTraceToString())
+            }
+        }
         val params: List<String> = parameters.raw + macOSHandledFiles
-        if (params.isNotEmpty()) {
+        if (
+            params.any {
+                it.endsWith(".EXP", ignoreCase = true) || it.endsWith(".json", ignoreCase = true)
+            }
+        ) {
             processParams(params)
         } else {
             logger.info("Starting MainView without parameters")
@@ -72,19 +94,22 @@ class GemApplication : Application() {
         logger.info("Exiting")
     }
 
-    private fun processParams(params: List<String>) {
+    private fun processParams(params: List<String>): Boolean {
         logger.info("Parameters are $params")
         val expFiles = mutableListOf<File>()
         for (param in params) {
             if (param.endsWith(".EXP", ignoreCase = true)) {
                 expFiles += File(param)
-            } else if (param.endsWith("json", ignoreCase = true)) {
+            } else if (param.endsWith(".json", ignoreCase = true)) {
                 loadMainViewWithJsonFile(File(param))
+                return true
             }
         }
         if (expFiles.isNotEmpty()) {
             loadMainViewWithEXPFiles(expFiles)
+            return true
         }
+        return false
     }
 
     private fun loadMainViewWithJsonFile(jsonFile: File) =
