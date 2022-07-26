@@ -54,7 +54,7 @@ internal class PolygonChartTest : FXTest() {
                 )
             )
             chart.data += series
-            val zoom = ZoomAxis(chart.xAxis as ValueAxis<Number>, chart.yAxis as ValueAxis<Number>)
+            val zoom = LogarithmicChartNavigationSupport(chart.xAxis as LogarithmicAxis, chart.yAxis as LogarithmicAxis)
 
             chart.onScroll = EventHandler { e ->
                     val position: Pair<Double, Double> = Pair(

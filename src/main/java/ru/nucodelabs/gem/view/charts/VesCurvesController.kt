@@ -31,7 +31,7 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.ZoomAxis
+import ru.nucodelabs.gem.view.control.chart.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.control.chart.length
@@ -111,7 +111,7 @@ class VesCurvesController @Inject constructor(
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
 
-    private lateinit var zoom: ZoomAxis
+    private lateinit var zoom: LogarithmicChartNavigationSupport
     private lateinit var zoomCoords: Pair<Double, Double>
 
 
@@ -120,7 +120,7 @@ class VesCurvesController @Inject constructor(
     private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        zoom = ZoomAxis(xAxis, yAxis)
+        zoom = LogarithmicChartNavigationSupport(xAxis, yAxis)
 
         xAxis.tickLabelFormatter = formatter
         yAxis.tickLabelFormatter = formatter
@@ -189,7 +189,7 @@ class VesCurvesController @Inject constructor(
 
         zoomCoords = Pair(e.sceneX, e.sceneY)
         val deltaCoords = Pair(dX / lineChart.xAxis.length * -1.0, dY / lineChart.yAxis.length)
-        zoom.drug(deltaCoords)
+        zoom.drag(deltaCoords)
     }
 
     private fun mapIndices() {
