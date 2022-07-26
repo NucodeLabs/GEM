@@ -4,7 +4,7 @@ import javafx.beans.NamedArg
 import ru.nucodelabs.gem.extensions.std.exp10
 import kotlin.math.*
 
-class PseudoLogAxis @JvmOverloads constructor(
+class PseudoLogarithmicAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 1.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : LogarithmicAxis(lowerBound, upperBound) {
