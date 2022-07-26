@@ -32,7 +32,7 @@
         <!--        </HBox>-->
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
-               styleClass="padded-chart" onScroll="#zoom">
+               styleClass="padded-chart" onScroll="#zoom" onMousePressed="#pressed" onMouseDragged="#drugged">
         <xAxis>
             <LogarithmicAxis fx:id="xAxis"
                              label="%ab2"
