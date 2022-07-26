@@ -19,7 +19,7 @@ import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 internal class PolygonChartTest : FXTest() {
 
     @Test
-    @Disabled
+//    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }
