@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ru.nucodelabs.gem.view.charts.ModelSectionSwitcherController"
+      maxWidth="Infinity" maxHeight="Infinity">
+    <fx:include fx:id="linearSectionBox" source="LinearModelSection.fxml"/>
+    <fx:include fx:id="logSectionBox" source="LogarithmicModelSection.fxml"/>
+</VBox>

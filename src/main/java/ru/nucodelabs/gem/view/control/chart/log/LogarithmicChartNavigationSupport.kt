@@ -1,8 +1,8 @@
-package ru.nucodelabs.gem.view.control.chart
+package ru.nucodelabs.gem.view.control.chart.log
 
 import javafx.scene.chart.ValueAxis
 import ru.nucodelabs.gem.extensions.std.exp10
-import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import ru.nucodelabs.gem.view.control.chart.length
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min

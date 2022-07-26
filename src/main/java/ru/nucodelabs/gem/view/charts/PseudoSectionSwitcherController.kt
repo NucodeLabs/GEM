@@ -49,7 +49,7 @@ class PseudoSectionSwitcherController : AbstractController() {
                     onAction = EventHandler { curvesPseudoSectionBox.isVisible = false }
                 }
             )
-            onContextMenuRequested = EventHandler { contextMenu.show(mapPseudoSectionBox, it.screenX, it.screenY) }
+            onContextMenuRequested = EventHandler { contextMenu.show(curvesPseudoSectionBox, it.screenX, it.screenY) }
         }
     }
 }
