@@ -110,7 +110,10 @@ class VesCurvesController @Inject constructor(
     private lateinit var uiProperties: ResourceBundle
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
+
     private lateinit var zoom: ZoomAxis
+    private lateinit var zoomCoords: Pair<Double, Double>
+
 
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
@@ -168,6 +171,25 @@ class VesCurvesController @Inject constructor(
         val dY = e.deltaY
         val scale = 1.0 + dY / lineChart.yAxis.length
         zoom.zoom(scale, position)
+    }
+
+    @FXML
+    private fun pressed(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+    }
+
+    @FXML
+    private fun drugged(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        val dX = e.sceneX - zoomCoords.first
+        val dY = e.sceneY - zoomCoords.second
+
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+        val deltaCoords = Pair(dX / lineChart.xAxis.length * -1.0, dY / lineChart.yAxis.length)
+        zoom.drug(deltaCoords)
     }
 
     private fun mapIndices() {
