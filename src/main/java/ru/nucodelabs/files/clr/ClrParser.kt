@@ -1,7 +1,7 @@
 package ru.nucodelabs.files.clr
 
 import javafx.scene.paint.Color
-import ru.nucodelabs.gem.view.tables.TextToTableParser
+import ru.nucodelabs.gem.util.TextToTableParser
 import java.io.File
 
 class ClrParser(

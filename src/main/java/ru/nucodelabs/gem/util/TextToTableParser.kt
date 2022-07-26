@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.tables
+package ru.nucodelabs.gem.util
 
 class TextToTableParser(
     text: String
