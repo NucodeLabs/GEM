@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.geometry.Point2D
 import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart.Data
@@ -15,6 +16,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.VesCurvesContext
@@ -29,8 +31,10 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.control.chart.ZoomAxis
 import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
 import ru.nucodelabs.gem.view.control.chart.installTooltips
+import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import java.lang.Double.max
 import java.lang.Double.min
@@ -107,11 +111,17 @@ class VesCurvesController @Inject constructor(
     private lateinit var modelCurveDragger: ModelCurveDragger
     private var isDraggingModel = false
 
+    private lateinit var zoom: ZoomAxis
+    private lateinit var zoomCoords: Pair<Double, Double>
+
+
     private fun xAxisRangeLog() = log10(xAxis.upperBound / xAxis.lowerBound)
 
     private fun yAxisRangeLog() = log10(yAxis.upperBound / yAxis.lowerBound)
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        zoom = ZoomAxis(xAxis, yAxis)
+
         xAxis.tickLabelFormatter = formatter
         yAxis.tickLabelFormatter = formatter
 
@@ -150,6 +160,36 @@ class VesCurvesController @Inject constructor(
 
         setupXAxisBounds()
         setupYAxisBounds()
+    }
+
+    @FXML
+    private fun zoom(e: ScrollEvent) {
+        val position: Pair<Double, Double> = Pair(
+            lineChart.xAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).x/lineChart.xAxis.length,
+            lineChart.yAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).y/lineChart.yAxis.length
+        )
+        val dY = e.deltaY
+        val scale = 1.0 + dY / lineChart.yAxis.length
+        zoom.zoom(scale, position)
+    }
+
+    @FXML
+    private fun pressed(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+    }
+
+    @FXML
+    private fun drugged(e: MouseEvent) {
+        if (isDraggingModel)
+            return
+        val dX = e.sceneX - zoomCoords.first
+        val dY = e.sceneY - zoomCoords.second
+
+        zoomCoords = Pair(e.sceneX, e.sceneY)
+        val deltaCoords = Pair(dX / lineChart.xAxis.length * -1.0, dY / lineChart.yAxis.length)
+        zoom.drug(deltaCoords)
     }
 
     private fun mapIndices() {
