@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.FXTest
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 
 internal class PolygonChartTest : FXTest() {
 
