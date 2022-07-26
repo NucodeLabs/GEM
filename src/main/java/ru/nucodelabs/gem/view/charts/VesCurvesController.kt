@@ -31,11 +31,11 @@ import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL

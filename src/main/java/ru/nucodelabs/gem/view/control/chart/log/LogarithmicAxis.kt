@@ -15,7 +15,7 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
-class LogarithmicAxis @JvmOverloads constructor(
+open class LogarithmicAxis @JvmOverloads constructor(
     @NamedArg("lowerBound") lowerBound: Double = 1.0,
     @NamedArg("upperBound") upperBound: Double = 100.0
 ) : InvertibleValueAxis<Number>(lowerBound, upperBound) {
@@ -29,7 +29,7 @@ class LogarithmicAxis @JvmOverloads constructor(
 
     init {
         animated = false
-        checkBounds(lowerBound, upperBound)
+        //checkBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }
 
@@ -126,7 +126,7 @@ class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+            //checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             ticks += lowerBound
 
@@ -156,7 +156,7 @@ class LogarithmicAxis @JvmOverloads constructor(
             range as Array<Number>
             val lowerBound = range[0]
             val upperBound = range[1]
-            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+            //checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             if (animate) {
                 try {
