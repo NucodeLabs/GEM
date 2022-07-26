@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.view.color;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
-import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.gem.extensions.std.MathKt;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class ColorPalette implements ColorMapper {
 
-    private final List<ValueColor> valueColorList;
+    private final List<ColorNode> valueColorList;
     private final DoubleProperty minValueProperty = new SimpleDoubleProperty();
     private Double minValue;
     private final DoubleProperty maxValueProperty = new SimpleDoubleProperty();
@@ -24,7 +24,7 @@ public class ColorPalette implements ColorMapper {
 
     private final List<Segment> segmentList = new ArrayList<>();
 
-    public ColorPalette(List<ValueColor> valueColorList, double minValue, double maxValue, int blocksCount) {
+    public ColorPalette(List<ColorNode> valueColorList, double minValue, double maxValue, int blocksCount) {
         this.valueColorList = valueColorList;
         setMinValue(minValue);
         setMaxValue(maxValue);
@@ -81,22 +81,22 @@ public class ColorPalette implements ColorMapper {
     /**
      * Ищет цвет в точке интерполяции между vc1 и vc2
      *
-     * @param vc1        vc1.percentage() < vc2.percentage()
-     * @param vc2        vc2.percentage() > vc1.percentage()
-     * @param percentage vc1.percentage() < percentage < vc2.percentage()
+     * @param vc1        vc1.position() < vc2.position()
+     * @param vc2        vc2.position() > vc1.position()
+     * @param percentage vc1.position() < position < vc2.position()
      * @return Interpolated rgba color between vc1.color() and vc2.color()
      */
-    private Color vcInterpolate(ValueColor vc1, ValueColor vc2, double percentage) {
-        Color c1 = vc1.color();
-        Color c2 = vc2.color();
-        double diff = (percentage - vc1.percentage()) / (vc2.percentage() - vc1.percentage());
+    private Color vcInterpolate(ColorNode vc1, ColorNode vc2, double percentage) {
+        Color c1 = vc1.getColor();
+        Color c2 = vc2.getColor();
+        double diff = (percentage - vc1.getPosition()) / (vc2.getPosition() - vc1.getPosition());
 
         return colorInterpolate(c1, c2, diff);
     }
 
     private Color blockColor(double from, double to) {
-        List<ValueColor> vcsFrom = findNearestVCs(from);
-        List<ValueColor> vcsTo = findNearestVCs(to);
+        List<ColorNode> vcsFrom = findNearestVCs(from);
+        List<ColorNode> vcsTo = findNearestVCs(to);
 
         Color colorFrom = vcInterpolate(vcsFrom.get(0), vcsFrom.get(1), from);
         Color colorTo = vcInterpolate(vcsTo.get(0), vcsTo.get(1), to);
@@ -104,10 +104,10 @@ public class ColorPalette implements ColorMapper {
         return colorInterpolate(colorFrom, colorTo, 0.5);
     }
 
-    private List<ValueColor> findNearestVCs(double percentage) {
+    private List<ColorNode> findNearestVCs(double percentage) {
         for (int i = 0; i < valueColorList.size() - 1; i++) {
-            double vcPercentage1 = valueColorList.get(i).percentage();
-            double vcPercentage2 = valueColorList.get(i + 1).percentage();
+            double vcPercentage1 = valueColorList.get(i).getPosition();
+            double vcPercentage2 = valueColorList.get(i + 1).getPosition();
             if (vcPercentage1 <= percentage && vcPercentage2 >= percentage)
                 return new ArrayList<>(Arrays.asList(valueColorList.get(i), valueColorList.get(i + 1)));
         }
@@ -115,8 +115,8 @@ public class ColorPalette implements ColorMapper {
     }
 
     private void blocksInit() {
-        Color firstColor = valueColorList.get(0).color();
-        Color lastColor = valueColorList.get(valueColorList.size() - 1).color();
+        Color firstColor = valueColorList.get(0).getColor();
+        Color lastColor = valueColorList.get(valueColorList.size() - 1).getColor();
 
         double blockSize = 1.0 / blocksCount.get();
         double currentFrom = 0;

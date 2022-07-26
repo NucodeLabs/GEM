@@ -13,8 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
-import ru.nucodelabs.files.color_palette.ClrParser;
-import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.files.clr.ClrParser;
+import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
@@ -25,7 +25,6 @@ import ru.nucodelabs.gem.view.main.MainViewController;
 import ru.nucodelabs.gem.view.main.MainViewModule;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.RoundingMode;
@@ -172,9 +171,9 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     ColorMapper colorMapper(@Named("CLR") File clrFile) throws FileNotFoundException {
-        ClrParser clrParser = new ClrParser();
+        ClrParser clrParser = new ClrParser(clrFile);
         System.out.println(clrFile.getAbsolutePath());
-        List<ValueColor> valueColorList = clrParser.parse(new FileInputStream(clrFile));
+        List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 1500, 15);
     }
 

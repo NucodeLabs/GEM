@@ -238,6 +238,7 @@ javapackager {
     version = "0.1"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
+    useResourcesAsWorkingDir = true
     additionalResources = [
             file("lib/${libPrefix}forwardsolver.${libExt}"),
             file("lib/${libPrefix}misfit.${libExt}")
@@ -251,7 +252,8 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
         generateDmg = false
         generatePkg = false
     }
-    finalizedBy distClr
+    additionalResources =
+            javapackager.additionalResources + [file("${projectDir}/colormap")]
 }
 
 task packageWindowsExe(type: PackageTask, dependsOn: build) {

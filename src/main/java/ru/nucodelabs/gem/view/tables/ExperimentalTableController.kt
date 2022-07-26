@@ -25,6 +25,7 @@ import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
+import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
