@@ -10,13 +10,17 @@ class ZoomAxis(
     val xAxis: ValueAxis<Number>,
     val yAxis: ValueAxis<Number>
 ) {
+    private val MAX_RANGE = 100_000_000
+    private val MIN_RANGE = 1.0
+
+
     fun zoom(scale: Double, position: Pair<Double, Double> = Pair(0.5, 0.5)) {
         if (scale < 0 || position.first < 0 || position.first > 1 || position.second < 0 || position.second > 1)
             return
 
         val minRange = min(xAxis.upperBound - xAxis.lowerBound, yAxis.upperBound - yAxis.lowerBound)
         val maxRange = max(xAxis.upperBound - xAxis.lowerBound, yAxis.upperBound - yAxis.lowerBound)
-        if ((minRange < 1.0 && scale > 1.0) || (maxRange > 100_000_000 && scale < 1.0))
+        if ((minRange < MIN_RANGE && scale > 1.0) || (maxRange > MAX_RANGE && scale < 1.0))
             return
 
         zoomAxis(xAxis, scale, position.first)
@@ -24,8 +28,18 @@ class ZoomAxis(
     }
 
     fun drug(deltaCoords: Pair<Double, Double>) {
-        dragAxis(xAxis, deltaCoords.first)
-        dragAxis(yAxis, deltaCoords.second)
+        val xRange = xAxis.upperBound - xAxis.lowerBound
+        val yRange = yAxis.upperBound - yAxis.lowerBound
+        val dX = deltaCoords.first
+        val dY = deltaCoords.second
+
+        if (dX < 0 && xRange < MIN_RANGE || dX > 0 && xRange > MAX_RANGE
+            || dY < 0 && yRange < MIN_RANGE || dY > 0 && yRange > MAX_RANGE
+        )
+            return
+
+        dragAxis(xAxis, dX)
+        dragAxis(yAxis, dY)
     }
 
     private fun dragAxis(axis: ValueAxis<Number>, deltaPos: Double) {
