@@ -5,12 +5,13 @@ import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.effect.BlendMode
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
 import ru.nucodelabs.data.ves.xOfPicket
-import ru.nucodelabs.gem.extensions.fx.noDelay
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
@@ -42,6 +43,7 @@ class MapPseudoSectionController @Inject constructor(
         super.initialize(location, resources)
         chart.colorMapper = colorMapper
         chart.installTooltips(::tooltipFactory)
+        chart.canvasBlendMode = BlendMode.MULTIPLY
     }
 
     override fun update() {
@@ -78,6 +80,6 @@ class MapPseudoSectionController @Inject constructor(
                 AB/2 = ${decimalFormat.format(point.yValue)} m
                 ρₐ = ${decimalFormat.format(point.extraValue)} Ω‧m
             """.trimIndent()
-        ).noDelay()
+        ).forCharts()
     }
 }

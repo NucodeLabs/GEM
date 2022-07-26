@@ -11,7 +11,7 @@ import ru.nucodelabs.algorithms.charts.curves_chart.CurvesChartParser
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.ExperimentalData
 import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
-import ru.nucodelabs.gem.extensions.fx.noDelay
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import java.net.URL
@@ -72,6 +72,6 @@ class CurvesPseudoSectionController @Inject constructor(
                 AB/2 = $ab2 m
                 ρₐ = $res Ω‧m
             """.trimIndent()
-        ).noDelay()
+        ).forCharts()
     }
 }

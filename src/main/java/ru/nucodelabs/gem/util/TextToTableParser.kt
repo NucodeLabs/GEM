@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.tables
+package ru.nucodelabs.gem.util
 
 class TextToTableParser(
     text: String
@@ -21,9 +21,7 @@ class TextToTableParser(
     private fun parseTabulation(text: String): List<List<String>> {
         val rows = mutableListOf<List<String>>()
         for (row in text.split("\n").filter { it.isNotBlank() }) {
-
             rows += row.split(regex = "\\s+".toRegex()).filter { it.isNotBlank() }
-
         }
         return rows
     }
