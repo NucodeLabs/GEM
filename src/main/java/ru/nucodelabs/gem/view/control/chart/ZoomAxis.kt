@@ -8,23 +8,22 @@ class ZoomAxis(
     val xAxis: ValueAxis<Number>,
     val yAxis: ValueAxis<Number>
 ) {
-    fun zoom() {
-
+    fun zoom(scale: Double, position: Pair<Double, Double> = Pair(0.5, 0.5)) {
+        zoomAxis(xAxis, scale, position.first)
+        zoomAxis(yAxis, scale, position.second)
     }
 
-    fun zoomAxis(axis: ValueAxis<Number>, scale: Double, position: Double, isVertical: Boolean) {
+    private fun zoomAxis(axis: ValueAxis<Number>, scale: Double, position: Double) {
         if (scale < 0 || position < 0 || position > 1)
             throw Exception("zoomAxis wrong data")
 
         val lowerBound = axis.lowerBound
         val upperBound = axis.upperBound
 
-        val range = upperBound - lowerBound
-        val positionValue = if (isVertical)
-            axis.getValueForDisplay(axis.height * position) as Double
-        else
-            axis.getValueForDisplay(axis.width * position) as Double
+        val positionValue = axis.getValueForDisplay(axis.length * position) as Double
 
-        axis.lowerBound = log10((exp10(positionValue) - exp10(lowerBound)) * scale)
+        axis.lowerBound = exp10(((log10(positionValue) - log10(lowerBound)) * (1.0 - 1.0 / scale)) + log10(lowerBound))
+        axis.upperBound = exp10(log10(upperBound) - ((log10(upperBound) - log10(positionValue)) * (1.0 - 1.0 / scale)))
     }
 }
+
