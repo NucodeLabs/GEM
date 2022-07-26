@@ -2,14 +2,12 @@ package ru.nucodelabs.clr;
 
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
-import ru.nucodelabs.files.color_palette.ClrParser;
-import ru.nucodelabs.files.color_palette.ValueColor;
+import ru.nucodelabs.files.clr.ClrParser;
+import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -18,15 +16,14 @@ public class ClrTest {
 
     @Test
     public void test_parser() throws FileNotFoundException {
-        ClrParser clrParser = new ClrParser();
-        File file = new File("data/clr/002_ERT_Rainbow_2.clr");
-        InputStream inputStream = new FileInputStream(file);
+        File file = new File("colormap/default.clr");
+        ClrParser clrParser = new ClrParser(file);
 
-        List<ValueColor> valueColorList = clrParser.parse(inputStream);
+        List<ColorNode> valueColorList = clrParser.getColorNodes();
 
-        Comparator<ValueColor> c = Comparator.comparing(ValueColor::percentage);
+        Comparator<ColorNode> c = Comparator.comparing(ColorNode::getPosition);
 
-        int vcIndex = Collections.binarySearch(valueColorList, new ValueColor(0.40369441, null), c);
+        int vcIndex = Collections.binarySearch(valueColorList, new ColorNode(0.40369441, Color.BLACK), c);
 
         System.out.println(valueColorList.get(vcIndex).toString());
     }
@@ -44,11 +41,10 @@ public class ClrTest {
 
     @Test
     public void colorFor_test() throws FileNotFoundException {
-        ClrParser clrParser = new ClrParser();
-        File file = new File("data/clr/002_ERT_Rainbow_2.clr");
-        InputStream inputStream = new FileInputStream(file);
+        File file = new File("colormap/default.clr");
+        ClrParser clrParser = new ClrParser(file);
 
-        List<ValueColor> valueColorList = clrParser.parse(inputStream);
+        List<ColorNode> valueColorList = clrParser.getColorNodes();
         ColorPalette colorPalette = new ColorPalette(valueColorList, 0, 1500, 10);
         Color color = colorPalette.colorFor(1200);
     }
