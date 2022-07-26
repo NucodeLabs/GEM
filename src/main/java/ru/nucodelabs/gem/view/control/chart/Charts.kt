@@ -31,6 +31,9 @@ fun <T> Axis<T>.getValueForScreen(screenCoordinate: Double): T {
     return getValueForDisplay(displayPosition)
 }
 
+val Axis<*>.length
+    get() = if (side.isVertical) height else width
+
 /**
  * Installs tooltips for each point in each series,
  * then listens to updates and adds tooltips on newly added Points.
