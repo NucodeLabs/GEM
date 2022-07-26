@@ -102,7 +102,8 @@
                                                    HBox.hgrow="ALWAYS">
                                             <fx:include fx:id="pseudoSectionSwitcher"
                                                         source="../charts/PseudoSectionSwitcher.fxml"/>
-                                            <fx:include fx:id="modelSection" source="../charts/ModelSection.fxml"/>
+                                            <fx:include fx:id="modelSectionSwitcher"
+                                                        source="../charts/ModelSectionSwitcher.fxml"/>
                                         </SplitPane>
                                         <fx:include source="../charts/ColorAxis.fxml"/>
                                     </HBox>
