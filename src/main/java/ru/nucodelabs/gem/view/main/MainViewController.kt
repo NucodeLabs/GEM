@@ -36,7 +36,7 @@ import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.charts.MisfitStacksController
-import ru.nucodelabs.gem.view.charts.ModelSectionController
+import ru.nucodelabs.gem.view.charts.ModelSectionSwitcherController
 import ru.nucodelabs.gem.view.charts.PseudoSectionSwitcherController
 import ru.nucodelabs.gem.view.charts.VesCurvesController
 import java.io.File
@@ -149,7 +149,7 @@ class MainViewController @Inject constructor(
     private lateinit var pseudoSectionSwitcherController: PseudoSectionSwitcherController
 
     @FXML
-    private lateinit var modelSectionController: ModelSectionController
+    private lateinit var modelSectionSwitcherController: ModelSectionSwitcherController
 
     override val stage: Stage
         get() = root
@@ -290,8 +290,15 @@ class MainViewController @Inject constructor(
         vesCurvesController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
         vesCurvesController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
 
-        modelSectionController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
-        modelSectionController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+        modelSectionSwitcherController
+            .logSectionBoxController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        modelSectionSwitcherController
+            .logSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
+
+        modelSectionSwitcherController
+            .linearSectionBoxController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
+        modelSectionSwitcherController
+            .linearSectionBoxController.title.managedProperty().bind(menuViewGraphTitles.selectedProperty())
 
         pseudoSectionSwitcherController
             .curvesPseudoSectionBoxController.title.visibleProperty().bind(menuViewGraphTitles.selectedProperty())
