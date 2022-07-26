@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.application.Application
 import javafx.event.EventHandler
+import javafx.geometry.Point2D
 import javafx.scene.Scene
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
@@ -19,7 +20,7 @@ import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 internal class PolygonChartTest : FXTest() {
 
     @Test
-//    @Disabled
+    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }
@@ -27,9 +28,8 @@ internal class PolygonChartTest : FXTest() {
     class TestApp : Application() {
         override fun start(primaryStage: Stage) {
             val chart = PolygonChart(
-                xAxis = NucodeNumberAxis(10.0, 100.0).apply {
+                xAxis = LogarithmicAxis(10.0, 100.0).apply {
                     label = "X Axis"
-                    tickUnit = 1.0
                     inverted = true
                 },
                 yAxis = LogarithmicAxis(10.0, 1000.0).apply {
@@ -37,6 +37,7 @@ internal class PolygonChartTest : FXTest() {
                     inverted = true
                 }
             )
+
             chart.data += Series(
                 observableListOf(
                     XYChart.Data(25.0, 25.0),
@@ -53,7 +54,17 @@ internal class PolygonChartTest : FXTest() {
                 )
             )
             chart.data += series
-            val zoom = AxisZoom(chart.xAxis as ValueAxis<Number>, chart.yAxis as ValueAxis<Number>)
+            val zoom = ZoomAxis(chart.xAxis as ValueAxis<Number>, chart.yAxis as ValueAxis<Number>)
+
+            chart.onScroll = EventHandler { e ->
+                    val position: Pair<Double, Double> = Pair(
+                        chart.xAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).x/chart.xAxis.length,
+                        chart.yAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).y/chart.yAxis.length
+                    )
+                    val dY = e.deltaY
+                    val scale = 1.0 + dY / chart.yAxis.length
+                    zoom.zoom(scale, position)
+            }
 
             primaryStage.scene = Scene(
                 VBox(
@@ -70,13 +81,13 @@ internal class PolygonChartTest : FXTest() {
                     },
                     Button("+").apply {
                         onAction = EventHandler {
-                            zoom.zoom(2.0, 1.0)
+                            zoom.zoom(1.1, Pair(0.3, 0.3))
                             println("${(chart.yAxis as ValueAxis<Number>).lowerBound}, ${(chart.yAxis as ValueAxis<Number>).upperBound}")
                         }
                     },
                     Button("-").apply {
                         onAction = EventHandler {
-                            zoom.zoom(2.0, 1.0, out = true)
+                            zoom.zoom(0.9, Pair(0.3, 0.3))
                             println("${(chart.yAxis as ValueAxis<Number>).lowerBound}, ${(chart.yAxis as ValueAxis<Number>).upperBound}")
                         }
                     }
