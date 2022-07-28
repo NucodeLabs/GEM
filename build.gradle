@@ -122,6 +122,7 @@ javafx {
 }
 
 dependencies {
+    implementation files("$projectDir/lib/MathVesJ-1.0.jar")
     implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     implementation 'com.github.haifengl:smile-math:2.6.0'
@@ -225,7 +226,7 @@ test {
 }
 
 tasks.withType(JavaExec) {
-    dependsOn forwardSolver, misfitFunctions
+//    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
 }
 
