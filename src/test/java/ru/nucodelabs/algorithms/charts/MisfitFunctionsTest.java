@@ -1,9 +1,11 @@
 package ru.nucodelabs.algorithms.charts;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class MisfitFunctionsTest {
     @Test
+    @Disabled
     void testJNI() {
         System.out.println("CalcRelativeDeviation(236, 240):");
         System.out.println(MisfitFunctions.calculateRelativeDeviation(236, 240));

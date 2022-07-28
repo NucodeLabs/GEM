@@ -20,7 +20,7 @@ internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : Mis
         val res = mutableListOf<Double>()
         for (i in experimentalData.indices) {
             val value = abs(
-                MisfitFunctions.calculateRelativeDeviationWithError(
+                ru.nucodelabs.mathves.MisfitFunctions.calculateRelativeDeviationWithError(
                     resistanceApparent[i],
                     errorResistanceApparent[i] / 100f,
                     solvedResistance[i]
