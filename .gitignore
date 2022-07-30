@@ -251,4 +251,3 @@ gradle-app.setting
 *.out
 *.gch
 *.o
-/lib/
