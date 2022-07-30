@@ -68,28 +68,6 @@ ext {
     jniArgs = prepareJNIArgs()
 }
 
-task prepareDir() {
-    File runDir = new File("build/run/")
-    runDir.mkdirs()
-    File colorMapDir = new File("build/run/colormap")
-    colorMapDir.mkdirs()
-}
-
-task copyClr(type: Copy) {
-    dependsOn prepareDir
-    from 'data/clr/002_ERT_Rainbow_2.clr'
-    into 'build/run/colormap'
-    rename('002_ERT_Rainbow_2.clr', 'default.clr')
-}
-
-task distClr(type: Copy) {
-    doFirst {
-        file('build/GEM/colormap').mkdirs()
-    }
-    from 'colormap'
-    into 'build/GEM/colormap'
-}
-
 def prepareJNIArgs() {
     def jniArgs = new ArrayList()
     jniArgs.add(compiler)
@@ -112,6 +90,10 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+configJavafxRun {
+    enabled = false
+}
+
 application {
     mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
 }
@@ -122,6 +104,7 @@ javafx {
 }
 
 dependencies {
+    implementation files("$projectDir/lib/MathVesJ-1.0.jar")
     implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
     implementation 'com.github.haifengl:smile-math:2.6.0'
@@ -218,15 +201,48 @@ task misfitFunctions(type: Exec) {
     }
 }
 
-test {
-    dependsOn forwardSolver, misfitFunctions
-    useJUnitPlatform()
-    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
+task copyDataToLibFolder(type: Copy) {
+    from "$projectDir/data"
+    into "$projectDir/lib/data"
 }
 
+task copyClrToLibFolder(type: Copy) {
+    from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
+    into "$projectDir/lib/colormap"
+    rename('002_ERT_Rainbow_2.clr', 'default.clr')
+}
+
+task cleanLibFolder(type: Delete) {
+    delete "$projectDir/lib/colormap", "$projectDir/lib/data"
+}
+
+task distClr(type: Copy) {
+    doFirst {
+        file('build/GEM/colormap').mkdirs()
+    }
+    from 'colormap'
+    into 'build/GEM/colormap'
+}
+
+
 tasks.withType(JavaExec) {
-    dependsOn forwardSolver, misfitFunctions
+//    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
+    workingDir = file("$projectDir/lib")
+}
+
+test {
+    dependsOn copyClrToLibFolder, copyDataToLibFolder
+    workingDir = file("$projectDir/lib")
+    useJUnitPlatform()
+    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
+    finalizedBy cleanLibFolder
+}
+
+run {
+    dependsOn copyClrToLibFolder
+    workingDir = file("$projectDir/lib")
+    finalizedBy cleanLibFolder
 }
 
 javapackager {
@@ -240,8 +256,8 @@ javapackager {
     administratorRequired = false
     useResourcesAsWorkingDir = true
     additionalResources = [
-            file("lib/${libPrefix}forwardsolver.${libExt}"),
-            file("lib/${libPrefix}misfit.${libExt}")
+            file("lib/${libPrefix}MathVES_JNI.${libExt}"),
+            file("lib/${libPrefix}MathVES.${libExt}")
     ]
 }
 
