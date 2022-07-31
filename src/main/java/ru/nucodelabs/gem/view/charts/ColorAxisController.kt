@@ -114,6 +114,7 @@ class ColorAxisController @Inject constructor(
         if (configWindow.owner == null) {
             configWindow.initOwner(stage)
         }
+        configWindow.icons.setAll(stage?.icons)
     }
 
     @Suppress("UNCHECKED_CAST")
