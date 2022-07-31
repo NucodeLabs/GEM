@@ -42,7 +42,7 @@
                             <Label text="Формулы"/>
                         </HBox>
                     </VBox>
-                    <LineChart title="График погрешности" HBox.hgrow="ALWAYS">
+                    <LineChart title="График погрешности" HBox.hgrow="ALWAYS" fx:id="chart">
                         <xAxis>
                             <LogarithmicAxis label="%ab2">
                             </LogarithmicAxis>

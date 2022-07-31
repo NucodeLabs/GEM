@@ -4,17 +4,16 @@ import com.google.inject.name.Named
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.fxml.FXML
+import javafx.scene.chart.LineChart
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter
 import javafx.stage.Stage
 import javafx.util.Callback
-import ru.nucodelabs.algorithms.error.kWithError
-import ru.nucodelabs.algorithms.error.measureError
-import ru.nucodelabs.algorithms.error.resistanceApparentWithError
-import ru.nucodelabs.algorithms.error.withValue
+import ru.nucodelabs.algorithms.error.*
 import ru.nucodelabs.data.fx.ObservableExperimentalData
+import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.fx.toObservable
 import ru.nucodelabs.gem.extensions.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.extensions.fx.observableListOf
@@ -26,21 +25,25 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
-const val DEFAULT_DIST_A_ERROR = 5e-3
+val DEFAULT_DIST_A_ERROR = 5e-3.asPercent()
 const val DEFAULT_DIST_B_ERROR = 1e-3
 
-const val DEFAULT_U_A_ERROR = 5e-3
+val DEFAULT_U_A_ERROR = 5e-3.asPercent()
 const val DEFAULT_U_B_ERROR = 1e-6
 
-const val DEFAULT_I_A_ERROR = 5e-3
+val DEFAULT_I_A_ERROR = 5e-3.asPercent()
 const val DEFAULT_I_B_ERROR = 1e-6
 
 const val LEQ_S = '≤'
 
 class CalculateErrorScreenController @Inject constructor(
     @Named("Precise") private val preciseFormat: DecimalFormat,
-    private val df: DecimalFormat
+    private val df: DecimalFormat,
+    private val observableSection: ObservableSection
 ) : AbstractController() {
+    @FXML
+    private lateinit var chart: LineChart<Number, Number>
+
     @FXML
     private lateinit var errorResistanceCol: TableColumn<ObservableExperimentalData, String>
 
@@ -94,6 +97,8 @@ class CalculateErrorScreenController @Inject constructor(
 
     // SHARED ITEMS
     val data = observableListOf<ObservableExperimentalData>()
+
+    val errorMap = mutableMapOf<ObservableExperimentalData, Double>()
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         table.selectionModel.isCellSelectionEnabled = false
@@ -247,6 +252,10 @@ class CalculateErrorScreenController @Inject constructor(
                 iBErrorTf.textFormatter.valueProperty()
             )
         }
+    }
+
+    private fun updateChart() {
+
     }
 
     private fun setupCellFactories() {
