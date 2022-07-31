@@ -9,6 +9,9 @@
       stylesheets="@../common.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.tables.ExperimentalTableController">
+    <fx:define>
+        <fx:include fx:id="calculateErrorScreen" source="../main/CalculateErrorScreen.fxml"/>
+    </fx:define>
     <!--    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS" spacing="5">-->
     <!--        <Button fx:id="deleteBtn" text="Удалить выбранное" onAction="#deleteSelected" disable="true">-->
     <!--            <graphic>-->

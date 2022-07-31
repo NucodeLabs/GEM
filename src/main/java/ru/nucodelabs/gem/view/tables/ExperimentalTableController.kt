@@ -28,6 +28,7 @@ import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
+import ru.nucodelabs.gem.view.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.main.FileImporter
 import java.net.URL
 import java.text.DecimalFormat
@@ -47,6 +48,12 @@ class ExperimentalTableController @Inject constructor(
     @Named("CSS") private val css: String,
     fileImporterProvider: Provider<FileImporter>
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
+
+    @FXML
+    private lateinit var calculateErrorScreen: Stage
+
+    @FXML
+    private lateinit var calculateErrorScreenController: CalculateErrorScreenController
 
     @FXML
     private lateinit var pasteBtn: Button
@@ -202,6 +209,9 @@ class ExperimentalTableController @Inject constructor(
                                 setErrorOnSelected(dialog.editor.textFormatter.value as Double)
                             }
                         }
+                    },
+                    MenuItem("Рассчитать погрешность").apply {
+                        onAction = EventHandler { showCalcErrorWindowForSelected() }
                     }
                 ).apply {
                     style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
@@ -227,6 +237,7 @@ class ExperimentalTableController @Inject constructor(
                         listenToItemsProperties(c.addedSubList)
                         commitChanges()
                     }
+
                     c.wasRemoved() -> commitChanges()
                     c.wasPermutated() -> commitChanges()
                 }
@@ -331,6 +342,19 @@ class ExperimentalTableController @Inject constructor(
         }
     }
 
+    private fun showCalcErrorWindowForSelected() {
+        lazyInitCalcErrorScreen()
+        calculateErrorScreenController.data.setAll(table.selectionModel.selectedItems.map { it.toExperimentalData() })
+        calculateErrorScreen.show()
+    }
+
+    private fun lazyInitCalcErrorScreen() {
+        if (calculateErrorScreen.owner == null) {
+            calculateErrorScreen.initOwner(stage)
+        }
+        calculateErrorScreen.icons.setAll(stage.icons)
+    }
+
     private fun setIsHiddenOnSelected(isHidden: Boolean) {
         val items = table.items.map { it.toExperimentalData() }.toMutableList()
         for (idx in table.selectionModel.selectedIndices) {
@@ -408,6 +432,7 @@ class ExperimentalTableController @Inject constructor(
                         voltage = volt
                     )
                 }
+
                 4 -> parsedTable.mapIndexed { rowIdx, row ->
                     ExperimentalData(
                         ab2 = row[0].process("AB/2", rowIdx, 0),
@@ -416,6 +441,7 @@ class ExperimentalTableController @Inject constructor(
                         amperage = row[3].process("I", rowIdx, 3)
                     )
                 }
+
                 5 -> parsedTable.mapIndexed { rowIdx, row ->
                     ExperimentalData(
                         ab2 = row[0].process("AB/2", rowIdx, 0),
@@ -425,6 +451,7 @@ class ExperimentalTableController @Inject constructor(
                         resistanceApparent = row[4].process("ρₐ", rowIdx, 4)
                     )
                 }
+
                 else -> {
                     val errorRow = parsedTable.find { row -> row.count { it != null } !in arrayOf(3, 4, 5) }
                     val errorRowIdx = parsedTable.indexOf(errorRow)
