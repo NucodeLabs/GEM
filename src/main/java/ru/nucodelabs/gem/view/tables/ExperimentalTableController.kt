@@ -372,9 +372,7 @@ class ExperimentalTableController @Inject constructor(
         if (calculateErrorScreen.owner == null) {
             calculateErrorScreen.initOwner(stage)
         }
-        if (calculateErrorScreen.icons.isEmpty()) {
-            calculateErrorScreen.icons.setAll(stage.icons)
-        }
+        calculateErrorScreen.icons.setAll(stage.icons)
     }
 
     private fun setIsHiddenOnSelected(isHidden: Boolean) {

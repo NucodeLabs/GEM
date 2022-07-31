@@ -203,24 +203,24 @@ task misfitFunctions(type: Exec) {
     }
 }
 
-task prcleanRunDir {
+task prepareRunDir {
     file(runDir).mkdirs()
 }
 
-task copyLcleanRunDir(type: Copy) {
-    dependsOn prcleanRunDir
+task copyLibsToRunDir(type: Copy) {
+    dependsOn prepareRunDir
     from "$projectDir/lib"
     into runDir
 }
 
-task copyDcleanRunDir(type: Copy) {
-    dependsOn prcleanRunDir
+task copyDataToRunDir(type: Copy) {
+    dependsOn prepareRunDir
     from "$projectDir/data"
     into "$projectDir/run/data"
 }
 
-task copycleanRunDir(type: Copy) {
-    dependsOn prcleanRunDir
+task copyClrToRunDir(type: Copy) {
+    dependsOn prepareRunDir
     from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
     into "$projectDir/run/colormap"
     rename('002_ERT_Rainbow_2.clr', 'default.clr')
@@ -240,7 +240,7 @@ task distClr(type: Copy) {
 
 
 tasks.withType(JavaExec) {
-    dependsOn copycleanRunDir, copyDcleanRunDir, copyLcleanRunDir
+    dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
 //    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/run").absolutePath]
     workingDir = file(runDir)
