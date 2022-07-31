@@ -54,3 +54,27 @@ fun resistanceApparentWithError(
         res[4].asPercent(),
     )
 }
+
+fun resistanceApparentErrorForDistance(k: ValueMinMax, u: Double, i: Double): Double {
+    return resistanceApparentWithError(
+        k,
+        ValueMinMax(u, u, u),
+        ValueMinMax(i, i, i)
+    ).error
+}
+
+fun resistanceApparentErrorForAmperage(i: ValueMinMax, k: Double, u: Double): Double {
+    return resistanceApparentWithError(
+        ValueMinMax(k, k, k),
+        ValueMinMax(u, u, u),
+        i
+    ).error
+}
+
+fun resistanceApparentErrorForVoltage(u: ValueMinMax, k: Double, i: Double): Double {
+    return resistanceApparentWithError(
+        ValueMinMax(k, k, k),
+        u,
+        ValueMinMax(i, i, i)
+    ).error
+}

@@ -129,7 +129,6 @@ class ExperimentalTableController @Inject constructor(
         setupCellFactories()
         setupRowFactory()
         setupAutoRefreshTable()
-        listenToCalcErrorData()
     }
 
     private fun setupAutoRefreshTable() {
@@ -246,25 +245,6 @@ class ExperimentalTableController @Inject constructor(
         })
     }
 
-    private fun listenToCalcErrorData() {
-        calculateErrorScreenController.data.addListener(ListChangeListener { c ->
-            while (c.next()) {
-                if (calculateErrorScreenController.data != table.selectionModel.selectedItems) {
-                    val items = table.items.map { it.toExperimentalData() }.toMutableList()
-                    for (i in items.indices) {
-                        if (i in table.selectionModel.selectedIndices) {
-                            val data = calculateErrorScreenController.data
-                            items[i] =
-                                data[table.selectionModel.selectedItems.indexOf(table.items[i])]
-                                    .toExperimentalData()
-                        }
-                    }
-                    table.items.setAll(items.map { it.toObservable() })
-                }
-            }
-        })
-    }
-
     private fun mapItems() {
         table.items = picket.sortedExperimentalData.map { it.toObservable() }.toObservableList()
     }
@@ -364,7 +344,7 @@ class ExperimentalTableController @Inject constructor(
 
     private fun showCalcErrorWindowForSelected() {
         lazyInitCalcErrorScreen()
-        calculateErrorScreenController.data.setAll(table.selectionModel.selectedItems)
+        calculateErrorScreenController.data.setAll(table.selectionModel.selectedItems.map { it.toExperimentalData() })
         calculateErrorScreen.show()
     }
 
