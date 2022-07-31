@@ -176,14 +176,14 @@ fun intFilter() = UnaryOperator<Change> { c ->
 
 class DoubleValidationConverter(
     private val decimalFormat: DecimalFormat = DecimalFormat(),
-    private val validate: (Double) -> Boolean
+    private val validate: (Double) -> Boolean = { true }
 ) : StringConverter<Double>() {
     override fun toString(o: Double?): String = decimalFormat.format(o)
     override fun fromString(string: String?): Double =
         decimalFormat.parse(string).toDouble().takeIf(validate) ?: throw IllegalArgumentException()
 }
 
-class IntValidationConverter(val validate: (Int) -> Boolean) : StringConverter<Int>() {
+class IntValidationConverter(private val validate: (Int) -> Boolean = { true }) : StringConverter<Int>() {
     override fun toString(o: Int?): String = o?.toString() ?: ""
     override fun fromString(string: String?): Int =
         string?.toInt()?.takeIf(validate) ?: throw IllegalArgumentException()

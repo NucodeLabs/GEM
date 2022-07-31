@@ -108,7 +108,20 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
+    @Named("Precise")
+    DecimalFormat preciseFormat() {
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+        decimalFormat.setMaximumFractionDigits(16);
+        var dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        dfs.setGroupingSeparator(' ');
+        decimalFormat.setDecimalFormatSymbols(dfs);
+
+        return decimalFormat;
+    }
+
+    @Provides
     private DecimalFormat decimalFormat() {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);

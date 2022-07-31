@@ -66,6 +66,8 @@ ext {
     ]
 
     jniArgs = prepareJNIArgs()
+
+    runDir = "$projectDir/run"
 }
 
 def prepareJNIArgs() {
@@ -201,19 +203,31 @@ task misfitFunctions(type: Exec) {
     }
 }
 
-task copyDataToLibFolder(type: Copy) {
-    from "$projectDir/data"
-    into "$projectDir/lib/data"
+task prepareRunDir {
+    file(runDir).mkdirs()
 }
 
-task copyClrToLibFolder(type: Copy) {
+task copyLibsToRunDir(type: Copy) {
+    dependsOn prepareRunDir
+    from "$projectDir/lib"
+    into runDir
+}
+
+task copyDataToRunDir(type: Copy) {
+    dependsOn prepareRunDir
+    from "$projectDir/data"
+    into "$projectDir/run/data"
+}
+
+task copyClrToRunDir(type: Copy) {
+    dependsOn prepareRunDir
     from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
-    into "$projectDir/lib/colormap"
+    into "$projectDir/run/colormap"
     rename('002_ERT_Rainbow_2.clr', 'default.clr')
 }
 
-task cleanLibFolder(type: Delete) {
-    delete "$projectDir/lib/colormap", "$projectDir/lib/data"
+task cleanRunDir(type: Delete) {
+    delete fileTree(runDir) { exclude "err-trace*.txt" }
 }
 
 task distClr(type: Copy) {
@@ -226,23 +240,21 @@ task distClr(type: Copy) {
 
 
 tasks.withType(JavaExec) {
+    dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
 //    dependsOn forwardSolver, misfitFunctions
-    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/lib").absolutePath]
-    workingDir = file("$projectDir/lib")
+    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/run").absolutePath]
+    workingDir = file(runDir)
+    finalizedBy cleanRunDir
 }
 
 test {
-    dependsOn copyClrToLibFolder, copyDataToLibFolder
-    workingDir = file("$projectDir/lib")
+    workingDir = file(runDir)
     useJUnitPlatform()
-    systemProperty "java.library.path", file("${projectDir}/lib").absolutePath
-    finalizedBy cleanLibFolder
+    systemProperty "java.library.path", file("${projectDir}/run").absolutePath
 }
 
 run {
-    dependsOn copyClrToLibFolder
-    workingDir = file("$projectDir/lib")
-    finalizedBy cleanLibFolder
+    workingDir = file(runDir)
 }
 
 javapackager {

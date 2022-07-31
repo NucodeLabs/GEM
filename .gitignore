@@ -251,3 +251,4 @@ gradle-app.setting
 *.out
 *.gch
 *.o
+!/run/
