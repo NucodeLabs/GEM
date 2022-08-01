@@ -1,16 +1,9 @@
 package ru.nucodelabs.algorithms.error
 
+import ru.nucodelabs.gem.extensions.std.asFraction
+import ru.nucodelabs.gem.extensions.std.asPercent
 import ru.nucodelabs.mathves.SchlumbergerErrorFunctions
 
-/**
- * e.g. 0.5 -> 50 (%)
- */
-fun Double.asPercent(): Double = this * 100.0
-
-/**
- * e.g. 50 (%) -> 0.5
- */
-fun Double.asFraction(): Double = this / 100.0
 data class MinMax(val min: Double, val max: Double)
 
 fun measureError(value: Double, aError: Double, bError: Double): MinMax {
