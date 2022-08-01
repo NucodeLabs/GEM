@@ -12,7 +12,7 @@
        fx:controller="ru.nucodelabs.gem.view.main.CalculateErrorScreenController" fx:id="root"
        title="Рассчет погрешности">
     <scene>
-        <Scene stylesheets="@../common.css">
+        <Scene stylesheets="@../common.css, @CalculateErrorScreen.css">
             <VBox alignment="TOP_CENTER" style="-fx-padding: 15;" maxHeight="Infinity" maxWidth="Infinity">
                 <HBox>
                     <VBox spacing="10">
@@ -45,7 +45,7 @@
                     <LineChart animated="false"
                                title="График погрешности" HBox.hgrow="ALWAYS" fx:id="chart">
                         <xAxis>
-                            <LogarithmicAxis label="%ab2">
+                            <LogarithmicAxis label="%ab2" autoRanging="true">
                             </LogarithmicAxis>
                         </xAxis>
                         <yAxis>

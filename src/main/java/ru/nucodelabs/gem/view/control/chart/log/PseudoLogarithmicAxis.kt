@@ -137,6 +137,14 @@ class PseudoLogarithmicAxis @JvmOverloads constructor(
         }
     }
 
+    override fun getRange(): Array<Number> {
+        return arrayOf<Number>(lowerBound, upperBound)
+    }
+
+    override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any {
+        return arrayOf<Number>(minValue, maxValue)
+    }
+
     private fun calcLinValue(value: Double): Double {
         return (value - upperBound) / ((lowerBound - upperBound) / 9) + 1
     }

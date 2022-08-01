@@ -20,7 +20,7 @@ fun measureError(value: Double, aError: Double, bError: Double): MinMax {
 
 data class ValueMinMax(val value: Double, val min: Double, val max: Double)
 
-fun MinMax.withValue(value: Double) = ValueMinMax(value, min, max)
+infix fun MinMax.withValue(value: Double) = ValueMinMax(value, min, max)
 
 fun kWithError(ab2: Double, mn2: Double, distAError: Double, distBError: Double): ValueMinMax {
     val res = SchlumbergerErrorFunctions.calculateKError(ab2, mn2, distAError.asFraction(), distBError.asFraction())
@@ -58,23 +58,23 @@ fun resistanceApparentWithError(
 fun resistanceApparentErrorForDistance(k: ValueMinMax, u: Double, i: Double): Double {
     return resistanceApparentWithError(
         k,
-        ValueMinMax(u, u, u),
-        ValueMinMax(i, i, i)
+        measureError(u, 0.0, 0.0).withValue(u),
+        measureError(i, 0.0, 0.0).withValue(i)
     ).error
 }
 
-fun resistanceApparentErrorForAmperage(i: ValueMinMax, k: Double, u: Double): Double {
+fun resistanceApparentErrorForAmperage(i: ValueMinMax, ab2: Double, mn2: Double, u: Double): Double {
     return resistanceApparentWithError(
-        ValueMinMax(k, k, k),
-        ValueMinMax(u, u, u),
+        kWithError(ab2, mn2, 0.0, 0.0),
+        measureError(u, 0.0, 0.0).withValue(u),
         i
     ).error
 }
 
-fun resistanceApparentErrorForVoltage(u: ValueMinMax, k: Double, i: Double): Double {
+fun resistanceApparentErrorForVoltage(u: ValueMinMax, ab2: Double, mn2: Double, i: Double): Double {
     return resistanceApparentWithError(
-        ValueMinMax(k, k, k),
+        kWithError(ab2, mn2, 0.0, 0.0),
         u,
-        ValueMinMax(i, i, i)
+        measureError(i, 0.0, 0.0).withValue(i)
     ).error
 }
