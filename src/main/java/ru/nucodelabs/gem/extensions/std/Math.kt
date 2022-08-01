@@ -17,3 +17,18 @@ fun String.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
 }
 
 fun String.toDoubleOrNullBy(decimalFormat: DecimalFormat) = toNumberOrNull(decimalFormat)?.toDouble()
+
+/**
+ * e.g. 0.5 -> 50 (%)
+ */
+fun Double.asPercent(): Double = this * 100.0
+
+/**
+ * e.g. 50 (%) -> 0.5
+ */
+fun Double.asFraction(): Double = this / 100.0
+
+const val MILLI = 1e-3
+fun asMilli(value: Double) = value / MILLI
+
+fun fromMilli(value: Double) = value * MILLI
