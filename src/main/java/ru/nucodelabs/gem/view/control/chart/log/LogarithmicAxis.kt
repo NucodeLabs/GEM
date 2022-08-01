@@ -145,7 +145,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
     }
 
     override fun getRange(): Array<Number> {
-        return arrayOf(lowerBound, upperBound)
+        return arrayOf(lowerBound.coerceAtLeast(Double.MIN_VALUE), upperBound.coerceAtLeast(Double.MIN_VALUE))
     }
 
     override fun getTickMarkLabel(value: Number): String = tickLabelFormatter?.toString(value) ?: value.toString()
@@ -232,7 +232,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
     }
 
     override fun autoRange(minValue: Double, maxValue: Double, length: Double, labelSize: Double): Any {
-        return arrayOf<Number>(minValue.coerceAtLeast(Double.MIN_VALUE), maxValue.coerceAtLeast(Double.MAX_VALUE))
+        return arrayOf<Number>(minValue.coerceAtLeast(Double.MIN_VALUE), maxValue.coerceAtLeast(Double.MIN_VALUE))
     }
 
 
