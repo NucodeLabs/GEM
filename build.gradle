@@ -252,11 +252,13 @@ test {
     workingDir = file(runDir)
     useJUnitPlatform()
     systemProperty "java.library.path", file("${projectDir}/run").absolutePath
+    finalizedBy cleanRunDir
 }
 
 run {
     dependsOn prepareRunDir, copyClrToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
+    finalizedBy cleanRunDir
 }
 
 javapackager {
