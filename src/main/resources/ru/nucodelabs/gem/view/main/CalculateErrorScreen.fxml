@@ -3,6 +3,8 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
@@ -10,7 +12,7 @@
 <Stage xmlns:fx="http://javafx.com/fxml"
        xmlns="http://javafx.com/javafx"
        fx:controller="ru.nucodelabs.gem.view.main.CalculateErrorScreenController" fx:id="root"
-       title="Рассчет погрешности">
+       title="Рассчет погрешности" width="1280">
     <scene>
         <Scene stylesheets="@../common.css, @CalculateErrorScreen.css">
             <VBox alignment="TOP_CENTER" style="-fx-padding: 15;" maxHeight="Infinity" maxWidth="Infinity">
@@ -38,9 +40,13 @@
                             <Label text="mV" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
                             <Label text="mA" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
                         </GridPane>
-                        <HBox alignment="BASELINE_CENTER">
-                            <Label text="Формулы"/>
-                        </HBox>
+                        <Label text="Формулы" styleClass="window-header"/>
+                        <ImageView preserveRatio="true" fitHeight="55">
+                            <Image url="@../../../../../img/rhoA.png"/>
+                        </ImageView>
+                        <ImageView preserveRatio="true" fitHeight="65">
+                            <Image url="@../../../../../img/k.png"/>
+                        </ImageView>
                     </VBox>
                     <LineChart animated="false"
                                title="График погрешности" HBox.hgrow="ALWAYS" fx:id="chart">
