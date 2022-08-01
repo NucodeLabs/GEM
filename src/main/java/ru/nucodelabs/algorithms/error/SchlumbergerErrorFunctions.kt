@@ -7,7 +7,7 @@ import ru.nucodelabs.mathves.SchlumbergerErrorFunctions
 data class MinMax(val min: Double, val max: Double)
 
 fun measureError(value: Double, aError: Double, bError: Double): MinMax {
-    val res = SchlumbergerErrorFunctions.calculateMeasureError(value, aError.asFraction(), bError.asFraction())
+    val res = SchlumbergerErrorFunctions.calculateMeasureError(value, aError.asFraction(), bError)
     return MinMax(res[0], res[1])
 }
 
@@ -16,7 +16,7 @@ data class ValueMinMax(val value: Double, val min: Double, val max: Double)
 infix fun MinMax.withValue(value: Double) = ValueMinMax(value, min, max)
 
 fun kWithError(ab2: Double, mn2: Double, distAError: Double, distBError: Double): ValueMinMax {
-    val res = SchlumbergerErrorFunctions.calculateKError(ab2, mn2, distAError.asFraction(), distBError.asFraction())
+    val res = SchlumbergerErrorFunctions.calculateKError(ab2, mn2, distAError.asFraction(), distBError)
     return ValueMinMax(res[0], res[1], res[2])
 }
 

@@ -26,7 +26,6 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.extensions.fx.toObservableList
-import ru.nucodelabs.gem.extensions.std.asPercent
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.tables.indexCellFactory
 import java.net.URL
@@ -34,14 +33,14 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
-val DEFAULT_DIST_A_ERROR = 5e-3.asPercent()
+const val DEFAULT_DIST_A_ERROR = 0.5
 const val DEFAULT_DIST_B_ERROR = 1e-3 // m
 
-val DEFAULT_U_A_ERROR = 5e-3.asPercent()
-const val DEFAULT_U_B_ERROR = 1e-3 // mV
+const val DEFAULT_U_A_ERROR = 0.5
+const val DEFAULT_U_B_ERROR = 0.5 // mV
 
-val DEFAULT_I_A_ERROR = 5e-3.asPercent()
-const val DEFAULT_I_B_ERROR = 1e-3 // mA
+const val DEFAULT_I_A_ERROR = 0.5
+const val DEFAULT_I_B_ERROR = 0.5 // mA
 
 const val LEQ_S = '≤'
 
