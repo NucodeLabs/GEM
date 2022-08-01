@@ -42,7 +42,7 @@
                         </GridPane>
                         <Label text="Формулы" styleClass="window-header"/>
                         <ImageView preserveRatio="true" fitHeight="55">
-                            <Image url="@../../../../../img/rho.png"/>
+                            <Image url="@../../../../../img/rhoA.png"/>
                         </ImageView>
                         <ImageView preserveRatio="true" fitHeight="65">
                             <Image url="@../../../../../img/k.png"/>
