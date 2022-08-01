@@ -307,7 +307,8 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.value as Double,
                 uBErrorTf.textFormatter.value as Double
             ).withValue(data.voltage),
-            kWithError(data.ab2, data.mn2, 0.0, 0.0).value,
+            data.ab2,
+            data.mn2,
             data.amperage
         )
 
@@ -318,7 +319,8 @@ class CalculateErrorScreenController @Inject constructor(
                 iAErrorTf.textFormatter.value as Double,
                 iBErrorTf.textFormatter.value as Double
             ).withValue(data.amperage),
-            kWithError(data.ab2, data.mn2, 0.0, 0.0).value,
+            data.ab2,
+            data.mn2,
             data.voltage
         )
 
