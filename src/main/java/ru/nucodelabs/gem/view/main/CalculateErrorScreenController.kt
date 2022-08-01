@@ -26,6 +26,7 @@ import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.std.asPercent
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.tables.indexCellFactory
 import java.net.URL
