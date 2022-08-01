@@ -248,12 +248,14 @@ tasks.withType(JavaExec) {
 }
 
 test {
+    dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
     useJUnitPlatform()
     systemProperty "java.library.path", file("${projectDir}/run").absolutePath
 }
 
 run {
+    dependsOn prepareRunDir, copyClrToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
 }
 
