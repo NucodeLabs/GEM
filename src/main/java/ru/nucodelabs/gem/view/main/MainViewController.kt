@@ -195,7 +195,12 @@ class MainViewController @Inject constructor(
         setupTextFields()
         syncMisfitAndVesXAxes()
         setupInverseBtn()
+        setupInverseShortcut()
         setupMenuItems()
+    }
+
+    private fun setupInverseShortcut() {
+        stage.scene.accelerators[KeyCodeCombination(KeyCode.SPACE)] = Runnable { inverseSolve() }
     }
 
     private fun setupTextFields() {
