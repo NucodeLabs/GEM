@@ -163,6 +163,8 @@ class VesCurvesController @Inject constructor(
     private fun setupContextMenu() {
         val contextMenu = ContextMenu(
             CheckMenuItem("Модель").also {
+                it.isSelected = true
+                isModelVisible.value = it.isSelected
                 isModelVisible.bind(it.selectedProperty())
             },
             MenuItem("Сохранить как изображение").apply {
