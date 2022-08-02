@@ -62,7 +62,7 @@
                         <fx:define>
                             <fx:include fx:id="authorsWindow" source="Authors.fxml"/>
                         </fx:define>
-                        <MenuItem text="%authors" onAction="#openAuthors"/>
+                        <MenuItem text="%about" onAction="#openAuthors"/>
                     </Menu>
                 </MenuBar>
                 <StackPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
