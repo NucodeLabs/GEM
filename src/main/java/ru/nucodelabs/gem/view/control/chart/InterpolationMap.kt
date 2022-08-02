@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
+import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Color
 import ru.nucodelabs.algorithms.interpolation.InterpolationParser
 import ru.nucodelabs.algorithms.interpolation.Interpolator
@@ -21,7 +22,7 @@ class InterpolationMap @JvmOverloads constructor(
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
 
-    var canvasBlendMode by canvas.blendModeProperty()
+    var canvasBlendMode: BlendMode by canvas.blendModeProperty()
 
     private val _interpolateSeriesIndex = SimpleIntegerProperty(0)
 
@@ -65,7 +66,7 @@ class InterpolationMap @JvmOverloads constructor(
     private lateinit var interpolator: Interpolator
     private var preparedData: List<List<Data<Double, Double>>> = mutableListOf()
 
-    fun interpolatedValueInPoint(x: Double, y: Double): Double = interpolator.getValue(x, y)
+    fun interpolatedValueAtPoint(x: Double, y: Double): Double = interpolator.getValue(x, y)
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
@@ -115,8 +116,7 @@ class InterpolationMap @JvmOverloads constructor(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun draw(canvas: Canvas) {
+    private fun draw(canvas: Canvas) {
         if (data.isEmpty()
             || data[interpolateSeriesIndex].data.isEmpty()
         ) {
@@ -157,6 +157,8 @@ class InterpolationMap @JvmOverloads constructor(
         }
     }
 
+
+    @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
         val series = data[interpolateSeriesIndex]
         if (series.data.isEmpty()) {
