@@ -252,11 +252,13 @@ test {
     workingDir = file(runDir)
     useJUnitPlatform()
     systemProperty "java.library.path", file("${projectDir}/run").absolutePath
+    finalizedBy cleanRunDir
 }
 
 run {
     dependsOn prepareRunDir, copyClrToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
+    finalizedBy cleanRunDir
 }
 
 javapackager {
@@ -316,11 +318,11 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
