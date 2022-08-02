@@ -63,4 +63,20 @@ public class FileChoosersModule extends AbstractModule {
         }
         return chooser;
     }
+
+    @Provides
+    @Singleton
+    @Named("PNG")
+    private FileChooser pngFileChooser(Preferences preferences) {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Изображение", "*.png", "*.PNG"),
+                allFilesFilter
+        );
+        File initDir = new File(preferences.get(PNG_FILES_DIR.getKey(), PNG_FILES_DIR.getDef()));
+        if (initDir.exists()) {
+            chooser.setInitialDirectory(initDir);
+        }
+        return chooser;
+    }
 }
