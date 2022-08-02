@@ -151,6 +151,9 @@ class MainViewController @Inject constructor(
     @FXML
     private lateinit var modelSectionSwitcherController: ModelSectionSwitcherController
 
+    @FXML
+    private lateinit var authorsWindow: Stage
+
     override val stage: Stage
         get() = root
 
@@ -668,5 +671,13 @@ class MainViewController @Inject constructor(
         } else {
             (addExperimentalData.scene.window as Stage).show()
         }
+    }
+
+    @FXML
+    private fun openAuthors() {
+        if (authorsWindow.owner == null) {
+            authorsWindow.initOwner(stage)
+        }
+        authorsWindow.show()
     }
 }
