@@ -1,18 +1,17 @@
 package ru.nucodelabs.gem.view.charts
 
 import javafx.beans.property.ObjectProperty
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.VBox
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.app.pref.COLOR_MAX_VALUE
-import ru.nucodelabs.gem.app.pref.COLOR_MIN_VALUE
-import ru.nucodelabs.gem.app.pref.COLOR_SEGMENTS
-import ru.nucodelabs.gem.app.pref.FXPreferences
+import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AbstractController
@@ -25,6 +24,7 @@ import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
+import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -34,7 +34,9 @@ class ColorAxisController @Inject constructor(
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val stringConverter: StringConverter<Number>,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    @Named("PNG") private val fc: FileChooser,
+    private val prefs: Preferences
 ) : AbstractController() {
 
     private val minAndMaxRange = 0.1..100_000.0
@@ -87,6 +89,16 @@ class ColorAxisController @Inject constructor(
         colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
 
         linearChart.data = observableListOf()
+
+        ctxMenu.items += MenuItem("Сохранить как изображение").apply {
+            onAction = EventHandler {
+                (if (isLogChkBox.isSelected) logChart else linearChart).saveSnapshotAsPng(fc)?.also {
+                    if (it.parentFile.isDirectory) {
+                        prefs.put(PNG_FILES_DIR.key, it.parentFile.absolutePath)
+                    }
+                }
+            }
+        }
 
         setupControls()
         initConfig()
