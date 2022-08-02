@@ -139,9 +139,9 @@
                         </TableColumn>
                     </columns>
                 </TableView>
-                <Separator/>
-                <HBox alignment="BASELINE_CENTER" style="-fx-padding: 15;">
-                    <Button text="Применить" onAction="#apply"/>
+                <Separator style="-fx-padding: 10;"/>
+                <HBox alignment="BASELINE_RIGHT">
+                    <Button text="Применить" onAction="#apply" defaultButton="true"/>
                 </HBox>
             </VBox>
         </Scene>
