@@ -121,14 +121,27 @@ class ExperimentalTableController @Inject constructor(
         }
 
         table.addEventHandler(KeyEvent.KEY_PRESSED) { e ->
-            if (e.code == KeyCode.DELETE || e.code == KeyCode.BACK_SPACE) {
-                deleteSelected()
+            when (e.code) {
+                KeyCode.DELETE, KeyCode.BACK_SPACE -> deleteSelected()
+                KeyCode.C -> if (e.isShortcutDown) copySelected()
+                else -> {}
             }
         }
 
         setupCellFactories()
         setupRowFactory()
         setupAutoRefreshTable()
+    }
+
+    private fun copySelected() {
+        Clipboard.getSystemClipboard().setContent(
+            buildMap {
+                put(
+                    DataFormat.PLAIN_TEXT,
+                    table.selectionModel.selectedItems.map { it.toExperimentalData() }.toTabulatedTable()
+                )
+            }
+        )
     }
 
     private fun setupAutoRefreshTable() {
@@ -175,6 +188,9 @@ class ExperimentalTableController @Inject constructor(
                     MenuItem("Удалить").apply {
                         onAction = EventHandler { deleteSelected() }
                     },
+                    MenuItem("Копировать в буфер обмена").apply {
+                        onAction = EventHandler { copySelected() }
+                    },
                     MenuItem("Рассчитать ρₐ").apply {
                         onAction = EventHandler { recalculateSelected() }
                     },
@@ -212,7 +228,7 @@ class ExperimentalTableController @Inject constructor(
                     },
                     MenuItem("Рассчитать погрешность").apply {
                         onAction = EventHandler { showCalcErrorWindowForSelected() }
-                    }
+                    },
                 ).apply {
                     style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
                 }

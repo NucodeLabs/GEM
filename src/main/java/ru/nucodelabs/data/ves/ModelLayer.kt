@@ -1,5 +1,6 @@
 package ru.nucodelabs.data.ves
 
+import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Min
 
 /**
@@ -11,7 +12,7 @@ import jakarta.validation.constraints.Min
  */
 data class ModelLayer(
     @field:Min(0) val power: Double,
-    @field:Min(1) val resistance: Double,
+    @field:DecimalMin("0.1") val resistance: Double,
     val isFixedPower: Boolean = false,
     val isFixedResistance: Boolean = false
 )

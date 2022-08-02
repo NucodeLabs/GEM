@@ -11,10 +11,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
-import javafx.scene.input.DragEvent
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.TransferMode
+import javafx.scene.input.*
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
@@ -26,6 +23,8 @@ import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
+import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
@@ -100,8 +99,10 @@ class ModelTableController @Inject constructor(
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         table.addEventHandler(KeyEvent.KEY_PRESSED) { e ->
-            if (e.code == KeyCode.DELETE || e.code == KeyCode.BACK_SPACE) {
-                deleteSelected()
+            when (e.code) {
+                KeyCode.DELETE, KeyCode.BACK_SPACE -> deleteSelected()
+                KeyCode.C -> if (e.isShortcutDown) copySelected()
+                else -> {}
             }
         }
 
@@ -162,9 +163,12 @@ class ModelTableController @Inject constructor(
                         MenuItem("Удалить").apply {
                             onAction = EventHandler { deleteSelected() }
                         },
+                        MenuItem("Копировать в буфер обмена").apply {
+                            onAction = EventHandler { copySelected() }
+                        },
                         MenuItem("Разделить").apply {
                             onAction = EventHandler { divideSelected() }
-                        }
+                        },
                     ).apply {
                         if (table.selectionModel.selectedItems.size == 1) {
                             items += MenuItem().apply {
@@ -208,6 +212,17 @@ class ModelTableController @Inject constructor(
                 onContextMenuRequested = EventHandler { createContextMenu().show(this, it.screenX, it.screenY) }
             }
         }
+    }
+
+    private fun copySelected() {
+        Clipboard.getSystemClipboard().setContent(
+            buildMap {
+                put(
+                    DataFormat.PLAIN_TEXT,
+                    table.selectionModel.selectedItems.map { it.toModelLayer() }.toTabulatedTable()
+                )
+            }
+        )
     }
 
     private fun divideSelected() {
@@ -269,6 +284,7 @@ class ModelTableController @Inject constructor(
                                 }
                             }
                         }
+
                         resistanceCol -> indexProperty().addListener { _, _, _ ->
                             if (index >= 0 && index <= picket.modelData.lastIndex) {
                                 style = if (picket.modelData[index].isFixedResistance) {
@@ -319,6 +335,7 @@ class ModelTableController @Inject constructor(
                         listenToItemsProperties(c.addedSubList)
                         commitChanges()
                     }
+
                     c.wasRemoved() -> commitChanges()
                     c.wasPermutated() -> commitChanges()
                 }
@@ -407,5 +424,54 @@ class ModelTableController @Inject constructor(
     @FXML
     private fun copyFromRight() {
         table.items.setAll(observableSection.pickets[picketIndex + 1].modelData.map { it.toObservable() })
+    }
+
+    @FXML
+    private fun pasteFromClipboard() {
+        val text = Clipboard.getSystemClipboard().string
+        val parser = if (text != null) TextToTableParser(text) else return
+        try {
+            val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
+            val parsedTable = parser.parsedTable.filter { row -> row.none { it == null } }
+
+            fun String?.process(expected: String, row: Int, col: Int) =
+                this?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
+                    ?: throw IllegalArgumentException("${a[col]}${row + 1} - Ожидалось $expected, было $this")
+
+            val pastedItems: List<ModelLayer> = when (parser.columnsCount) {
+                2 -> parsedTable.mapIndexed { rowIdx, row ->
+                    val pow = row[0].process("H", rowIdx, 0)
+                    val res = row[1].process("ρ", rowIdx, 1)
+                    ModelLayer(
+                        resistance = res,
+                        power = pow
+                    )
+                }
+
+                else -> {
+                    val errorRow = parsedTable.find { row -> row.count { it != null } != 2 }
+                    val errorRowIdx = parsedTable.indexOf(errorRow)
+                    throw IllegalStateException(
+                        """
+                    Строка ${errorRowIdx + 1}: ${errorRow?.asList()}
+                    
+                    Допустимые числа колонок: 2.
+                    Соответствующий порядок:
+                    2 колонки - Мощность H, сопротивление ρ
+                    """.trimIndent()
+                    )
+                }
+            }
+            for (item in pastedItems) {
+                val violations = validator.validate(item)
+                if (violations.isNotEmpty()) {
+                    alertsFactory.violationsAlert(violations, stage).show()
+                    return
+                }
+            }
+            table.items += pastedItems.map { it.toObservable() }
+        } catch (e: Exception) {
+            alertsFactory.simpleExceptionAlert(e, stage).show()
+        }
     }
 }
