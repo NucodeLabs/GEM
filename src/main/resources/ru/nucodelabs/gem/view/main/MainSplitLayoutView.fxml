@@ -181,6 +181,9 @@
                                         <Tab text="%modelTable" closable="false">
                                             <fx:include fx:id="modelTable" source="../tables/ModelTable.fxml"/>
                                         </Tab>
+                                        <Tab text="Комментарии" closable="false">
+                                            <TextArea fx:id="commentTextArea"/>
+                                        </Tab>
                                     </TabPane>
                                 </SplitPane>
                             </VBox>

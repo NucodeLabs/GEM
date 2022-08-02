@@ -8,22 +8,30 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
+import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.XYChart
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter.Change
 import javafx.scene.control.Tooltip
+import javafx.scene.image.WritableImage
+import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import javafx.scene.transform.Transform
+import javafx.stage.FileChooser
 import javafx.util.Duration
 import javafx.util.StringConverter
+import java.io.File
 import java.lang.String.format
 import java.text.DecimalFormat
 import java.text.ParsePosition
 import java.util.*
 import java.util.function.UnaryOperator
+import javax.imageio.ImageIO
 import kotlin.math.ceil
 
 
@@ -196,3 +204,20 @@ fun Tooltip.noAutoHide() = apply { showDuration = Duration.INDEFINITE }
 fun Tooltip.noHideDelay() = apply { hideDelay = Duration.ZERO }
 
 fun Tooltip.forCharts() = this.noDelay().noAutoHide().noHideDelay()
+
+/**
+ * As PNG
+ */
+fun Region.saveSnapshotAsPng(fileChooser: FileChooser = FileChooser(), scale: Double = 10.0): File? {
+    val file = fileChooser.showSaveDialog(scene?.window)
+    if (file != null) {
+        val snapshot: WritableImage = snapshot(
+            SnapshotParameters().also {
+                it.transform = Transform.scale(scale, scale)
+            },
+            null
+        )
+        ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file)
+    }
+    return file
+}

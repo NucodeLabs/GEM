@@ -15,6 +15,9 @@ val JSON_FILES_DIR = Preference("JSON_FC_INIT_DIR", USER_HOME)
 val MOD_FILES_DIR = Preference("MOD_FC_INIT_DIR", USER_HOME)
 
 @JvmField
+val PNG_FILES_DIR = Preference("PNG_FC_INIT_DIR", USER_HOME)
+
+@JvmField
 val MAIN_WINDOW_X = Preference("WINDOW_X", .0)
 
 @JvmField
