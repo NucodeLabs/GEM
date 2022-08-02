@@ -154,6 +154,10 @@ class MainViewController @Inject constructor(
     @FXML
     private lateinit var authorsWindow: Stage
 
+    @FXML
+    private lateinit var commentTextArea: TextArea
+
+
     override val stage: Stage
         get() = root
 
@@ -195,8 +199,18 @@ class MainViewController @Inject constructor(
     }
 
     private fun setupTextFields() {
-        picketOffsetX.isValidBy { validateDoubleInput(it) }
-        picketZ.isValidBy { validateDoubleInput(it) }
+        picketOffsetX.textFormatter = TextFormatter(DoubleValidationConverter(decimalFormat), 100.0)
+        picketZ.textFormatter = TextFormatter(DoubleValidationConverter(decimalFormat), 0.0)
+
+        commentTextArea.focusedProperty().addListener { _, _, isFocused ->
+            if (!isFocused) {
+                if (observableSection.pickets.isNotEmpty()) {
+                    historyManager.snapshotAfter {
+                        observableSection.pickets[picketIndex] = picket.copy(comment = commentTextArea.text)
+                    }
+                }
+            }
+        }
     }
 
     private fun setupInverseBtn() {
@@ -260,8 +274,10 @@ class MainViewController @Inject constructor(
         picketObservable.addListener { _: ObservableValue<out Picket?>?, _: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 picketName.text = newValue.name
+                commentTextArea.text = newValue.comment
             } else {
                 picketName.text = "-"
+                commentTextArea.text = ""
             }
         }
         noFileOpenedProperty.bind(
