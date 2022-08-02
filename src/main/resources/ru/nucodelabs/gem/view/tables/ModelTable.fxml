@@ -27,6 +27,7 @@
                     <Button fx:id="copyFromRightBtn" text="Использовать следующую" onAction="#copyFromRight"/>
                 </HBox>
                 <Button text="Первичная модель" onAction="#makePrimaryModel"/>
+                <Button text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importMOD"/>
