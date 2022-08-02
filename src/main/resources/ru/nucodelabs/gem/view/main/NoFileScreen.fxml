@@ -4,6 +4,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.TextFlow?>
 <VBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       stylesheets="@../common.css, @NoFileScreen.css"
@@ -17,7 +18,23 @@
             </ImageView>
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
             <Label style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
-            <Label text="%noFileText"/>
+            <TextFlow maxWidth="600">
+                <Label wrapText="true" maxWidth="600" style="-fx-font-size: 16;">
+                    Мы сделали эту программную систему специально для Вас, наши друзья, будущие коллеги, нынешние
+                    студенты
+                    НГУ! Собрав здесь, в одном месте, достижения человечества в области физики, математики,
+                    информационных
+                    технологий, приборостроения, помочь Вам открыть удивительный мир наземной электроразведки. Узнать на
+                    практике влияние погрешности измерений на полученный результат. Оценить сложность сопоставления
+                    теоретического модельного представления среды и существующих в реальном мире объектов исследования.
+                    Понять причины неоднозначности математического решения обратных задач в геофизике. И конечно,
+                    многое,
+                    многое другое, что поможет Вам вырасти в востребованных высококвалифицированных специалистов.
+                    Помните,
+                    что полученные Вами знания дороже всех сокровищ, их нельзя потерять, нельзя похитить они останутся с
+                    Вами навсегда!
+                </Label>
+            </TextFlow>
             <VBox VBox.vgrow="ALWAYS"/>
             <Button styleClass="action_button" text="%addPicket" defaultButton="true" onAction="#addNewPicket"/>
             <Button styleClass="action_button" text="%openSection" onAction="#openJsonSection"/>
