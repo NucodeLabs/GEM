@@ -21,7 +21,8 @@ data class Picket(
     private var experimentalData: List<@Valid ExperimentalData> = emptyList(),
     @field:Size(max = 40) val modelData: List<@Valid ModelLayer> = emptyList(),
     @field:Min(0) val offsetX: Double = 100.0,
-    val z: Double = 0.0
+    val z: Double = 0.0,
+    val comment: String = ""
 ) {
     /**
      * Полевые(экспериментальные) данные, отсортированы по AB/2 затем по MN/2
