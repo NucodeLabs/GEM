@@ -19,7 +19,7 @@
             <Label style="-fx-text-fill: DarkGray" text="%version"/>
             <Label style="-fx-font-weight: bold; -fx-font-size: 22pt;" text="%noFileTitle"/>
             <TextFlow maxWidth="600">
-                <Label wrapText="true" maxWidth="600" style="-fx-font-size: 16;">
+                <Label wrapText="true" maxWidth="600" style="-fx-font-size: 16;" textAlignment="JUSTIFY">
                     Мы сделали эту программную систему специально для Вас, наши друзья, будущие коллеги, нынешние
                     студенты
                     НГУ! Собрав здесь, в одном месте, достижения человечества в области физики, математики,
