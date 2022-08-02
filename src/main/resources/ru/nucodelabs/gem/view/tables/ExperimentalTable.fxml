@@ -32,13 +32,13 @@
                editable="true">
         <placeholder>
             <VBox alignment="CENTER" spacing="25">
+                <Button fx:id="pasteBtn" text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importEXP"/>
                         <Label text="(*.EXP)" style="-fx-font-size: 12; -fx-text-fill: Gray; -fx-padding: 5;"/>
                     </VBox>
                 </HBox>
-                <Button fx:id="pasteBtn" text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
             </VBox>
         </placeholder>
         <columns>
