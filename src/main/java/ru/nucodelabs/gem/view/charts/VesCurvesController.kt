@@ -4,6 +4,7 @@ import com.google.inject.name.Named
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
@@ -13,10 +14,10 @@ import javafx.scene.Cursor
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
-import javafx.scene.control.Label
-import javafx.scene.control.Tooltip
+import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.algorithms.charts.VesCurvesContext
@@ -24,9 +25,11 @@ import ru.nucodelabs.algorithms.charts.vesCurvesContext
 import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.*
+import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.get
+import ru.nucodelabs.gem.extensions.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.extensions.std.exp10
 import ru.nucodelabs.gem.view.AbstractController
@@ -41,6 +44,7 @@ import java.lang.Double.min
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
+import java.util.prefs.Preferences
 import javax.inject.Inject
 import kotlin.math.log10
 
@@ -66,7 +70,9 @@ class VesCurvesController @Inject constructor(
     private val historyManager: HistoryManager<Section>,
     private val decimalFormat: DecimalFormat,
     private val formatter: StringConverter<Number>,
-    private val forwardSolver: ForwardSolver
+    private val forwardSolver: ForwardSolver,
+    @Named("PNG") private val fc: FileChooser,
+    private val prefs: Preferences
 ) : AbstractController() {
 
     // SERIES CSS STYLE CLASSES
@@ -81,7 +87,6 @@ class VesCurvesController @Inject constructor(
     private val expUpperSymbolStyle = "exp-upper-symbol"
     private val expLowerSymbolStyle = "exp-lower-symbol"
     private val hiddenSymbolStyle = "hidden-symbol"
-
 
     private val picketIndex
         get() = _picketIndex.get()
@@ -103,6 +108,8 @@ class VesCurvesController @Inject constructor(
 
     private val picket
         get() = picketObservable.get()!!
+
+    private val isModelVisible = SimpleBooleanProperty(true)
 
     private lateinit var vesCurvesContext: VesCurvesContext
     private var effectiveToSortedMapping = intArrayOf()
@@ -149,6 +156,26 @@ class VesCurvesController @Inject constructor(
             modelCurveIndex = MOD_CURVE_SERIES_INDEX,
             lowerLimitY = 1.0
         )
+
+        setupContextMenu()
+    }
+
+    private fun setupContextMenu() {
+        val contextMenu = ContextMenu(
+            CheckMenuItem("Модель").also {
+                isModelVisible.bind(it.selectedProperty())
+            },
+            MenuItem("Сохранить как изображение").apply {
+                onAction = EventHandler {
+                    lineChart.saveSnapshotAsPng(fc)?.also {
+                        if (it.parentFile.isDirectory) {
+                            prefs.put(PNG_FILES_DIR.key, it.parentFile.absolutePath)
+                        }
+                    }
+                }
+            }
+        )
+        lineChart.onContextMenuRequested = EventHandler { contextMenu.show(lineChart, it.screenX, it.screenY) }
     }
 
     private fun update() {
@@ -165,8 +192,8 @@ class VesCurvesController @Inject constructor(
     @FXML
     private fun zoom(e: ScrollEvent) {
         val position: Pair<Double, Double> = Pair(
-            lineChart.xAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).x/lineChart.xAxis.length,
-            lineChart.yAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).y/lineChart.yAxis.length
+            lineChart.xAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).x / lineChart.xAxis.length,
+            lineChart.yAxis.sceneToLocal(Point2D(e.sceneX, e.sceneY)).y / lineChart.yAxis.length
         )
         val dY = e.deltaY
         val scale = 1.0 + dY / lineChart.yAxis.length
@@ -274,6 +301,12 @@ class VesCurvesController @Inject constructor(
         modelCurveSeries.name = uiProperties["modCurve"]
         dataProperty.get()[MOD_CURVE_SERIES_INDEX] = modelCurveSeries
 
+        modelCurveSeries.node.isVisible = isModelVisible.value
+        modelCurveSeries.node.visibleProperty().bind(isModelVisible)
+        modelCurveSeries.data.forEach {
+            it.node.isVisible = isModelVisible.value
+            it.node.visibleProperty().bind(isModelVisible)
+        }
         addDraggingToModelCurveSeries(modelCurveSeries)
     }
 
@@ -364,6 +397,7 @@ class VesCurvesController @Inject constructor(
                 """.trimIndent()
                 ).forCharts()
             }
+
             else -> null
         }
     }
