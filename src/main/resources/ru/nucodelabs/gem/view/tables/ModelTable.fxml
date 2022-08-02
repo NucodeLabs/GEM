@@ -26,6 +26,7 @@
                     <Button fx:id="copyFromLeftBtn" text="Использовать предыдущую" onAction="#copyFromLeft"/>
                     <Button fx:id="copyFromRightBtn" text="Использовать следующую" onAction="#copyFromRight"/>
                 </HBox>
+                <Button text="Первичная модель" onAction="#makePrimaryModel"/>
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importMOD"/>
@@ -35,7 +36,6 @@
                 <HBox alignment="BASELINE_CENTER" style="-fx-padding: 20;" VBox.vgrow="NEVER">
                     <Label text="%drag"/>
                 </HBox>
-                <Button text="Первичная модель" onAction="#makePrimaryModel"/>
             </VBox>
         </placeholder>
         <columns>
