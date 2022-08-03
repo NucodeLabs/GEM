@@ -8,11 +8,13 @@ import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
+import javafx.scene.control.Tooltip
 import javafx.stage.Stage
 import ru.nucodelabs.algorithms.charts.MisfitsFunction
 import ru.nucodelabs.algorithms.charts.vesCurvesContext
 import ru.nucodelabs.data.ves.Picket
 import ru.nucodelabs.gem.extensions.fx.Point
+import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.line
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
@@ -29,7 +31,8 @@ class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
-    private val misfitsFunction: MisfitsFunction
+    private val misfitsFunction: MisfitsFunction,
+    private val decimalFormat: DecimalFormat
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
@@ -55,7 +58,6 @@ class MisfitStacksController @Inject constructor(
                 update()
             }
         }
-
         lineChart.dataProperty().bind(dataProperty)
     }
 
@@ -90,6 +92,15 @@ class MisfitStacksController @Inject constructor(
         dataProperty.get().clear()
         dataProperty.get() += misfitStacksSeriesList
         colorizeMisfitStacksSeries()
+        installTooltips()
+    }
+
+    private fun installTooltips() {
+        dataProperty.get().forEach {
+            val text = "${decimalFormat.format(it.data[1].yValue)}%"
+            Tooltip.install(it.node, Tooltip(text).forCharts())
+            it.data.forEach { p -> Tooltip.install(p.node, Tooltip(text).forCharts()) }
+        }
     }
 
     private fun colorizeMisfitStacksSeries() {

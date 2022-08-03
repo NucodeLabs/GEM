@@ -12,6 +12,7 @@ import ru.nucodelabs.algorithms.interpolation.Interpolator
 import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.util.OS.appleSilicon
 import ru.nucodelabs.gem.view.color.ColorMapper
 import java.lang.Double.max
 import kotlin.math.min
@@ -117,6 +118,9 @@ class InterpolationMap @JvmOverloads constructor(
     }
 
     private fun draw(canvas: Canvas) {
+        appleSilicon {
+            return@draw
+        }
         if (data.isEmpty()
             || data[interpolateSeriesIndex].data.isEmpty()
         ) {
@@ -160,6 +164,9 @@ class InterpolationMap @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
+        appleSilicon {
+            return@initInterpolator
+        }
         val series = data[interpolateSeriesIndex]
         if (series.data.isEmpty()) {
             canvas.clear()
