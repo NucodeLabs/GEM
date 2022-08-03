@@ -699,6 +699,7 @@ class MainViewController @Inject constructor(
         if (authorsWindow.owner == null) {
             authorsWindow.initOwner(stage)
         }
+        authorsWindow.icons.setAll(stage.icons)
         authorsWindow.show()
     }
 }

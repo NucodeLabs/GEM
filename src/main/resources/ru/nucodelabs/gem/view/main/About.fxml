@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <Stage xmlns:fx="http://javafx.com/fxml"
-       xmlns="http://javafx.com/javafx" resizable="false">
+       xmlns="http://javafx.com/javafx" resizable="false" title="О программе">
     <scene>
         <Scene>
             <VBox maxWidth="600" style="-fx-padding: 25;" spacing="5">
-                <Label style="-fx-font-size: 20;">О программе</Label>
-                <Label text="%version"/>
+                <HBox>
+                    <Label text="GeologyElectroMetry "/>
+                    <Label text="%version"/>
+                </HBox>
                 <Label prefWidth="600" style="-fx-font-size: 16;">
                     Куратор проекта
                 </Label>
