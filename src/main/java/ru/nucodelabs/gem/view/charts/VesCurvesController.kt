@@ -234,7 +234,11 @@ class VesCurvesController @Inject constructor(
     private fun setupXAxisBounds() {
         val xMin: Double
         val xMax: Double
-        if (picket.modelData.isNotEmpty()
+
+        if (picket.modelData.size == 1) {
+            xMin = picket.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0
+            xMax = picket.sortedExperimentalData.lastOrNull()?.ab2 ?: 100.0
+        } else if (picket.modelData.isNotEmpty()
             || picket.sortedExperimentalData.isNotEmpty()
         ) {
             xMin = min(
@@ -245,9 +249,6 @@ class VesCurvesController @Inject constructor(
                 picket.z - (picket.zOfModelLayers().getOrElse(picket.modelData.lastIndex - 1) { 1e4 }),
                 picket.sortedExperimentalData.lastOrNull()?.ab2 ?: Double.MIN_VALUE
             )
-        } else if (picket.modelData.size == 1) {
-            xMin = picket.sortedExperimentalData.firstOrNull()?.ab2 ?: 1.0
-            xMax = picket.sortedExperimentalData.lastOrNull()?.ab2 ?: 100.0
         } else {
             xMin = 1.0
             xMax = 1000.0

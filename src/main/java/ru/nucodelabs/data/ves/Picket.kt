@@ -19,11 +19,24 @@ data class Picket(
     @JsonIgnore val id: UUID = UUID.randomUUID(),
     val name: String = "Пикет",
     private var experimentalData: List<@Valid ExperimentalData> = emptyList(),
-    @field:Size(max = 40) val modelData: List<@Valid ModelLayer> = emptyList(),
+    @field:Size(max = 40) var modelData: List<@Valid ModelLayer> = emptyList(),
     @field:Min(0) val offsetX: Double = 100.0,
     val z: Double = 0.0,
     val comment: String = ""
 ) {
+    init {
+        modelData = modelData.toMutableList().also {
+            if (it.isNotEmpty()) {
+                for (i in it.indices) {
+                    if (it[i].power.isNaN()) {
+                        it[i] = it[i].copy(power = 0.0)
+                    }
+                }
+                it[it.lastIndex] = it.last().copy(power = Double.NaN)
+            }
+        }
+    }
+
     /**
      * Полевые(экспериментальные) данные, отсортированы по AB/2 затем по MN/2
      */

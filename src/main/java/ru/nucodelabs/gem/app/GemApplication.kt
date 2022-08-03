@@ -19,6 +19,7 @@ import java.time.LocalDate.now
 import java.time.format.DateTimeFormatter.ofPattern
 import java.util.logging.Logger
 import kotlin.random.Random
+import kotlin.random.nextUInt
 import com.sun.glass.ui.Application as LowLevelApplication
 
 /**
@@ -74,7 +75,7 @@ class GemApplication : Application() {
             } else {
                 val log =
                     File(
-                        "err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}_${Random(now().toEpochDay())}.txt"
+                        "err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}_${Random.nextUInt()}.txt"
                     ).also { it.createNewFile() }
                 log.writeText(e.stackTraceToString())
             }
