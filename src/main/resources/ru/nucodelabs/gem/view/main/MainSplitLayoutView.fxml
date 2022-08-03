@@ -60,7 +60,7 @@
                     </Menu>
                     <Menu text="%help">
                         <fx:define>
-                            <fx:include fx:id="authorsWindow" source="Authors.fxml"/>
+                            <fx:include fx:id="authorsWindow" source="About.fxml"/>
                         </fx:define>
                         <MenuItem text="%about" onAction="#openAuthors"/>
                     </Menu>
