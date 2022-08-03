@@ -13,7 +13,7 @@ class PseudoLogarithmicAxis @JvmOverloads constructor(
         get() = if (side.isVertical) height else width
 
     init {
-        checkBounds(lowerBound, upperBound)
+//        checkBounds(lowerBound, upperBound)
     }
 
     private fun checkBounds(lowerBound: Double, upperBound: Double) =
@@ -26,10 +26,10 @@ class PseudoLogarithmicAxis @JvmOverloads constructor(
         if (range != null) {
             range as Array<Number>
             val lowerBound = range[0]
-            val lowerSign = sign(lowerBound.toDouble())
             val upperBound = range[1]
+            val lowerSign = sign(lowerBound.toDouble())
             val upperSign = sign(upperBound.toDouble())
-            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
+//            checkBounds(lowerBound.toDouble(), upperBound.toDouble())
 
             ticks += lowerBound
 
