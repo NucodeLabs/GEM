@@ -191,6 +191,9 @@ class ModelTableController @Inject constructor(
                             }
                         } else {
                             items += listOf(
+                                MenuItem("Объединить").apply {
+                                    onAction = EventHandler { joinSelected() }
+                                },
                                 MenuItem("Зафиксировать сопротивление").apply {
                                     onAction = EventHandler { fixResistanceForSelected() }
                                 },
@@ -214,6 +217,15 @@ class ModelTableController @Inject constructor(
         }
     }
 
+    private fun joinSelected() {
+        val selected = table.selectionModel.selectedItems.map { it.toModelLayer() }
+        val joined = selected.join()
+        val items = table.items.map { it.toModelLayer() }.toMutableList()
+        items -= selected.toSet()
+        items.add(table.selectionModel.selectedIndices[0], joined)
+        table.items.setAll(items.map { it.toObservable() })
+    }
+
     private fun copySelected() {
         Clipboard.getSystemClipboard().setContent(
             buildMap {
@@ -229,7 +241,7 @@ class ModelTableController @Inject constructor(
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
             if (modelData.size == 1) {
-                modelData += modelData[index].copy(power = 10.0)
+                modelData.add(0, modelData[index].copy(power = 10.0))
             } else {
                 if (index == modelData.lastIndex) {
                     modelData.add(index, modelData[index - 1].copy(resistance = modelData.last().resistance))
@@ -349,6 +361,7 @@ class ModelTableController @Inject constructor(
                 val violations = validator.validateValue(ModelLayer::class.java, "power", newPow)
                 if (violations.isEmpty()) {
                     commitChanges()
+                    update()
                 } else {
                     layer.power = oldPow.toDouble()
                     alertsFactory.violationsAlert(violations, stage).show()
