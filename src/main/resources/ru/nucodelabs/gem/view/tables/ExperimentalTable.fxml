@@ -42,7 +42,7 @@
 
                         def showHelp() {
                             Alert help = new Alert(Alert.AlertType.INFORMATION,
-                                    ExperimentalTableControllerKt.HELP_PASTE)
+                                    ExperimentalTableControllerKt.EXP_HELP_PASTE)
                             help.title = "Допустимый формат данных"
                             help.headerText = "Допустимый формат данных"
                             help.initOwner((root as VBox).scene.window)
