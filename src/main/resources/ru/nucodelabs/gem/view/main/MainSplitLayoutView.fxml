@@ -26,20 +26,16 @@
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
+                        <MenuItem text="Импортировать пикет" onAction="#importJsonPicket"/>
                         <Menu text="%import">
-                            <Menu text="%picket">
-                                <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
-                                <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
-                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
-                            </Menu>
+                            <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
+                            <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
                         </Menu>
                         <MenuItem text="%saveSection" onAction="#saveSection" disable="${controller.noFileOpened}"
                                   accelerator="Shortcut+S"/>
                         <MenuItem text="%saveSectionAs" onAction="#saveSectionAs" disable="${controller.noFileOpened}"
                                   accelerator="Shift+Shortcut+S"/>
-                        <Menu text="%export">
-                            <MenuItem text="%picket" onAction="#exportJsonPicket"/>
-                        </Menu>
+                        <MenuItem text="Экспортировать текущий пикет" onAction="#exportJsonPicket"/>
                         <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"
                                   disable="${controller.noFileOpened}"/>
                     </Menu>
