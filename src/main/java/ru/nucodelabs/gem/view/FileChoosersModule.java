@@ -39,6 +39,8 @@ public class FileChoosersModule extends AbstractModule {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json", "*.JSON"),
+                new FileChooser.ExtensionFilter(ui.getString("picket"), "*.point.json"),
+                new FileChooser.ExtensionFilter(ui.getString("section"), "*.section.json"),
                 allFilesFilter
         );
         File initDir = new File(preferences.get(JSON_FILES_DIR.getKey(), JSON_FILES_DIR.getDef()));
