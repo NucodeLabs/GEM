@@ -119,9 +119,11 @@ dependencies {
     implementation "org.bytedeco:javacpp:1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+    implementation 'org.codehaus.groovy:groovy-all:3.0.11'
+    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation "org.openjfx:javafx:${jfxVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
