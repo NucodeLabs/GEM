@@ -151,16 +151,14 @@ class MainViewController @Inject constructor(
     private lateinit var modelSectionSwitcherController: ModelSectionSwitcherController
 
     @FXML
-    private lateinit var authorsWindow: Stage
-
-    @FXML
     private lateinit var commentTextArea: TextArea
-
 
     override val stage: Stage
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        super.initialize(location, resources)
+
         stage.onCloseRequest = EventHandler { e ->
             if (!askToSave(e).isConsumed) {
                 menuViewSectionInSeparateWindow.isSelected = false

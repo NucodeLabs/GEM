@@ -111,7 +111,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     val data = observableListOf<ExperimentalData>()
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
         table.selectionModel.isCellSelectionEnabled = false
         listenData()
         setupTextFields()

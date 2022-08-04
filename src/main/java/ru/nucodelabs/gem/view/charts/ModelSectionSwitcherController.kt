@@ -36,7 +36,7 @@ class ModelSectionSwitcherController @Inject constructor(
     override val stage: Stage?
         get() = linearSectionBox.scene?.window as Stage?
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
         logSectionBox.managedProperty() bindTo logSectionBox.visibleProperty()
         linearSectionBox.managedProperty() bindTo linearSectionBox.visibleProperty()
 
