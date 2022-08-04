@@ -15,7 +15,6 @@ import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import javafx.scene.input.KeyCombination
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -167,7 +166,7 @@ class MainViewController @Inject constructor(
                 menuViewSectionInSeparateWindow.isSelected = false
             }
         }
-        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
+//        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
         macOS {
             val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
             menuView.items.add(0, useSystemMenu)
@@ -694,12 +693,12 @@ class MainViewController @Inject constructor(
         }
     }
 
-    @FXML
-    private fun openAuthors() {
-        if (authorsWindow.owner == null) {
-            authorsWindow.initOwner(stage)
-        }
-        authorsWindow.icons.setAll(stage.icons)
-        authorsWindow.show()
-    }
+//    @FXML
+//    private fun openAuthors() {
+//        if (authorsWindow.owner == null) {
+//            authorsWindow.initOwner(stage)
+//        }
+//        authorsWindow.icons.setAll(stage.icons)
+//        authorsWindow.show()
+//    }
 }
