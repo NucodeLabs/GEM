@@ -64,7 +64,7 @@ class MainViewController @Inject constructor(
     private val validator: Validator,
     private val preferences: Preferences,
     private val decimalFormat: DecimalFormat,
-    private val fxPreferences: FXPreferences,
+    @FXML private val fxPreferences: FXPreferences,
     private val inverseSolver: InverseSolver
 ) : AbstractController(), FileImporter, FileOpener {
 
