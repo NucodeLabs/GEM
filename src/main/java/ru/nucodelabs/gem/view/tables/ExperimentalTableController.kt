@@ -37,18 +37,19 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @JvmField
-val HELP_PASTE =
-    """Допустимые числа колонок: 3, 4, 5.
-       Соответствующий порядок:
-       3 колонки - AB/2, MN/2, ρₐ
-          Берется I = 100mA, U выражается из ρₐ, I, K
-                        
-       4 колонки - AB/2, MN/2, U, I
-          ρₐ рассчитывается по формуле
-                        
-       5 колонок - AB/2, MN/2, U, I, ρₐ
+val EXP_HELP_PASTE = """
+    Допустимые числа колонок: 3, 4, 5.
+    Соответствующий порядок:
+    3 колонки - AB/2, MN/2, ρₐ
+        Берется I = 100mA, U выражается из ρₐ, I, K
                     
-       Погрешность берется δρₐ = 5%""".trimIndent()
+    4 колонки - AB/2, MN/2, U, I
+        ρₐ рассчитывается по формуле
+                    
+    5 колонок - AB/2, MN/2, U, I, ρₐ
+                
+    Погрешность берется δρₐ = 5%
+       """.trimIndent()
 
 class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
@@ -489,7 +490,7 @@ class ExperimentalTableController @Inject constructor(
                         """
                     Строка ${errorRowIdx + 1}: ${errorRow?.asList()}
                     
-                    $HELP_PASTE
+                    $EXP_HELP_PASTE
                     """.trimIndent()
                     )
                 }
