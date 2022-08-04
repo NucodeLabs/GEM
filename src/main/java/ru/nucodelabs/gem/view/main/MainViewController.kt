@@ -291,7 +291,7 @@ class MainViewController @Inject constructor(
             )
         )
         observableSection.pickets.addListener(ListChangeListener {
-            if (it.next()) {
+            while (it.next()) {
                 if (storageManager.savedSnapshot != observableSection.snapshot()) {
                     dirtyAsterisk.set("*")
                 } else {
@@ -343,7 +343,7 @@ class MainViewController @Inject constructor(
         menuViewSectionInSeparateWindow.selectedProperty().addListener { _, _, isSelected ->
             if (isSelected) {
                 Stage().apply {
-                    icons += root.icons
+                    icons.setAll(root.icons)
                     titleProperty().bind(stage.titleProperty() + " - Разрез")
                     onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
                     prepareToSeparateSection()
