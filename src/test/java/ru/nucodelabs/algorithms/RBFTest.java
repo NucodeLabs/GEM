@@ -1,16 +1,16 @@
 package ru.nucodelabs.algorithms;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.tinfour.common.Vertex;
 import org.tinfour.interpolation.TriangularFacetInterpolator;
 import org.tinfour.standard.IncrementalTin;
 import smile.interpolation.RBFInterpolation2D;
 import smile.math.rbf.GaussianRadialBasis;
-import smile.math.rbf.InverseMultiquadricRadialBasis;
 import smile.math.rbf.MultiquadricRadialBasis;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class RBFTest {
     @Test
