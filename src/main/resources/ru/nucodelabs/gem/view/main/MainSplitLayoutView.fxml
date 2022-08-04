@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?language groovy?>
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -13,7 +14,18 @@
        fx:id="root"
        width="1280"
        height="720"
-       title="GEM">
+       title="GEM" onShown="initShortcut()">
+    <fx:script>
+        import javafx.scene.input.KeyCodeCombination
+        import javafx.scene.input.KeyCode
+        import javafx.scene.input.KeyCombination
+
+        def initShortcut() {
+            root.scene.accelerators.put(
+                    new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
+                    { controller.redo() } as Runnable)
+        }
+    </fx:script>
     <icons>
         <Image url="@../../../../../img/gem.png"/>
     </icons>
@@ -26,20 +38,16 @@
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
+                        <MenuItem text="Импортировать пикет" onAction="#importJsonPicket"/>
                         <Menu text="%import">
-                            <Menu text="%picket">
-                                <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
-                                <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
-                                <MenuItem text="JSON" onAction="#importJsonPicket"/>
-                            </Menu>
+                            <MenuItem text="EXP" fx:id="menuFileOpenEXP" onAction="#importEXP"/>
+                            <MenuItem disable="${controller.noFileOpened}" text="MOD" onAction="#importMOD"/>
                         </Menu>
                         <MenuItem text="%saveSection" onAction="#saveSection" disable="${controller.noFileOpened}"
                                   accelerator="Shortcut+S"/>
                         <MenuItem text="%saveSectionAs" onAction="#saveSectionAs" disable="${controller.noFileOpened}"
                                   accelerator="Shift+Shortcut+S"/>
-                        <Menu text="%export">
-                            <MenuItem text="%picket" onAction="#exportJsonPicket"/>
-                        </Menu>
+                        <MenuItem text="Экспортировать текущий пикет" onAction="#exportJsonPicket"/>
                         <MenuItem text="%close" onAction="#closeFile" accelerator="Shortcut+W"
                                   disable="${controller.noFileOpened}"/>
                     </Menu>
@@ -62,7 +70,19 @@
                         <fx:define>
                             <fx:include fx:id="authorsWindow" source="About.fxml"/>
                         </fx:define>
-                        <MenuItem text="%about" onAction="#openAuthors"/>
+                        <fx:script>
+                            import javafx.stage.Stage
+
+                            def openAbout() {
+                                authorsWindow as Stage
+                                if (authorsWindow.owner == null) {
+                                    authorsWindow.initOwner(root)
+                                }
+                                authorsWindow.icons.setAll(root.icons)
+                                authorsWindow.show()
+                            }
+                        </fx:script>
+                        <MenuItem text="%about" onAction="openAbout()"/>
                     </Menu>
                 </MenuBar>
                 <StackPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
