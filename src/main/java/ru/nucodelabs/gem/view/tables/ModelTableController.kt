@@ -39,6 +39,13 @@ private const val STYLE_FOR_FIXED = """
     -fx-background-color: Gray;
 """
 
+@JvmField
+val MOD_HELP_PASTE = """
+    Допустимые числа колонок: 2.
+    Соответствующий порядок:
+    2 колонки - Мощность H, сопротивление ρ
+    """.trimIndent()
+
 class ModelTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket?>,
     private val fileImporterProvider: Provider<FileImporter>,
@@ -468,9 +475,7 @@ class ModelTableController @Inject constructor(
                         """
                     Строка ${errorRowIdx + 1}: ${errorRow?.asList()}
                     
-                    Допустимые числа колонок: 2.
-                    Соответствующий порядок:
-                    2 колонки - Мощность H, сопротивление ρ
+                    $MOD_HELP_PASTE
                     """.trimIndent()
                     )
                 }
