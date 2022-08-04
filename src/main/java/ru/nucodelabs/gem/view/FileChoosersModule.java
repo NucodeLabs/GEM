@@ -14,7 +14,7 @@ import static ru.nucodelabs.gem.app.pref.AppPreferencesKt.*;
 
 public class FileChoosersModule extends AbstractModule {
 
-    private static final FileChooser.ExtensionFilter allFilesFilter = new FileChooser.ExtensionFilter("All files", "*.*");
+    private static final FileChooser.ExtensionFilter allFilesFilter = new FileChooser.ExtensionFilter("Все файлы", "*.*");
 
     @Provides
     @Singleton
@@ -22,7 +22,7 @@ public class FileChoosersModule extends AbstractModule {
     private FileChooser provideEXPFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter(ui.getString("expData"), "*.EXP", "*.exp"),
+                new FileChooser.ExtensionFilter(ui.getString("expData"), "*.exp"),
                 allFilesFilter
         );
         File initDir = new File(preferences.get(EXP_FILES_DIR.getKey(), EXP_FILES_DIR.getDef()));
@@ -38,7 +38,7 @@ public class FileChoosersModule extends AbstractModule {
     private FileChooser provideJSONFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json", "*.JSON"),
+                new FileChooser.ExtensionFilter(ui.getString("section") + "/" + ui.getString("picket"), "*.json"),
                 new FileChooser.ExtensionFilter(ui.getString("picket"), "*.point.json"),
                 new FileChooser.ExtensionFilter(ui.getString("section"), "*.section.json"),
                 allFilesFilter
@@ -56,7 +56,7 @@ public class FileChoosersModule extends AbstractModule {
     private FileChooser provideMODFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter(ui.getString("modData"), "*.MOD", "*.mod"),
+                new FileChooser.ExtensionFilter(ui.getString("modData"), "*.mod"),
                 allFilesFilter
         );
         File initDir = new File(preferences.get(MOD_FILES_DIR.getKey(), MOD_FILES_DIR.getDef()));
