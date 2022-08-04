@@ -120,7 +120,7 @@ dependencies {
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7"
     implementation 'org.codehaus.groovy:groovy-all:3.0.11'
-    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
+//    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
