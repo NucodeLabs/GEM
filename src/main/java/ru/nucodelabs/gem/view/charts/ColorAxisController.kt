@@ -81,7 +81,7 @@ class ColorAxisController @Inject constructor(
     override val stage: Stage?
         get() = root.scene.window as Stage?
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
         fileLbl.text = "Цветовая схема: ${clrFile.path}"
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }

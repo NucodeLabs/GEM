@@ -65,7 +65,7 @@ class ModelSectionController @Inject constructor(
     override val stage: Stage?
         get() = chart.scene.window as Stage?
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
         yAxis.tickLabelFormatter = formatter
         xAxis.tickLabelFormatter = formatter
 

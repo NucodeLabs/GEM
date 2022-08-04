@@ -14,11 +14,13 @@
        fx:id="root"
        width="1280"
        height="720"
-       title="GEM" onShown="initShortcut()">
+       title="GEM">
     <fx:script>
         import javafx.scene.input.KeyCodeCombination
         import javafx.scene.input.KeyCode
         import javafx.scene.input.KeyCombination
+
+        controller.fxScriptInit = { initShortcut() }
 
         def initShortcut() {
             root.scene.accelerators.put(
@@ -74,7 +76,6 @@
                             import javafx.stage.Stage
 
                             def openAbout() {
-                                authorsWindow as Stage
                                 if (authorsWindow.owner == null) {
                                     authorsWindow.initOwner(root)
                                 }

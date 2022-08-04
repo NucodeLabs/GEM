@@ -36,7 +36,7 @@ class PseudoSectionSwitcherController @Inject constructor(
     override val stage: Stage?
         get() = mapPseudoSectionBox.scene?.window as Stage?
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL, resources: ResourceBundle) {
         mapPseudoSectionBox.managedProperty() bindTo mapPseudoSectionBox.visibleProperty()
         curvesPseudoSectionBox.managedProperty() bindTo curvesPseudoSectionBox.visibleProperty()
 
