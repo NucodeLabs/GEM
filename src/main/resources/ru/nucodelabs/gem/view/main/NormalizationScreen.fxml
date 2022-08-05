@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<Stage xmlns:fx="http://javafx.com/fxml"
+       xmlns="http://javafx.com/javafx" fx:id="root"
+       fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController">
+    <scene>
+        <Scene>
+            <HBox>
+                <LineChart>
+                    <xAxis>
+                        <LogarithmicAxis/>
+                    </xAxis>
+                    <yAxis>
+                        <LogarithmicAxis/>
+                    </yAxis>
+                </LineChart>
+                <TableView>
+                </TableView>
+            </HBox>
+        </Scene>
+    </scene>
+</Stage>
