@@ -14,16 +14,63 @@
        fx:id="root"
        width="1280"
        height="720"
-       title="GEM" onShown="initShortcut()">
+       title="GEM" onShown="initLayoutConfig()">
     <fx:script>
+        import javafx.scene.control.SplitPane
         import javafx.scene.input.KeyCodeCombination
         import javafx.scene.input.KeyCode
         import javafx.scene.input.KeyCombination
+        import ru.nucodelabs.gem.app.pref.FXPreferences
+        import ru.nucodelabs.gem.app.pref.UIPreferences
+        import javafx.stage.Stage
+
+        controller.fxScriptInit = {
+            initShortcut()
+        }
 
         def initShortcut() {
             root.scene.accelerators.put(
                     new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN),
                     { controller.redo() } as Runnable)
+        }
+
+        def initLayoutConfig() {
+            FXPreferences fxPrefs = controller.fxPreferences as FXPreferences
+            (vesSectionSplit as SplitPane).dividers.get(0).positionProperty().tap {
+                fxPrefs.setAndBind(it,
+                        UIPreferences.VES_SECTION_SPLIT_DIV.key,
+                        UIPreferences.VES_SECTION_SPLIT_DIV.def)
+            }
+            (sectionSplit as SplitPane).dividers.get(0).positionProperty().tap {
+                fxPrefs.setAndBind(it,
+                        UIPreferences.SECTION_SPLIT_DIV.key,
+                        UIPreferences.SECTION_SPLIT_DIV.def)
+            }
+            (vesMisfitSplit as SplitPane).dividers.get(0).positionProperty().tap {
+                fxPrefs.setAndBind(it,
+                        UIPreferences.VES_MISFIT_SPLIT_DIV.key,
+                        UIPreferences.VES_MISFIT_SPLIT_DIV.def)
+            }
+            (curvesTableSplit as SplitPane).dividers.get(0).positionProperty().tap {
+                fxPrefs.setAndBind(it,
+                        UIPreferences.CURVES_TABLE_SPLIT_DIV.key,
+                        UIPreferences.CURVES_TABLE_SPLIT_DIV.def)
+            }
+        }
+
+        def resetView() {
+            (vesSectionSplit as SplitPane).setDividerPosition(0, UIPreferences.SECTION_SPLIT_DIV.def)
+            (sectionSplit as SplitPane).setDividerPosition(0, UIPreferences.SECTION_SPLIT_DIV.def)
+            (vesMisfitSplit as SplitPane).setDividerPosition(0, UIPreferences.VES_MISFIT_SPLIT_DIV.def)
+            (curvesTableSplit as SplitPane).setDividerPosition(0, UIPreferences.CURVES_TABLE_SPLIT_DIV.def)
+        }
+
+        def openAbout() {
+            if (authorsWindow.owner == null) {
+                authorsWindow.initOwner(root)
+            }
+            authorsWindow.icons.setAll(root.icons)
+            authorsWindow.show()
         }
     </fx:script>
     <icons>
@@ -61,6 +108,7 @@
                         </fx:define>
                     </Menu>
                     <Menu fx:id="menuView" text="%view">
+                        <MenuItem text="Восстановить первоначальный вид" onAction="resetView()"/>
                         <CheckMenuItem fx:id="menuViewVESCurvesLegend" text="%vesLegend"/>
                         <CheckMenuItem fx:id="menuViewGraphTitles" text="%graphTitles"/>
                         <CheckMenuItem fx:id="menuViewSectionInSeparateWindow" text="%sectionInSeparateWindow"
@@ -70,18 +118,6 @@
                         <fx:define>
                             <fx:include fx:id="authorsWindow" source="About.fxml"/>
                         </fx:define>
-                        <fx:script>
-                            import javafx.stage.Stage
-
-                            def openAbout() {
-                                authorsWindow as Stage
-                                if (authorsWindow.owner == null) {
-                                    authorsWindow.initOwner(root)
-                                }
-                                authorsWindow.icons.setAll(root.icons)
-                                authorsWindow.show()
-                            }
-                        </fx:script>
                         <MenuItem text="%about" onAction="openAbout()"/>
                     </Menu>
                 </MenuBar>
@@ -122,7 +158,7 @@
                                     </HBox>
                                     <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
                                         <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
-                                                   HBox.hgrow="ALWAYS">
+                                                   HBox.hgrow="ALWAYS" fx:id="sectionSplit">
                                             <fx:include fx:id="pseudoSectionSwitcher"
                                                         source="../charts/PseudoSectionSwitcher.fxml"/>
                                             <fx:include fx:id="modelSectionSwitcher"
@@ -184,10 +220,10 @@
                                     </Button>
                                 </HBox>
                                 <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
-                                           VBox.vgrow="ALWAYS">
+                                           VBox.vgrow="ALWAYS" fx:id="curvesTableSplit">
 
                                     <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
-                                               VBox.vgrow="ALWAYS">
+                                               VBox.vgrow="ALWAYS" fx:id="vesMisfitSplit">
                                         <fx:include fx:id="misfitStacks" source="../charts/MisfitStacks.fxml"
                                                     VBox.vgrow="ALWAYS"/>
                                         <fx:include fx:id="vesCurves" source="../charts/VesCurves.fxml"

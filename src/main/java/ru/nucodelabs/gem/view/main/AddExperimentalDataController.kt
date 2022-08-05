@@ -14,8 +14,6 @@ import ru.nucodelabs.data.ves.Section
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
-import java.net.URL
-import java.util.*
 import javax.inject.Inject
 
 class AddExperimentalDataController @Inject constructor(
@@ -49,9 +47,6 @@ class AddExperimentalDataController @Inject constructor(
 
     override val stage: Stage?
         get() = root.scene.window as Stage?
-
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
-    }
 
     fun createJson(
         ab2: String,

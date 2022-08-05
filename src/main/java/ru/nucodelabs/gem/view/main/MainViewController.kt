@@ -64,7 +64,7 @@ class MainViewController @Inject constructor(
     private val validator: Validator,
     private val preferences: Preferences,
     private val decimalFormat: DecimalFormat,
-    private val fxPreferences: FXPreferences,
+    @FXML private val fxPreferences: FXPreferences,
     private val inverseSolver: InverseSolver
 ) : AbstractController(), FileImporter, FileOpener {
 
@@ -151,16 +151,14 @@ class MainViewController @Inject constructor(
     private lateinit var modelSectionSwitcherController: ModelSectionSwitcherController
 
     @FXML
-    private lateinit var authorsWindow: Stage
-
-    @FXML
     private lateinit var commentTextArea: TextArea
-
 
     override val stage: Stage
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        super.initialize(location, resources)
+
         stage.onCloseRequest = EventHandler { e ->
             if (!askToSave(e).isConsumed) {
                 menuViewSectionInSeparateWindow.isSelected = false
@@ -291,7 +289,7 @@ class MainViewController @Inject constructor(
             )
         )
         observableSection.pickets.addListener(ListChangeListener {
-            if (it.next()) {
+            while (it.next()) {
                 if (storageManager.savedSnapshot != observableSection.snapshot()) {
                     dirtyAsterisk.set("*")
                 } else {
@@ -343,7 +341,7 @@ class MainViewController @Inject constructor(
         menuViewSectionInSeparateWindow.selectedProperty().addListener { _, _, isSelected ->
             if (isSelected) {
                 Stage().apply {
-                    icons += root.icons
+                    icons.setAll(root.icons)
                     titleProperty().bind(stage.titleProperty() + " - Разрез")
                     onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
                     prepareToSeparateSection()
