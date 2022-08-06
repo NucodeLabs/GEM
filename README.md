@@ -1,6 +1,17 @@
 # GEM
+**G**eophysics**E**lectro**M**etry
 
-- `README` с инструкцией по сборке нативных библиотек смотрите в `/orig`
-
-
-- `README` с гайд-лайнами разработки смотрите в `/src`
+Программное обеспечение, созданное для обучения студентов методам электроразведки.
+# Сборка дистрибутива
+## Windows
+```shell
+gradle packageWindowsExe
+```
+## macOS
+```shell
+gradle packageMacApp
+```
+## Linux
+```shell
+gradle packageLinuxApplication
+```
