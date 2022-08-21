@@ -6,23 +6,34 @@
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
 <Stage xmlns:fx="http://javafx.com/fxml"
        xmlns="http://javafx.com/javafx" fx:id="root"
        fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController">
     <scene>
         <Scene>
-            <HBox>
-                <LineChart>
-                    <xAxis>
-                        <LogarithmicAxis/>
-                    </xAxis>
-                    <yAxis>
-                        <LogarithmicAxis/>
-                    </yAxis>
-                </LineChart>
-                <TableView>
-                </TableView>
-            </HBox>
+            <VBox alignment="TOP_RIGHT" style="-fx-padding: 15;" spacing="15">
+                <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10">
+                    <LineChart fx:id="chart" HBox.hgrow="ALWAYS">
+                        <xAxis>
+                            <LogarithmicAxis/>
+                        </xAxis>
+                        <yAxis>
+                            <LogarithmicAxis/>
+                        </yAxis>
+                    </LineChart>
+                    <TableView fx:id="table">
+                        <columns>
+                            <TableColumn fx:id="mn2Col" text="%mn2" editable="false" reorderable="false"
+                                         sortable="false"/>
+                            <TableColumn fx:id="fixedCol" text="Зафиксировать" reorderable="false" sortable="false"/>
+                        </columns>
+                    </TableView>
+                </HBox>
+                <Button text="Применить"/>
+            </VBox>
         </Scene>
     </scene>
 </Stage>

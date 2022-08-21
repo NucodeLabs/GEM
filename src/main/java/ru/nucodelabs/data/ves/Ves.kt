@@ -15,11 +15,6 @@ fun k(am: Double, bm: Double, an: Double, bn: Double) = (2 * PI) / ((1 / am) - (
 
 fun u(rhoA: Double, amperage: Double, k: Double) = (rhoA * amperage) / k
 
-/**
- * Пара, список уникальных значений и измерения с индексом соответствующего MN/2 в списке уникальных значений MN/2
- */
-fun distinctMn2(experimentalData: List<ExperimentalData>): Pair<List<Double>, Map<ExperimentalData, Int>> {
-    val distinctMn2 = experimentalData.map { it.mn2 }.distinct()
-    val map = experimentalData.associateWith { distinctMn2.indexOf(it.mn2) }
-    return distinctMn2 to map
+fun distinctMn2(experimentalData: List<ExperimentalData>): Map<Double, List<ExperimentalData>> {
+    return experimentalData.groupBy { it.mn2 }
 }
