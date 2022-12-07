@@ -1,7 +1,7 @@
 package ru.nucodelabs.algorithms.normalization
 
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.gem.extensions.std.asFraction
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.gem.util.std.asFraction
 import ru.nucodelabs.mathves.Normalization
 
 data class FixableValue<T>(val value: T, val isFixed: Boolean)

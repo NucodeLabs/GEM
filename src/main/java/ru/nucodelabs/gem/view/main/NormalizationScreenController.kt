@@ -20,11 +20,11 @@ import javafx.util.Callback
 import ru.nucodelabs.algorithms.normalization.FixableValue
 import ru.nucodelabs.algorithms.normalization.distinctMn2
 import ru.nucodelabs.algorithms.normalization.normalizeExperimentalData
-import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.setValue
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.setValue
+import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import java.net.URL
 import java.text.DecimalFormat
