@@ -1,14 +1,11 @@
 package ru.nucodelabs.algorithms;
 
-import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.ShiraPicket;
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolverKt;
-import ru.nucodelabs.algorithms.inverse_solver.InverseSolver;
-import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.FunctionValue;
-import ru.nucodelabs.algorithms.inverse_solver.inverse_functions.SquaresDiff;
-import ru.nucodelabs.data.ves.ModelLayer;
-import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolverKt;
+import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver;
+import ru.nucodelabs.geo.ves.ModelLayer;
+import ru.nucodelabs.geo.ves.Picket;
 
 import java.util.List;
 

@@ -20,11 +20,11 @@ import javafx.scene.input.ScrollEvent
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.algorithms.charts.VesCurvesContext
-import ru.nucodelabs.algorithms.charts.vesCurvesContext
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolver
+import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
+import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.*
+import ru.nucodelabs.geo.ves.calc.*
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.forCharts
@@ -39,6 +39,11 @@ import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
+import ru.nucodelabs.geo.ves.*
+import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
+import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
+import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL

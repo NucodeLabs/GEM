@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import ru.nucodelabs.data.fx.ObservableSection;
-import ru.nucodelabs.data.ves.Picket;
+import ru.nucodelabs.geo.ves.Picket;
 
 import static javafx.beans.binding.Bindings.createObjectBinding;
 

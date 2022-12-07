@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.app.io
 
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.Picket
 import java.io.File
 
 interface SonetImportManager {

@@ -21,7 +21,7 @@ import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableExperimentalData
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.fx.toObservable
-import ru.nucodelabs.data.ves.*
+import ru.nucodelabs.geo.ves.calc.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.fx.*
 import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
@@ -30,6 +30,10 @@ import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.main.FileImporter
+import ru.nucodelabs.geo.ves.*
+import ru.nucodelabs.geo.ves.calc.k
+import ru.nucodelabs.geo.ves.calc.u
+import ru.nucodelabs.geo.ves.calc.withCalculatedResistanceApparent
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*

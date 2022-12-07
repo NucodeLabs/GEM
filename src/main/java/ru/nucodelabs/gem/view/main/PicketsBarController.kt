@@ -10,9 +10,9 @@ import javafx.scene.control.MenuItem
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.length
-import ru.nucodelabs.data.ves.picketsBounds
+import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.length
+import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.extensions.std.swap
 import ru.nucodelabs.gem.view.AbstractController

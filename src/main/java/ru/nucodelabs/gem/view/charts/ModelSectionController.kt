@@ -8,7 +8,6 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.*
 import ru.nucodelabs.gem.extensions.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
@@ -16,6 +15,10 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import ru.nucodelabs.geo.ves.*
+import ru.nucodelabs.geo.ves.calc.picketsBounds
+import ru.nucodelabs.geo.ves.calc.xOfPicket
+import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL

@@ -9,8 +9,8 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory

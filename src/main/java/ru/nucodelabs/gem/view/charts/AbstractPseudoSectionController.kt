@@ -5,10 +5,10 @@ import javafx.fxml.FXML
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.picketsBounds
-import ru.nucodelabs.data.ves.xOfPicket
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.calc.picketsBounds
+import ru.nucodelabs.geo.ves.calc.xOfPicket
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.AbstractPseudoSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis

@@ -2,7 +2,7 @@ package ru.nucodelabs.data.fx
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.geo.ves.Picket
 
 internal class ObservableSectionTest {
     @Test

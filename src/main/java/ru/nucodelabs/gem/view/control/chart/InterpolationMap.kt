@@ -7,8 +7,8 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Color
-import ru.nucodelabs.algorithms.interpolation.InterpolationParser
-import ru.nucodelabs.algorithms.interpolation.Interpolator
+import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
+import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
 import ru.nucodelabs.gem.extensions.fx.clear
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.setValue

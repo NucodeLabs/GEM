@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.app.io
 
-import ru.nucodelabs.data.ves.Section
+import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.gem.app.snapshot.Snapshot
 import java.io.File
 import javax.inject.Inject

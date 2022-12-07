@@ -10,9 +10,9 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.stage.Stage
-import ru.nucodelabs.algorithms.charts.MisfitsFunction
-import ru.nucodelabs.algorithms.charts.vesCurvesContext
-import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
+import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.gem.extensions.fx.Point
 import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.line

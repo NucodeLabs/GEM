@@ -7,10 +7,10 @@ import javafx.scene.chart.XYChart.Data
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.util.StringConverter
-import ru.nucodelabs.algorithms.charts.curves_chart.CurvesChartParser
+import ru.nucodelabs.geo.ves.calc.graph.CurvesChartParser
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.gem.extensions.fx.forCharts
 import ru.nucodelabs.gem.extensions.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.installTooltips

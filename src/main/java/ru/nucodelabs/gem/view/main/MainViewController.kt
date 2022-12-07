@@ -20,11 +20,11 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Screen
 import javafx.stage.Stage
-import ru.nucodelabs.algorithms.inverse_solver.InverseSolver
+import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.Section
-import ru.nucodelabs.data.ves.xOfPicket
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.xOfPicket
 import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager

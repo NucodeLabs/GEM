@@ -2,7 +2,7 @@ package ru.nucodelabs.data.fx
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import ru.nucodelabs.data.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.setValue
 
