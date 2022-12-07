@@ -5,7 +5,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.7.22'
     dependencies {
         classpath "io.github.fvarrui:javapackager:${DefaultNativePlatform.currentOperatingSystem.isMacOsX() ? "1.6.3" : "1.6.4"}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -37,7 +37,7 @@ repositories {
 }
 
 ext {
-    jfxVersion = '18.0.2'
+    jfxVersion = '19'
     // Platform Info
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
@@ -82,8 +82,8 @@ javafx {
 
 dependencies {
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")
-    implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
-    implementation 'org.glassfish.expressly:expressly:5.0.0-M1'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+    implementation 'org.glassfish.expressly:expressly:5.0.0'
     implementation 'com.github.haifengl:smile-math:2.6.0'
     implementation 'com.github.haifengl:smile-interpolation:2.6.0'
     implementation 'com.github.haifengl:smile-core:2.6.0'
@@ -94,19 +94,19 @@ dependencies {
     implementation "org.bytedeco:javacpp:1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7"
-    implementation 'org.codehaus.groovy:groovy-all:3.0.12'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.13'
 //    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.1'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0'
 }
 
 task prepareRunDir {
