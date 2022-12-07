@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.extensions.std
+package ru.nucodelabs.gem.util.std
 
 import java.text.DecimalFormat
 import kotlin.math.pow

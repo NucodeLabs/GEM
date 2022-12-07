@@ -13,10 +13,10 @@ import javafx.stage.Stage
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.gem.extensions.fx.Point
-import ru.nucodelabs.gem.extensions.fx.forCharts
-import ru.nucodelabs.gem.extensions.fx.line
-import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.util.fx.Point
+import ru.nucodelabs.gem.util.fx.forCharts
+import ru.nucodelabs.gem.util.fx.line
+import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis

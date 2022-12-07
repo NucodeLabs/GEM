@@ -13,7 +13,7 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.FXTest
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport

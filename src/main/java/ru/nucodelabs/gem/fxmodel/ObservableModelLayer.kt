@@ -1,10 +1,10 @@
-package ru.nucodelabs.data.fx
+package ru.nucodelabs.gem.fxmodel
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import ru.nucodelabs.geo.ves.ModelLayer
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.setValue
 
 class ObservableModelLayer(
     power: Double,

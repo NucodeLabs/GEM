@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.view
 import jakarta.validation.ConstraintViolation
 import javafx.scene.control.Alert
 import javafx.stage.Stage
-import ru.nucodelabs.gem.extensions.fx.get
+import ru.nucodelabs.gem.util.fx.get
 import java.util.*
 import javax.inject.Inject
 

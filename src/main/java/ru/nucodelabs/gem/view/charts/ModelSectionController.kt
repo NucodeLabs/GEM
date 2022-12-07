@@ -7,8 +7,8 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.gem.extensions.fx.observableListOf
+import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.gem.view.color.ColorMapper

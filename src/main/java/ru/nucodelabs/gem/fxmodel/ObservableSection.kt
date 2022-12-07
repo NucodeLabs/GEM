@@ -1,11 +1,11 @@
-package ru.nucodelabs.data.fx
+package ru.nucodelabs.gem.fxmodel
 
 import javafx.collections.ObservableList
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.gem.app.snapshot.Snapshot
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.util.fx.toObservableList
 
 class ObservableSection(
     pickets: List<Picket> = listOf()

@@ -6,9 +6,9 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.collections.ListChangeListener
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.observableListOf
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.observableListOf
+import ru.nucodelabs.gem.util.fx.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
 

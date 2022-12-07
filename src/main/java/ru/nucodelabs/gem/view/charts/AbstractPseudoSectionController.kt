@@ -4,7 +4,7 @@ import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.picketsBounds

@@ -8,11 +8,11 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.util.StringConverter
 import ru.nucodelabs.geo.ves.calc.graph.CurvesChartParser
-import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
-import ru.nucodelabs.gem.extensions.fx.forCharts
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.util.fx.forCharts
+import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import java.net.URL
 import java.text.DecimalFormat

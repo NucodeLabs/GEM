@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.extensions.fx
+package ru.nucodelabs.gem.util.fx
 
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding

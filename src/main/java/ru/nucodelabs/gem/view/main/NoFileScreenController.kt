@@ -11,7 +11,7 @@ import javafx.scene.input.TransferMode
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.RECENT_FILES
-import ru.nucodelabs.gem.extensions.fx.emptyBinding
+import ru.nucodelabs.gem.util.fx.emptyBinding
 import ru.nucodelabs.gem.view.AbstractController
 import java.io.File
 import java.net.URL

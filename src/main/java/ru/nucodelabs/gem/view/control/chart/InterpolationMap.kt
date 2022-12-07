@@ -9,9 +9,9 @@ import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Color
 import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
 import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
-import ru.nucodelabs.gem.extensions.fx.clear
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.util.fx.clear
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.setValue
 import ru.nucodelabs.gem.util.OS.appleSilicon
 import ru.nucodelabs.gem.view.color.ColorMapper
 import java.lang.Double.max

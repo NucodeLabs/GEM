@@ -21,7 +21,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Screen
 import javafx.stage.Stage
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
-import ru.nucodelabs.data.fx.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.xOfPicket
@@ -29,9 +29,11 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.extensions.fx.*
-import ru.nucodelabs.gem.util.FXUtils
+import ru.nucodelabs.gem.util.fx.*
+import ru.nucodelabs.gem.util.fx.FXUtils
 import ru.nucodelabs.gem.util.OS.macOS
+import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
+import ru.nucodelabs.gem.util.fx.plus
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.charts.MisfitStacksController

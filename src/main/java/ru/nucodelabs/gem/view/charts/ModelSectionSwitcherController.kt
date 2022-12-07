@@ -8,8 +8,8 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
-import ru.nucodelabs.gem.extensions.fx.bindTo
-import ru.nucodelabs.gem.extensions.fx.saveSnapshotAsPng
+import ru.nucodelabs.gem.util.fx.bindTo
+import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.view.AbstractController
 import java.net.URL
 import java.util.*

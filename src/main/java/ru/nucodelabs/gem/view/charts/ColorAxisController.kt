@@ -12,8 +12,8 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
-import ru.nucodelabs.gem.extensions.fx.*
-import ru.nucodelabs.gem.extensions.std.toDoubleOrNullBy
+import ru.nucodelabs.gem.util.fx.*
+import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis

@@ -6,10 +6,10 @@ import javafx.scene.chart.LineChart
 import javafx.scene.chart.ValueAxis
 import javafx.scene.image.Image
 import javafx.scene.layout.*
-import ru.nucodelabs.gem.extensions.fx.getValue
-import ru.nucodelabs.gem.extensions.fx.minus
-import ru.nucodelabs.gem.extensions.fx.plus
-import ru.nucodelabs.gem.extensions.fx.setValue
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.minus
+import ru.nucodelabs.gem.util.fx.plus
+import ru.nucodelabs.gem.util.fx.setValue
 
 
 class ImageLineChart(

@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.extensions.std
+package ru.nucodelabs.gem.util.std
 
 fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
     val tmp = this[index1]
