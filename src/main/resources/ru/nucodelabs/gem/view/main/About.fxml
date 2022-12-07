@@ -44,6 +44,8 @@
                 <Label>
                     • Андрей Юрьевич Соболев
                 </Label>
+                <Label text=" "/>
+                <Hyperlink text="https://yandex.ru/legal/maps_termsofuse"/>
             </VBox>
         </Scene>
     </scene>
