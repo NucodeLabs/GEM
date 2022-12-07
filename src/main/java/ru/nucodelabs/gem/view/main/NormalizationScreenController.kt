@@ -1,15 +1,16 @@
 package ru.nucodelabs.gem.view.main
 
 import javafx.beans.binding.Bindings.createStringBinding
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
-import javafx.scene.chart.XYChart.Data
+import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
@@ -17,10 +18,10 @@ import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.algorithms.normalization.FixableValue
+import ru.nucodelabs.algorithms.normalization.distinctMn2
 import ru.nucodelabs.algorithms.normalization.normalizeExperimentalData
 import ru.nucodelabs.data.fx.ObservableSection
 import ru.nucodelabs.data.ves.Picket
-import ru.nucodelabs.data.ves.distinctMn2
 import ru.nucodelabs.gem.extensions.fx.getValue
 import ru.nucodelabs.gem.extensions.fx.setValue
 import ru.nucodelabs.gem.extensions.fx.toObservableList
@@ -41,12 +42,12 @@ class NormalizationScreenController @Inject constructor(
         fixed: Boolean
     ) {
         private val mn2Property = SimpleDoubleProperty(mn2)
-        fun mn2Property() = mn2Property
+        fun mn2Property(): DoubleProperty = mn2Property
         var mn2 by mn2Property
 
         private val fixedProperty = SimpleBooleanProperty(fixed)
-        fun fixedProperty() = fixedProperty
-        var fixed by fixedProperty
+        fun fixedProperty(): BooleanProperty = fixedProperty
+        var isFixed by fixedProperty
     }
 
     @FXML
@@ -98,29 +99,43 @@ class NormalizationScreenController @Inject constructor(
     }
 
     private fun mapItems() {
-        table.items.setAll(distinctMn2(picket.sortedExperimentalData).keys.map { FixedMn2Model(it, false) })
+        table.items.setAll(distinctMn2(picket.sortedExperimentalData).first.map { FixedMn2Model(it, false) })
     }
 
     private fun listenToItemsProperties() {
         table.items.forEach { item ->
-            item.fixedProperty().addListener { _, _, _ -> updateChart() }
+            item.fixedProperty().addListener { _, _, _ ->
+                updateChart()
+            }
         }
     }
 
     private fun updateChart() {
-        val map = distinctMn2(picket.sortedExperimentalData)
+        chart.data.clear()
 
-        val series = map.keys.map { mn2 ->
+        val (distValues, idxMap) = distinctMn2(picket.sortedExperimentalData)
+
+        val series = distValues.mapIndexed { idx, mn2 ->
             Series(
-                map[mn2]?.map { Data(it.ab2 as Number, it.resistanceApparent as Number) }?.toObservableList()
+                idxMap.mapIndexed { idxSrc, idxDist ->
+                    idxSrc to idxDist
+                }.filter { (_, idxDist) ->
+                    idxDist == idx
+                }.map { (idxSrc, _) ->
+                    picket.sortedExperimentalData[idxSrc]
+                }.map {
+                    XYChart.Data(it.ab2 as Number, it.resistanceApparent as Number)
+                }.toObservableList()
             ).also { it.name = decimalFormat.format(mn2) }
         }
+
         val normRes = Series(
             normalizeExperimentalData(
                 picket.sortedExperimentalData,
-                table.items.map { FixableValue(it.mn2, it.fixed) }
+                table.items.map { FixableValue(it.mn2, it.isFixed) },
+                idxMap
             ).mapIndexed { i, resApp ->
-                Data(picket.sortedExperimentalData[i].ab2 as Number, resApp as Number)
+                XYChart.Data(picket.sortedExperimentalData[i].ab2 as Number, resApp as Number)
             }.toObservableList()
         )
 
@@ -128,5 +143,9 @@ class NormalizationScreenController @Inject constructor(
         chart.data += normRes
 
         normRes.name = "Нормализованная кривая"
+    }
+
+    fun apply() {
+        table.items[0].isFixed = true
     }
 }

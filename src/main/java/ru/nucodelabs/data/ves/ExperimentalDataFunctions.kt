@@ -1,5 +1,7 @@
 package ru.nucodelabs.data.ves
 
+import ru.nucodelabs.mathves.Normalization
+
 fun orderByDistances() =
     compareBy<ExperimentalData> { it.ab2 }
         .thenBy { it.mn2 }

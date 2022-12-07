@@ -32,7 +32,7 @@
                         </columns>
                     </TableView>
                 </HBox>
-                <Button text="Применить"/>
+                <Button text="Применить" onAction="#apply"/>
             </VBox>
         </Scene>
     </scene>

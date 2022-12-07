@@ -14,7 +14,3 @@ fun k(ab2: Double, mn2: Double): Double {
 fun k(am: Double, bm: Double, an: Double, bn: Double) = (2 * PI) / ((1 / am) - (1 / bm) - (1 / an) + (1 / bn))
 
 fun u(rhoA: Double, amperage: Double, k: Double) = (rhoA * amperage) / k
-
-fun distinctMn2(experimentalData: List<ExperimentalData>): Map<Double, List<ExperimentalData>> {
-    return experimentalData.groupBy { it.mn2 }
-}
