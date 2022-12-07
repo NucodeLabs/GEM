@@ -7,7 +7,7 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.input.MouseEvent
-import ru.nucodelabs.data.ves.ModelLayer
+import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.gem.view.control.chart.getValueForScene
 import kotlin.properties.Delegates
 

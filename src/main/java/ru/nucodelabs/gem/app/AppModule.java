@@ -12,7 +12,7 @@ import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import ru.nucodelabs.algorithms.forward_solver.ForwardSolver;
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 import ru.nucodelabs.files.clr.ClrParser;
 import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;

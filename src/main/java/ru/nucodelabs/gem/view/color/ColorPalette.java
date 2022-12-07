@@ -4,7 +4,7 @@ import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.clr.ColorNode;
-import ru.nucodelabs.gem.extensions.std.MathKt;
+import ru.nucodelabs.gem.util.std.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;

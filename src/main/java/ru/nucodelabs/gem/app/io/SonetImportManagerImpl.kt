@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.app.io
 
-import ru.nucodelabs.data.ves.ExperimentalData
-import ru.nucodelabs.data.ves.ModelLayer
-import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.files.sonet.*
 import java.io.File
 

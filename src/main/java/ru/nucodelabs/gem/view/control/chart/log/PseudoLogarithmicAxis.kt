@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.control.chart.log
 
 import javafx.beans.NamedArg
-import ru.nucodelabs.gem.extensions.std.exp10
+import ru.nucodelabs.gem.util.std.exp10
 import kotlin.math.*
 
 class PseudoLogarithmicAxis @JvmOverloads constructor(
