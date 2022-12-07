@@ -1,6 +1,9 @@
 package ru.nucodelabs.data.ves
 
 import org.junit.jupiter.api.Test
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.calc.orderByDistances
 
 internal class ExperimentalDataTest {
 

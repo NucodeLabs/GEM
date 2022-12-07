@@ -1,6 +1,6 @@
 package ru.nucodelabs
 
-import ru.nucodelabs.data.ves.Picket
+import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.gem.app.io.SonetImportManager.Factory.create
 import java.io.File
 

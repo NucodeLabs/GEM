@@ -8,11 +8,11 @@ import javafx.scene.control.Tooltip
 import javafx.scene.effect.BlendMode
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.data.fx.ObservableSection
-import ru.nucodelabs.data.ves.effectiveToSortedIndicesMapping
-import ru.nucodelabs.data.ves.xOfPicket
-import ru.nucodelabs.gem.extensions.fx.forCharts
-import ru.nucodelabs.gem.extensions.fx.toObservableList
+import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
+import ru.nucodelabs.geo.ves.calc.xOfPicket
+import ru.nucodelabs.gem.util.fx.forCharts
+import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
 import ru.nucodelabs.gem.view.control.chart.installTooltips
