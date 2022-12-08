@@ -1,5 +1,8 @@
 package ru.nucodelabs.gem.net
 
+import java.io.InputStream
+import java.net.UnknownServiceException
+
 interface MapImageProvider {
     /**
      * Returns image URL
@@ -7,13 +10,14 @@ interface MapImageProvider {
      * @param latBottomLeft latitude in degrees of bottom left corner
      * @param lonUpperRight longitude in degrees of upper right corner
      * @param latUpperRight latitude in degrees of upper right corner
+     * @throws UnknownServiceException if response is not image
      */
     fun requestImage(
         lonBottomLeft: Double,
         latBottomLeft: Double,
         lonUpperRight: Double,
         latUpperRight: Double
-    ): String
+    ): InputStream
 
     /**
      * Returns image URL
@@ -23,6 +27,7 @@ interface MapImageProvider {
      * @param latUpperRight latitude in degrees of upper right corner
      * @param width width of image in pixels
      * @param height height of image in pixels
+     * @throws UnknownServiceException if response is not image
      */
     fun requestImage(
         lonBottomLeft: Double,
@@ -31,5 +36,5 @@ interface MapImageProvider {
         latUpperRight: Double,
         width: Int,
         height: Int
-    ): String
+    ): InputStream
 }
