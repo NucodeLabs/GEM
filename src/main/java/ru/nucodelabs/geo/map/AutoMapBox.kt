@@ -9,7 +9,8 @@ import kotlin.math.abs
  */
 class AutoMapBox(
     val center: Wsg,
-    private val maxAb2WithAzimuth: Collection<AzimuthPoint>
+    private val maxAb2WithAzimuth: Collection<AzimuthPoint>,
+    paddingPercent: Double = 20.0
 ) {
     private val maxAbsXFromCenterInMeters: Double by lazy {
         maxAb2WithAzimuth.maxOf { abs(xFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
@@ -19,12 +20,14 @@ class AutoMapBox(
         maxAb2WithAzimuth.maxOf { abs(yFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
     }
 
+    private val padCoefficient = 1 + paddingPercent
+
     val bottomLeftCorner: Wsg by lazy {
-        center + Dx(-maxAbsXFromCenterInMeters) + Dy(-maxAbsYFromCenterInMeters)
+        center + Dx(-maxAbsXFromCenterInMeters * padCoefficient) + Dy(-maxAbsYFromCenterInMeters * padCoefficient)
     }
 
     val upperRightCorner: Wsg by lazy {
-        center + Dx(maxAbsXFromCenterInMeters) + Dy(maxAbsYFromCenterInMeters)
+        center + Dx(maxAbsXFromCenterInMeters * padCoefficient) + Dy(maxAbsYFromCenterInMeters * padCoefficient)
     }
 }
 
