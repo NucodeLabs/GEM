@@ -42,7 +42,7 @@ internal class ImageLineChartTest : FXTest() {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }
