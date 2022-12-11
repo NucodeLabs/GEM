@@ -12,7 +12,7 @@ class AnisotropyMapImageProvider @Inject constructor(
 ) {
     /**
      * Returns satellite image
-     * @throws WrongResponseException if API call response is not image
+     * @throws ru.nucodelabs.gem.net.WrongResponseException if API call response is not image
      */
     fun satImage(center: Wsg, maxAb2WithAzimuth: Collection<AzimuthPoint>, scale: Double = 0.8): Image {
         val mapSizer = MapSizer(center, maxAb2WithAzimuth, scale)
