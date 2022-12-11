@@ -10,7 +10,7 @@ interface MapImageProvider {
      * @param latBottomLeft latitude in degrees of bottom left corner
      * @param lonUpperRight longitude in degrees of upper right corner
      * @param latUpperRight latitude in degrees of upper right corner
-     * @throws UnknownServiceException if response is not image
+     * @throws WrongResponseException if response is not image
      */
     fun requestImage(
         lonBottomLeft: Double,
@@ -27,7 +27,7 @@ interface MapImageProvider {
      * @param latUpperRight latitude in degrees of upper right corner
      * @param width width of image in pixels
      * @param height height of image in pixels
-     * @throws UnknownServiceException if response is not image
+     * @throws WrongResponseException if response is not image
      */
     fun requestImage(
         lonBottomLeft: Double,

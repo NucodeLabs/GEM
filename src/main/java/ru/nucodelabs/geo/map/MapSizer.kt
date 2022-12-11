@@ -10,6 +10,7 @@ import kotlin.math.abs
 class MapSizer(
     val center: Wsg,
     private val maxAb2WithAzimuth: Collection<AzimuthPoint>,
+    val scale: Double
 ) {
     val maxAbsXFromCenterInMeters: Double by lazy {
         maxAb2WithAzimuth.maxOf { abs(xFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
@@ -19,15 +20,14 @@ class MapSizer(
         maxAb2WithAzimuth.maxOf { abs(yFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
     }
 
-    private val paddingPercent = 0.2
-    private val padCoefficient = 1.0 + paddingPercent
+    private val coefficient = 1.0 / scale
 
     val bottomLeftCorner: Wsg by lazy {
-        center + Dx(-maxAbsXFromCenterInMeters * padCoefficient) + Dy(-maxAbsYFromCenterInMeters * padCoefficient)
+        center + Dx(-maxAbsXFromCenterInMeters * coefficient) + Dy(-maxAbsYFromCenterInMeters * coefficient)
     }
 
     val upperRightCorner: Wsg by lazy {
-        center + Dx(maxAbsXFromCenterInMeters * padCoefficient) + Dy(maxAbsYFromCenterInMeters * padCoefficient)
+        center + Dx(maxAbsXFromCenterInMeters * coefficient) + Dy(maxAbsYFromCenterInMeters * coefficient)
     }
 }
 

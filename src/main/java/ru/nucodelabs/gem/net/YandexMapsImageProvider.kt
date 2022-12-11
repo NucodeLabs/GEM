@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.net
 
 import java.io.InputStream
 import java.net.URL
-import java.net.UnknownServiceException
 
 class YandexMapsImageProvider : MapImageProvider {
 
@@ -39,7 +38,7 @@ class YandexMapsImageProvider : MapImageProvider {
         val url = URL(urlString)
         val con = url.openConnection()
         if (con.contentType != "image/jpeg") {
-            throw UnknownServiceException(url.readText())
+            throw WrongResponseException(url.readText())
         } else {
             return url.openStream()
         }
