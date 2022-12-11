@@ -1,4 +1,4 @@
-package ru.nucodelabs.geo.anizotrop.calc
+package ru.nucodelabs.geo.map
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -14,13 +14,13 @@ internal class CoordinatesKtTest {
     fun xFromCenter() {
         val a = 285.0
         val ref = distValue * cos(toRadians(15.0)) * -1
-        assertEquals(ref, ru.nucodelabs.geo.map.xFromCenter(distValue, a))
+        assertEquals(ref, xFromCenter(distValue, a))
     }
 
     @Test
     fun yFromCenter() {
         val a = 285.0
         val ref = distValue * sin(toRadians(15.0))
-        assertEquals(ref, ru.nucodelabs.geo.map.yFromCenter(distValue, a))
+        assertEquals(ref, yFromCenter(distValue, a))
     }
 }

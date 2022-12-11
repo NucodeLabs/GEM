@@ -7,20 +7,20 @@ import kotlin.math.abs
  * @param center center of inst
  * @param maxAb2WithAzimuth collection that contains only abs max AB/2 points with their azimuth
  */
-class AutoMapBox(
+class MapSizer(
     val center: Wsg,
     private val maxAb2WithAzimuth: Collection<AzimuthPoint>,
-    paddingPercent: Double = 20.0
 ) {
-    private val maxAbsXFromCenterInMeters: Double by lazy {
+    val maxAbsXFromCenterInMeters: Double by lazy {
         maxAb2WithAzimuth.maxOf { abs(xFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
     }
 
-    private val maxAbsYFromCenterInMeters: Double by lazy {
+    val maxAbsYFromCenterInMeters: Double by lazy {
         maxAb2WithAzimuth.maxOf { abs(yFromCenter(it.distFromCenterInMeters, it.azimuthInDegrees)) }
     }
 
-    private val padCoefficient = 1 + paddingPercent
+    private val paddingPercent = 0.2
+    private val padCoefficient = 1.0 + paddingPercent
 
     val bottomLeftCorner: Wsg by lazy {
         center + Dx(-maxAbsXFromCenterInMeters * padCoefficient) + Dy(-maxAbsYFromCenterInMeters * padCoefficient)
