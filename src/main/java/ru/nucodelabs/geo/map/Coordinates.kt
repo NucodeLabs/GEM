@@ -11,7 +11,7 @@ import kotlin.math.sin
  * @return X-coordinate of point relative to center in **meters**
  */
 fun xFromCenter(distInMeters: Double, azimuthInDegrees: Double): Double {
-    return distInMeters * cos(toRadians(azimuthInDegrees % 90.0)) * xSignForAzimuth(azimuthInDegrees)
+    return distInMeters * cos(toRadians(toComplexAngle(azimuthInDegrees)))
 }
 
 /**
@@ -20,21 +20,11 @@ fun xFromCenter(distInMeters: Double, azimuthInDegrees: Double): Double {
  * @return Y-coordinate of point relative to center in **meters**
  */
 fun yFromCenter(distInMeters: Double, azimuthInDegrees: Double): Double {
-    return distInMeters * sin(toRadians(azimuthInDegrees % 90.0)) * ySignForAzimuth(azimuthInDegrees)
+    return distInMeters * sin(toRadians(toComplexAngle(azimuthInDegrees)))
 }
 
-private fun xSignForAzimuth(angleInDegrees: Double): Double {
-    return when (angleInDegrees) {
-        in 0.0..180.0 -> +1.0
-        else -> -1.0
-    }
-}
-
-private fun ySignForAzimuth(angleInDegrees: Double): Double {
-    return when (angleInDegrees) {
-        in 90.0..270.0 -> -1.0
-        else -> +1.0
-    }
+private fun toComplexAngle(angleInDegrees: Double): Double {
+    return -angleInDegrees + 90
 }
 
 private const val R_EARTH = 6378.0
