@@ -7,13 +7,12 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Color
-import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
-import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
 import ru.nucodelabs.gem.util.fx.clear
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.setValue
-import ru.nucodelabs.gem.util.OS.appleSilicon
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
+import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
 import java.lang.Double.max
 import kotlin.math.min
 
@@ -118,9 +117,6 @@ class InterpolationMap @JvmOverloads constructor(
     }
 
     private fun draw(canvas: Canvas) {
-        appleSilicon {
-            return@draw
-        }
         if (data.isEmpty()
             || data[interpolateSeriesIndex].data.isEmpty()
         ) {
@@ -164,9 +160,6 @@ class InterpolationMap @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
-        appleSilicon {
-            return@initInterpolator
-        }
         val series = data[interpolateSeriesIndex]
         if (series.data.isEmpty()) {
             canvas.clear()

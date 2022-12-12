@@ -45,8 +45,8 @@ ext {
     javaHome = Jvm.current().javaHome
 
     // For deps
-    var osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
-    var archName = "x86_64"
+    osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
+    archName = currentArch.displayName.toLowerCase().contains("arm") ? "arm64" : "x86_64"
     platform = "$osName-$archName"
 
     // JNI specific variables
@@ -90,10 +90,9 @@ dependencies {
     implementation 'com.github.haifengl:smile-data:2.6.0'
     implementation 'com.github.haifengl:smile-plot:2.6.0'
     implementation 'com.github.haifengl:smile-io:2.6.0'
-    implementation "org.bytedeco:openblas:0.3.13-1.5.5:$platform"
-    implementation "org.bytedeco:javacpp:1.5.7:$platform"
-    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7:$platform"
-    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.7"
+    implementation "org.bytedeco:openblas:0.3.13-1.5.8:$platform"
+    implementation "org.bytedeco:javacpp:1.5.8:$platform"
+    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8:$osName-x86_64"
     implementation 'org.codehaus.groovy:groovy-all:3.0.13'
 //    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
