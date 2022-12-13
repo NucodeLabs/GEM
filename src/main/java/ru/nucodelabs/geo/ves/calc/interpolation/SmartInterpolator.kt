@@ -19,8 +19,10 @@ class SmartInterpolator(
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
     fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
-        val unorderedUniquePoints = toUniquePoints(unorderedPoints)
-        buildLeakyGrid(unorderedUniquePoints)
+        setXYRanges(unorderedPoints)
+        val orderedUniquePoints = toOrderedUniquePoints(unorderedPoints)
+
+        buildLeakyGrid(orderedUniquePoints)
 
         gridToLogValues()
 
@@ -31,7 +33,7 @@ class SmartInterpolator(
         buildInterpolatingFunction()
     }
 
-    private fun toUniquePoints(unorderedPoints: List<XYChart.Data<Double, Double>>): List<XYChart.Data<Double, Double>> {
+    private fun toOrderedUniquePoints(unorderedPoints: List<XYChart.Data<Double, Double>>): List<XYChart.Data<Double, Double>> {
         val uniquePoints = mutableListOf<XYChart.Data<Double, Double>>()
         val hs = HashSet<Pair<Double, Double>>()
 
@@ -47,14 +49,21 @@ class SmartInterpolator(
             uniquePoints.add(point)
         }
 
+        uniquePoints.sortedWith(compareBy({ it.xValue }, { it.xValue }))
+
         return uniquePoints
     }
 
-    private fun getGridSize(unorderedUniquePoints: List<XYChart.Data<Double, Double>>): Pair<Int, Int> {
+    private fun setXYRanges(points: List<XYChart.Data<Double, Double>>) {
+        this.xRange = Pair(points.minBy { it.xValue }.xValue, points.maxBy { it.xValue }.xValue)
+        this.yRange = Pair(points.minBy { it.yValue }.yValue, points.maxBy { it.yValue }.xValue)
+    }
+
+    private fun getGridSize(orderedUniquePoints: List<XYChart.Data<Double, Double>>): Pair<Int, Int> {
         val hsX = HashSet<Double>()
         val hsY = HashSet<Double>()
 
-        for (point in unorderedUniquePoints) {
+        for (point in orderedUniquePoints) {
             val x = point.xValue
             val y = point.yValue
 
@@ -70,8 +79,8 @@ class SmartInterpolator(
         return Pair(hsX.size, hsY.size)
     }
 
-    private fun buildLeakyGrid(unorderedPoints: List<XYChart.Data<Double, Double>>) {
-        val gridSize = getGridSize(unorderedPoints)
+    private fun buildLeakyGrid(orderedUniquePoints: List<XYChart.Data<Double, Double>>) {
+        val gridSize = getGridSize(orderedUniquePoints)
 
         this.x = Array(gridSize.first) { Double.NaN }
         this.y = Array(gridSize.second) { Double.NaN }
@@ -80,7 +89,7 @@ class SmartInterpolator(
         var xCnt = 0
         var yCnt = 0
 
-        for (point in unorderedPoints) {
+        for (point in orderedUniquePoints) {
             val x = point.xValue
             val y = point.yValue
             val f = point.extraValue as Double
@@ -92,7 +101,6 @@ class SmartInterpolator(
                 this.y[yCnt] = y
                 this.f[xPos][yCnt] = f
                 yCnt++
-
             } else {
                 val yPos = this.y.indexOf(y)
                 this.x[xCnt] = x
