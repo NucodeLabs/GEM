@@ -7,7 +7,7 @@ import ru.nucodelabs.gem.util.std.exp10
 
 class Interpolator(
     private var interpolationParser: InterpolationParser
-) {
+): Interpolator2D {
     private lateinit var grid: MutableList<MutableList<XYChart.Data<Double, Double>>>
 
     private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
@@ -44,7 +44,7 @@ class Interpolator(
         }
     }
 
-    fun getValue(x: Double, y: Double): Double {
+    override fun getValue(x: Double, y: Double): Double {
         return when (getRange(x)) {
             Side.LEFT ->
                 if (leftSideInterpolated) {

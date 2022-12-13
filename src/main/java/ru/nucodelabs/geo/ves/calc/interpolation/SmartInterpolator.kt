@@ -2,20 +2,27 @@ package ru.nucodelabs.geo.ves.calc.interpolation
 
 import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
+import ru.nucodelabs.gem.util.std.exp10
+import kotlin.math.log10
 
 class SmartInterpolator(
     private val spatialInterpolator: SpatialInterpolator,
     private val regularGridInterpolator: RegularGridInterpolator
-) {
+) : Interpolator2D {
     private lateinit var x: Array<Double>
     private lateinit var y: Array<Double>
     private lateinit var f: Array<Array<Double?>>
+
+    private var xRange = Pair(Double.NaN, Double.NaN)
+    private var yRange = Pair(Double.NaN, Double.NaN)
 
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
     fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
         val unorderedUniquePoints = toUniquePoints(unorderedPoints)
         buildLeakyGrid(unorderedUniquePoints)
+
+        gridToLogValues()
 
         buildSpatial()
 
@@ -95,6 +102,17 @@ class SmartInterpolator(
         }
     }
 
+    private fun gridToLogValues() {
+        for (xIdx in this.f.indices) {
+            for (yIdx in this.f[xIdx].indices) {
+                if (this.f[xIdx][yIdx]!! < 0) {
+                    throw RuntimeException("gridToLogValues < 0 error")
+                }
+                this.f[xIdx][yIdx] = log10(this.f[xIdx][yIdx]!!)
+            }
+        }
+    }
+
     private fun buildSpatial() {
         val x = mutableListOf<Double>()
         val y = mutableListOf<Double>()
@@ -127,5 +145,19 @@ class SmartInterpolator(
         val f = this.f.map { it.requireNoNulls().toDoubleArray() }
         bicubicInterpolatingFunction =
             regularGridInterpolator.interpolate(this.x.toDoubleArray(), this.y.toDoubleArray(), f.toTypedArray())
+    }
+
+    private fun isInRange(x: Double, y: Double): Boolean {
+        if (x in xRange.first..xRange.second && y in yRange.first..yRange.second) {
+            return true
+        }
+        return false
+    }
+
+    override fun getValue(x: Double, y: Double): Double {
+        if (!isInRange(x, y)) {
+            throw RuntimeException("getValue not in range")
+        }
+        return exp10(bicubicInterpolatingFunction.value(x, y))
     }
 }
