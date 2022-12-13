@@ -73,7 +73,8 @@ class Interpolator(
     }
 
     private fun adjustGrid() {
-        val spatialInterpolator: SpatialInterpolator = RBFSpatialInterpolator(
+        val spatialInterpolator: SpatialInterpolator = RBFSpatialInterpolator()
+        spatialInterpolator.build(
             interpolationParser.getX(),
             interpolationParser.getY(),
             interpolationParser.getF()
