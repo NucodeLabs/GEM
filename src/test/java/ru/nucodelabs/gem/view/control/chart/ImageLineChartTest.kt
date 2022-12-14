@@ -21,7 +21,7 @@ internal class ImageLineChartTest : FXTest() {
                 val chart = ImageLineChart(
                     NumberAxis(),
                     NumberAxis(),
-                    Image("https://static-maps.yandex.ru/1.x/?ll=37.620070,55.753630&size=450,450&z=13&l=sat"),
+//                    Image("https://static-maps.yandex.ru/1.x/?ll=37.620070,55.753630&size=450,450&z=13&l=sat"),
                 )
                 scene = Scene(
                     VBox().apply {
@@ -42,7 +42,7 @@ internal class ImageLineChartTest : FXTest() {
     }
 
     @Test
-//    @Disabled
+    @Disabled
     fun launchApp() {
         Application.launch(TestApp::class.java)
     }

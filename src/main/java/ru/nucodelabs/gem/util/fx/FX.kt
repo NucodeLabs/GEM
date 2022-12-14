@@ -17,6 +17,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter.Change
 import javafx.scene.control.Tooltip
+import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
@@ -220,4 +221,17 @@ fun Region.saveSnapshotAsPng(fileChooser: FileChooser = FileChooser(), scale: Do
         ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file)
     }
     return file
+}
+
+fun generateImage(width: Int, height: Int, color: Color): Image {
+    val writableImg = WritableImage(width, height)
+    val pxWriter = writableImg.pixelWriter
+
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            pxWriter.setColor(x, y, color)
+        }
+    }
+
+    return writableImg
 }
