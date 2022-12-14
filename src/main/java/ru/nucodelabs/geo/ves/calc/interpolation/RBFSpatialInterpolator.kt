@@ -5,7 +5,7 @@ import smile.math.rbf.GaussianRadialBasis
 import smile.math.rbf.MultiquadricRadialBasis
 import smile.math.rbf.ThinPlateRadialBasis
 
-class RBFSpatialInterpolator(): SpatialInterpolator {
+class RBFSpatialInterpolator: SpatialInterpolator {
 
     private lateinit var rbfInterpolation2D: RBFInterpolation2D
 

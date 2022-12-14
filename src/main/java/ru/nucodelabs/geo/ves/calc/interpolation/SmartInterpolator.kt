@@ -34,7 +34,7 @@ class SmartInterpolator(
     }
 
     private fun toOrderedUniquePoints(unorderedPoints: List<XYChart.Data<Double, Double>>): List<XYChart.Data<Double, Double>> {
-        val uniquePoints = mutableListOf<XYChart.Data<Double, Double>>()
+        var uniquePoints = mutableListOf<XYChart.Data<Double, Double>>()
         val hs = HashSet<Pair<Double, Double>>()
 
         for (point in unorderedPoints) {
@@ -49,7 +49,7 @@ class SmartInterpolator(
             uniquePoints.add(point)
         }
 
-        uniquePoints.sortedWith(compareBy({ it.xValue }, { it.xValue }))
+        uniquePoints = uniquePoints.sortedWith(compareBy({ it.xValue }, { it.xValue })) as MutableList<XYChart.Data<Double, Double>>
 
         return uniquePoints
     }
@@ -69,10 +69,9 @@ class SmartInterpolator(
 
             if (hsX.contains(x) && hsY.contains(y)) {
                 throw RuntimeException("Such point is already exist")
-            } else if (hsX.contains(x)) {
-                hsY.add(y)
             } else {
                 hsX.add(x)
+                hsY.add(y)
             }
         }
 
@@ -101,13 +100,20 @@ class SmartInterpolator(
                 this.y[yCnt] = y
                 this.f[xPos][yCnt] = f
                 yCnt++
-            } else {
+            } else if (this.y.contains(y)) {
                 val yPos = this.y.indexOf(y)
                 this.x[xCnt] = x
                 this.f[yPos][xCnt] = f
                 xCnt++
+            } else {
+                this.x[xCnt] = x
+                this.y[yCnt] = y
+                this.f[xCnt][yCnt] = f
+                xCnt++
+                yCnt++
             }
         }
+        println()
     }
 
     private fun gridToLogValues() {
