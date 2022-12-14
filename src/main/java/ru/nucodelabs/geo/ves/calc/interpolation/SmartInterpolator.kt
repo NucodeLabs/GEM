@@ -19,10 +19,8 @@ class SmartInterpolator(
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
     fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
-        setXYRanges(unorderedPoints)
-        val orderedUniquePoints = toOrderedUniquePoints(unorderedPoints)
-
-        buildLeakyGrid(orderedUniquePoints)
+        buildLeakyGrid(unorderedPoints)
+        setXYRanges()
 
         gridToLogValues()
 
@@ -33,92 +31,33 @@ class SmartInterpolator(
         buildInterpolatingFunction()
     }
 
-    private fun toOrderedUniquePoints(unorderedPoints: List<XYChart.Data<Double, Double>>): List<XYChart.Data<Double, Double>> {
-        var uniquePoints = mutableListOf<XYChart.Data<Double, Double>>()
-        val hs = HashSet<Pair<Double, Double>>()
-
-        for (point in unorderedPoints) {
-            val x = point.xValue
-            val y = point.yValue
-
-            if (hs.contains(Pair(x, y))) {
-                continue
-            }
-
-            hs.add(Pair(x, y))
-            uniquePoints.add(point)
-        }
-
-        uniquePoints = uniquePoints.sortedWith(compareBy({ it.xValue }, { it.xValue })) as MutableList<XYChart.Data<Double, Double>>
-
-        return uniquePoints
+    private fun setXYRanges() {
+        this.xRange = Pair(this.x.first(), this.x.last())
+        this.yRange = Pair(this.y.first(), this.y.last())
     }
 
-    private fun setXYRanges(points: List<XYChart.Data<Double, Double>>) {
-        this.xRange = Pair(points.minBy { it.xValue }.xValue, points.maxBy { it.xValue }.xValue)
-        this.yRange = Pair(points.minBy { it.yValue }.yValue, points.maxBy { it.yValue }.xValue)
-    }
+    private fun buildLeakyGrid(points: List<XYChart.Data<Double, Double>>) {
+        val xPoints = points.map { it.xValue }.distinct().sorted()
+        val yPoints = points.map { it.yValue }.distinct().sorted()
 
-    private fun getGridSize(orderedUniquePoints: List<XYChart.Data<Double, Double>>): Pair<Int, Int> {
-        val hsX = HashSet<Double>()
-        val hsY = HashSet<Double>()
+        this.x = xPoints.toTypedArray()
+        this.y = yPoints.toTypedArray()
+        this.f = Array(x.size) { Array(y.size) { null } }
 
-        for (point in orderedUniquePoints) {
-            val x = point.xValue
-            val y = point.yValue
+        for (point in points) {
+            val xIdx = x.indexOf(point.xValue)
+            val yIdx = y.indexOf(point.yValue)
 
-            if (hsX.contains(x) && hsY.contains(y)) {
-                throw RuntimeException("Such point is already exist")
-            } else {
-                hsX.add(x)
-                hsY.add(y)
-            }
+            this.f[xIdx][yIdx] = point.extraValue as Double
         }
-
-        return Pair(hsX.size, hsY.size)
-    }
-
-    private fun buildLeakyGrid(orderedUniquePoints: List<XYChart.Data<Double, Double>>) {
-        val gridSize = getGridSize(orderedUniquePoints)
-
-        this.x = Array(gridSize.first) { Double.NaN }
-        this.y = Array(gridSize.second) { Double.NaN }
-        this.f = Array(gridSize.first) { Array(gridSize.second) { null } }
-
-        var xCnt = 0
-        var yCnt = 0
-
-        for (point in orderedUniquePoints) {
-            val x = point.xValue
-            val y = point.yValue
-            val f = point.extraValue as Double
-
-            if (this.x.contains(x) && this.y.contains(y)) {
-                throw RuntimeException("Such point is already exist")
-            } else if (this.x.contains(x)) {
-                val xPos = this.x.indexOf(x)
-                this.y[yCnt] = y
-                this.f[xPos][yCnt] = f
-                yCnt++
-            } else if (this.y.contains(y)) {
-                val yPos = this.y.indexOf(y)
-                this.x[xCnt] = x
-                this.f[yPos][xCnt] = f
-                xCnt++
-            } else {
-                this.x[xCnt] = x
-                this.y[yCnt] = y
-                this.f[xCnt][yCnt] = f
-                xCnt++
-                yCnt++
-            }
-        }
-        println()
     }
 
     private fun gridToLogValues() {
         for (xIdx in this.f.indices) {
             for (yIdx in this.f[xIdx].indices) {
+                if (this.f[xIdx][yIdx] == null) {
+                    continue
+                }
                 if (this.f[xIdx][yIdx]!! < 0) {
                     throw RuntimeException("gridToLogValues < 0 error")
                 }
