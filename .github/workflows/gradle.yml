@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 jobs:
-  packageMacX64:
+  packageMacApp_x64:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
@@ -35,9 +35,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: gem_mac-x64
-        path: build/GEM/GEM.app
+        path: build/GEM/*
         
-  packageWindowsx64:
+  packageWindowsExe_x64:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
