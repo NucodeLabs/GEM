@@ -17,7 +17,7 @@ permissions:
   contents: read
   
 env:
-  artifact_name: ${{ "gem_$RUNNER_OS-$RUNNER_ARCH_${{ github.ref_name }}-${{ github.sha }}" }}
+  artifact_name: gem_$RUNNER_OS-$RUNNER_ARCH_${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   packageMacApp_x64:
