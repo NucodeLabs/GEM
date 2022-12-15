@@ -34,7 +34,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gem_mac-x64
+        name: gem_mac-x64_${{ github.head_ref }}-${{ github.sha }}
         path: build/GEM/*
         
   packageWindowsExe_x64:
@@ -54,5 +54,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gem_win-x64
+        name: gem_win-x64_${{ github.head_ref }}-${{ github.sha }}
         path: build/GEM/*
