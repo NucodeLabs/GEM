@@ -33,9 +33,9 @@ jobs:
         arguments: packageMacApp
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
-        with:
-          name: gem_mac-x64
-          path: build/GEM/GEM.app
+      with:
+        name: gem_mac-x64
+        path: build/GEM/GEM.app
         
   packageWindowsx64:
     runs-on: windows-latest
@@ -53,6 +53,6 @@ jobs:
         arguments: packageWindowsExe
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
-        with:
-          name: gem_win-x64
-          path: build/GEM/*
+      with:
+        name: gem_win-x64
+        path: build/GEM/*
