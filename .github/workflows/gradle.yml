@@ -17,7 +17,7 @@ permissions:
   contents: read
   
 env:
-  artifact_name: gem_$RUNNER_OS-$RUNNER_ARCH_${{ github.ref_name }}-${{ github.sha }}
+  artifact_name: gem_${{ env.RUNNER_OS }}-${{ env.RUNNER_ARCH }}_${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   packageMacApp_x64:
@@ -37,7 +37,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: "$artifact_name"
+        name: ${{ artifact_name }}
         path: build/GEM/*
         
   packageWindowsExe_x64:
@@ -57,5 +57,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: "$artifact_name"
+        name: ${{ artifact_name }}
         path: build/GEM/*
