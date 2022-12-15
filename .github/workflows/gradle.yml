@@ -15,13 +15,12 @@ on:
 
 permissions:
   contents: read
-  
-env:
-  artifact_name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   packageMacApp_x64:
     runs-on: macos-latest
+    env:
+      artifact_name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 
@@ -42,6 +41,8 @@ jobs:
         
   packageWindowsExe_x64:
     runs-on: windows-latest
+    env:
+      artifact_name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 
