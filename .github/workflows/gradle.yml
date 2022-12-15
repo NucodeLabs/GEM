@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   packageMacArm64:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 
@@ -26,7 +26,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'zulu'
-        architecture: 'arm64'
+        architecture: 'aarch64'
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
