@@ -20,7 +20,7 @@ internal class SmartInterpolatorTest {
             XYChart.Data(
                 xFromCenter(e.yValue, angle) + e.xValue,
                 yFromCenter(e.yValue, angle),
-                (e.extraValue as Double + Random.nextDouble(-20.0, 40.0))
+                (e.extraValue as Double)
             )
         }
         angle = 45.0
@@ -28,7 +28,7 @@ internal class SmartInterpolatorTest {
             XYChart.Data(
                 xFromCenter(e.yValue, angle) + e.xValue,
                 yFromCenter(e.yValue, angle),
-                (e.extraValue as Double + Random.nextDouble(-20.0, 40.0))
+                (e.extraValue as Double)
             )
         }
         angle = -60.0
@@ -36,14 +36,16 @@ internal class SmartInterpolatorTest {
             XYChart.Data(
                 xFromCenter(e.yValue, angle) + e.xValue,
                 yFromCenter(e.yValue, angle),
-                (e.extraValue as Double + Random.nextDouble(-20.0, 40.0))
+                (e.extraValue as Double)
             )
         }
         val points = (points1 + points2 + points3 + points4) as MutableList
         points.shuffle()
 
-        val smartInterpolator = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
+        val smartInterpolator = SmartInterpolator(KrigingInterpolator())
         smartInterpolator.build(points)
+
+        println(smartInterpolator.getValue(200.0, 200.0))
     }
 
     @Test

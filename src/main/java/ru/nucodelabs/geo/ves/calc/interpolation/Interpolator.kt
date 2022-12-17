@@ -62,6 +62,10 @@ class Interpolator(
         }
     }
 
+    override fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
+
+    }
+
     private fun checkInterpolated() {
         if (adjustedGrid[0].size < 3) leftSideInterpolated = false
         if (adjustedGrid.last().size < 3) rightSideInterpolated = false
@@ -105,7 +109,7 @@ class Interpolator(
         val y: DoubleArray = picket.map { point -> point.yValue }.toDoubleArray()
         val f: DoubleArray = picket.map { point -> point.extraValue as Double }.toDoubleArray()
 
-        val interpolator1D: Interpolator1D = ApacheInterpolator1D()
+        val interpolator1D = ApacheInterpolator1D()
         return interpolator1D.interpolate(y, f)
     }
 

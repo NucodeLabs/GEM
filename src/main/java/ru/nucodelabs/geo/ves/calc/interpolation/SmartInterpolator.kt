@@ -7,33 +7,42 @@ import kotlin.math.log10
 
 class SmartInterpolator(
     private val spatialInterpolator: SpatialInterpolator,
-    private val regularGridInterpolator: RegularGridInterpolator
+    private val regularGridInterpolator: RegularGridInterpolator? = null
 ) : Interpolator2D {
     private lateinit var x: Array<Double>
     private lateinit var y: Array<Double>
     private lateinit var f: Array<Array<Double?>>
 
-    private var xRange = Pair(Double.NaN, Double.NaN)
-    private var yRange = Pair(Double.NaN, Double.NaN)
+    var xRange = Pair(Double.NaN, Double.NaN)
+    var yRange = Pair(Double.NaN, Double.NaN)
 
-    private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
+    lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
-    fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
-        buildLeakyGrid(unorderedPoints)
-        setXYRanges()
+    override fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
+        if (regularGridInterpolator != null) {
+            buildLeakyGrid(unorderedPoints)
+            setXYRanges()
 
-        gridToLogValues()
+            gridToLogValues()
 
-        buildSpatial()
+            buildSpatial()
 
-        buildRegularGrid()
+            buildRegularGrid()
 
-        buildInterpolatingFunction()
+            buildInterpolatingFunction()
+        } else {
+            buildSpatial(unorderedPoints)
+        }
     }
 
     private fun setXYRanges() {
         this.xRange = Pair(this.x.first(), this.x.last())
         this.yRange = Pair(this.y.first(), this.y.last())
+    }
+
+    private fun setXYRanges(x: List<Double>, y: List<Double>) {
+        this.xRange = Pair(x.min(), x.max())
+        this.yRange = Pair(y.min(), y.max())
     }
 
     private fun buildLeakyGrid(points: List<XYChart.Data<Double, Double>>) {
@@ -84,6 +93,21 @@ class SmartInterpolator(
         this.spatialInterpolator.build(x.toDoubleArray(), y.toDoubleArray(), f.toDoubleArray())
     }
 
+    private fun buildSpatial(points: List<XYChart.Data<Double, Double>>) {
+        val x = mutableListOf<Double>()
+        val y = mutableListOf<Double>()
+        val f = mutableListOf<Double>()
+
+        for (point in points){
+            x.add(point.xValue)
+            y.add(point.yValue)
+            f.add(log10(point.extraValue as Double))
+        }
+
+        this.spatialInterpolator.build(x.toDoubleArray(), y.toDoubleArray(), f.toDoubleArray())
+        setXYRanges(x, y)
+    }
+
     private fun buildRegularGrid() {
         for (xIdx in this.f.indices) {
             for (yIdx in this.f[xIdx].indices) {
@@ -97,7 +121,7 @@ class SmartInterpolator(
     private fun buildInterpolatingFunction() {
         val f = this.f.map { it.requireNoNulls().toDoubleArray() }
         bicubicInterpolatingFunction =
-            regularGridInterpolator.interpolate(this.x.toDoubleArray(), this.y.toDoubleArray(), f.toTypedArray())
+            regularGridInterpolator!!.interpolate(this.x.toDoubleArray(), this.y.toDoubleArray(), f.toTypedArray())
     }
 
     private fun isInRange(x: Double, y: Double): Boolean {
@@ -109,7 +133,11 @@ class SmartInterpolator(
 
     override fun getValue(x: Double, y: Double): Double {
         if (!isInRange(x, y)) {
-            throw RuntimeException("getValue not in range")
+            return -1.0
+            //throw RuntimeException("getValue not in range")
+        }
+        if (regularGridInterpolator == null) {
+            return exp10(spatialInterpolator.interpolate(x, y))
         }
         return exp10(bicubicInterpolatingFunction.value(x, y))
     }
