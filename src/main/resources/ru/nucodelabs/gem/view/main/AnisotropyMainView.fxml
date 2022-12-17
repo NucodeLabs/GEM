@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.stage.Stage?>
-<?import javafx.scene.Scene?>
-<?import javafx.scene.layout.HBox?>
-<?import ru.nucodelabs.gem.view.control.chart.ImageLineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.control.chart.ImageScatterChart?>
+<?import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="ru.nucodelabs.gem.view.main.AnisotropyMainViewController"
        title="Тестовые данные - GEM#Anisotropy">
     <scene>
-        <Scene stylesheets="@../common.css">
+        <Scene stylesheets="@../common.css, @../charts/MapPseudoSection.css">
             <VBox fx:id="root">
-                <HBox>
-                    <ImageLineChart fx:id="satChart">
+                <HBox spacing="10">
+                    <ImageScatterChart fx:id="satChart" legendVisible="false">
                         <xAxis>
-                            <NumberAxis/>
+                            <NucodeNumberAxis autoRanging="false"/>
                         </xAxis>
                         <yAxis>
-                            <NumberAxis/>
+                            <NucodeNumberAxis autoRanging="false"/>
                         </yAxis>
-                    </ImageLineChart>
+                    </ImageScatterChart>
+                    <SmartInterpolationMap fx:id="interpolChart" legendVisible="false">
+                        <xAxis>
+                            <NucodeNumberAxis autoRanging="true"/>
+                        </xAxis>
+                        <yAxis>
+                            <NucodeNumberAxis autoRanging="true"/>
+                        </yAxis>
+                    </SmartInterpolationMap>
                 </HBox>
             </VBox>
         </Scene>
