@@ -109,7 +109,8 @@ class SmartInterpolator(
 
     override fun getValue(x: Double, y: Double): Double {
         if (!isInRange(x, y)) {
-            throw RuntimeException("getValue not in range")
+//            throw RuntimeException("getValue not in range")
+            return -1.0
         }
         return exp10(bicubicInterpolatingFunction.value(x, y))
     }

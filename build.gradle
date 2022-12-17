@@ -1,4 +1,5 @@
 import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.MacStartup
 import io.github.fvarrui.javapackager.model.SetupMode
 import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
@@ -7,7 +8,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 buildscript {
     ext.kotlin_version = '1.7.22'
     dependencies {
-        classpath "io.github.fvarrui:javapackager:${DefaultNativePlatform.currentOperatingSystem.isMacOsX() ? "1.6.3" : "1.6.4"}"
+        classpath "io.github.fvarrui:javapackager:1.6.7"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
     repositories {
@@ -93,6 +94,7 @@ dependencies {
     implementation "org.bytedeco:openblas:0.3.13-1.5.8:$platform"
     implementation "org.bytedeco:javacpp:1.5.8:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8:$osName-x86_64"
+    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8"
     implementation 'org.codehaus.groovy:groovy-all:3.0.13'
 //    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -175,7 +177,6 @@ javapackager {
     version = "0.1"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
-    useResourcesAsWorkingDir = true
     additionalResources = [
             file("lib/${libPrefix}MathVES_JNI.${libExt}"),
             file("lib/${libPrefix}MathVES.${libExt}")
@@ -185,6 +186,7 @@ javapackager {
 task packageMacApp(type: PackageTask, dependsOn: build) {
     generateInstaller = false
     macConfig {
+        macStartup = MacStartup.UNIVERSAL
         icnsFile = file("src/main/resources/img/gem.icns")
         generateDmg = false
         generatePkg = false

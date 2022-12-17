@@ -3,20 +3,19 @@ package ru.nucodelabs.gem.view.control.chart
 import javafx.beans.NamedArg
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.chart.LineChart
+import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.ValueAxis
 import javafx.scene.image.Image
-import javafx.scene.image.PixelWriter
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.util.fx.*
 
 
-class ImageLineChart @JvmOverloads constructor(
+class ImageScatterChart @JvmOverloads constructor(
     @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
     image: Image = generateImage(256, 256, Color.WHITESMOKE)
-) : LineChart<Number, Number>(xAxis, yAxis) {
+) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     private val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()

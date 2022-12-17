@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test
 
 import ru.nucodelabs.gem.view.FXTest
 
-internal class ImageLineChartTest : FXTest() {
+internal class ImageScatterChartTest : FXTest() {
 
     class TestApp : Application() {
         override fun start(primaryStage: Stage?) {
             primaryStage?.apply {
-                val chart = ImageLineChart(
+                val chart = ImageScatterChart(
                     NumberAxis(),
                     NumberAxis(),
 //                    Image("https://static-maps.yandex.ru/1.x/?ll=37.620070,55.753630&size=450,450&z=13&l=sat"),

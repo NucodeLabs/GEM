@@ -8,7 +8,7 @@ import kotlin.math.abs
  * @param maxAb2WithAzimuth collection that contains only abs max AB/2 points with their azimuth
  */
 class MapSizer(
-    val center: Wsg,
+    val center: WGS,
     private val maxAb2WithAzimuth: Collection<AzimuthPoint>,
     val scale: Double
 ) {
@@ -45,15 +45,15 @@ class MapSizer(
     /**
      * Calculated bottom left corner of rectangle in WSG
      */
-    val bottomLeftCorner: Wsg by lazy {
-        center + Dx(-maxAbsXFromCenterInMeters * coefficient) + Dy(-maxAbsYFromCenterInMeters * coefficient)
+    val bottomLeftCorner: WGS by lazy {
+        center - Offset(maxAbsXFromCenterInMeters * coefficient, maxAbsYFromCenterInMeters * coefficient)
     }
 
     /**
      * Calculated upper right corner of rectangle in WSG
      */
-    val upperRightCorner: Wsg by lazy {
-        center + Dx(maxAbsXFromCenterInMeters * coefficient) + Dy(maxAbsYFromCenterInMeters * coefficient)
+    val upperRightCorner: WGS by lazy {
+        center + Offset(maxAbsXFromCenterInMeters * coefficient, maxAbsYFromCenterInMeters * coefficient)
     }
 }
 

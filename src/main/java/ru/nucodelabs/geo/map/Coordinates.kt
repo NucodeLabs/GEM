@@ -1,6 +1,8 @@
 package ru.nucodelabs.geo.map
 
+import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
+import java.util.DoubleSummaryStatistics
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -27,19 +29,34 @@ private fun toComplexAngle(angleInDegrees: Double): Double {
     return -angleInDegrees + 90
 }
 
-private const val R_EARTH = 6378.0
+private const val R_EARTH = 6_378_137
 
-data class Wsg(val longitudeInDegrees: Double, val latitudeInDegrees: Double)
-data class Dx(val distanceInMeters: Double)
-data class Dy(val distanceInMeters: Double)
+data class WGS(val longitudeInDegrees: Double, val latitudeInDegrees: Double)
 
-operator fun Wsg.plus(dx: Dx): Wsg {
-    val newLon =
-        longitudeInDegrees + (dx.distanceInMeters * 1e-3 / R_EARTH) * (180 / PI) / cos(latitudeInDegrees * PI / 180)
-    return copy(longitudeInDegrees = newLon)
+data class Offset(val dXInMeters: Double = 0.0, val dYInMeters: Double = 0.0)
+
+operator fun WGS.plus(offset: Offset): WGS {
+    //Coordinate offsets in radians
+    val dLat = offset.dYInMeters / R_EARTH
+    val dLon = offset.dXInMeters / (R_EARTH * cos(toRadians(this.latitudeInDegrees)))
+
+    //OffsetPosition, decimal degrees
+    val newLat = this.latitudeInDegrees + toDegrees(dLat)
+    val newLon = this.longitudeInDegrees + toDegrees(dLon)
+
+    return this.copy(longitudeInDegrees = newLon, latitudeInDegrees = newLat)
 }
 
-operator fun Wsg.plus(dy: Dy): Wsg {
-    val newLat = latitudeInDegrees + (dy.distanceInMeters * 1e-3 / R_EARTH) * (180 / PI)
-    return copy(latitudeInDegrees = newLat)
+operator fun WGS.minus(offset: Offset): WGS {
+    //Coordinate offsets in radians
+    val dLat = offset.dYInMeters / R_EARTH
+    val dLon = offset.dXInMeters / (R_EARTH * cos(toRadians(this.latitudeInDegrees)))
+
+    //OffsetPosition, decimal degrees
+    val newLat = this.latitudeInDegrees - toDegrees(dLat)
+    val newLon = this.longitudeInDegrees - toDegrees(dLon)
+
+    return this.copy(longitudeInDegrees = newLon, latitudeInDegrees = newLat)
 }
+
+
