@@ -10,9 +10,6 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.stage.Stage
-import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
-import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
-import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.line
@@ -20,6 +17,10 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
+import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -32,7 +33,8 @@ class MisfitStacksController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val misfitsFunction: MisfitsFunction,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    private val forwardSolver: ForwardSolver
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
@@ -80,10 +82,19 @@ class MisfitStacksController @Inject constructor(
                 }
             }
             val avg = misfits.map { abs(it) }.average()
+            val max = misfits.maxOfOrNull { abs(it) } ?: 0.0
+
+            val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
+            val misfitsWithoutErr = expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
+            val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
+            val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
             val decimalFormat = DecimalFormat("#.##").apply {
                 roundingMode = RoundingMode.HALF_UP
             }
-            text.text = "avg = ${decimalFormat.format(avg)} %"
+            text.text =
+                "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${decimalFormat.format(maxWithoutErr)}" +
+                        " | " +
+                        "погрешность: avg = ${decimalFormat.format(avg)}%, max = ${decimalFormat.format(max)}%"
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
         } catch (e: IllegalStateException) {
