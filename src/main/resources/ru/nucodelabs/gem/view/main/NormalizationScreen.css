@@ -1,0 +1,8 @@
+.chart-line-symbol {
+    -fx-pref-height: 2;
+    -fx-pref-width: 2;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 1;
+}

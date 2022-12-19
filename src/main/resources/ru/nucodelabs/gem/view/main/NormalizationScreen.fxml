@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
 <Stage xmlns:fx="http://javafx.com/fxml"
        xmlns="http://javafx.com/javafx" fx:id="root"
        fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController">
     <scene>
-        <Scene>
+        <Scene stylesheets="@NormalizationScreen.css, @../common.css">
             <VBox alignment="TOP_RIGHT" style="-fx-padding: 15;" spacing="15">
                 <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10">
                     <LineChart fx:id="chart" HBox.hgrow="ALWAYS">
                         <xAxis>
-                            <LogarithmicAxis/>
+                            <LogarithmicAxis fx:id="xAxis"/>
                         </xAxis>
                         <yAxis>
-                            <LogarithmicAxis/>
+                            <LogarithmicAxis fx:id="yAxis"/>
                         </yAxis>
                     </LineChart>
                     <TableView fx:id="table">
                         <columns>
-                            <TableColumn fx:id="mn2Col" text="%mn2" editable="false" reorderable="false"
-                                         sortable="false"/>
-                            <TableColumn fx:id="fixedCol" text="Зафиксировать" reorderable="false" sortable="false"/>
+                            <!--                            <TableColumn fx:id="fixedCol" text="Зафиксировать" sortable="false"/>-->
+                            <TableColumn fx:id="mn2Col" text="%mn2" sortable="false"/>
                         </columns>
                     </TableView>
                 </HBox>
-                <Button text="Применить" onAction="#apply"/>
+                <Button text="Применить" onAction="#apply" defaultButton="true"/>
             </VBox>
         </Scene>
     </scene>
