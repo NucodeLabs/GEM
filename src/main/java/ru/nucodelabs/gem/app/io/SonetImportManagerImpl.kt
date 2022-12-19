@@ -1,9 +1,9 @@
 package ru.nucodelabs.gem.app.io
 
+import ru.nucodelabs.files.sonet.*
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.files.sonet.*
 import java.io.File
 
 internal class SonetImportManagerImpl : SonetImportManager {
@@ -16,7 +16,7 @@ internal class SonetImportManagerImpl : SonetImportManager {
         ).parse()
     }
 
-    private fun parseExperimentalData(expFile: File): List<ExperimentalData> {
+    private fun parseExperimentalDataAndComment(expFile: File): Pair<List<ExperimentalData>, String> {
         val (expParsed, sttParsed) = parseExpWithStt(expFile)
 
         val minSize = listOf(
@@ -39,7 +39,18 @@ internal class SonetImportManagerImpl : SonetImportManager {
                 voltage = expParsed.voltage[i]
             )
         }
-        return expData
+        return expData to passportAsString(expParsed)
+    }
+
+    private fun passportAsString(expFile: EXPFile): String {
+        return """
+            Номер установки: ${expFile.number}
+            Дата: ${expFile.date}
+            Погода: ${expFile.weather}
+            Оператор: ${expFile.operator}
+            Интерпретатор: ${expFile.interpreter}
+            Проверил ${expFile.checked}
+        """.trimIndent()
     }
 
     override fun fromEXPFile(expFile: File): Picket {
@@ -51,9 +62,11 @@ internal class SonetImportManagerImpl : SonetImportManager {
             fileName
         }
 
+        val (expData, passport) = parseExperimentalDataAndComment(expFile)
         return Picket(
             name = picketName,
-            experimentalData = parseExperimentalData(expFile)
+            experimentalData = expData,
+            comment = passport
         )
     }
 

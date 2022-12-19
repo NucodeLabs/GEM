@@ -28,7 +28,7 @@ apply plugin: 'io.github.fvarrui.javapackager.plugin'
 apply plugin: 'kotlin'
 
 group 'ru.nucodelabs'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
@@ -174,7 +174,7 @@ javapackager {
     organizationName = "NucodeLabs"
     name = "GEM"
     applicationName = "GEM"
-    version = "0.1"
+    version = "1.0"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
     useResourcesAsWorkingDir = true

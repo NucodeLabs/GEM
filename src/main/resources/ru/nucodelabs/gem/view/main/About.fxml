@@ -9,28 +9,37 @@
        xmlns="http://javafx.com/javafx" resizable="false" title="О программе">
     <scene>
         <Scene>
-            <VBox maxWidth="600" style="-fx-padding: 25;" spacing="5">
+            <VBox maxWidth="800" style="-fx-padding: 25;" spacing="5">
                 <HBox>
                     <Label text="GeologyElectroMetry "/>
                     <Label text="%version"/>
                 </HBox>
+                <Label style="-fx-font-size: 20;">
+                    Авторы
+                </Label>
                 <Label prefWidth="600" style="-fx-font-size: 16;">
                     Куратор проекта
                 </Label>
                 <Label prefWidth="600">
-                    • к.т.н., доцент кафедры СИ ФИТ НГУ, с.н.с. лаборатории электромагнитных полей ИНГГ СО РАН Александр Александрович Власов
-                </Label>
-                <Label prefWidth="600" style="-fx-font-size: 16;">
-                    Студенты 3-го курса ФИТ НГУ (20214)
+                    • к.т.н., доцент кафедры СИ ФИТ НГУ, с.н.с. лаборатории электромагнитных полей ИНГГ СО РАН
                 </Label>
                 <Label prefWidth="600">
-                    • Вадим Евгеньевич Мостовой
+                    Александр Александрович Власов
+                </Label>
+                <Label prefWidth="600" style="-fx-font-size: 16;">
+                    Студенты 3-го курса ФИТ НГУ
+                </Label>
+                <Label prefWidth="600">
+                    • Вадим Евгеньевич Мостовой (20214)
                 </Label>
                 <Label>
-                    • Михаил Константинович Плугин
+                    • Михаил Константинович Плугин (20214)
                 </Label>
                 <Label>
-                    • Никита Сергеевич Батенко
+                    • Никита Сергеевич Батенко (20214)
+                </Label>
+                <Label>
+                    • Анастасия Дмитриевна Ордина (20215)
                 </Label>
                 <Label prefWidth="600" style="-fx-font-size: 16;">
                     Сотрудники лаборатории электромагнитных полей ИНГГ СО РАН
@@ -45,9 +54,11 @@
                     • Андрей Юрьевич Соболев
                 </Label>
                 <Label>
-	            • Для моделирования сигналов ВЭЗ использованы программные модули Юлия Александровича Дашевского из системы SONET
+                    • Для моделирования сигналов ВЭЗ использованы программные модули Юлия Александровича Дашевского из
+                    системы SONET
                 </Label>
                 <Label text=" "/>
+                <Label text="Условия использования сервиса Яндекс.Карты"/>
                 <Hyperlink text="https://yandex.ru/legal/maps_termsofuse"/>
             </VBox>
         </Scene>
