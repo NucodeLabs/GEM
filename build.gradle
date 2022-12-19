@@ -50,10 +50,6 @@ ext {
     archName = currentArch.displayName.toLowerCase().contains("arm") ? "arm64" : "x86_64"
     platform = "$osName-$archName"
 
-    // JNI specific variables
-    libPrefix = currentOS.isWindows() ? "" : "lib"
-    libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
-
     runDir = "$projectDir/run"
 }
 
@@ -179,8 +175,8 @@ javapackager {
     administratorRequired = false
     useResourcesAsWorkingDir = true
     additionalResources = [
-            file("lib/${libPrefix}MathVES_JNI.${libExt}"),
-            file("lib/${libPrefix}MathVES.${libExt}")
+            file("lib/${System.mapLibraryName("MathVES_JNI")}"),
+            file("lib/${System.mapLibraryName("MathVES")}")
     ]
 }
 
