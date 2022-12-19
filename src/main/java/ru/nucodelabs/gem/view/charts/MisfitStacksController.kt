@@ -80,21 +80,27 @@ class MisfitStacksController @Inject constructor(
                         Point(expPoint.x as Number, misfits[index] as Number)
                     )
                 }
-            }
-            val avg = misfits.map { abs(it) }.average()
-            val max = misfits.maxOfOrNull { abs(it) } ?: 0.0
 
-            val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
-            val misfitsWithoutErr = expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
-            val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
-            val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
-            val decimalFormat = DecimalFormat("#.##").apply {
-                roundingMode = RoundingMode.HALF_UP
+                val avg = misfits.map { abs(it) }.average()
+                val max = misfits.maxOfOrNull { abs(it) } ?: 0.0
+
+                val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
+                val misfitsWithoutErr =
+                    expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
+                val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
+                val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
+                val decimalFormat = DecimalFormat("#.##").apply {
+                    roundingMode = RoundingMode.HALF_UP
+                }
+                text.text =
+                    "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${
+                        decimalFormat.format(
+                            maxWithoutErr
+                        )
+                    }" +
+                            " | " +
+                            "погрешность: avg = ${decimalFormat.format(avg)}%, max = ${decimalFormat.format(max)}%"
             }
-            text.text =
-                "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${decimalFormat.format(maxWithoutErr)}" +
-                        " | " +
-                        "погрешность: avg = ${decimalFormat.format(avg)}%, max = ${decimalFormat.format(max)}%"
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
         } catch (e: IllegalStateException) {
