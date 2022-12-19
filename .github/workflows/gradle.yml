@@ -34,7 +34,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
+        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.sha }}
         path: build/GEM/*
         
   packageWindowsExe_x64:
@@ -54,5 +54,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
+        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.sha }}
         path: build/GEM/*
