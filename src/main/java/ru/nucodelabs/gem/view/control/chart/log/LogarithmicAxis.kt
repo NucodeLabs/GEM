@@ -29,6 +29,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
 
     init {
         animated = false
+        isAutoRanging = true
         //checkBounds(lowerBound, upperBound)
         bindLogBoundsToDefaultBounds()
     }

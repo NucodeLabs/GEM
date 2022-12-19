@@ -15,29 +15,32 @@ import javafx.scene.input.*
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
-import ru.nucodelabs.geo.ves.calc.primarymodel.PrimaryModel
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.gem.fxmodel.toObservable
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
-import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.FileImporter
-import ru.nucodelabs.geo.ves.*
+import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.divide
 import ru.nucodelabs.geo.ves.calc.join
+import ru.nucodelabs.geo.ves.calc.primarymodel.PrimaryModel
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.geo.ves.toTabulatedTable
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
-private const val STYLE_FOR_FIXED = """
+const val STYLE_FOR_FIXED = """
     -fx-text-fill: White;
     -fx-background-color: Gray;
 """
