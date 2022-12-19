@@ -120,9 +120,9 @@ class MisfitStacksController @Inject constructor(
             val nonZeroPoint = series.data[1]
             if (abs(nonZeroPoint.yValue.toDouble()) < 100.0) {
                 series.node.style = "-fx-stroke: LimeGreen;"
-                nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
+                nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen;"
                 val zeroPoint = series.data[0]
-                zeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
+                zeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen;"
             }
         }
     }
