@@ -32,9 +32,10 @@ jobs:
       with:
         arguments: packageMacApp
     - name: Upload Artifact
+      if: ${{ github.event_name == 'push' }}
       uses: actions/upload-artifact@v3
       with:
-        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.sha }}
+        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
         path: build/GEM/*
         
   packageWindowsExe_x64:
@@ -52,7 +53,8 @@ jobs:
       with:
         arguments: packageWindowsExe
     - name: Upload Artifact
+      if: ${{ github.event_name == 'push' }}
       uses: actions/upload-artifact@v3
       with:
-        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.sha }}
+        name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
         path: build/GEM/*
