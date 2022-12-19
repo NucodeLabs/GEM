@@ -21,6 +21,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.SquaresDiff
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -92,13 +93,19 @@ class MisfitStacksController @Inject constructor(
                 val decimalFormat = DecimalFormat("#.##").apply {
                     roundingMode = RoundingMode.HALF_UP
                 }
+                val targetFun = SquaresDiff()
+                val targetFunValue = targetFun.apply(
+                    forwardSolver(picket.effectiveExperimentalData, picket.modelData),
+                    picket.effectiveExperimentalData.map { it.resistanceApparent }
+                )
                 text.text =
-                    "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${
-                        decimalFormat.format(
-                            maxWithoutErr
-                        )
-                    }" +
-                            " | " +
+                    "целевая функция: f = ${decimalFormat.format(targetFunValue)}" +
+                            "  |  " +
+                            "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${
+                                decimalFormat.format(
+                                    maxWithoutErr
+                                )
+                            }" + "  |  " +
                             "погрешность: avg = ${decimalFormat.format(avg)}%, max = ${decimalFormat.format(max)}%"
             }
         } catch (e: UnsatisfiedLinkError) {
