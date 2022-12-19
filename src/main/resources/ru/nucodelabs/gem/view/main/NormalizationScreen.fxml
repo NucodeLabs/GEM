@@ -11,7 +11,7 @@
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
 <Stage xmlns:fx="http://javafx.com/fxml"
        xmlns="http://javafx.com/javafx" fx:id="root"
-       fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController">
+       fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController" title="Нормализация кривых">
     <scene>
         <Scene stylesheets="@NormalizationScreen.css, @../common.css">
             <VBox alignment="TOP_RIGHT" style="-fx-padding: 15;" spacing="15">
