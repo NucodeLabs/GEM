@@ -16,7 +16,7 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.charts.MisfitStacksController">
     <HBox maxWidth="Infinity">
-        <Label styleClass="chart-label" text="Погрешность" VBox.vgrow="NEVER"/>
+        <Label styleClass="chart-label" text="Погрешность подбора модели" VBox.vgrow="NEVER"/>
         <HBox HBox.hgrow="ALWAYS"/>
         <Label fx:id="text" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
     </HBox>
