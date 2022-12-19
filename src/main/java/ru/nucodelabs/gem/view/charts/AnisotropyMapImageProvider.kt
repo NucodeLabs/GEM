@@ -2,9 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.scene.image.Image
 import ru.nucodelabs.gem.net.MapImageProvider
-import ru.nucodelabs.geo.map.AzimuthPoint
 import ru.nucodelabs.geo.map.MapSizer
-import ru.nucodelabs.geo.map.WGS
 import javax.inject.Inject
 
 class AnisotropyMapImageProvider @Inject constructor(
@@ -14,8 +12,7 @@ class AnisotropyMapImageProvider @Inject constructor(
      * Returns satellite image
      * @throws ru.nucodelabs.gem.net.WrongResponseException if API call response is not image
      */
-    fun satImage(center: WGS, maxAb2WithAzimuth: Collection<AzimuthPoint>, scale: Double = 0.8): Image {
-        val mapSizer = MapSizer(center, maxAb2WithAzimuth, scale)
+    fun satImage(mapSizer: MapSizer): Image {
         val bottomLeft = mapSizer.bottomLeftCorner
         val upperRight = mapSizer.upperRightCorner
         val stream = mapImageProvider.requestImage(

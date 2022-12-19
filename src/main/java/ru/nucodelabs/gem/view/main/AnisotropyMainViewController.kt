@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.main
 
 import javafx.event.EventHandler
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.layout.VBox
@@ -255,7 +254,7 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun setupSatelliteChart() {
-        val scale = 0.8
+        val scale = 1.0
         val center = WGS(82.654444, 54.568056)
         val maxAb2WithAzimuth = listOf(
             AzimuthPoint(117.5, 0.0),
@@ -263,12 +262,8 @@ class AnisotropyMainViewController @Inject constructor(
             AzimuthPoint(117.5, 90.0),
             AzimuthPoint(117.5, 135.0)
         )
-        val satImg = anisotropyMapImageProvider.satImage(
-            center = center,
-            maxAb2WithAzimuth = maxAb2WithAzimuth,
-            scale = scale
-        )
         val mapSizer = MapSizer(center, maxAb2WithAzimuth, scale)
+        val satImg = anisotropyMapImageProvider.satImage(mapSizer)
 
         (satChart.xAxis as NucodeNumberAxis).lowerBound = -mapSizer.maxAbsXFromCenterScaledInMeters
         (satChart.xAxis as NucodeNumberAxis).upperBound = +mapSizer.maxAbsXFromCenterScaledInMeters
