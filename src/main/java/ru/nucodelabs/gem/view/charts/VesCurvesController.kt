@@ -20,13 +20,9 @@ import javafx.scene.input.ScrollEvent
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
-import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
-import ru.nucodelabs.gem.fxmodel.ObservableSection
-import ru.nucodelabs.geo.ves.calc.*
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.get
 import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
@@ -40,10 +36,10 @@ import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.geo.ves.*
-import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
-import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
-import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
-import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.geo.ves.calc.*
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
+import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL
@@ -386,7 +382,10 @@ class VesCurvesController @Inject constructor(
         point: Data<Number, Number>
     ): Tooltip? {
         return when (seriesIndex) {
-            EXP_CURVE_SERIES_INDEX, EXP_CURVE_ERROR_LOWER_SERIES_INDEX, EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
+            EXP_CURVE_SERIES_INDEX,
+            EXP_CURVE_ERROR_LOWER_SERIES_INDEX,
+            EXP_CURVE_ERROR_UPPER_SERIES_INDEX,
+            THEOR_CURVE_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
                     picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
@@ -395,6 +394,8 @@ class VesCurvesController @Inject constructor(
                     picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
                 )
                 val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
+                val theorRes = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver).getOrNull(pointIndex)?.y
+                val theorResStr = if (theorRes == null) "" else "\nρₐ (теор.) = ${decimalFormat.format(theorRes)} Ω‧m"
                 Tooltip(
                     """
                     №${effectiveToSortedMapping[pointIndex] + 1}
@@ -402,10 +403,9 @@ class VesCurvesController @Inject constructor(
                     ρₐ = $y Ω‧m
                     min ρₐ = $yLower
                     max ρₐ = $yUpper
-                """.trimIndent()
+                """.trimIndent() + theorResStr
                 ).forCharts()
             }
-
             else -> null
         }
     }
