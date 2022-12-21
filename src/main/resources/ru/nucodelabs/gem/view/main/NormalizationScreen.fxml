@@ -2,7 +2,6 @@
 
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.*?>
@@ -31,7 +30,7 @@
                         </columns>
                     </TableView>
                 </HBox>
-                <Label text="a - аддитивный коэффициент"/>
+<!--                <Label text="a - аддитивный коэффициент"/>-->
                 <HBox>
                     <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
                     <Button text="Применить" onAction="#apply" defaultButton="true"/>
