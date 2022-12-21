@@ -28,6 +28,8 @@ import ru.nucodelabs.gem.view.tables.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.tables.STYLE_FOR_FIXED
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
+import java.math.MathContext
+import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
@@ -42,9 +44,10 @@ class NormalizationScreenController @Inject constructor(
     private val historyManager: HistoryManager<Section>
 ) : AbstractController() {
 
-    private class FixedMn2Model(
+    private class Mn2Model(
         mn2: Double,
-        fixed: Boolean
+        fixed: Boolean,
+        add: Double = .0
     ) {
         private val mn2Property = SimpleDoubleProperty(mn2)
         fun mn2Property(): DoubleProperty = mn2Property
@@ -53,7 +56,14 @@ class NormalizationScreenController @Inject constructor(
         private val fixedProperty = SimpleBooleanProperty(fixed)
         fun fixedProperty(): BooleanProperty = fixedProperty
         var isFixed by fixedProperty
+
+        private val addProperty = SimpleDoubleProperty(add)
+        fun addProperty(): DoubleProperty = addProperty
+        var add by addProperty
     }
+
+    @FXML
+    private lateinit var addCol: TableColumn<Mn2Model, String>
 
     @FXML
     private lateinit var xAxis: LogarithmicAxis
@@ -62,10 +72,10 @@ class NormalizationScreenController @Inject constructor(
     private lateinit var yAxis: LogarithmicAxis
 
     @FXML
-    private lateinit var mn2Col: TableColumn<FixedMn2Model, String>
+    private lateinit var mn2Col: TableColumn<Mn2Model, String>
 
     @FXML
-    private lateinit var mn2Table: TableView<FixedMn2Model>
+    private lateinit var mn2Table: TableView<Mn2Model>
 
     @FXML
     private lateinit var chart: LineChart<Number, Number>
@@ -73,13 +83,13 @@ class NormalizationScreenController @Inject constructor(
     @FXML
     private lateinit var root: Stage
 
-    private lateinit var normalizationResult: List<Double>
-    private lateinit var additiveResult: List<Double>
-
     override val stage: Stage
         get() = root
 
     private val picket by _picket
+
+    private lateinit var normalizationResult: List<Double>
+    private lateinit var additiveResult: List<Double>
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
@@ -106,7 +116,7 @@ class NormalizationScreenController @Inject constructor(
     private fun update() {
         mapItems()
         listenToItemsProperties()
-        updateChart()
+        updateChartAndTable()
     }
 
     private fun setupCellFactories() {
@@ -114,7 +124,7 @@ class NormalizationScreenController @Inject constructor(
             Callback { f -> createStringBinding({ decimalFormat.format(f.value.mn2) }, f.value.mn2Property()) }
         mn2Col.cellFactory =
             Callback {
-                TextFieldTableCell<FixedMn2Model, String>().apply {
+                TextFieldTableCell<Mn2Model, String>().apply {
                     indexProperty().addListener { _, _, _ ->
                         if (index >= 0 && index <= mn2Table.items.lastIndex) {
                             style = if (mn2Table.items[index].isFixed) {
@@ -133,11 +143,22 @@ class NormalizationScreenController @Inject constructor(
                     }
                 }
             }
+
+        addCol.cellValueFactory =
+            Callback { f ->
+                createStringBinding(
+                    {
+                        f.value.add.toBigDecimal().round(MathContext(4, RoundingMode.UP)).toString()
+                    },
+                    f.value.addProperty()
+                )
+            }
+        addCol.cellFactory = Callback { TextFieldTableCell() }
     }
 
     private fun setupRowFactories() {
         mn2Table.rowFactory = Callback {
-            TableRow<FixedMn2Model>().apply {
+            TableRow<Mn2Model>().apply {
                 val contextMenu = ContextMenu(
                     MenuItem("Зафиксировать").apply {
                         onAction = EventHandler { fixSelected() }
@@ -160,18 +181,23 @@ class NormalizationScreenController @Inject constructor(
     }
 
     private fun mapItems() {
-        mn2Table.items.setAll(distinctMn2(picket.sortedExperimentalData).first.map { FixedMn2Model(it, false) })
+        mn2Table.items.setAll(distinctMn2(picket.sortedExperimentalData).first.map {
+            Mn2Model(
+                it,
+                false
+            )
+        })
     }
 
     private fun listenToItemsProperties() {
         mn2Table.items.forEach { item ->
             item.fixedProperty().addListener { _, _, _ ->
-                updateChart()
+                updateChartAndTable()
             }
         }
     }
 
-    private fun updateChart() {
+    private fun updateChartAndTable() {
         chart.data.clear()
 
         val (distValues, idxMap) = distinctMn2(picket.sortedExperimentalData)
@@ -199,6 +225,9 @@ class NormalizationScreenController @Inject constructor(
         additiveResult = additive
         normalizationResult = normResApp
 
+        mn2Table.items.forEachIndexed { idx, mn2Model -> mn2Model.add = additive[idx] }
+        mn2Table.refresh()
+
         val normRes = Series(
             normResApp.mapIndexed { i, resApp ->
                 XYChart.Data(picket.sortedExperimentalData[i].ab2 as Number, resApp as Number)
@@ -211,7 +240,8 @@ class NormalizationScreenController @Inject constructor(
         normRes.name = "Нормализованная кривая"
     }
 
-    fun apply() {
+    @FXML
+    private fun apply() {
         val newExp = picket.sortedExperimentalData.mapIndexed { idx, exp ->
             exp.copy(resistanceApparent = normalizationResult[idx])
         }
