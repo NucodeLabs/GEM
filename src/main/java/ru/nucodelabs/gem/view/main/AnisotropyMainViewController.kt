@@ -4,6 +4,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
+import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import ru.nucodelabs.gem.util.TextToTableParser
@@ -24,6 +25,9 @@ class AnisotropyMainViewController @Inject constructor(
     private val anisotropyMapImageProvider: AnisotropyMapImageProvider,
     private val colorMapper: ColorMapper
 ) : AbstractController() {
+    @FXML
+    private lateinit var scaleTf: TextField
+
     @FXML
     private lateinit var interpolChart: SmartInterpolationMap
 
@@ -253,8 +257,7 @@ class AnisotropyMainViewController @Inject constructor(
         interpolChart.data = chartPointsData()
     }
 
-    private fun setupSatelliteChart() {
-        val scale = 1.0
+    private fun setupSatelliteChart(scale: Double = 1.0) {
         val center = WGS(82.654444, 54.568056)
         val maxAb2WithAzimuth = listOf(
             AzimuthPoint(117.5, 0.0),
@@ -272,5 +275,10 @@ class AnisotropyMainViewController @Inject constructor(
 
         satChart.image = satImg
         satChart.data = chartPointsData()
+    }
+
+    @FXML
+    private fun applyScale() {
+        setupSatelliteChart(scaleTf.text.toDoubleOrNull() ?: 1.0)
     }
 }
