@@ -23,10 +23,12 @@
                             <LogarithmicAxis fx:id="yAxis" label="%resistanceApparent"/>
                         </yAxis>
                     </LineChart>
-                    <TableView fx:id="mn2Table" maxWidth="200">
+                    <TableView fx:id="mn2Table" maxWidth="300" prefWidth="300" minWidth="300">
                         <columns>
                             <!--                            <TableColumn fx:id="fixedCol" text="Зафиксировать" sortable="false"/>-->
-                            <TableColumn fx:id="mn2Col" text="%mn2" sortable="false" prefWidth="${mn2Table.width - 2}"/>
+                            <TableColumn fx:id="mn2Col" text="%mn2" sortable="false" prefWidth="${mn2Table.width / 2}"/>
+                            <TableColumn fx:id="addCol" text="%additive" sortable="false"
+                                         prefWidth="${mn2Col.prefWidth}" editable="false"/>
                         </columns>
                     </TableView>
                 </HBox>

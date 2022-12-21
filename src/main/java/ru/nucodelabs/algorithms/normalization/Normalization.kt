@@ -14,7 +14,7 @@ fun normalizeExperimentalData(
     distinctMn2: List<FixableValue<Double>>,
     idxMap: List<Int>
 ): Pair<List<Double>, List<Double>> {
-    val add = DoubleArray(experimentalData.size)
+    val add = DoubleArray(distinctMn2.size)
     return Normalization.signalNormalizationSchlumberger(
         distinctMn2.map { it.value }.toDoubleArray(),
         distinctMn2.map { it.isFixed }.toBooleanArray(),
