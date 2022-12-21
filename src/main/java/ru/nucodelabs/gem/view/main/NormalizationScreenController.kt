@@ -65,10 +65,7 @@ class NormalizationScreenController @Inject constructor(
     private lateinit var mn2Col: TableColumn<FixedMn2Model, String>
 
     @FXML
-    private lateinit var fixedCol: TableColumn<FixedMn2Model, Boolean>
-
-    @FXML
-    private lateinit var table: TableView<FixedMn2Model>
+    private lateinit var mn2Table: TableView<FixedMn2Model>
 
     @FXML
     private lateinit var chart: LineChart<Number, Number>
@@ -77,6 +74,7 @@ class NormalizationScreenController @Inject constructor(
     private lateinit var root: Stage
 
     private lateinit var normalizationResult: List<Double>
+    private lateinit var additiveResult: List<Double>
 
     override val stage: Stage
         get() = root
@@ -99,7 +97,7 @@ class NormalizationScreenController @Inject constructor(
 
         root.onShown = EventHandler { update() }
 
-        table.selectionModel.selectionMode = SelectionMode.MULTIPLE
+        mn2Table.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         setupCellFactories()
         setupRowFactories()
@@ -118,13 +116,13 @@ class NormalizationScreenController @Inject constructor(
             Callback {
                 TextFieldTableCell<FixedMn2Model, String>().apply {
                     indexProperty().addListener { _, _, _ ->
-                        if (index >= 0 && index <= table.items.lastIndex) {
-                            style = if (table.items[index].isFixed) {
+                        if (index >= 0 && index <= mn2Table.items.lastIndex) {
+                            style = if (mn2Table.items[index].isFixed) {
                                 STYLE_FOR_FIXED
                             } else {
                                 ""
                             }
-                            table.items[index].fixedProperty().addListener { _, _, fix ->
+                            mn2Table.items[index].fixedProperty().addListener { _, _, fix ->
                                 style = if (fix) {
                                     STYLE_FOR_FIXED
                                 } else {
@@ -138,7 +136,7 @@ class NormalizationScreenController @Inject constructor(
     }
 
     private fun setupRowFactories() {
-        table.rowFactory = Callback {
+        mn2Table.rowFactory = Callback {
             TableRow<FixedMn2Model>().apply {
                 val contextMenu = ContextMenu(
                     MenuItem("Зафиксировать").apply {
@@ -154,19 +152,19 @@ class NormalizationScreenController @Inject constructor(
     }
 
     private fun unfixSelected() {
-        table.selectionModel.selectedItems.forEach { it.isFixed = false }
+        mn2Table.selectionModel.selectedItems.forEach { it.isFixed = false }
     }
 
     private fun fixSelected() {
-        table.selectionModel.selectedItems.forEach { it.isFixed = true }
+        mn2Table.selectionModel.selectedItems.forEach { it.isFixed = true }
     }
 
     private fun mapItems() {
-        table.items.setAll(distinctMn2(picket.sortedExperimentalData).first.map { FixedMn2Model(it, false) })
+        mn2Table.items.setAll(distinctMn2(picket.sortedExperimentalData).first.map { FixedMn2Model(it, false) })
     }
 
     private fun listenToItemsProperties() {
-        table.items.forEach { item ->
+        mn2Table.items.forEach { item ->
             item.fixedProperty().addListener { _, _, _ ->
                 updateChart()
             }
@@ -192,14 +190,17 @@ class NormalizationScreenController @Inject constructor(
             ).also { it.name = decimalFormat.format(mn2) }
         }
 
+        val (normResApp, additive) = normalizeExperimentalData(
+            picket.sortedExperimentalData,
+            mn2Table.items.map { FixableValue(it.mn2, it.isFixed) },
+            idxMap
+        )
+
+        additiveResult = additive
+        normalizationResult = normResApp
+
         val normRes = Series(
-            normalizeExperimentalData(
-                picket.sortedExperimentalData,
-                table.items.map { FixableValue(it.mn2, it.isFixed) },
-                idxMap
-            ).also {
-                normalizationResult = it
-            }.mapIndexed { i, resApp ->
+            normResApp.mapIndexed { i, resApp ->
                 XYChart.Data(picket.sortedExperimentalData[i].ab2 as Number, resApp as Number)
             }.toObservableList()
         )

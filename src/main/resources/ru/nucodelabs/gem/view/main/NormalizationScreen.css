@@ -1,6 +1,6 @@
 .chart-line-symbol {
-    -fx-pref-height: 2;
-    -fx-pref-width: 2;
+    -fx-pref-height: 5;
+    -fx-pref-width: 5;
 }
 
 .chart-series-line {

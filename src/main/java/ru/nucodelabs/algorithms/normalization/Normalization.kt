@@ -1,24 +1,29 @@
 package ru.nucodelabs.algorithms.normalization
 
-import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.gem.util.std.asFraction
+import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.mathves.Normalization
 
 data class FixableValue<T>(val value: T, val isFixed: Boolean)
 
+/**
+ * @return normalized resistance and additive coefficients
+ */
 fun normalizeExperimentalData(
     experimentalData: List<ExperimentalData>,
     distinctMn2: List<FixableValue<Double>>,
     idxMap: List<Int>
-): List<Double> {
+): Pair<List<Double>, List<Double>> {
+    val add = DoubleArray(experimentalData.size)
     return Normalization.signalNormalizationSchlumberger(
         distinctMn2.map { it.value }.toDoubleArray(),
         distinctMn2.map { it.isFixed }.toBooleanArray(),
         experimentalData.map { it.ab2 }.toDoubleArray(),
         idxMap.map { it.toShort() }.toShortArray(),
         experimentalData.map { it.resistanceApparent }.toDoubleArray(),
-        experimentalData.map { it.errorResistanceApparent.asFraction() }.toDoubleArray()
-    ).toList()
+        experimentalData.map { it.errorResistanceApparent.asFraction() }.toDoubleArray(),
+        add
+    ).toList() to add.toList()
 }
 
 @JvmName("distinctMn2ForExpData")

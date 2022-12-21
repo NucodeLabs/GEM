@@ -4,8 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
 <?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
@@ -14,24 +13,28 @@
        fx:controller="ru.nucodelabs.gem.view.main.NormalizationScreenController" title="Нормализация кривых">
     <scene>
         <Scene stylesheets="@NormalizationScreen.css, @../common.css">
-            <VBox alignment="TOP_RIGHT" style="-fx-padding: 15;" spacing="15">
-                <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10">
-                    <LineChart fx:id="chart" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER_LEFT" style="-fx-padding: 15;" spacing="15">
+                <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10" VBox.vgrow="ALWAYS">
+                    <LineChart fx:id="chart" HBox.hgrow="ALWAYS" styleClass="padded-chart">
                         <xAxis>
-                            <LogarithmicAxis fx:id="xAxis"/>
+                            <LogarithmicAxis fx:id="xAxis" label="%ab2"/>
                         </xAxis>
                         <yAxis>
-                            <LogarithmicAxis fx:id="yAxis"/>
+                            <LogarithmicAxis fx:id="yAxis" label="%resistanceApparent"/>
                         </yAxis>
                     </LineChart>
-                    <TableView fx:id="table">
+                    <TableView fx:id="mn2Table" maxWidth="200">
                         <columns>
                             <!--                            <TableColumn fx:id="fixedCol" text="Зафиксировать" sortable="false"/>-->
-                            <TableColumn fx:id="mn2Col" text="%mn2" sortable="false"/>
+                            <TableColumn fx:id="mn2Col" text="%mn2" sortable="false" prefWidth="${mn2Table.width - 2}"/>
                         </columns>
                     </TableView>
                 </HBox>
-                <Button text="Применить" onAction="#apply" defaultButton="true"/>
+<!--                <Label text="a - аддитивный коэффициент"/>-->
+                <HBox>
+                    <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                    <Button text="Применить" onAction="#apply" defaultButton="true"/>
+                </HBox>
             </VBox>
         </Scene>
     </scene>

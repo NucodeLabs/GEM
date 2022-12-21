@@ -90,23 +90,22 @@ class MisfitStacksController @Inject constructor(
                     expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
                 val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
                 val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
-                val decimalFormat = DecimalFormat("#.##").apply {
-                    roundingMode = RoundingMode.HALF_UP
-                }
+                val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
+                val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
                 val targetFun = SquaresDiff()
                 val targetFunValue = targetFun.apply(
                     forwardSolver(picket.effectiveExperimentalData, picket.modelData),
                     picket.effectiveExperimentalData.map { it.resistanceApparent }
                 )
                 text.text =
-                    "целевая функция: f = ${decimalFormat.format(targetFunValue)}" +
+                    "целевая функция: f = ${dfFour.format(targetFunValue)}" +
                             "  |  " +
-                            "отклонение: avg = ${decimalFormat.format(avgWithoutErr)}, max = ${
-                                decimalFormat.format(
+                            "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
+                                dfFour.format(
                                     maxWithoutErr
                                 )
                             }" + "  |  " +
-                            "погрешность: avg = ${decimalFormat.format(avg)}%, max = ${decimalFormat.format(max)}%"
+                            "погрешность: avg = ${dfTwo.format(avg)}%, max = ${dfTwo.format(max)}%"
             }
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
