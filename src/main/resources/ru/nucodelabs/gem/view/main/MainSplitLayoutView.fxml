@@ -69,11 +69,20 @@
         }
 
         def openAbout() {
-            if (authorsWindow.owner == null) {
-                authorsWindow.initOwner(root)
+            openChildWindow(authorsWindow as Stage)
+        }
+
+        def openNormalizationScreen() {
+            openChildWindow(normalizationScreen as Stage)
+        }
+
+        def openChildWindow(Stage window) {
+            if (window.owner == null) {
+                window.initOwner(root as Stage)
             }
-            authorsWindow.icons.setAll(root.icons)
-            authorsWindow.show()
+            window.scene.stylesheets.addAll((root as Stage).scene.stylesheets)
+            window.icons.setAll((root as Stage).icons)
+            window.show()
         }
 
         def openAnisotropyMainView() {
@@ -201,14 +210,10 @@
                                             </ImageView>
                                         </graphic>
                                     </Button>
-                                    <Label style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
+                                    <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                                           style="-fx-text-fill: Gray" text="${controller.vesNumber}"/>
                                     <TextField fx:id="picketName" text="-" onAction="#submitPicketName"/>
                                     <fx:include source="SmallDivider.fxml"/>
-                                    <Label text="X"/>
-                                    <Label text="="/>
-                                    <Label fx:id="xCoordLbl" text="-"/>
-                                    <Label text="m"/>
-                                    <HBox HBox.hgrow="ALWAYS"/>
                                     <Label text="Z"/>
                                     <Label text="="/>
                                     <TextField promptText="Z" fx:id="picketZ" prefWidth="50" onAction="#submitZ"/>
@@ -220,6 +225,22 @@
                                                onAction="#submitOffsetX"/>
                                     <Label text="m"/>
                                     <fx:include source="SmallDivider.fxml"/>
+                                    <Label text="X"/>
+                                    <Label text="="/>
+                                    <Label fx:id="xCoordLbl" text="-"/>
+                                    <Label text="m"/>
+                                    <HBox HBox.hgrow="ALWAYS"/>
+                                    <fx:define>
+                                        <fx:include fx:id="normalizationScreen" source="NormalizationScreen.fxml"/>
+                                    </fx:define>
+                                    <Button text="%normalization" onAction="openNormalizationScreen()"
+                                            fx:id="normalizationBtn">
+                                        <graphic>
+                                            <ImageView fitWidth="15" fitHeight="15">
+                                                <Image url="@../../../../../img/ui_icons/discover_tune.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
                                     <Button text="%inverse" onAction="#inverseSolve" fx:id="inverseBtn">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">

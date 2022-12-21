@@ -2,6 +2,8 @@ package ru.nucodelabs.geo.ves.calc
 
 import ru.nucodelabs.geo.ves.ExperimentalData
 
+import ru.nucodelabs.mathves.Normalization
+
 fun orderByDistances() =
     compareBy<ExperimentalData> { it.ab2 }
         .thenBy { it.mn2 }

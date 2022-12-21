@@ -28,7 +28,7 @@ apply plugin: 'io.github.fvarrui.javapackager.plugin'
 apply plugin: 'kotlin'
 
 group 'ru.nucodelabs'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
@@ -49,10 +49,6 @@ ext {
     osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
     archName = currentArch.displayName.toLowerCase().contains("arm") ? "arm64" : "x86_64"
     platform = "$osName-$archName"
-
-    // JNI specific variables
-    libPrefix = currentOS.isWindows() ? "" : "lib"
-    libExt = currentOS.isMacOsX() ? "dylib" : currentOS.isLinux() ? "so" : "dll"
 
     runDir = "$projectDir/run"
 }
@@ -87,9 +83,9 @@ dependencies {
     implementation 'org.glassfish.expressly:expressly:5.0.0'
     implementation 'com.github.haifengl:smile-math:2.6.0'
     implementation 'com.github.haifengl:smile-interpolation:2.6.0'
-    implementation 'com.github.haifengl:smile-core:2.6.0'
+    implementation 'com.github.haifengl:smile-core:3.0.0'
     implementation 'com.github.haifengl:smile-data:2.6.0'
-    implementation 'com.github.haifengl:smile-plot:2.6.0'
+    implementation 'com.github.haifengl:smile-plot:3.0.0'
     implementation 'com.github.haifengl:smile-io:2.6.0'
     implementation "org.bytedeco:openblas:0.3.13-1.5.8:$platform"
     implementation "org.bytedeco:javacpp:1.5.8:$platform"
@@ -174,12 +170,12 @@ javapackager {
     organizationName = "NucodeLabs"
     name = "GEM"
     applicationName = "GEM"
-    version = "0.1"
+    version = "1.0"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
     additionalResources = [
-            file("lib/${libPrefix}MathVES_JNI.${libExt}"),
-            file("lib/${libPrefix}MathVES.${libExt}")
+            file("lib/${System.mapLibraryName("MathVES_JNI")}"),
+            file("lib/${System.mapLibraryName("MathVES")}")
     ]
 }
 

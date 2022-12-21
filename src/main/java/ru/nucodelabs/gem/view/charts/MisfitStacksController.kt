@@ -10,9 +10,6 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.stage.Stage
-import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
-import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
-import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.line
@@ -20,6 +17,11 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
+import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.SquaresDiff
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -32,7 +34,8 @@ class MisfitStacksController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val misfitsFunction: MisfitsFunction,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    private val forwardSolver: ForwardSolver
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
@@ -78,12 +81,32 @@ class MisfitStacksController @Inject constructor(
                         Point(expPoint.x as Number, misfits[index] as Number)
                     )
                 }
+
+                val avg = misfits.map { abs(it) }.average()
+                val max = misfits.maxOfOrNull { abs(it) } ?: 0.0
+
+                val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
+                val misfitsWithoutErr =
+                    expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
+                val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
+                val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
+                val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
+                val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
+                val targetFun = SquaresDiff()
+                val targetFunValue = targetFun.apply(
+                    forwardSolver(picket.effectiveExperimentalData, picket.modelData),
+                    picket.effectiveExperimentalData.map { it.resistanceApparent }
+                )
+                text.text =
+                    "целевая функция: f = ${dfFour.format(targetFunValue)}" +
+                            "  |  " +
+                            "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
+                                dfFour.format(
+                                    maxWithoutErr
+                                )
+                            }" + "  |  " +
+                            "погрешность: avg = ${dfTwo.format(avg)}%, max = ${dfTwo.format(max)}%"
             }
-            val avg = misfits.map { abs(it) }.average()
-            val decimalFormat = DecimalFormat("#.##").apply {
-                roundingMode = RoundingMode.HALF_UP
-            }
-            text.text = "avg = ${decimalFormat.format(avg)} %"
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
         } catch (e: IllegalStateException) {
@@ -109,9 +132,9 @@ class MisfitStacksController @Inject constructor(
             val nonZeroPoint = series.data[1]
             if (abs(nonZeroPoint.yValue.toDouble()) < 100.0) {
                 series.node.style = "-fx-stroke: LimeGreen;"
-                nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
+                nonZeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen;"
                 val zeroPoint = series.data[0]
-                zeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen"
+                zeroPoint.node.lookup(".chart-line-symbol").style = "-fx-background-color: LimeGreen;"
             }
         }
     }
