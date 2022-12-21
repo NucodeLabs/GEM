@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<?import ru.nucodelabs.gem.view.control.chart.ImageScatterChart?>
-<?import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap?>
-<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
+<?import ru.nucodelabs.gem.view.control.chart.*?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="ru.nucodelabs.gem.view.main.AnisotropyMainViewController"
@@ -24,12 +21,13 @@
                             <NucodeNumberAxis autoRanging="false"/>
                         </yAxis>
                     </ImageScatterChart>
-                    <SmartInterpolationMap fx:id="interpolChart" legendVisible="false">
+                    <SmartInterpolationMap fx:id="interpolChart" legendVisible="false" prefWidth="500" minWidth="500"
+                                           maxWidth="500" prefHeight="500" maxHeight="500" minHeight="500">
                         <xAxis>
-                            <NucodeNumberAxis autoRanging="true"/>
+                            <NucodeNumberAxis autoRanging="true" inverted="false"/>
                         </xAxis>
                         <yAxis>
-                            <NucodeNumberAxis autoRanging="true"/>
+                            <NucodeNumberAxis autoRanging="true" inverted="false"/>
                         </yAxis>
                     </SmartInterpolationMap>
                 </HBox>
