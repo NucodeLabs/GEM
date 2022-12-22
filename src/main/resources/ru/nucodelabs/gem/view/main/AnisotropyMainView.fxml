@@ -14,9 +14,9 @@
        title="Тестовые данные - GEM#Anisotropy">
     <scene>
         <Scene stylesheets="@../common.css, @../charts/MapPseudoSection.css">
-            <VBox fx:id="root">
+            <VBox fx:id="root" style="-fx-padding: 20;">
                 <HBox spacing="10">
-                    <VBox spacing="10" style="-fx-padding: 25;">
+                    <VBox spacing="10">
                         <ImageScatterChart fx:id="satChart" legendVisible="false">
                             <xAxis>
                                 <NucodeNumberAxis autoRanging="false"/>
