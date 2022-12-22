@@ -15,12 +15,12 @@
         <Scene stylesheets="@NormalizationScreen.css, @../common.css">
             <VBox alignment="CENTER_LEFT" style="-fx-padding: 15;" spacing="15">
                 <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10" VBox.vgrow="ALWAYS">
-                    <LineChart fx:id="chart" HBox.hgrow="ALWAYS" styleClass="padded-chart">
+                    <LineChart fx:id="chart" HBox.hgrow="ALWAYS" styleClass="padded-chart" animated="false">
                         <xAxis>
-                            <LogarithmicAxis fx:id="xAxis" label="%ab2"/>
+                            <LogarithmicAxis fx:id="xAxis" label="%ab2" animated="false"/>
                         </xAxis>
                         <yAxis>
-                            <LogarithmicAxis fx:id="yAxis" label="%resistanceApparent"/>
+                            <LogarithmicAxis fx:id="yAxis" label="%resistanceApparent" animated="false"/>
                         </yAxis>
                     </LineChart>
                     <TableView fx:id="mn2Table" maxWidth="300" prefWidth="300" minWidth="300">
