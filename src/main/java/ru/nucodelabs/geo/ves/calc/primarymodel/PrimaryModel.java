@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nucodelabs.geo.ves.JavaApi.copy;
-
 public class PrimaryModel {
 
     private final List<ExperimentalData> experimentalData;
@@ -19,7 +17,7 @@ public class PrimaryModel {
 
     public List<ModelLayer> get3LayersPrimaryModel() {
         if (experimentalData.size() <= 3) {
-            return new ArrayList<>();
+            throw new IllegalStateException("Для построения стартовой модели требуется ≥ 4 измерений, было " + experimentalData.size());
         }
 
         List<ExperimentalData> logExperimentalData = experimentalData.stream()

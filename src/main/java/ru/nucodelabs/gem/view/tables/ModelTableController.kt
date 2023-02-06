@@ -437,9 +437,15 @@ class ModelTableController @Inject constructor(
 
     @FXML
     fun makePrimaryModel() {
-        val primaryModel = PrimaryModel(picket.sortedExperimentalData)
-        val newModelData = primaryModel.get3LayersPrimaryModel()
-        historyManager.snapshotAfter { observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData) }
+        try {
+            val primaryModel = PrimaryModel(picket.sortedExperimentalData)
+            val newModelData = primaryModel.get3LayersPrimaryModel()
+            historyManager.snapshotAfter {
+                observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData)
+            }
+        } catch (e: IllegalStateException) {
+            alertsFactory.simpleExceptionAlert(e, stage).show()
+        }
     }
 
     @FXML
