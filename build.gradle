@@ -181,11 +181,11 @@ javapackager {
 }
 
 task packageMacApp(type: PackageTask, dependsOn: build) {
-    generateInstaller = false
+    generateInstaller = true
     macConfig {
         macStartup = MacStartup.UNIVERSAL
         icnsFile = file("src/main/resources/img/gem.icns")
-        generateDmg = false
+        generateDmg = true
         generatePkg = false
         codesignApp = false
     }
