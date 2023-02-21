@@ -24,16 +24,18 @@ public class PrimaryModel {
                 .map(experimentalData -> ru.nucodelabs.geo.ves.JavaApi.copy(experimentalData).ab2(Math.log(experimentalData.getAb2())).build())
                 .toList();
         int pointsCnt = logExperimentalData.size();
+        double ab2min = logExperimentalData.get(0).getAb2();
         double ab2max = logExperimentalData.get(pointsCnt - 1).getAb2();
+        double ab2range = ab2max - ab2min;
         List<List<ExperimentalData>> logSplitData = new ArrayList<>();
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() <= ab2min + (ab2range / 3.0))
                 .collect(Collectors.toList()));
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max * 2.0 / 3.0 && experimentalData.getAb2() > ab2max / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() <= ab2min + (ab2range * 2.0 / 3.0) && experimentalData.getAb2() > ab2min + (ab2range / 3.0))
                 .collect(Collectors.toList()));
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max && experimentalData.getAb2() > ab2max * 2.0 / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() > ab2min + (ab2range * 2.0 / 3.0))
                 .collect(Collectors.toList()));
 
         List<ModelLayer> modelLayers = new ArrayList<>();
