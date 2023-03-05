@@ -7,7 +7,7 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.layout.StackPane
 import javafx.scene.text.Text
 
-class PolygonNames (
+class PolygonWithNamesChart (
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>) : PolygonChart(xAxis, yAxis) {
     init {

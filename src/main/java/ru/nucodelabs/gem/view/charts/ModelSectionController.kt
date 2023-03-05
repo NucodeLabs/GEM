@@ -22,6 +22,7 @@ import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -31,7 +32,8 @@ private const val LAST_COEF = 0.5
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
     private val colorMapper: ColorMapper,
-    private val formatter: StringConverter<Number>
+    private val formatter: StringConverter<Number>,
+    private val df: DecimalFormat
 ) : AbstractController() {
 
     /**
@@ -136,7 +138,7 @@ class ModelSectionController @Inject constructor(
                     )
                 )
 
-                chart.data += series
+                chart.data += series.also { it.name = df.format(picket.modelData[i].power) }
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
