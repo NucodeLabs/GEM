@@ -8,26 +8,25 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.layout.StackPane
 import javafx.scene.text.Text
 
-class PolygonNames (
+class PolygonWithNamesChart (
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>) : PolygonChart(xAxis, yAxis) {
     init {
         animated = false
     }
 
-
    private fun updateText(): ObservableList<Node>? {
-
        for ((s,p) in seriesPolygons) {
            val po = p.points
-           val text = Text(po[0], po[1], "hjghj")
+           val text = Text(po[0], po[1], s.name)
            val group = Group()
            group.children.addAll(text)
            group.children.addAll(p)
            plotChildren.addAll(group)
        }
-        return plotChildren
+       return plotChildren
    }
+
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
