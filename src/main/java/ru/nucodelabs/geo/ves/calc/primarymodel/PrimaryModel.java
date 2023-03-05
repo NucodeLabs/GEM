@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nucodelabs.geo.ves.JavaApi.copy;
-
 public class PrimaryModel {
 
     private final List<ExperimentalData> experimentalData;
@@ -19,23 +17,25 @@ public class PrimaryModel {
 
     public List<ModelLayer> get3LayersPrimaryModel() {
         if (experimentalData.size() <= 3) {
-            return new ArrayList<>();
+            throw new IllegalStateException("Для построения стартовой модели требуется ≥ 4 измерений, было " + experimentalData.size());
         }
 
         List<ExperimentalData> logExperimentalData = experimentalData.stream()
                 .map(experimentalData -> ru.nucodelabs.geo.ves.JavaApi.copy(experimentalData).ab2(Math.log(experimentalData.getAb2())).build())
                 .toList();
         int pointsCnt = logExperimentalData.size();
+        double ab2min = logExperimentalData.get(0).getAb2();
         double ab2max = logExperimentalData.get(pointsCnt - 1).getAb2();
+        double ab2range = ab2max - ab2min;
         List<List<ExperimentalData>> logSplitData = new ArrayList<>();
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() <= ab2min + (ab2range / 3.0))
                 .collect(Collectors.toList()));
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max * 2.0 / 3.0 && experimentalData.getAb2() > ab2max / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() <= ab2min + (ab2range * 2.0 / 3.0) && experimentalData.getAb2() > ab2min + (ab2range / 3.0))
                 .collect(Collectors.toList()));
         logSplitData.add(logExperimentalData.stream()
-                .filter(experimentalData -> experimentalData.getAb2() <= ab2max && experimentalData.getAb2() > ab2max * 2.0 / 3.0)
+                .filter(experimentalData -> experimentalData.getAb2() > ab2min + (ab2range * 2.0 / 3.0))
                 .collect(Collectors.toList()));
 
         List<ModelLayer> modelLayers = new ArrayList<>();

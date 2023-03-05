@@ -36,7 +36,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
-        path: build/GEM/*
+        path: build/*.dmg
         
   packageWindowsExe_x64:
     runs-on: windows-latest

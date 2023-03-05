@@ -384,8 +384,7 @@ class VesCurvesController @Inject constructor(
         return when (seriesIndex) {
             EXP_CURVE_SERIES_INDEX,
             EXP_CURVE_ERROR_LOWER_SERIES_INDEX,
-            EXP_CURVE_ERROR_UPPER_SERIES_INDEX,
-            THEOR_CURVE_SERIES_INDEX -> {
+            EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
                     picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
@@ -394,8 +393,6 @@ class VesCurvesController @Inject constructor(
                     picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
                 )
                 val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
-                val theorRes = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver).getOrNull(pointIndex)?.y
-                val theorResStr = if (theorRes == null) "" else "\nρₐ (теор.) = ${decimalFormat.format(theorRes)} Ω‧m"
                 Tooltip(
                     """
                     №${effectiveToSortedMapping[pointIndex] + 1}
@@ -403,9 +400,32 @@ class VesCurvesController @Inject constructor(
                     ρₐ = $y Ω‧m
                     min ρₐ = $yLower
                     max ρₐ = $yUpper
-                """.trimIndent() + theorResStr
+                """.trimIndent()
                 ).forCharts()
             }
+
+            THEOR_CURVE_SERIES_INDEX -> {
+                val x = decimalFormat.format(point.xValue)
+                val yLower = decimalFormat.format(
+                    picket.sortedExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                )
+                val yUpper = decimalFormat.format(
+                    picket.sortedExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                )
+                val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistanceApparent)
+                val theorRes = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver).getOrNull(pointIndex)?.y
+                Tooltip(
+                    """
+                    №${pointIndex + 1}
+                    AB/2 = $x m
+                    ρₐ = $y Ω‧m
+                    min ρₐ = $yLower
+                    max ρₐ = $yUpper
+                    ρₐ (теор.) = ${decimalFormat.format(theorRes)} Ω‧m
+                """.trimIndent()
+                ).forCharts()
+            }
+
             else -> null
         }
     }
