@@ -18,8 +18,6 @@ open class PolygonChart(
         animated = false
     }
 
-    private val polygonNames = PolygonNames(xAxis, yAxis)
-
     private val _seriesPolygons: MutableMap<Series<Number, Number>, Polygon> = mutableMapOf()
     val seriesPolygons: Map<Series<Number, Number>, Polygon>
         get() = _seriesPolygons
@@ -42,7 +40,6 @@ open class PolygonChart(
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
         setupPolygonsAll()
-        polygonNames.getSeries()
     }
 
     private fun setupPolygonsAll() {
