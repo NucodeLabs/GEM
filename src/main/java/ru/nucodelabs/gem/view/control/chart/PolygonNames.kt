@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
 import javafx.collections.ObservableList
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.chart.ValueAxis
 import javafx.scene.layout.StackPane
@@ -14,13 +15,16 @@ class PolygonNames (
         animated = false
     }
 
+
    private fun updateText(): ObservableList<Node>? {
+
        for ((s,p) in seriesPolygons) {
-           val stack = StackPane()
            val po = p.points
-           val text = Text(po[0], po[1], s.name)
-           stack.children.addAll(p, text)
-           plotChildren.addAll(stack)
+           val text = Text(po[0], po[1], "hjghj")
+           val group = Group()
+           group.children.addAll(text)
+           group.children.addAll(p)
+           plotChildren.addAll(group)
        }
         return plotChildren
    }
