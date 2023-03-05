@@ -145,7 +145,7 @@ task distClr(type: Copy) {
 tasks.withType(JavaExec) {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
 //    dependsOn forwardSolver, misfitFunctions
-    allJvmArgs = ["-Djava.library.path=" + file("${projectDir}/run").absolutePath]
+    allJvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath]
     workingDir = file(runDir)
     finalizedBy cleanRunDir
 }
@@ -154,7 +154,7 @@ test {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
     useJUnitPlatform()
-    systemProperty "java.library.path", file("${projectDir}/run").absolutePath
+    systemProperty "java.library.path", file(runDir).absolutePath
     finalizedBy cleanRunDir
 }
 
