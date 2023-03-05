@@ -139,7 +139,7 @@ class ModelSectionController @Inject constructor(
                 )
 
                 chart.data += series
-                series.name = df.format(picket.modelData[i].power)
+                series.name = df.format(picket.modelData[i].resistance)
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
