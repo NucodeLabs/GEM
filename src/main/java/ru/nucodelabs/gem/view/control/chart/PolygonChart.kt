@@ -9,7 +9,7 @@ import javafx.scene.shape.Polygon
  * Draws polygons using points of each series.
  * To get polygons references use `seriesPolygons` map view.
  */
-class PolygonChart(
+open class PolygonChart(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
@@ -17,6 +17,8 @@ class PolygonChart(
     init {
         animated = false
     }
+
+    private val polygonNames = PolygonNames(xAxis, yAxis)
 
     private val _seriesPolygons: MutableMap<Series<Number, Number>, Polygon> = mutableMapOf()
     val seriesPolygons: Map<Series<Number, Number>, Polygon>
@@ -40,6 +42,7 @@ class PolygonChart(
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
         setupPolygonsAll()
+        polygonNames.getSeries()
     }
 
     private fun setupPolygonsAll() {
