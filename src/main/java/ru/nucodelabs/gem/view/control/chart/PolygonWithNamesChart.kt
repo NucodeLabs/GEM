@@ -6,6 +6,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.chart.ValueAxis
 import javafx.scene.layout.StackPane
+import javafx.scene.text.Font
 import javafx.scene.text.Text
 
 class PolygonWithNamesChart (
@@ -19,6 +20,7 @@ class PolygonWithNamesChart (
        for ((s,p) in seriesPolygons) {
            val po = p.points
            val text = Text(po[0], po[1], s.name)
+            text.font = Font(15.0)
            val group = Group()
            group.children.addAll(text)
            group.children.addAll(p)
