@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app;
+package ru.nucodelabs.gem.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -12,20 +12,18 @@ import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 import ru.nucodelabs.files.clr.ClrParser;
 import ru.nucodelabs.files.clr.ColorNode;
+import ru.nucodelabs.gem.app.GemApplication;
 import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
-import ru.nucodelabs.gem.view.FileChoosersModule;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 import ru.nucodelabs.gem.view.main.MainViewController;
-import ru.nucodelabs.gem.view.main.MainViewModule;
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -183,7 +181,7 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ColorMapper colorMapper(@Named("CLR") File clrFile) throws FileNotFoundException {
+    ColorMapper colorMapper(@Named("CLR") File clrFile) {
         ClrParser clrParser = new ClrParser(clrFile);
         System.out.println(clrFile.getAbsolutePath());
         List<ColorNode> valueColorList = clrParser.getColorNodes();

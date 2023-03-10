@@ -10,6 +10,7 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
+import ru.nucodelabs.gem.config.AppModule
 import ru.nucodelabs.gem.util.OS
 import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AlertsFactory

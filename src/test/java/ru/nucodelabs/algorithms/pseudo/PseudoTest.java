@@ -1,13 +1,11 @@
 package ru.nucodelabs.algorithms.pseudo;
 
-import com.google.inject.Guice;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
-import ru.nucodelabs.gem.app.AppModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,7 @@ public class PseudoTest extends Application {
         list2.add(new XYChart.Data<>(100d, 32d, 33d));
         list2.add(new XYChart.Data<>(100d, 42d, 24d));
 
-        var injector = Guice.createInjector(new AppModule());
+//        var injector = Guice.createInjector(new AppModule());
 
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root));

@@ -1,15 +1,17 @@
-package ru.nucodelabs.gem.view.main;
+package ru.nucodelabs.gem.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import ru.nucodelabs.gem.fxmodel.ObservableSection;
-import ru.nucodelabs.geo.ves.Section;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
-import ru.nucodelabs.gem.view.DialogsModule;
-import ru.nucodelabs.gem.view.charts.ChartsModule;
+import ru.nucodelabs.gem.fxmodel.ObservableSection;
+import ru.nucodelabs.gem.view.main.FileImporter;
+import ru.nucodelabs.gem.view.main.FileOpener;
+import ru.nucodelabs.gem.view.main.MainViewController;
+import ru.nucodelabs.gem.view.main.ObservableDataModule;
+import ru.nucodelabs.geo.ves.Section;
 
 import static com.google.inject.Scopes.SINGLETON;
 

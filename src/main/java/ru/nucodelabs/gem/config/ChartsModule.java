@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.charts;
+package ru.nucodelabs.gem.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -11,8 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import ru.nucodelabs.gem.net.MapImageProvider;
 import ru.nucodelabs.gem.net.YandexMapsImageProvider;
-import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction;
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
+import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction;
 
 import java.util.ArrayList;
 

@@ -9,12 +9,11 @@ import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.gem.app.AppModule
+import ru.nucodelabs.gem.config.AppModule
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.FXTest
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.log.PseudoLogarithmicAxis
 import ru.nucodelabs.geo.ves.calc.interpolation.AnisotropyTestData
 
 internal class SmartInterpolationMapTest : FXTest() {

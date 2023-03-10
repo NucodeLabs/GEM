@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view;
+package ru.nucodelabs.gem.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
