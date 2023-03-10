@@ -14,9 +14,6 @@ import javafx.scene.control.cell.TextFieldTableCell
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
-import ru.nucodelabs.algorithms.normalization.FixableValue
-import ru.nucodelabs.algorithms.normalization.distinctMn2
-import ru.nucodelabs.algorithms.normalization.normalizeExperimentalData
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.gem.util.fx.getValue
@@ -28,6 +25,9 @@ import ru.nucodelabs.gem.view.tables.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.tables.STYLE_FOR_FIXED
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.FixableValue
+import ru.nucodelabs.geo.ves.calc.distinctMn2
+import ru.nucodelabs.geo.ves.calc.normalizeExperimentalData
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL

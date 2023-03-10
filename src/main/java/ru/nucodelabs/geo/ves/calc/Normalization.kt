@@ -1,4 +1,4 @@
-package ru.nucodelabs.algorithms.normalization
+package ru.nucodelabs.geo.ves.calc
 
 import ru.nucodelabs.gem.util.std.asFraction
 import ru.nucodelabs.geo.ves.ExperimentalData
