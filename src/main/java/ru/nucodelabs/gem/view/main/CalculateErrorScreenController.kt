@@ -15,19 +15,18 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter
 import javafx.stage.Stage
 import javafx.util.Callback
-import ru.nucodelabs.geo.ves.calc.error.*
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ObservableSection
-import ru.nucodelabs.gem.fxmodel.toObservable
-import ru.nucodelabs.geo.ves.ExperimentalData
-import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.Section
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
 import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.tables.indexCellFactory
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.error.*
 import java.net.URL
 import java.text.DecimalFormat
@@ -51,7 +50,8 @@ class CalculateErrorScreenController @Inject constructor(
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val observablePicket: ObservableObjectValue<Picket>,
-    private val picketIndexProp: IntegerProperty
+    private val picketIndexProp: IntegerProperty,
+    private val fxModelMapper: FxModelMapper
 ) : AbstractController() {
     @FXML
     private lateinit var resAvgCol: TableColumn<ObservableExperimentalData, String>
@@ -130,7 +130,7 @@ class CalculateErrorScreenController @Inject constructor(
     }
 
     private fun mapItems() {
-        table.items = data.map { it.toObservable() }.toObservableList()
+        table.items = data.map { fxModelMapper.toObservable(it) }.toObservableList()
     }
 
     private fun listenToItems() {
@@ -223,7 +223,7 @@ class CalculateErrorScreenController @Inject constructor(
         resCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (rhoA, min, max, _, _) = resAppWithError(f.value.toExperimentalData())
+                    val (rhoA, min, max, _, _) = resAppWithError(fxModelMapper.toModel(f.value))
                     "${min.fmt()} $LEQ_S ${rhoA.fmt()} $LEQ_S ${max.fmt()}"
                 },
                 f.value.ab2Property(),
@@ -238,7 +238,7 @@ class CalculateErrorScreenController @Inject constructor(
         resAvgCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (_, _, _, avg, _) = resAppWithError(f.value.toExperimentalData())
+                    val (_, _, _, avg, _) = resAppWithError(fxModelMapper.toModel(f.value))
                     f.value.resistanceApparent = avg
                     avg.fmt()
                 },
@@ -254,7 +254,7 @@ class CalculateErrorScreenController @Inject constructor(
         errorResistanceCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (_, _, _, _, error) = resAppWithError(f.value.toExperimentalData())
+                    val (_, _, _, _, error) = resAppWithError(fxModelMapper.toModel(f.value))
                     f.value.errorResistanceApparent = error
                     error.fmt()
                 },

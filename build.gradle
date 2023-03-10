@@ -92,6 +92,11 @@ dependencies {
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8:$osName-x86_64"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8"
     implementation 'org.codehaus.groovy:groovy-all:3.0.13'
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
 //    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation "org.openjfx:javafx:${jfxVersion}"

@@ -18,7 +18,7 @@ import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ObservableSection
-import ru.nucodelabs.gem.fxmodel.toObservable
+import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.toObservableList
@@ -61,7 +61,8 @@ class ModelTableController @Inject constructor(
     private val validator: Validator,
     private val historyManager: HistoryManager<Section>,
     private val doubleStringConverter: StringConverter<Double>,
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
+    private val mapper: FxModelMapper
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
@@ -98,7 +99,7 @@ class ModelTableController @Inject constructor(
         picketObservable.addListener { _, oldValue, newValue ->
             newValue?.let {
                 if (oldValue != null
-                    && newValue.modelData != table.items.map { it.toModelLayer() }
+                    && newValue.modelData != table.items.map { mapper.toModel(it) }
                 ) {
                     update()
                 } else if (oldValue == null) {
@@ -137,11 +138,11 @@ class ModelTableController @Inject constructor(
     }
 
     private fun fixPowerForSelected() {
-        val modelData = table.items.map { it.toModelLayer() }.toMutableList()
+        val modelData = table.items.map { mapper.toModel(it) }.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedPower = true)
         }
-        table.items.setAll(modelData.map { it.toObservable() })
+        table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun fixResistanceForSelected() {
@@ -149,7 +150,7 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedResistance = true)
         }
-        table.items.setAll(modelData.map { it.toObservable() })
+        table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun unfixPowerForSelected() {
@@ -157,7 +158,7 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedPower = false)
         }
-        table.items.setAll(modelData.map { it.toObservable() })
+        table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun unfixResistanceForSelected() {
@@ -165,7 +166,7 @@ class ModelTableController @Inject constructor(
         for (index in table.selectionModel.selectedIndices) {
             modelData[index] = modelData[index].copy(isFixedResistance = false)
         }
-        table.items.setAll(modelData.map { it.toObservable() })
+        table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun setupRowFactory() {
@@ -231,12 +232,12 @@ class ModelTableController @Inject constructor(
     }
 
     private fun joinSelected() {
-        val selected = table.selectionModel.selectedItems.map { it.toModelLayer() }
+        val selected = table.selectionModel.selectedItems.map { mapper.toModel(it) }
         val joined = selected.join()
-        val items = table.items.map { it.toModelLayer() }.toMutableList()
+        val items = table.items.map { mapper.toModel(it) }.toMutableList()
         items -= selected.toSet()
         items.add(table.selectionModel.selectedIndices[0], joined)
-        table.items.setAll(items.map { it.toObservable() })
+        table.items.setAll(items.map { mapper.toObservable(it) })
     }
 
     private fun copySelected() {
@@ -244,7 +245,7 @@ class ModelTableController @Inject constructor(
             buildMap {
                 put(
                     DataFormat.PLAIN_TEXT,
-                    table.selectionModel.selectedItems.map { it.toModelLayer() }.toTabulatedTable()
+                    table.selectionModel.selectedItems.map { mapper.toModel(it) }.toTabulatedTable()
                 )
             }
         )
@@ -265,7 +266,7 @@ class ModelTableController @Inject constructor(
                 }
             }
         }
-        table.items.setAll(modelData.map { it.toObservable() })
+        table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun setupCellFactories() {
@@ -349,7 +350,7 @@ class ModelTableController @Inject constructor(
     }
 
     private fun mapItems() {
-        table.items = picket.modelData.map { it.toObservable() }.toObservableList()
+        table.items = picket.modelData.map { mapper.toObservable(it) }.toObservableList()
     }
 
     private fun listenToItemsList() {
@@ -395,7 +396,7 @@ class ModelTableController @Inject constructor(
     }
 
     private fun commitChanges() {
-        val modelDataInTable = table.items.map { it.toModelLayer() }
+        val modelDataInTable = table.items.map { mapper.toModel(it) }
         if (modelDataInTable != picket.modelData) {
             historyManager.snapshotAfter {
                 observableSection.pickets[picketIndex] = picket.copy(modelData = modelDataInTable)
@@ -450,12 +451,12 @@ class ModelTableController @Inject constructor(
 
     @FXML
     private fun copyFromLeft() {
-        table.items.setAll(observableSection.pickets[picketIndex - 1].modelData.map { it.toObservable() })
+        table.items.setAll(observableSection.pickets[picketIndex - 1].modelData.map { mapper.toObservable(it) })
     }
 
     @FXML
     private fun copyFromRight() {
-        table.items.setAll(observableSection.pickets[picketIndex + 1].modelData.map { it.toObservable() })
+        table.items.setAll(observableSection.pickets[picketIndex + 1].modelData.map { mapper.toObservable(it) })
     }
 
     @FXML
@@ -499,7 +500,7 @@ class ModelTableController @Inject constructor(
                     return
                 }
             }
-            table.items += pastedItems.map { it.toObservable() }
+            table.items += pastedItems.map { mapper.toObservable(it) }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }

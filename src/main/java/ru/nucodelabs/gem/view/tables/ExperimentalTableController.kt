@@ -18,25 +18,19 @@ import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
+import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ObservableSection
-import ru.nucodelabs.gem.fxmodel.toObservable
-import ru.nucodelabs.geo.ves.calc.*
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
+import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
-import ru.nucodelabs.gem.util.TextToTableParser
-import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
-import ru.nucodelabs.gem.util.fx.decimalFilter
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.main.FileImporter
 import ru.nucodelabs.geo.ves.*
-import ru.nucodelabs.geo.ves.calc.k
-import ru.nucodelabs.geo.ves.calc.u
-import ru.nucodelabs.geo.ves.calc.withCalculatedResistanceApparent
+import ru.nucodelabs.geo.ves.calc.*
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
@@ -62,13 +56,14 @@ class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val validator: Validator,
     private val observableSection: ObservableSection,
-    private val picketIndexProperty: IntegerProperty,
+    picketIndexProperty: IntegerProperty,
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat,
     @Named("CSS") private val css: String,
-    fileImporterProvider: Provider<FileImporter>
+    fileImporterProvider: Provider<FileImporter>,
+    private val mapper: FxModelMapper
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
@@ -119,7 +114,7 @@ class ExperimentalTableController @Inject constructor(
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 if (oldValue != null
-                    && newValue.sortedExperimentalData != table.items.map { it.toExperimentalData() }
+                    && newValue.sortedExperimentalData != table.items.map { (it) }
                 ) {
                     update()
                 } else if (oldValue == null) {
@@ -160,7 +155,7 @@ class ExperimentalTableController @Inject constructor(
             buildMap {
                 put(
                     DataFormat.PLAIN_TEXT,
-                    table.selectionModel.selectedItems.map { it.toExperimentalData() }.toTabulatedTable()
+                    table.selectionModel.selectedItems.map { mapper.toModel(it) }.toTabulatedTable()
                 )
             }
         )
@@ -284,7 +279,7 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun mapItems() {
-        table.items = picket.sortedExperimentalData.map { it.toObservable() }.toObservableList()
+        table.items = picket.sortedExperimentalData.map { mapper.toObservable(it) }.toObservableList()
     }
 
     private fun listenToItemsProperties(items: List<ObservableExperimentalData>) {
@@ -371,7 +366,7 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun commitChanges() {
-        val experimentalDataInTable = table.items.map { it.toExperimentalData() }
+        val experimentalDataInTable = table.items.map { mapper.toModel(it) }
         if (experimentalDataInTable != picket.sortedExperimentalData) {
             historyManager.snapshotAfter {
                 observableSection.pickets[picketIndex] =
@@ -382,7 +377,7 @@ class ExperimentalTableController @Inject constructor(
 
     private fun showCalcErrorWindowForSelected() {
         lazyInitCalcErrorScreen()
-        calculateErrorScreenController.data.setAll(table.selectionModel.selectedItems.map { it.toExperimentalData() })
+        calculateErrorScreenController.data.setAll(table.selectionModel.selectedItems.map { mapper.toModel(it) })
         calculateErrorScreen.show()
     }
 
@@ -394,25 +389,26 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun setIsHiddenOnSelected(isHidden: Boolean) {
-        val items = table.items.map { it.toExperimentalData() }.toMutableList()
+        val items = table.items.map { mapper.toModel(it) }.toMutableList()
         for (idx in table.selectionModel.selectedIndices) {
             items[idx] = items[idx].copy(isHidden = isHidden)
         }
-        table.items.setAll(items.map { it.toObservable() })
+        table.items.setAll(items.map { mapper.toObservable(it) })
     }
 
     private fun toggleSingleHidden(item: ObservableExperimentalData, isHidden: Boolean) {
         if (isHidden) {
             commitChanges()
         } else {
-            val selected = item.toExperimentalData()
-            val dupGroups = table.items.map { it.toExperimentalData() }.groupBy { it.ab2 }.values.filter { it.size > 1 }
+            val selected = mapper.toModel(item)
+            val dupGroups =
+                table.items.map { mapper.toModel(it) }.groupBy { it.ab2 }.values.filter { it.size > 1 }
             val group = dupGroups.find { selected in it }
             if (group != null) {
                 val other = group - selected
-                val all = table.items.map { it.toExperimentalData() }.toMutableList()
+                val all = table.items.map { mapper.toModel(it) }.toMutableList()
                 all.replaceAll { if (it in other) it.copy(isHidden = true) else it }
-                table.items.setAll(all.map { it.toObservable() })
+                table.items.setAll(all.map { mapper.toObservable(it) })
             } else {
                 commitChanges()
             }
@@ -420,11 +416,11 @@ class ExperimentalTableController @Inject constructor(
     }
 
     private fun setErrorOnSelected(error: Double) {
-        val items = table.items.map { it.toExperimentalData() }.toMutableList()
+        val items = table.items.map { mapper.toModel(it) }.toMutableList()
         for (i in table.selectionModel.selectedIndices) {
             items[i] = items[i].copy(errorResistanceApparent = error)
         }
-        table.items.setAll(items.map { it.toObservable() })
+        table.items.setAll(items.map { mapper.toObservable(it) })
     }
 
     @FXML
@@ -434,13 +430,13 @@ class ExperimentalTableController @Inject constructor(
 
     @FXML
     private fun recalculateSelected() {
-        val experimentalData = table.items.map { it.toExperimentalData() }.toMutableList()
+        val experimentalData = table.items.map { mapper.toModel(it) }.toMutableList()
 
         for (i in table.selectionModel.selectedIndices) {
             experimentalData[i] = experimentalData[i].withCalculatedResistanceApparent()
         }
 
-        table.items.setAll(experimentalData.map { it.toObservable() })
+        table.items.setAll(experimentalData.map { mapper.toObservable(it) })
     }
 
     @FXML
@@ -509,7 +505,7 @@ class ExperimentalTableController @Inject constructor(
                     return
                 }
             }
-            table.items += pastedItems.map { it.toObservable() }
+            table.items += pastedItems.map { mapper.toObservable(it) }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }

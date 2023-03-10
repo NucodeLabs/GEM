@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.fxmodel
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.setValue
 
@@ -15,19 +14,6 @@ class ObservableExperimentalData(
     errorResistanceApparent: Double,
     isHidden: Boolean = false
 ) {
-    constructor(experimentalData: ExperimentalData) : this(
-        experimentalData.ab2,
-        experimentalData.mn2,
-        experimentalData.amperage,
-        experimentalData.voltage,
-        experimentalData.resistanceApparent,
-        experimentalData.errorResistanceApparent,
-        experimentalData.isHidden
-    )
-
-    fun toExperimentalData() =
-        ExperimentalData(ab2, mn2, amperage, voltage, resistanceApparent, errorResistanceApparent, isHidden)
-
     private val ab2Property = SimpleDoubleProperty(ab2)
     fun ab2Property() = ab2Property
     var ab2 by ab2Property
@@ -56,5 +42,3 @@ class ObservableExperimentalData(
     fun hiddenProperty() = hiddenProperty
     var isHidden by hiddenProperty
 }
-
-fun ExperimentalData.toObservable() = ObservableExperimentalData(this)
