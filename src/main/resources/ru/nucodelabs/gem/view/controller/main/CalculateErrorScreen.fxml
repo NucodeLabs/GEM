@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.Scene?>
+<?import javafx.stage.Stage?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<Stage xmlns:fx="http://javafx.com/fxml"
+       xmlns="http://javafx.com/javafx"
+       fx:controller="ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController" fx:id="root"
+       title="Рассчет погрешности" width="1280">
+    <scene>
+        <Scene stylesheets="@../../common.css, @CalculateErrorScreen.css">
+            <VBox alignment="TOP_CENTER" style="-fx-padding: 15;" maxHeight="Infinity" maxWidth="Infinity">
+                <HBox>
+                    <VBox spacing="10">
+                        <Label text="Погрешность измерения" styleClass="window-header"/>
+                        <GridPane hgap="10" vgap="5">
+                            <Label text="Расстояние" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label text="Напряжение" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label text="Сила тока" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+
+                            <Label text="Относительная [%]" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="Абсолютная" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+
+                            <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="distAErrorTf"/>
+                            <TextField GridPane.rowIndex="1" GridPane.columnIndex="2" fx:id="distBErrorTf"/>
+
+                            <TextField GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="uAErrorTf"/>
+                            <TextField GridPane.rowIndex="2" GridPane.columnIndex="2" fx:id="uBErrorTf"/>
+
+                            <TextField GridPane.rowIndex="3" GridPane.columnIndex="1" fx:id="iAErrorTf"/>
+                            <TextField GridPane.rowIndex="3" GridPane.columnIndex="2" fx:id="iBErrorTf"/>
+
+                            <Label text="m" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                            <Label text="mV" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+                            <Label text="mA" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+                        </GridPane>
+                        <Label text="Формулы" styleClass="window-header"/>
+                        <ImageView preserveRatio="true" fitHeight="55">
+                            <Image url="@../../../../../../img/rhoA.png"/>
+                        </ImageView>
+                        <ImageView preserveRatio="true" fitHeight="65">
+                            <Image url="@../../../../../../img/k.png"/>
+                        </ImageView>
+                    </VBox>
+                    <LineChart animated="false"
+                               title="График погрешности" HBox.hgrow="ALWAYS" fx:id="chart">
+                        <xAxis>
+                            <LogarithmicAxis label="%ab2" autoRanging="true">
+                            </LogarithmicAxis>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Погрешность [%]">
+                            </NumberAxis>
+                        </yAxis>
+                    </LineChart>
+                </HBox>
+                <Separator/>
+                <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№" styleClass="centered-column"
+                                     resizable="false" editable="false" fx:id="indexCol"/>
+                        <TableColumn fx:id="ab2Col" sortable="false">
+                            <graphic>
+                                <Label text="%ab2">
+                                    <tooltip>
+                                        <Tooltip text="%ab2Full"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="mn2Col" sortable="false">
+                            <graphic>
+                                <Label text="%mn2">
+                                    <tooltip>
+                                        <Tooltip text="%mn2Full"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="kCol" sortable="false">
+                            <graphic>
+                                <Label text="K">
+                                    <tooltip>
+                                        <Tooltip text="%kFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="amperageCol" sortable="false">
+                            <graphic>
+                                <Label text="%amperage">
+                                    <tooltip>
+                                        <Tooltip text="%amperageFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="voltageCol" sortable="false">
+                            <graphic>
+                                <Label text="%voltage">
+                                    <tooltip>
+                                        <Tooltip text="%voltageFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="resCol" sortable="false">
+                            <graphic>
+                                <Label text="%resistanceApparent">
+                                    <tooltip>
+                                        <Tooltip text="%resistanceApparentFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="resAvgCol" sortable="false">
+                            <graphic>
+                                <Label text="%resistanceApparentAvg">
+                                    <tooltip>
+                                        <Tooltip text="%resistanceApparentFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                        <TableColumn fx:id="errorResistanceCol" sortable="false">
+                            <graphic>
+                                <Label text="%errorResistanceApparent">
+                                    <tooltip>
+                                        <Tooltip text="%errorResistanceApparentFull"/>
+                                    </tooltip>
+                                </Label>
+                            </graphic>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+                <Separator style="-fx-padding: 10;"/>
+                <HBox alignment="BASELINE_RIGHT">
+                    <Button text="Применить" onAction="#apply" defaultButton="true"/>
+                </HBox>
+            </VBox>
+        </Scene>
+    </scene>
+</Stage>

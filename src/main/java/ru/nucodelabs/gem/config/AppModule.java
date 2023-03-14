@@ -20,7 +20,7 @@ import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
-import ru.nucodelabs.gem.view.main.MainViewController;
+import ru.nucodelabs.gem.view.controller.main.MainViewController;
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 
 import java.io.File;
@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import static com.fasterxml.jackson.module.kotlin.ExtensionsKt.jacksonObjectMapper;
@@ -182,9 +183,9 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ColorMapper colorMapper(@Named("CLR") File clrFile) {
+    ColorMapper colorMapper(@Named("CLR") File clrFile, Logger log) {
         ClrParser clrParser = new ClrParser(clrFile);
-        System.out.println(clrFile.getAbsolutePath());
+        log.info("Colormap CLR file path: " + clrFile.getAbsolutePath());
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 1500, 15);
     }

@@ -14,7 +14,7 @@ import ru.nucodelabs.gem.config.AppModule
 import ru.nucodelabs.gem.util.OS
 import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.main.MainViewController
+import ru.nucodelabs.gem.view.controller.main.MainViewController
 import java.io.File
 import java.time.LocalDate.now
 import java.time.format.DateTimeFormatter.ofPattern

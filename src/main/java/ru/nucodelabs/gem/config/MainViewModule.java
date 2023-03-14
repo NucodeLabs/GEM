@@ -7,10 +7,9 @@ import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
 import ru.nucodelabs.gem.fxmodel.ObservableSection;
-import ru.nucodelabs.gem.view.main.FileImporter;
-import ru.nucodelabs.gem.view.main.FileOpener;
-import ru.nucodelabs.gem.view.main.MainViewController;
-import ru.nucodelabs.gem.view.main.ObservableDataModule;
+import ru.nucodelabs.gem.view.controller.FileImporter;
+import ru.nucodelabs.gem.view.controller.FileOpener;
+import ru.nucodelabs.gem.view.controller.main.MainViewController;
 import ru.nucodelabs.geo.ves.Section;
 
 import static com.google.inject.Scopes.SINGLETON;

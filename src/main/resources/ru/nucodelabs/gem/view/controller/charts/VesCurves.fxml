@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis?>
+<?import ru.nucodelabs.gem.view.controller.main.UIConstantsKt?>
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      maxHeight="Infinity"
+      maxWidth="Infinity"
+      stylesheets="@../../common.css, @VesCurves.css"
+      VBox.vgrow="ALWAYS"
+      fx:controller="ru.nucodelabs.gem.view.controller.charts.VesCurvesController">
+    <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
+        <Label fx:id="title" styleClass="chart-label" text="%ves" VBox.vgrow="NEVER"/>
+        <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+        <!--        <HBox spacing="5" style="-fx-padding: 5">-->
+        <!--            <Button contentDisplay="GRAPHIC_ONLY">-->
+        <!--                <graphic>-->
+        <!--                    <ImageView fitHeight="15" fitWidth="15">-->
+        <!--                        <Image url="@../../../../../img/ui_icons/zoom_in.png"/>-->
+        <!--                    </ImageView>-->
+        <!--                </graphic>-->
+        <!--            </Button>-->
+        <!--            <Button contentDisplay="GRAPHIC_ONLY">-->
+        <!--                <graphic>-->
+        <!--                    <ImageView fitHeight="15" fitWidth="15">-->
+        <!--                        <Image url="@../../../../../img/ui_icons/zoom_out.png"/>-->
+        <!--                    </ImageView>-->
+        <!--                </graphic>-->
+        <!--            </Button>-->
+        <!--        </HBox>-->
+    </HBox>
+    <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
+               styleClass="padded-chart" onScroll="#zoom" onMousePressed="#pressed" onMouseDragged="#drugged">
+        <xAxis>
+            <LogarithmicAxis fx:id="xAxis"
+                             label="%ab2"
+                             side="BOTTOM"
+                             autoRanging="false"
+                             lowerBound="1" upperBound="1e4">
+            </LogarithmicAxis>
+        </xAxis>
+        <yAxis>
+            <LogarithmicAxis fx:id="yAxis"
+                             label="%resistanceApparent"
+                             side="LEFT"
+                             autoRanging="false"
+                             lowerBound="1" upperBound="10e4">
+                <prefWidth>
+                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                </prefWidth>
+            </LogarithmicAxis>
+        </yAxis>
+    </LineChart>
+</VBox>

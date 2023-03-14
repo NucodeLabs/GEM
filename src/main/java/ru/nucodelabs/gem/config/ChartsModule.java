@@ -16,7 +16,7 @@ import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction;
 
 import java.util.ArrayList;
 
-import static ru.nucodelabs.gem.view.charts.VesCurvesController.TOTAL_COUNT;
+import static ru.nucodelabs.gem.view.controller.charts.VesCurvesController.TOTAL_COUNT;
 
 public class ChartsModule extends AbstractModule {
     @Provides
