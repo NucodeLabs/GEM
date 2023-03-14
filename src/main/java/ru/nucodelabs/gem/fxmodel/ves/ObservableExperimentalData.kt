@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.fxmodel
+package ru.nucodelabs.gem.fxmodel.ves
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty

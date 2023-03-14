@@ -4,7 +4,7 @@ import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.controller.AbstractController

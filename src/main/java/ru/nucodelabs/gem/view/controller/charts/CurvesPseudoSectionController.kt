@@ -7,7 +7,7 @@ import javafx.scene.chart.XYChart.Data
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.installTooltips

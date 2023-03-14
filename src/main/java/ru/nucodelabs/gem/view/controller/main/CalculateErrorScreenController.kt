@@ -16,9 +16,9 @@ import javafx.scene.control.TextFormatter
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.fxmodel.ObservableExperimentalData
-import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
+import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList

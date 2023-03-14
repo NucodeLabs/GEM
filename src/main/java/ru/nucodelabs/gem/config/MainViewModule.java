@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
-import ru.nucodelabs.gem.fxmodel.ObservableSection;
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection;
 import ru.nucodelabs.gem.view.controller.FileImporter;
 import ru.nucodelabs.gem.view.controller.FileOpener;
 import ru.nucodelabs.gem.view.controller.main.MainViewController;

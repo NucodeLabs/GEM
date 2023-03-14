@@ -10,7 +10,7 @@ import javafx.scene.control.MenuItem
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.std.swap
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.Section

@@ -7,7 +7,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis

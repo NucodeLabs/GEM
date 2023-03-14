@@ -16,9 +16,9 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.fxmodel.ObservableModelLayer
-import ru.nucodelabs.gem.fxmodel.ObservableSection
 import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
+import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.toObservableList

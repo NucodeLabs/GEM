@@ -24,7 +24,7 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
-import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.view.AlertsFactory

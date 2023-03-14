@@ -1,8 +1,6 @@
-package ru.nucodelabs.data.ves
+package ru.nucodelabs.geo.ves
 
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.geo.ves.ModelLayer
-import ru.nucodelabs.geo.ves.toTabulatedTable
 
 internal class TableConversionKtTest {
     @Test

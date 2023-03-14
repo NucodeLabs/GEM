@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.fxmodel.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import ru.nucodelabs.gem.fxmodel.ObservableExperimentalData;
-import ru.nucodelabs.gem.fxmodel.ObservableModelLayer;
+import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData;
+import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
 
