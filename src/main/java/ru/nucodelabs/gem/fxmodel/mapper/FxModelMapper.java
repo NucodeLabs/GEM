@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal;
@@ -32,6 +33,8 @@ public abstract class FxModelMapper {
     public abstract ModelLayer toModel(ObservableModelLayer modelLayer);
 
     public abstract ObservablePoint toObservable(Point point);
+
+    public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
 
     @Mapping(target = "isHidden", source = "hidden")
     public abstract ObservableSignal toObservable(Signal signal);
