@@ -6,7 +6,7 @@ import ru.nucodelabs.gem.app.snapshot.StateHolder
 import javax.inject.Provider
 
 class SaveStateInterceptor(
-    stateHolderProvider: Provider<StateHolder<String, Any>>,
+    stateHolderProvider: Provider<StateHolder>,
 ) : MethodInterceptor {
     private val stateHolder = stateHolderProvider.get()
 

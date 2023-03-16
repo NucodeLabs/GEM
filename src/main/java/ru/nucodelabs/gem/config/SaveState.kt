@@ -1,5 +1,8 @@
 package ru.nucodelabs.gem.config
 
+/**
+ * Save values annotated with @State(identifier)
+ */
 @Target(AnnotationTarget.FUNCTION)
 annotation class SaveState
 

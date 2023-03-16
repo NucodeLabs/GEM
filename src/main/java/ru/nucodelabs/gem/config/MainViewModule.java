@@ -39,8 +39,9 @@ public class MainViewModule extends AbstractModule {
     }
 
     @Provides
-    StateHolder<String, Object> stateHolder() {
-        return new StateHolder<>();
+    @Singleton
+    StateHolder stateHolder() {
+        return new StateHolder();
     }
 
     @Provides

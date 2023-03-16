@@ -1,15 +1,15 @@
 package ru.nucodelabs.gem.app.snapshot
 
-class StateHolder<I, S> {
-    private val states: MutableMap<I, S> = mutableMapOf()
+class StateHolder {
+    private val states: MutableMap<String, Any> = mutableMapOf()
 
-    fun getState(identifier: I) = states[identifier]
+    fun getState(identifier: String) = states[identifier]
 
-    fun putState(identifier: I, state: S) {
+    fun putState(identifier: String, state: Any) {
         states[identifier] = state
     }
 
-    fun resetState(identifier: I) {
+    fun resetState(identifier: String) {
         states -= identifier
     }
 }
