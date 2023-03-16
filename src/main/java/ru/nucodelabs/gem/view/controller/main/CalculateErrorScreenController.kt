@@ -16,9 +16,9 @@ import javafx.scene.control.TextFormatter
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
 import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList
@@ -51,7 +51,7 @@ class CalculateErrorScreenController @Inject constructor(
     private val historyManager: HistoryManager<Section>,
     private val observablePicket: ObservableObjectValue<Picket>,
     private val picketIndexProp: IntegerProperty,
-    private val fxModelMapper: FxModelMapper
+    private val vesFxModelMapper: VesFxModelMapper
 ) : AbstractController() {
     @FXML
     private lateinit var resAvgCol: TableColumn<ObservableExperimentalData, String>
@@ -130,7 +130,7 @@ class CalculateErrorScreenController @Inject constructor(
     }
 
     private fun mapItems() {
-        table.items = data.map { fxModelMapper.toObservable(it) }.toObservableList()
+        table.items = data.map { vesFxModelMapper.toObservable(it) }.toObservableList()
     }
 
     private fun listenToItems() {
@@ -223,7 +223,7 @@ class CalculateErrorScreenController @Inject constructor(
         resCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (rhoA, min, max, _, _) = resAppWithError(fxModelMapper.toModel(f.value))
+                    val (rhoA, min, max, _, _) = resAppWithError(vesFxModelMapper.toModel(f.value))
                     "${min.fmt()} $LEQ_S ${rhoA.fmt()} $LEQ_S ${max.fmt()}"
                 },
                 f.value.ab2Property(),
@@ -238,7 +238,7 @@ class CalculateErrorScreenController @Inject constructor(
         resAvgCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (_, _, _, avg, _) = resAppWithError(fxModelMapper.toModel(f.value))
+                    val (_, _, _, avg, _) = resAppWithError(vesFxModelMapper.toModel(f.value))
                     f.value.resistanceApparent = avg
                     avg.fmt()
                 },
@@ -254,7 +254,7 @@ class CalculateErrorScreenController @Inject constructor(
         errorResistanceCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
-                    val (_, _, _, _, error) = resAppWithError(fxModelMapper.toModel(f.value))
+                    val (_, _, _, _, error) = resAppWithError(vesFxModelMapper.toModel(f.value))
                     f.value.errorResistanceApparent = error
                     error.fmt()
                 },
