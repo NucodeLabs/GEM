@@ -75,11 +75,9 @@ class PolygonWithNamesChart(
             group.children.addAll(polygon)
             plotChildren.addAll(group)
             _group[series] = group
-
             _group.getOrPut(series){
                 group
             }.children += text
-            println(text.text)
             _seriesText.getOrPut(series){
                 text
             }
