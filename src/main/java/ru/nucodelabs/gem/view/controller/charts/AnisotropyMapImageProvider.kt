@@ -53,14 +53,14 @@ class AnisotropyMapImageProvider @Inject constructor(
         for (y in 0 until image.height.toInt()) {
             for (x in 0 until image.width.toInt()) {
                 val pixel = pixelReader.getArgb(x, y)
-                val alpha = pixel shr 24 and 0xff
                 val red = pixel shr 16 and 0xff
                 val green = pixel shr 8 and 0xff
                 val blue = pixel and 0xff
-                if (!endOfLine && red >= 230 && green <= 10 && blue <= 10 && alpha == 255) {
+                if (!endOfLine && red >= 200 && green <= 30 && blue <= 30) {
                     pixelCount++
                     startOfLine = true
-                } else if (startOfLine) {
+                    continue
+                } else if (startOfLine && !endOfLine) {
                     endOfLine = true
                     endX = x
                 }
@@ -75,7 +75,7 @@ class AnisotropyMapImageProvider @Inject constructor(
         println("---End of line: $xCord")
         println("---Line length in pixels: $pixelCount")
         println("---Extra length in pixels: $extraInPixels")
-        val metersInPixel = pixelCount.toDouble() / (maxDist * 2.0)
+        val metersInPixel = (maxDist * 2.0) / pixelCount.toDouble()
         return extraInPixels * metersInPixel
     }
 }
