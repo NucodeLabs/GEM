@@ -49,7 +49,7 @@ class YandexMapsImageProvider : MapImageProvider {
                     "?l=sat" +
                     "&bbox=${lonBottomLeft},${latBottomLeft}~${lonUpperRight},${latUpperRight}" +
                     "&size=${width},${height}" +
-                    "&pl=${lonUpperLeft},${latUpperLeft},${lonUpperRight},${latUpperRight}"
+                    "&pl=c:FF0000FF,${lonUpperLeft},${latUpperLeft},${lonUpperRight},${latUpperRight}"
         )
     }
 
