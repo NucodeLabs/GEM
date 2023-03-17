@@ -1,12 +1,11 @@
 package ru.nucodelabs.gem.view.controller.charts
 
 import javafx.scene.image.Image
-import javafx.scene.image.WritableImage
-import javafx.scene.paint.Color
 import ru.nucodelabs.gem.net.MapImageProvider
-import ru.nucodelabs.geo.map.*
+import ru.nucodelabs.geo.map.MapSizer
+import ru.nucodelabs.geo.map.Offset
+import ru.nucodelabs.geo.map.plus
 import javax.inject.Inject
-import kotlin.math.abs
 
 class AnisotropyMapImageProvider @Inject constructor(
     val mapImageProvider: MapImageProvider
@@ -19,7 +18,7 @@ class AnisotropyMapImageProvider @Inject constructor(
         val bottomLeft = mapSizer.bottomLeftCorner
         val upperRight = mapSizer.upperRightCorner
         val upperLeft = mapSizer.center + Offset(
-            -1 * mapSizer.maxAbsXFromCenterInMeters,
+            -mapSizer.maxAbsXFromCenterInMeters,
             mapSizer.maxAbsYFromCenterInMeters
             )
         val imageWithLine = mapImageProvider.requestImage(
@@ -32,16 +31,17 @@ class AnisotropyMapImageProvider @Inject constructor(
             width = 450,
             height = 450
         )
-        //val extraDist = imageParser(Image(imageWithLine), mapSizer.maxAbsXFromCenterInMeters)
-/*        val stream = mapImageProvider.requestImage(
+        val extraDist = imageParser(Image(imageWithLine), mapSizer.maxAbsXFromCenterInMeters)
+        val stream = mapImageProvider.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
             lonUpperRight = upperRight.longitudeInDegrees,
             latUpperRight = upperRight.latitudeInDegrees,
             width = 450,
             height = 450
-        )*/
-        return Image(imageWithLine)
+        )
+        println("---Extra distance: $extraDist")
+        return Image(stream)
     }
 
     private fun imageParser(image: Image, maxDist: Double): Double {
@@ -49,13 +49,19 @@ class AnisotropyMapImageProvider @Inject constructor(
         var pixelCount = 0
         var endX = 0
         var endOfLine = false
+        var startOfLine = false
         for (y in 0 until image.height.toInt()) {
             for (x in 0 until image.width.toInt()) {
-                while (Color.web(pixelReader.getArgb(x, y).toString()) == Color.RED) {
+                val pixel = pixelReader.getArgb(x, y)
+                val alpha = pixel shr 24 and 0xff
+                val red = pixel shr 16 and 0xff
+                val green = pixel shr 8 and 0xff
+                val blue = pixel and 0xff
+                if (!endOfLine && red >= 230 && green <= 10 && blue <= 10 && alpha == 255) {
                     pixelCount++
+                    startOfLine = true
+                } else if (startOfLine) {
                     endOfLine = true
-                }
-                if (endOfLine) {
                     endX = x
                 }
             }
@@ -65,7 +71,10 @@ class AnisotropyMapImageProvider @Inject constructor(
     }
 
     private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double): Double {
-        val extraInPixels = 450 - xCord
+        val extraInPixels = 450.0 - xCord.toDouble()
+        println("---End of line: $xCord")
+        println("---Line length in pixels: $pixelCount")
+        println("---Extra length in pixels: $extraInPixels")
         val metersInPixel = pixelCount.toDouble() / (maxDist * 2.0)
         return extraInPixels * metersInPixel
     }
