@@ -1,18 +1,25 @@
 package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
-import javafx.scene.Group
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.DropShadow
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+import ru.nucodelabs.gem.util.fx.getValue
+import ru.nucodelabs.gem.util.fx.setValue
 
 
 class PolygonWithNamesChart(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>
 ) : PolygonChart(xAxis, yAxis) {
+
+    private val namesVisibleProperty = SimpleBooleanProperty(true)
+    var namesVisible by namesVisibleProperty
+    fun namesVisibleProperty(): BooleanProperty = namesVisibleProperty
 
     /**
      * Maps series to corresponding Text node
@@ -64,7 +71,9 @@ class PolygonWithNamesChart(
                 fill = Color.WHITE
                 effect = DropShadow(2.0, Color.BLACK)
                 textProperty().bind(series.nameProperty())
-
+                managedProperty().bind(visibleProperty())
+                isVisible = namesVisible
+                visibleProperty().bind(namesVisibleProperty)
             }
             plotChildren += newText
             _seriesText[series] = newText
