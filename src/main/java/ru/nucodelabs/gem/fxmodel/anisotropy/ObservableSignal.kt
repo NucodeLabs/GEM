@@ -1,11 +1,11 @@
-package ru.nucodelabs.gem.fxmodel.ves
+package ru.nucodelabs.gem.fxmodel.anisotropy
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import ru.nucodelabs.gem.util.fx.getValue
 import ru.nucodelabs.gem.util.fx.setValue
 
-class ObservableExperimentalData(
+class ObservableSignal(
     ab2: Double,
     mn2: Double,
     amperage: Double,

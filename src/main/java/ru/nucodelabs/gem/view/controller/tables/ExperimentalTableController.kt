@@ -19,9 +19,9 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.fxmodel.mapper.FxModelMapper
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
@@ -63,7 +63,7 @@ class ExperimentalTableController @Inject constructor(
     private val decimalFormat: DecimalFormat,
     @Named("CSS") private val css: String,
     fileImporterProvider: Provider<FileImporter>,
-    private val mapper: FxModelMapper
+    private val mapper: VesFxModelMapper
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML

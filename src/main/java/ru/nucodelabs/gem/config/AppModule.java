@@ -197,6 +197,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     ObjectMapper objectMapper() {
         return jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
