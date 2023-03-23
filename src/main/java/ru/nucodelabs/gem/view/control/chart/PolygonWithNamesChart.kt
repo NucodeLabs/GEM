@@ -17,7 +17,7 @@ class PolygonWithNamesChart(
     @NamedArg("yAxis") yAxis: ValueAxis<Number>
 ) : PolygonChart(xAxis, yAxis) {
 
-    private val namesVisibleProperty = SimpleBooleanProperty(true)
+    private val namesVisibleProperty = SimpleBooleanProperty(false)
     var namesVisible by namesVisibleProperty
     fun namesVisibleProperty(): BooleanProperty = namesVisibleProperty
 
