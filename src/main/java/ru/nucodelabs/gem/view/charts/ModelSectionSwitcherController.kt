@@ -33,10 +33,13 @@ class ModelSectionSwitcherController @Inject constructor(
     @FXML
     lateinit var linearSectionBoxController: ModelSectionController
 
+
+
     override val stage: Stage?
         get() = linearSectionBox.scene?.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+
         logSectionBox.managedProperty() bindTo logSectionBox.visibleProperty()
         linearSectionBox.managedProperty() bindTo linearSectionBox.visibleProperty()
 
@@ -48,6 +51,12 @@ class ModelSectionSwitcherController @Inject constructor(
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на линейный масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = true }
+                },
+                MenuItem("Добавить надписи").apply {
+                    onAction = EventHandler {logSectionBoxController.setupNames(true) }
+                },
+                MenuItem("Выключить надписи").apply {
+                    onAction = EventHandler { logSectionBoxController.setupNames(false) }
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {
@@ -67,6 +76,12 @@ class ModelSectionSwitcherController @Inject constructor(
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на псевдо-логарифмический масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = false }
+                },
+                MenuItem("Включить надписи").apply {
+                    onAction = EventHandler { linearSectionBoxController.setupNames(true)}
+                },
+                MenuItem("Выключить надписи").apply {
+                    onAction = EventHandler { linearSectionBoxController.setupNames(false) }
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {

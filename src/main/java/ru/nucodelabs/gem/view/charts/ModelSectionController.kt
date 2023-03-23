@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.charts
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
@@ -8,6 +9,7 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ObservableSection
+import ru.nucodelabs.gem.util.fx.booleanProperty
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AbstractController
 import ru.nucodelabs.gem.view.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
@@ -15,6 +17,7 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import ru.nucodelabs.gem.view.control.chart.PolygonWithNamesChart
 import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.geo.ves.calc.xOfPicket
@@ -65,7 +68,7 @@ class ModelSectionController @Inject constructor(
     private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
-    private lateinit var chart: PolygonChart
+    private lateinit var chart: PolygonWithNamesChart
 
     override val stage: Stage?
         get() = chart.scene.window as Stage?
@@ -145,6 +148,10 @@ class ModelSectionController @Inject constructor(
         }
     }
 
+     fun setupNames(boolean: Boolean){
+      chart.namesVisibleProperty().set(boolean)
+
+     }
     private fun setupXAxisMarks() {
         val section = observableSection.asSection()
         xAxis.forceMarks.setAll(
@@ -181,4 +188,5 @@ class ModelSectionController @Inject constructor(
             }
         }
     }.filter { it.isNotEmpty() }
+
 }
