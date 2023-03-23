@@ -54,7 +54,7 @@ class ModelSectionSwitcherController @Inject constructor(
                 MenuItem("Переключить на линейный масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = true }
                 },
-                CheckMenuItem("Надписи").apply{
+                CheckMenuItem("Показывать сопротивления").apply{
                     isSelected = false
                     onAction = if (!this.isSelected){
                         EventHandler { logSectionBoxController.setupNames(this.isSelected)}
@@ -82,7 +82,7 @@ class ModelSectionSwitcherController @Inject constructor(
                 MenuItem("Переключить на псевдо-логарифмический масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = false }
                 },
-                CheckMenuItem("Надписи").apply{
+                CheckMenuItem("Показывать сопротивления").apply{
                     isSelected = false
                     onAction = if (!this.isSelected){
                         EventHandler { linearSectionBoxController.setupNames(this.isSelected)}
