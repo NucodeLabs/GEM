@@ -5,15 +5,25 @@ import javafx.collections.ObservableList;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals;
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableModelLayer;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal;
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals;
+import ru.nucodelabs.geo.anisotropy.ModelLayer;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.geo.anisotropy.Signal;
 
-@Mapper
+@Mapper(
+        unmappedSourcePolicy = ReportingPolicy.ERROR,
+        unmappedTargetPolicy = ReportingPolicy.ERROR
+)
 public abstract class AnisotropyFxModelMapper {
+    protected <T> ObservableList<T> createObservableList() {
+        return FXCollections.observableArrayList();
+    }
+
     public abstract ObservablePoint toObservable(Point point);
 
     public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
@@ -23,7 +33,7 @@ public abstract class AnisotropyFxModelMapper {
 
     public abstract ObservableAzimuthSignals toObservable(AzimuthSignals azimuthSignals);
 
-    public <T> ObservableList<T> createObservableList() {
-        return FXCollections.observableArrayList();
-    }
+    @Mapping(target = "isFixedResistance", source = "fixedResistance")
+    @Mapping(target = "isFixedPower", source = "fixedPower")
+    public abstract ObservableModelLayer toObservable(ModelLayer modelLayer);
 }

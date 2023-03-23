@@ -7,6 +7,16 @@ import jakarta.validation.constraints.Positive
 import ru.nucodelabs.geo.ves.DEFAULT_ERROR
 import ru.nucodelabs.geo.ves.calc.rhoA
 
+/**
+ * Экспериментальное измерение
+ * @property ab2 AB/2, м
+ * @property mn2 MN/2, м
+ * @property amperage Ток, мА
+ * @property voltage Напряжение, мВ
+ * @property resistanceApparent Сопротивление кажущееся, Ом * м
+ * @property errorResistanceApparent Погрешность, %
+ * @property isHidden Отключена для интерпретации
+ */
 data class Signal(
     @field:Positive var ab2: Double,
     @field:Positive var mn2: Double,
