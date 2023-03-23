@@ -147,7 +147,6 @@ class ModelSectionController @Inject constructor(
             }
         }
     }
-
      fun setupNames(boolean: Boolean){
       chart.namesVisibleProperty().set(boolean)
      }
