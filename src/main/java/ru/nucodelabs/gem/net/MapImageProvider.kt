@@ -57,6 +57,8 @@ interface MapImageProvider {
         latUpperRight: Double,
         lonUpperLeft: Double,
         latUpperLeft: Double,
+        lonBottomRight: Double,
+        latBottomRight: Double,
         width: Int,
         height: Int
     ): InputStream

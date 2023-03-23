@@ -41,6 +41,8 @@ class YandexMapsImageProvider : MapImageProvider {
         latUpperRight: Double,
         lonUpperLeft: Double,
         latUpperLeft: Double,
+        lonBottomRight: Double,
+        latBottomRight: Double,
         width: Int,
         height: Int
     ): InputStream {
@@ -49,7 +51,10 @@ class YandexMapsImageProvider : MapImageProvider {
                     "?l=sat" +
                     "&bbox=${lonBottomLeft},${latBottomLeft}~${lonUpperRight},${latUpperRight}" +
                     "&size=${width},${height}" +
-                    "&pl=c:FF0000FF,${lonUpperLeft},${latUpperLeft},${lonUpperRight},${latUpperRight}"
+                    "&pl=c:FF0000FF,${lonUpperLeft},${latUpperLeft},${lonUpperRight},${latUpperRight}," +
+                    "$lonUpperRight,$latUpperRight,$lonBottomRight,$latBottomRight," +
+                    "$lonBottomRight,$latBottomRight,$lonBottomLeft,$latBottomLeft," +
+                    "$lonBottomLeft,$latBottomLeft,$lonUpperLeft,$latUpperRight"
         )
     }
 
