@@ -39,6 +39,7 @@ class AnisotropyMapImageProvider @Inject constructor(
             height = 450
         )
         val points = imageParser(Image(imageWithSquare))
+        //println(points)
         val stream = mapImageProvider.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
@@ -47,7 +48,7 @@ class AnisotropyMapImageProvider @Inject constructor(
             width = 450,
             height = 450
         )
-        return Image(imageWithSquare)
+        return Image(stream)
     }
 
     private fun imageParser(image: Image): MutableList<Point> {
