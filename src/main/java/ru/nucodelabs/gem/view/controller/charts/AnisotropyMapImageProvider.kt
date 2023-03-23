@@ -4,6 +4,7 @@ import javafx.scene.image.Image
 import ru.nucodelabs.gem.net.MapImageProvider
 import ru.nucodelabs.geo.map.MapSizer
 import ru.nucodelabs.geo.map.Offset
+import ru.nucodelabs.geo.map.Point
 import ru.nucodelabs.geo.map.plus
 import javax.inject.Inject
 
@@ -21,17 +22,23 @@ class AnisotropyMapImageProvider @Inject constructor(
             -mapSizer.maxAbsXFromCenterInMeters,
             mapSizer.maxAbsYFromCenterInMeters
             )
-        val imageWithLine = mapImageProvider.requestImage(
+        val bottomRight = mapSizer.center + Offset(
+            mapSizer.maxAbsXFromCenterInMeters,
+            -mapSizer.maxAbsYFromCenterScaledInMeters
+        )
+        val imageWithSquare = mapImageProvider.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
             lonUpperRight = upperRight.longitudeInDegrees,
             latUpperRight = upperRight.latitudeInDegrees,
             lonUpperLeft = upperLeft.longitudeInDegrees,
             latUpperLeft = upperLeft.latitudeInDegrees,
+            lonBottomRight = bottomRight.longitudeInDegrees,
+            latBottomRight = bottomRight.latitudeInDegrees,
             width = 450,
             height = 450
         )
-        val extraDist = imageParser(Image(imageWithLine), mapSizer.maxAbsXFromCenterInMeters)
+        val points = imageParser(Image(imageWithSquare))
         val stream = mapImageProvider.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
@@ -40,58 +47,25 @@ class AnisotropyMapImageProvider @Inject constructor(
             width = 450,
             height = 450
         )
-        println("---Extra distance: $extraDist")
-        return Image(stream)
+        return Image(imageWithSquare)
     }
 
-    private fun imageParser(image: Image, maxDist: Double): Double {
+    private fun imageParser(image: Image): MutableList<Point> {
         val pixelReader = image.pixelReader
-        var pixelCount = 0
-        val threshold = 0.1
-        val sobelX = arrayOf(intArrayOf(-1,0,1), intArrayOf(-2,0,2), intArrayOf(-1,0,1))
-        val sobelY = arrayOf(intArrayOf(-1, -2, -1), intArrayOf(0, 0, 0), intArrayOf(1, 2, 1))
-
-        var largestEndX = 0
-        var maxLength = 0
-
-        for (y in 1 until image.height.toInt() - 1) {
-            var startX = Int.MAX_VALUE
-            var startY = Int.MAX_VALUE
-            var endX = Int.MIN_VALUE
-            var endY = Int.MIN_VALUE
-            for (x in 1 until image.width.toInt() - 1) {
+        val redPoints = mutableListOf<Point>()
+        for (y in 0 until image.height.toInt()) {
+            for (x in 0 until image.width.toInt()) {
                 val pixel = pixelReader.getArgb(x, y)
                 val red = pixel shr 16 and 0xff
                 val green = pixel shr 8 and 0xff
                 val blue = pixel and 0xff
                 if (red > 200 && green < 30 && blue < 30) {
-                    var pixelGradient = 0.0
-                    for (i in -1..1) {
-                        for (j in -1..1) {
-                            val nPixel = pixelReader.getArgb(x + i, y + j)
-                            val nRed = nPixel shr 16 and 0xff
-                            val nGreen = nPixel shr 8 and 0xff
-                            val nBlue = nPixel and 0xff
-                            val nIntensity = (nRed + nGreen + nBlue) / 3.0
-                            pixelGradient += sobelX[i + 1][j + 1] * nIntensity
-                            pixelGradient += sobelY[i + 1][j + 1] * nIntensity
-                        }
-                    }
-                    if (pixelGradient > threshold) {
-                        if (x < startX) startX = x
-                        if (x > endX) endX = x
-                        if (y < startY) startY = y
-                        if (y > endY) endY = y
-                        pixelCount = endX - startX
-                    }
+                    val point = Point(x, y)
+                    redPoints.add(point)
                 }
             }
-            if (pixelCount > maxLength) {
-                maxLength = pixelCount
-                largestEndX = endX
-            }
         }
-        return pixelsToMeters(maxLength, largestEndX, maxDist)
+        return redPoints
     }
 
     private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double): Double {
