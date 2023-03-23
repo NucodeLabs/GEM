@@ -150,7 +150,6 @@ class ModelSectionController @Inject constructor(
 
      fun setupNames(boolean: Boolean){
       chart.namesVisibleProperty().set(boolean)
-
      }
     private fun setupXAxisMarks() {
         val section = observableSection.asSection()

@@ -52,7 +52,7 @@ class ModelSectionSwitcherController @Inject constructor(
                 MenuItem("Переключить на линейный масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = true }
                 },
-                MenuItem("Добавить надписи").apply {
+                MenuItem("Включить надписи").apply {
                     onAction = EventHandler {logSectionBoxController.setupNames(true) }
                 },
                 MenuItem("Выключить надписи").apply {
