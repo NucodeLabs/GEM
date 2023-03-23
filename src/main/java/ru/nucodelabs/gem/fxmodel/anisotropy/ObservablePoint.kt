@@ -11,6 +11,6 @@ class ObservablePoint(
 ) {
     private val azimuthSignalsProperty: ObjectProperty<ObservableList<ObservableAzimuthSignals>> =
         SimpleObjectProperty(azimuthSignals)
-    var azimuthSignals by azimuthSignalsProperty
-    fun azimuthSignals() = azimuthSignalsProperty
+    var azimuthSignals: ObservableList<ObservableAzimuthSignals> by azimuthSignalsProperty
+    fun azimuthSignalsProperty() = azimuthSignalsProperty
 }
