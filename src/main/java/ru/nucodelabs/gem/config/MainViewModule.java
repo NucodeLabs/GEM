@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.matcher.Matchers;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
@@ -30,12 +29,6 @@ public class MainViewModule extends AbstractModule {
         install(new DialogsModule());
         install(new ObservableDataModule());
         install(new ChartsModule());
-
-        bindInterceptor(
-                Matchers.any(),
-                Matchers.annotatedWith(SaveState.class),
-                new SaveStateInterceptor(this::stateHolder)
-        );
     }
 
     @Provides

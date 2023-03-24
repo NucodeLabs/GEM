@@ -6,7 +6,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 buildscript {
-    ext.kotlin_version = '1.7.22'
+    ext.kotlin_version = '1.8.10'
     repositories {
         mavenCentral()
     }
@@ -38,7 +38,7 @@ repositories {
 }
 
 ext {
-    jfxVersion = '19'
+    jfxVersion = '19.0.2.1'
     // Platform Info
     currentOS = DefaultNativePlatform.currentOperatingSystem
     currentArch = DefaultNativePlatform.currentArchitecture
@@ -83,32 +83,33 @@ dependencies {
     implementation 'org.glassfish.expressly:expressly:5.0.0'
     implementation 'com.github.haifengl:smile-math:2.6.0'
     implementation 'com.github.haifengl:smile-interpolation:2.6.0'
-    implementation 'com.github.haifengl:smile-core:3.0.0'
+    implementation 'com.github.haifengl:smile-core:3.0.1'
     implementation 'com.github.haifengl:smile-data:2.6.0'
-    implementation 'com.github.haifengl:smile-plot:3.0.0'
+    implementation 'com.github.haifengl:smile-plot:3.0.1'
     implementation 'com.github.haifengl:smile-io:2.6.0'
     implementation "org.bytedeco:openblas:0.3.13-1.5.8:$platform"
     implementation "org.bytedeco:javacpp:1.5.8:$platform"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8:$osName-x86_64"
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8"
-    implementation 'org.codehaus.groovy:groovy-all:3.0.13'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.16'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-
-//    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-    testImplementation "org.openjfx:javafx:${jfxVersion}"
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.1'
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+//    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testImplementation "org.openjfx:javafx:${jfxVersion}"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 task prepareRunDir {
