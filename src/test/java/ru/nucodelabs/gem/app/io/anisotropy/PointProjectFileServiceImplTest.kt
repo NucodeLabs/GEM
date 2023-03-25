@@ -5,6 +5,7 @@ import com.google.inject.Key
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import ru.nucodelabs.gem.app.io.next.Project
 import ru.nucodelabs.gem.app.io.next.ProjectFileService
 import ru.nucodelabs.gem.config.MappersModule
@@ -62,12 +63,12 @@ class PointProjectFileServiceImplTest {
 
     @Test
     fun loadProject() {
-        projectFileService.loadProject(file)
+        assertDoesNotThrow { projectFileService.loadProject(file) }
     }
 
     @Test
     fun saveProject() {
-        projectFileService.saveProject(file, project)
+        assertDoesNotThrow { projectFileService.saveProject(file, project) }
     }
 
     @Test
