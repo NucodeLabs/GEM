@@ -105,17 +105,18 @@ dependencies {
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2'
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 //    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testImplementation 'io.mockk:mockk:1.13.4'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'

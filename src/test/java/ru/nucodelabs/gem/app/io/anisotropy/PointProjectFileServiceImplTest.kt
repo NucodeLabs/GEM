@@ -1,0 +1,80 @@
+package ru.nucodelabs.gem.app.io.anisotropy
+
+import com.google.inject.Guice
+import com.google.inject.Key
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Test
+import ru.nucodelabs.gem.app.io.next.Project
+import ru.nucodelabs.gem.app.io.next.ProjectFileService
+import ru.nucodelabs.gem.config.MappersModule
+import ru.nucodelabs.gem.config.ProjectModule
+import ru.nucodelabs.geo.anisotropy.AzimuthSignals
+import ru.nucodelabs.geo.anisotropy.Point
+import java.io.File
+
+class PointProjectFileServiceImplTest {
+
+    var project: Project<Point> = mockk()
+
+    init {
+        every { project.data } returns mockk(relaxed = true)
+        every { project.data.azimuthSignals } returns mutableListOf(
+            AzimuthSignals(
+                0.0,
+                mutableListOf(mockk(relaxed = true))
+            )
+        )
+        every { project.data.model } returns mutableListOf()
+    }
+
+    val file =
+        File.createTempFile("sample", "test").apply {
+            writeText(
+                """
+                {
+                  "data" : {
+                    "type" : "ru.nucodelabs.gem.file.dto.anisotropy.PointDto",
+                    "azimuthSignals" : [ {
+                      "azimuth" : 0.0,
+                      "signals" : [ {
+                        "ab2" : 0.0,
+                        "mn2" : 0.0,
+                        "amperage" : 0.0,
+                        "voltage" : 0.0,
+                        "resistanceApparent" : 0.0,
+                        "errorResistanceApparent" : 0.0,
+                        "isHidden" : false
+                      } ]
+                    } ],
+                    "model" : [ ]
+                  }
+                }
+            """.trimIndent()
+            )
+        }
+
+    val injector = Guice.createInjector(MappersModule(), ProjectModule())
+
+    val projectFileService: ProjectFileService<Point> = injector.getInstance(
+        object : Key<ProjectFileService<Point>>() {}
+    )
+
+    @Test
+    fun loadProject() {
+        projectFileService.loadProject(file)
+    }
+
+    @Test
+    fun saveProject() {
+        projectFileService.saveProject(file, project)
+    }
+
+    @Test
+    fun lastSavedProject() {
+    }
+
+    @Test
+    fun lastSavedProjectFile() {
+    }
+}
