@@ -252,3 +252,4 @@ gradle-app.setting
 *.gch
 *.o
 /run/
+/.idea/

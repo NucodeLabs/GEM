@@ -7,7 +7,7 @@ import java.io.File
 import javax.inject.Inject
 
 
-class FileManager @Inject constructor(
+class PointFileManager @Inject constructor(
     private val objectMapper: ObjectMapper
 ) {
     fun loadPoint(json: String): Point {
