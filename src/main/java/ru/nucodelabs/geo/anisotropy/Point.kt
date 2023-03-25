@@ -7,6 +7,6 @@ import jakarta.validation.Valid
  * @property model данные модели
  */
 data class Point(
-    var azimuthSignals: MutableList<@Valid AzimuthSignals>,
-    var model: MutableList<ModelLayer>
+    var azimuthSignals: MutableList<@Valid AzimuthSignals> = mutableListOf(),
+    var model: MutableList<ModelLayer> = mutableListOf()
 )

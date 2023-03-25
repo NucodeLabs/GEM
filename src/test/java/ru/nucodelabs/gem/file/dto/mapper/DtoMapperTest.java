@@ -80,7 +80,7 @@ class DtoMapperTest {
                                 )
                         )
                 ),
-                List.of()
+                null
         );
 
         var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
