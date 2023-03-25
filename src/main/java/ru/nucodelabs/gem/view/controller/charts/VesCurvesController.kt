@@ -375,6 +375,7 @@ class VesCurvesController @Inject constructor(
 
     fun legendVisibleProperty(): BooleanProperty = lineChart.legendVisibleProperty()
 
+    @Suppress("UNUSED_PARAMETER")
     private fun tooltipFactory(
         seriesIndex: Int,
         series: Series<Number, Number>,

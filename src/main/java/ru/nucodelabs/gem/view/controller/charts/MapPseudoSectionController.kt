@@ -68,6 +68,7 @@ class MapPseudoSectionController @Inject constructor(
         chart.data.setAll(XYChart.Series(data.toObservableList()))
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun tooltipFactory(
         seriesIndex: Int,
         series: XYChart.Series<Number, Number>,

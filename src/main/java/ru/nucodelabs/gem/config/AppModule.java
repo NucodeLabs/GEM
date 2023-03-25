@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -36,8 +35,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-
-import static com.fasterxml.jackson.module.kotlin.ExtensionsKt.jacksonObjectMapper;
 
 /**
  * Зависимости приложения, которое, по сути, создает MainView
@@ -194,11 +191,5 @@ public class AppModule extends AbstractModule {
     @Singleton
     ForwardSolver forwardSolver() {
         return ForwardSolver.createDefault();
-    }
-
-    @Provides
-    @Singleton
-    ObjectMapper objectMapper() {
-        return jacksonObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 }

@@ -22,6 +22,9 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.11'
     id "com.google.osdetector" version "1.7.0"
+
+    id 'org.jetbrains.kotlin.plugin.lombok' version '1.8.10'
+    id 'io.freefair.lombok' version '5.3.0'
 }
 
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
@@ -110,6 +113,12 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation "org.openjfx:javafx:${jfxVersion}"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 
 task prepareRunDir {

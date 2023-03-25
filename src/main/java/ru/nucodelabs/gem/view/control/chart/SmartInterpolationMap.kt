@@ -76,6 +76,7 @@ class SmartInterpolationMap(
         initInterpolator()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
         interpolator2D.build(data.flatMap { it.data as List<Data<Double, Double>> })
     }

@@ -56,6 +56,7 @@ class CurvesPseudoSectionController @Inject constructor(
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun tooltipFactory(
         seriesIndex: Int,
         series: XYChart.Series<Number, Number>,

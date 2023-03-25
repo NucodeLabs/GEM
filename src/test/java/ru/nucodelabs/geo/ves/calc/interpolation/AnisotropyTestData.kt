@@ -4,7 +4,6 @@ import javafx.scene.chart.XYChart
 import ru.nucodelabs.ShiraPicket
 import ru.nucodelabs.geo.map.xFromCenter
 import ru.nucodelabs.geo.map.yFromCenter
-import kotlin.random.Random
 
 object AnisotropyTestData {
     val points: List<XYChart.Data<Number, Number>>
@@ -54,6 +53,8 @@ object AnisotropyTestData {
         }
         val points = (points1 + points2 + points3 + points4 + points5 + points6).toMutableList()
         points.shuffle()
+
+        @Suppress("UNCHECKED_CAST")
         this.points = points.toList() as List<XYChart.Data<Number, Number>>
     }
 }
