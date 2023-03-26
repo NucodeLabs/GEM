@@ -15,9 +15,6 @@
        width="1280"
        height="720"
        title="GEM" onShown="initLayoutConfig()">
-    <fx:define>
-        <fx:include source="AnisotropyMainView.fxml" fx:id="anisotropyMainView"/>
-    </fx:define>
     <fx:script>
         import javafx.scene.control.SplitPane
         import javafx.scene.input.KeyCodeCombination
@@ -84,11 +81,6 @@
             window.icons.setAll((root as Stage).icons)
             window.show()
         }
-
-        def openAnisotropyMainView() {
-            anisotropyMainView.icons.setAll(root.icons)
-            anisotropyMainView.show()
-        }
     </fx:script>
     <icons>
         <Image url="@../../../../../../img/gem.png"/>
@@ -100,7 +92,7 @@
                     <Menu text="%file">
                         <MenuItem text="%addPicket" onAction="#addNewPicket"/>
                         <MenuItem text="%newWindow" onAction="#newWindow" accelerator="Shift+Shortcut+N"/>
-                        <MenuItem text="Режим работы с анизотропией" onAction="openAnisotropyMainView()"/>
+                        <MenuItem text="Режим работы с анизотропией" onAction="#openAnisotropyMainView"/>
                         <MenuItem text="%openSection" fx:id="menuFileOpenSection" onAction="#openJsonSection"
                                   accelerator="Shortcut+O"/>
                         <MenuItem text="Импортировать пикет" onAction="#importJsonPicket"/>

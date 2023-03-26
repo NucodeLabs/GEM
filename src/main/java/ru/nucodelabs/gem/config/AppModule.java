@@ -9,6 +9,8 @@ import com.google.inject.name.Named;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ru.nucodelabs.files.clr.ClrParser;
@@ -17,8 +19,11 @@ import ru.nucodelabs.gem.app.GemApplication;
 import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
+import ru.nucodelabs.gem.net.MapImageProvider;
+import ru.nucodelabs.gem.net.YandexMapsImageProvider;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
+import ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController;
 import ru.nucodelabs.gem.view.controller.main.MainViewController;
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 
@@ -45,6 +50,7 @@ public class AppModule extends AbstractModule {
     protected void configure() {
         install(new FileChoosersModule());
         install(new MappersModule());
+        bind(MapImageProvider.class).to(YandexMapsImageProvider.class);
     }
 
     @Provides
@@ -65,6 +71,28 @@ public class AppModule extends AbstractModule {
     private URL provideMainViewFXML() {
         return MainViewController.class.getResource("MainSplitLayoutView.fxml");
     }
+
+    @Provides
+    @Named("AnisotropyMainView")
+    URL anisotropyMainView() {
+        return AnisotropyMainViewController.class.getResource("AnisotropyMainView.fxml");
+    }
+
+    @Provides
+    @Named("AnisotropyMainView")
+    private Stage anisotropyMainViewWindow(
+            ResourceBundle uiProperties,
+            Injector injector,
+            @Named("AnisotropyMainView") URL url
+    ) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
+        fxmlLoader.setControllerFactory(injector.createChildInjector(new AnisotropyProjectModule())::getInstance);
+        VBox root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        return stage;
+    }
+
 
     @Provides
     @Named("MainView")

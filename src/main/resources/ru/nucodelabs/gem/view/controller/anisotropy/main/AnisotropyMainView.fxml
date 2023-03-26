@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
+      prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../common.css">
+    <MenuBar>
+        <Menu text="%file">
+            <MenuItem text="%openProject" onAction="#loadProject"/>
+            <MenuItem text="%saveProject" onAction="#saveProject"/>
+        </Menu>
+    </MenuBar>
+</VBox>

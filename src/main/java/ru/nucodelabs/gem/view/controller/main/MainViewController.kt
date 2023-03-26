@@ -51,6 +51,7 @@ import javax.inject.Provider
 
 class MainViewController @Inject constructor(
     @Named("MainView") private val mainViewProvider: Provider<Stage>,
+    @Named("AnisotropyMainView") private val anisotropyMainViewProvider: Provider<Stage>,
     @Named("EXP") private val expFileChooser: FileChooser,
     @Named("MOD") private val modFileChooser: FileChooser,
     @Named("JSON") private val jsonFileChooser: FileChooser,
@@ -692,12 +693,8 @@ class MainViewController @Inject constructor(
         }
     }
 
-//    @FXML
-//    private fun openAuthors() {
-//        if (authorsWindow.owner == null) {
-//            authorsWindow.initOwner(stage)
-//        }
-//        authorsWindow.icons.setAll(stage.icons)
-//        authorsWindow.show()
-//    }
+    @FXML
+    private fun openAnisotropyMainView() {
+        anisotropyMainViewProvider.get().show()
+    }
 }

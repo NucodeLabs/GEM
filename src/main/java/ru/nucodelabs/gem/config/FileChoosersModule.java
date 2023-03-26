@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-import static ru.nucodelabs.gem.app.pref.AppPreferencesKt.*;
+import static ru.nucodelabs.gem.app.pref.AppPreferences.*;
 
 public class FileChoosersModule extends AbstractModule {
 

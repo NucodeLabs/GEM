@@ -2,15 +2,12 @@ package ru.nucodelabs.gem.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.gem.net.MapImageProvider;
-import ru.nucodelabs.gem.net.YandexMapsImageProvider;
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction;
 
@@ -39,11 +36,5 @@ public class ChartsModule extends AbstractModule {
     @Provides
     MisfitsFunction misfitValuesFactory(ForwardSolver forwardSolver) {
         return MisfitsFunction.createDefault(forwardSolver);
-    }
-
-    @Provides
-    @Singleton
-    MapImageProvider mapImageProvider() {
-        return new YandexMapsImageProvider();
     }
 }

@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import ru.nucodelabs.gem.app.io.StorageManager;
 import ru.nucodelabs.gem.app.snapshot.HistoryManager;
 import ru.nucodelabs.gem.app.snapshot.Snapshot;
-import ru.nucodelabs.gem.app.snapshot.StateHolder;
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection;
 import ru.nucodelabs.gem.view.controller.FileImporter;
 import ru.nucodelabs.gem.view.controller.FileOpener;
@@ -29,12 +28,6 @@ public class MainViewModule extends AbstractModule {
         install(new DialogsModule());
         install(new ObservableDataModule());
         install(new ChartsModule());
-    }
-
-    @Provides
-    @Singleton
-    StateHolder stateHolder() {
-        return new StateHolder();
     }
 
     @Provides

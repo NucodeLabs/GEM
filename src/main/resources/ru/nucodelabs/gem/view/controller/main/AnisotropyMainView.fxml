@@ -13,7 +13,7 @@
        fx:controller="ru.nucodelabs.gem.view.controller.main.AnisotropyMainViewController"
        title="Тестовые данные - GEM#Anisotropy">
     <scene>
-        <Scene stylesheets="@../../common.css../chartsrts/MapPseudoSection.css">
+        <Scene stylesheets="@../../common.css, ../charts/MapPseudoSection.css">
             <VBox fx:id="root" style="-fx-padding: 20;">
                 <HBox spacing="10">
                     <VBox spacing="10">
