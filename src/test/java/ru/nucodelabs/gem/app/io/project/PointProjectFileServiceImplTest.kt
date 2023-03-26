@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.io.anisotropy
+package ru.nucodelabs.gem.app.io.project
 
 import com.google.inject.Guice
 import com.google.inject.Key
@@ -6,8 +6,8 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import ru.nucodelabs.gem.app.io.project.Project
-import ru.nucodelabs.gem.app.io.project.ProjectFileService
+import ru.nucodelabs.gem.app.project.Project
+import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.config.AnisotropyProjectModule
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals

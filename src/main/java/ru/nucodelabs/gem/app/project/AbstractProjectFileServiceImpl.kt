@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.io.project
+package ru.nucodelabs.gem.app.project
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue

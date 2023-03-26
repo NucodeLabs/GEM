@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.io.project
+package ru.nucodelabs.gem.app.project
 
 import ru.nucodelabs.kfx.snapshot.Snapshot
 import ru.nucodelabs.kfx.snapshot.snapshotOf
