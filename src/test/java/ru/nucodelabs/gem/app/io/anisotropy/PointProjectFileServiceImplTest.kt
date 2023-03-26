@@ -6,8 +6,8 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import ru.nucodelabs.gem.app.io.next.Project
-import ru.nucodelabs.gem.app.io.next.ProjectFileService
+import ru.nucodelabs.gem.app.io.project.Project
+import ru.nucodelabs.gem.app.io.project.ProjectFileService
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.gem.config.ProjectModule
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals

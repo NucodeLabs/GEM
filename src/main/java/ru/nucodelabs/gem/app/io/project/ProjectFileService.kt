@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.io.next
+package ru.nucodelabs.gem.app.io.project
 
 import java.io.File
 

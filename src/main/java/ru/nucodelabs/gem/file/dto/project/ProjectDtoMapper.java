@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.file.dto.project;
 
 import org.mapstruct.Mapper;
-import ru.nucodelabs.gem.app.io.next.Project;
+import ru.nucodelabs.gem.app.io.project.Project;
 import ru.nucodelabs.gem.file.dto.anisotropy.PointDto;
 import ru.nucodelabs.gem.file.dto.mapper.DtoMapper;
 import ru.nucodelabs.geo.anisotropy.Point;
