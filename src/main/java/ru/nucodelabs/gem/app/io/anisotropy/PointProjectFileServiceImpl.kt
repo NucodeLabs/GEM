@@ -15,10 +15,10 @@ class PointProjectFileServiceImpl @Inject constructor(
 ) : AbstractProjectFileServiceImpl<Point>(objectMapper) {
     @Suppress("UNCHECKED_CAST")
     override fun mapFromDto(projectDto: ProjectDto<*>): Project<Point> {
-        return dtoMapper.fromDto(projectDto as ProjectDto<PointDto>)
+        return dtoMapper.toPointProject(projectDto as ProjectDto<PointDto>)
     }
 
     override fun mapToDto(project: Project<Point>): ProjectDto<*> {
-        return dtoMapper.toDto(project)
+        return dtoMapper.fromPointProject(project)
     }
 }
