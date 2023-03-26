@@ -1,0 +1,47 @@
+package ru.nucodelabs.gem.fxmodel.anisotropy.app
+
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
+import ru.nucodelabs.gem.app.io.project.Project
+import ru.nucodelabs.gem.app.io.project.ProjectFileService
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
+import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
+import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.kfx.ext.getValue
+import ru.nucodelabs.kfx.ext.setValue
+import ru.nucodelabs.kfx.snapshot.HistoryManager
+import java.io.File
+import javax.inject.Inject
+import javax.inject.Named
+
+class AnisotropyFxAppModel @Inject constructor(
+    private val historyManager: HistoryManager<Project<Point>>,
+    private val fxModelMapper: AnisotropyFxModelMapper,
+    @Named("Initial") private val project: Project<Point>,
+    private val projectFileService: ProjectFileService<Point>
+) {
+    private val point by project::data
+
+    private val observablePointProperty: ObjectProperty<ObservablePoint> =
+        SimpleObjectProperty(fxModelMapper.toObservable(project.data))
+
+    fun observablePointProperty() = observablePointProperty
+    var observablePoint: ObservablePoint by observablePointProperty
+
+    private fun doOnPoint(block: Point.() -> Unit) {
+        historyManager.snapshotAfter {
+            block(point)
+        }
+        fxModelMapper.updateObservable(observablePoint, point)
+    }
+
+    fun loadProject(file: File) {
+        val loadedProject = projectFileService.loadProject(file)
+        project.restoreFromSnapshot(loadedProject.snapshot())
+        fxModelMapper.updateObservable(observablePoint, point)
+    }
+
+    fun saveProject(file: File) {
+        projectFileService.saveProject(file, project)
+    }
+}
