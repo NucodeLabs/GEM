@@ -8,5 +8,5 @@ import jakarta.validation.Valid
  */
 data class Point(
     var azimuthSignals: MutableList<@Valid AzimuthSignals> = mutableListOf(),
-    var model: MutableList<ModelLayer> = mutableListOf()
+    var model: MutableList<@Valid ModelLayer> = mutableListOf()
 )

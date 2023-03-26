@@ -25,7 +25,6 @@ import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.OS.macOS
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -39,6 +38,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.geo.ves.calc.xOfPicket
+import ru.nucodelabs.kfx.core.OS.macOS
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat

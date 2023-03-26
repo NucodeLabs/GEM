@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import ru.nucodelabs.gem.file.dto.anisotropy.AzimuthSignalsDto;
 import ru.nucodelabs.gem.file.dto.anisotropy.ModelLayerDto;
 import ru.nucodelabs.gem.file.dto.anisotropy.PointDto;
@@ -15,7 +16,11 @@ import ru.nucodelabs.geo.anisotropy.Signal;
 
 import javax.inject.Inject;
 
-@Mapper(componentModel = "jsr330")
+@Mapper(
+        componentModel = "jsr330",
+        unmappedSourcePolicy = ReportingPolicy.ERROR,
+        unmappedTargetPolicy = ReportingPolicy.ERROR
+)
 public abstract class DtoMapper {
 
     @Inject

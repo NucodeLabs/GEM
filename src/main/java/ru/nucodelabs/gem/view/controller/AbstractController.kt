@@ -9,6 +9,13 @@ import java.util.*
 /**
  * Контроллер, который не только инициализируется FXML-загрузчиком, но и знает как добыть свою сцену
  */
+@Deprecated(
+    message = "Улучшенная версия вынесена в отдельной библиотеке https://github.com/lilvadim/kfx-utils",
+    replaceWith = ReplaceWith(
+        "AbstractViewController<T>()",
+        "ru.nucodelabs.kfx.core.AbstractViewController"
+    )
+)
 abstract class AbstractController : Initializable {
     protected abstract val stage: Stage?
 
