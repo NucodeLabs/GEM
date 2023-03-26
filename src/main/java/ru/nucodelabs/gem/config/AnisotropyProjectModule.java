@@ -11,7 +11,7 @@ import ru.nucodelabs.gem.file.dto.project.ProjectDtoMapper;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.kfx.snapshot.HistoryManager;
 
-public class PointProjectModule extends AbstractModule {
+public class AnisotropyProjectModule extends AbstractModule {
     @Provides
     @Singleton
     ProjectFileService<Point> projectFileService(ObjectMapper objectMapper, ProjectDtoMapper projectDtoMapper) {
