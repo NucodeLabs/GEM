@@ -8,7 +8,7 @@ import com.google.inject.name.Named;
 import ru.nucodelabs.gem.app.project.PointProjectFileServiceImpl;
 import ru.nucodelabs.gem.app.project.Project;
 import ru.nucodelabs.gem.app.project.ProjectFileService;
-import ru.nucodelabs.gem.file.dto.project.ProjectDtoMapper;
+import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.kfx.snapshot.HistoryManager;
 
@@ -23,7 +23,7 @@ public class AnisotropyProjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ProjectFileService<Point> projectFileService(ObjectMapper objectMapper, ProjectDtoMapper projectDtoMapper) {
+    ProjectFileService<Point> projectFileService(ObjectMapper objectMapper, AnisotropyProjectDtoMapper projectDtoMapper) {
         return new PointProjectFileServiceImpl(objectMapper, projectDtoMapper);
     }
 
