@@ -23,5 +23,5 @@ data class Signal(
     @field:Min(0) var voltage: Double,
     @field:DecimalMin("0.1") var resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
     @field:Min(0) @field:Max(100) var errorResistanceApparent: Double = DEFAULT_ERROR,
-    var isHidden: Boolean = false
+    val isHidden: Boolean = false
 )
