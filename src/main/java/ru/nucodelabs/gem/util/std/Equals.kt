@@ -1,14 +1,15 @@
 package ru.nucodelabs.gem.util.std
 
 abstract class AutoEquals {
+
     private var includeInEquals: List<() -> Any?> = listOf()
 
     protected fun includeInEquals(vararg getters: () -> Any?) {
         includeInEquals = getters.toList()
     }
 
-    private fun equalsPropertiesValues(): EqualsProperties {
-        return EqualsProperties(includeInEquals.map { it() })
+    private fun equalsPropertiesValues(): List<Any?> {
+        return includeInEquals.map { it() }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -26,7 +27,3 @@ abstract class AutoEquals {
         return includeInEquals.hashCode()
     }
 }
-
-private data class EqualsProperties(
-    val properties: List<Any?>
-)
