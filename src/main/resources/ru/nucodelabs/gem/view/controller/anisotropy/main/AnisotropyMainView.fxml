@@ -7,7 +7,8 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
-      prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../common.css">
+      prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../common.css"
+      fx:id="root">
     <MenuBar>
         <Menu text="%file">
             <MenuItem text="%openProject" onAction="#loadProject"/>

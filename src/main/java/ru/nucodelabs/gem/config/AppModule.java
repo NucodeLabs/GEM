@@ -83,13 +83,16 @@ public class AppModule extends AbstractModule {
     private Stage anisotropyMainViewWindow(
             ResourceBundle uiProperties,
             Injector injector,
-            @Named("AnisotropyMainView") URL url
+            @Named("AnisotropyMainView") URL url,
+            @Named("MainView") Stage mainStage
     ) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new AnisotropyProjectModule())::getInstance);
         VBox root = fxmlLoader.load();
         Stage stage = new Stage();
+        stage.setTitle("GEM Anisotropy");
         stage.setScene(new Scene(root));
+        stage.getIcons().setAll(mainStage.getIcons());
         return stage;
     }
 

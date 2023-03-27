@@ -40,7 +40,7 @@ public abstract class DtoMapper {
 
     public abstract AzimuthSignals fromDto(AzimuthSignalsDto dto);
 
-    public Signals mapSignals(List<SignalDto> dto) {
+    protected Signals mapSignals(List<SignalDto> dto) {
         return new Signals(emptyIfNull(dto).stream().map(this::fromDto).toList());
     }
 

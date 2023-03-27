@@ -9,10 +9,16 @@ import ru.nucodelabs.gem.app.project.PointProjectFileServiceImpl;
 import ru.nucodelabs.gem.app.project.Project;
 import ru.nucodelabs.gem.app.project.ProjectFileService;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
+import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.kfx.snapshot.HistoryManager;
 
 public class AnisotropyProjectModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(AnisotropyFxAppModel.class).in(Singleton.class);
+    }
+
     @Provides
     @Singleton
     @Named("initial")
