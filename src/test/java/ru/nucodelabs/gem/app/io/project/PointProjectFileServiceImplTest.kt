@@ -12,6 +12,7 @@ import ru.nucodelabs.gem.config.AnisotropyProjectModule
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.geo.anisotropy.Signals
 import java.io.File
 
 class PointProjectFileServiceImplTest {
@@ -23,7 +24,7 @@ class PointProjectFileServiceImplTest {
         every { project.data.azimuthSignals } returns mutableListOf(
             AzimuthSignals(
                 0.0,
-                mutableListOf(mockk(relaxed = true))
+                Signals(mutableListOf(mockk(relaxed = true)))
             )
         )
         every { project.data.model } returns mutableListOf()

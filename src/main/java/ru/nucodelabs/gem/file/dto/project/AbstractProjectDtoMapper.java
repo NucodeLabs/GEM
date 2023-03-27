@@ -1,9 +1,14 @@
 package ru.nucodelabs.gem.file.dto.project;
 
+import org.mapstruct.MapperConfig;
+import org.mapstruct.Mapping;
 import ru.nucodelabs.gem.app.project.Project;
 
-public abstract class AbstractProjectDtoMapper<M, D> {
-    public abstract ProjectDto<D> toDto(Project<M> project);
+@MapperConfig
+public interface AbstractProjectDtoMapper<M, D> {
+    @Mapping(target = "copy", ignore = true)
+    ProjectDto<D> toDto(Project<M> project);
 
-    public abstract Project<M> fromDto(ProjectDto<D> projectDto);
+    @Mapping(target = "copy", ignore = true)
+    Project<M> fromDto(ProjectDto<D> projectDto);
 }

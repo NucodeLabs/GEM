@@ -18,8 +18,8 @@ import ru.nucodelabs.geo.ves.calc.rhoA
  * @property isHidden Отключена для интерпретации
  */
 data class Signal(
-    @field:Positive var ab2: Double,
-    @field:Positive var mn2: Double,
+    @field:Positive val ab2: Double,
+    @field:Positive val mn2: Double,
     @field:Min(0) var amperage: Double,
     @field:Min(0) var voltage: Double,
     @field:DecimalMin("0.1") var resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),

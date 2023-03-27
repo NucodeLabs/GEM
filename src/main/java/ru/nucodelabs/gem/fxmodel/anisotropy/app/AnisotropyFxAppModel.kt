@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
-import javafx.beans.property.ObjectProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
@@ -8,7 +8,6 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.kfx.ext.getValue
-import ru.nucodelabs.kfx.ext.setValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -22,13 +21,13 @@ class AnisotropyFxAppModel @Inject constructor(
 ) {
     private val point by project::data
 
-    private val observablePointProperty: ObjectProperty<ObservablePoint> =
+    private val observablePointProperty: ReadOnlyObjectProperty<ObservablePoint> =
         SimpleObjectProperty(fxModelMapper.toObservable(project.data))
 
     fun observablePointProperty() = observablePointProperty
-    var observablePoint: ObservablePoint by observablePointProperty
+    val observablePoint: ObservablePoint by observablePointProperty
 
-    private fun doOnPoint(block: Point.() -> Unit) {
+    private fun doWithPoint(block: (Point) -> Unit) {
         historyManager.snapshotAfter {
             block(point)
         }

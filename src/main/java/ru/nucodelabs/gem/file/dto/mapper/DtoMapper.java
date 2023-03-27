@@ -36,34 +36,34 @@ public abstract class DtoMapper {
      * @return mapped
      */
     @SneakyThrows
-    protected <O, I> O map(I dto, Class<O> outClass) {
+    private <O, I> O mapFromDto(I dto, Class<O> outClass) {
         return objectMapper.readValue(objectMapper.writeValueAsString(dto), outClass);
     }
 
     public ModelLayer fromDto(ModelLayerDto dto) {
-        return map(dto, ModelLayer.class);
+        return mapFromDto(dto, ModelLayer.class);
     }
 
     public Signal fromDto(SignalDto dto) {
-        return map(dto, Signal.class);
+        return mapFromDto(dto, Signal.class);
     }
 
     public Point fromDto(PointDto dto) {
-        return map(dto, Point.class);
+        return mapFromDto(dto, Point.class);
     }
 
     public AzimuthSignals fromDto(AzimuthSignalsDto dto) {
-        return map(dto, AzimuthSignals.class);
+        return mapFromDto(dto, AzimuthSignals.class);
     }
 
     @Mapping(target = "isFixedResistance", source = "fixedResistance")
     @Mapping(target = "isFixedPower", source = "fixedPower")
     public abstract ModelLayerDto toDto(ModelLayer modelLayer);
 
-
     @Mapping(target = "isHidden", source = "hidden")
     public abstract SignalDto toDto(Signal signal);
 
+    @Mapping(target = "signals", source = "signals.sortedSignals")
     public abstract AzimuthSignalsDto toDto(AzimuthSignals azimuthSignals);
 
     public abstract PointDto toDto(Point point);

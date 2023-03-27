@@ -10,6 +10,7 @@ import ru.nucodelabs.gem.file.dto.anisotropy.SignalDto;
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.geo.anisotropy.Signal;
+import ru.nucodelabs.geo.anisotropy.Signals;
 import ru.nucodelabs.geo.ves.DefaultValuesKt;
 import ru.nucodelabs.geo.ves.calc.VesKt;
 
@@ -80,7 +81,9 @@ class DtoMapperTest {
                                 )
                         )
                 ),
-                null
+                null,
+                DefaultValuesKt.DEFAULT_PICKET_Z,
+                DefaultValuesKt.DEFAULT_PICKET_COMMENT
         );
 
         var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
@@ -89,7 +92,7 @@ class DtoMapperTest {
                 List.of(
                         new AzimuthSignals(
                                 0.0,
-                                List.of(
+                                new Signals(List.of(
                                         new Signal(
                                                 ab2,
                                                 mn2,
@@ -99,10 +102,12 @@ class DtoMapperTest {
                                                 DefaultValuesKt.DEFAULT_ERROR,
                                                 false
                                         )
-                                )
+                                ))
                         )
                 ),
-                List.of()
+                List.of(),
+                DefaultValuesKt.DEFAULT_PICKET_Z,
+                DefaultValuesKt.DEFAULT_PICKET_COMMENT
         );
     }
 }

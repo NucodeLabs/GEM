@@ -14,8 +14,8 @@ import ru.nucodelabs.kfx.snapshot.HistoryManager;
 
 public class AnisotropyProjectModule extends AbstractModule {
     @Provides
-    @Named("initial")
     @Singleton
+    @Named("initial")
     Project<Point> pointProject() {
         return new Project<>(new Point());
     }
