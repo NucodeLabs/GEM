@@ -82,8 +82,8 @@ class DtoMapperTest {
                         )
                 ),
                 null,
-                DefaultValuesKt.DEFAULT_PICKET_Z,
-                DefaultValuesKt.DEFAULT_PICKET_COMMENT
+                null,
+                null
         );
 
         var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
@@ -109,5 +109,7 @@ class DtoMapperTest {
                 DefaultValuesKt.DEFAULT_PICKET_Z,
                 DefaultValuesKt.DEFAULT_PICKET_COMMENT
         );
+
+        assertEquals(expected, dtoMapper.fromDto(pointDto));
     }
 }

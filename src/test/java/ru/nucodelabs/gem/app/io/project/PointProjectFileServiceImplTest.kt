@@ -2,8 +2,6 @@ package ru.nucodelabs.gem.app.io.project
 
 import com.google.inject.Guice
 import com.google.inject.Key
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import ru.nucodelabs.gem.app.project.Project
@@ -12,23 +10,34 @@ import ru.nucodelabs.gem.config.AnisotropyProjectModule
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.geo.anisotropy.Signal
 import ru.nucodelabs.geo.anisotropy.Signals
 import java.io.File
 
 class PointProjectFileServiceImplTest {
 
-    var project: Project<Point> = mockk()
-
-    init {
-        every { project.data } returns mockk(relaxed = true)
-        every { project.data.azimuthSignals } returns mutableListOf(
-            AzimuthSignals(
-                0.0,
-                Signals(mutableListOf(mockk(relaxed = true)))
+    var project: Project<Point> = Project(
+        Point(
+            azimuthSignals = mutableListOf(
+                AzimuthSignals(
+                    azimuth = 0.0,
+                    signals = Signals(
+                        listOf(
+                            Signal(
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                false
+                            )
+                        )
+                    )
+                )
             )
         )
-        every { project.data.model } returns mutableListOf()
-    }
+    )
 
     val file =
         File.createTempFile("sample", "test").apply {

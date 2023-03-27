@@ -3,8 +3,6 @@ package ru.nucodelabs.gem.file.dto
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Guice
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.gem.file.dto.anisotropy.AzimuthSignalsDto
@@ -17,15 +15,19 @@ class ProjectDtoTest {
 
     @Test
     fun json() {
-        val projectDto = mockk<ProjectDto<PointDto>>()
-        every { projectDto.data } returns mockk(relaxed = true)
-        every { projectDto.data.azimuthSignals } returns listOf(
-            AzimuthSignalsDto(
-                0.0,
-                listOf(mockk(relaxed = true))
+        val projectDto = ProjectDto(
+            PointDto(
+                azimuthSignals = listOf(
+                    AzimuthSignalsDto(
+                        azimuth = 0.0,
+                        listOf()
+                    )
+                ),
+                model = null,
+                z = 0.0,
+                comment = ""
             )
         )
-        every { projectDto.data.model } returns listOf()
         val json = objectMapper.writeValueAsString(projectDto)
         println(json)
         val deserialized = objectMapper.readValue<ProjectDto<*>>(json)

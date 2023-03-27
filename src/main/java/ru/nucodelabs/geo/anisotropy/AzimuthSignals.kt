@@ -10,5 +10,5 @@ import jakarta.validation.constraints.DecimalMin
  */
 data class AzimuthSignals(
     @field:DecimalMin("0") @field:DecimalMax("360") var azimuth: Double,
-    var signals: Signals,
+    var signals: Signals = Signals(),
 )

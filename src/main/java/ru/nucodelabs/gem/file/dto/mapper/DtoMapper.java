@@ -1,59 +1,47 @@
 package ru.nucodelabs.gem.file.dto.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.nucodelabs.gem.file.dto.anisotropy.AzimuthSignalsDto;
 import ru.nucodelabs.gem.file.dto.anisotropy.ModelLayerDto;
 import ru.nucodelabs.gem.file.dto.anisotropy.PointDto;
 import ru.nucodelabs.gem.file.dto.anisotropy.SignalDto;
-import ru.nucodelabs.geo.anisotropy.AzimuthSignals;
-import ru.nucodelabs.geo.anisotropy.ModelLayer;
-import ru.nucodelabs.geo.anisotropy.Point;
-import ru.nucodelabs.geo.anisotropy.Signal;
+import ru.nucodelabs.geo.anisotropy.*;
 
-import javax.inject.Inject;
+import java.util.List;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Mapper(
         componentModel = "jsr330",
         unmappedSourcePolicy = ReportingPolicy.ERROR,
-        unmappedTargetPolicy = ReportingPolicy.ERROR
+        unmappedTargetPolicy = ReportingPolicy.ERROR,
+        nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
 )
 public abstract class DtoMapper {
 
-    @Inject
-    private ObjectMapper objectMapper;
+    @Mapping(target = "isFixedResistance", source = "fixedPower", defaultValue = "false")
+    @Mapping(target = "isFixedPower", source = "fixedResistance", defaultValue = "false")
+    public abstract ModelLayer fromDto(ModelLayerDto dto);
 
-    /**
-     * Mapping using jackson ObjectMapper to use data class default parameters
-     *
-     * @param dto      source
-     * @param outClass target type
-     * @param <O>      target type
-     * @param <I>      source type
-     * @return mapped
-     */
-    @SneakyThrows
-    private <O, I> O mapFromDto(I dto, Class<O> outClass) {
-        return objectMapper.readValue(objectMapper.writeValueAsString(dto), outClass);
-    }
+    @Mapping(
+            target = "resistanceApparent",
+            defaultExpression = "java(ru.nucodelabs.geo.ves.calc.VesKt.rhoA(dto.getAb2(), dto.getMn2(), dto.getAmperage(), dto.getVoltage()))"
+    )
+    @Mapping(target = "errorResistanceApparent", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_ERROR)")
+    @Mapping(target = "isHidden", source = "hidden", defaultValue = "false")
+    public abstract Signal fromDto(SignalDto dto);
 
-    public ModelLayer fromDto(ModelLayerDto dto) {
-        return mapFromDto(dto, ModelLayer.class);
-    }
+    @Mapping(target = "z", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_POINT_Z)")
+    @Mapping(target = "comment", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_POINT_COMMENT)")
+    public abstract Point fromDto(PointDto dto);
 
-    public Signal fromDto(SignalDto dto) {
-        return mapFromDto(dto, Signal.class);
-    }
+    public abstract AzimuthSignals fromDto(AzimuthSignalsDto dto);
 
-    public Point fromDto(PointDto dto) {
-        return mapFromDto(dto, Point.class);
-    }
-
-    public AzimuthSignals fromDto(AzimuthSignalsDto dto) {
-        return mapFromDto(dto, AzimuthSignals.class);
+    public Signals mapSignals(List<SignalDto> dto) {
+        return new Signals(emptyIfNull(dto).stream().map(this::fromDto).toList());
     }
 
     @Mapping(target = "isFixedResistance", source = "fixedResistance")
@@ -63,7 +51,7 @@ public abstract class DtoMapper {
     @Mapping(target = "isHidden", source = "hidden")
     public abstract SignalDto toDto(Signal signal);
 
-    @Mapping(target = "signals", source = "signals.sortedSignals")
+    @Mapping(target = "signals", source = "signals.effectiveSignals")
     public abstract AzimuthSignalsDto toDto(AzimuthSignals azimuthSignals);
 
     public abstract PointDto toDto(Point point);

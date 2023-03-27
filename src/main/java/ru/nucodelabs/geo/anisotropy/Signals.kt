@@ -5,7 +5,7 @@ import ru.nucodelabs.gem.util.std.AutoEquals
 import ru.nucodelabs.geo.anisotropy.calc.processSignals
 
 class Signals(
-    signals: List<Signal>
+    signals: List<Signal> = listOf()
 ) : AutoEquals() {
     init {
         includeInEquals(
