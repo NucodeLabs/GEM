@@ -4,6 +4,8 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.ScatterChart?>
+<?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
@@ -15,4 +17,12 @@
             <MenuItem text="%saveProject" onAction="#saveProject"/>
         </Menu>
     </MenuBar>
+    <ScatterChart fx:id="chart">
+        <xAxis>
+            <NucodeNumberAxis/>
+        </xAxis>
+        <yAxis>
+            <NucodeNumberAxis/>
+        </yAxis>
+    </ScatterChart>
 </VBox>

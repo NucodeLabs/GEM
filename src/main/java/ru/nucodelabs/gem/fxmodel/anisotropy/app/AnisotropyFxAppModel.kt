@@ -34,6 +34,11 @@ class AnisotropyFxAppModel @Inject constructor(
         fxModelMapper.updateObservable(observablePoint, point)
     }
 
+    fun newProject() {
+        project.restoreFromSnapshot(Project(Point()).snapshot())
+        projectFileService.resetSave()
+    }
+
     fun loadProject(file: File) {
         val loadedProject = projectFileService.loadProject(file)
         project.restoreFromSnapshot(loadedProject.snapshot())
@@ -42,5 +47,9 @@ class AnisotropyFxAppModel @Inject constructor(
 
     fun saveProject(file: File) {
         projectFileService.saveProject(file, project)
+    }
+
+    fun isProjectSaved(): Boolean {
+        return projectFileService.lastSavedProject() == project && projectFileService.lastSavedProjectFile() != null
     }
 }
