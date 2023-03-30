@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.controller.charts
 
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
@@ -13,9 +12,7 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
-import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.PolygonWithNamesChart
-import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.geo.ves.ExperimentalData
