@@ -1,9 +1,7 @@
-package ru.nucodelabs.geo.map
+package ru.nucodelabs.geo.anisotropy.calc.map
 
 import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
-import java.util.DoubleSummaryStatistics
-import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -25,19 +23,23 @@ fun yFromCenter(distInMeters: Double, azimuthInDegrees: Double): Double {
     return distInMeters * sin(toRadians(toComplexAngle(azimuthInDegrees)))
 }
 
+fun mirror(angleInDegrees: Double) = (angleInDegrees + 180.0) % 360.0
+
+operator fun Double.not() = mirror(this)
+
 private fun toComplexAngle(angleInDegrees: Double): Double {
     return -angleInDegrees + 90
 }
 
 private const val R_EARTH = 6_378_137
 
-data class WGS(val longitudeInDegrees: Double, val latitudeInDegrees: Double)
+data class Wgs(val longitudeInDegrees: Double, val latitudeInDegrees: Double)
 
 data class Offset(val dXInMeters: Double = 0.0, val dYInMeters: Double = 0.0)
 
 data class Point(val x: Int = 0, val y: Int = 0)
 
-operator fun WGS.plus(offset: Offset): WGS {
+operator fun Wgs.plus(offset: Offset): Wgs {
     //Coordinate offsets in radians
     val dLat = offset.dYInMeters / R_EARTH
     val dLon = offset.dXInMeters / (R_EARTH * cos(toRadians(this.latitudeInDegrees)))
@@ -49,7 +51,7 @@ operator fun WGS.plus(offset: Offset): WGS {
     return this.copy(longitudeInDegrees = newLon, latitudeInDegrees = newLat)
 }
 
-operator fun WGS.minus(offset: Offset): WGS {
+operator fun Wgs.minus(offset: Offset): Wgs {
     //Coordinate offsets in radians
     val dLat = offset.dYInMeters / R_EARTH
     val dLon = offset.dXInMeters / (R_EARTH * cos(toRadians(this.latitudeInDegrees)))

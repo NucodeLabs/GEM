@@ -10,10 +10,12 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableModelLayer;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal;
+import ru.nucodelabs.gem.fxmodel.map.ObservableWgs;
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals;
 import ru.nucodelabs.geo.anisotropy.ModelLayer;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.geo.anisotropy.Signal;
+import ru.nucodelabs.geo.anisotropy.calc.map.Wgs;
 
 @Mapper(
         unmappedSourcePolicy = ReportingPolicy.ERROR,
@@ -27,6 +29,13 @@ public abstract class AnisotropyFxModelMapper {
     public abstract ObservablePoint toObservable(Point point);
 
     public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
+
+    public ObservableWgs map(Wgs wgs) {
+        if (wgs == null) {
+            return null;
+        }
+        return new ObservableWgs(wgs.getLongitudeInDegrees(), wgs.getLatitudeInDegrees());
+    }
 
     @Mapping(target = "isHidden", source = "hidden")
     public abstract ObservableSignal toObservable(Signal signal);

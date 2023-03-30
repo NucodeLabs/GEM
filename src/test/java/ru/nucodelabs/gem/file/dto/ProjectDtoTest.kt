@@ -17,6 +17,7 @@ class ProjectDtoTest {
     fun json() {
         val projectDto = ProjectDto(
             PointDto(
+                center = null,
                 azimuthSignals = listOf(
                     AzimuthSignalsDto(
                         azimuth = 0.0,

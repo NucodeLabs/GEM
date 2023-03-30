@@ -65,6 +65,7 @@ class DtoMapperTest {
         var voltage = 1.0;
 
         PointDto pointDto = new PointDto(
+                null,
                 List.of(
                         new AzimuthSignalsDto(
                                 0.0,
@@ -89,6 +90,7 @@ class DtoMapperTest {
         var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
 
         Point expected = new Point(
+                null,
                 List.of(
                         new AzimuthSignals(
                                 0.0,

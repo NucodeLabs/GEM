@@ -1,15 +1,15 @@
-package ru.nucodelabs.gem.view.controller.charts
+package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import javafx.scene.image.Image
 import ru.nucodelabs.gem.net.MapImageProvider
-import ru.nucodelabs.geo.map.MapSizer
-import ru.nucodelabs.geo.map.Offset
-import ru.nucodelabs.geo.map.Point
-import ru.nucodelabs.geo.map.plus
+import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
+import ru.nucodelabs.geo.anisotropy.calc.map.Offset
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
+import ru.nucodelabs.geo.anisotropy.calc.map.plus
 import javax.inject.Inject
 
 class AnisotropyMapImageProvider @Inject constructor(
-    val mapImageProvider: MapImageProvider
+    private val mapImageProvider: MapImageProvider
 ) {
     /**
      * Returns satellite image

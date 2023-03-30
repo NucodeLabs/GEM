@@ -1,4 +1,4 @@
-package ru.nucodelabs.geo.map
+package ru.nucodelabs.geo.anisotropy.calc.map
 
 import kotlin.math.abs
 
@@ -8,7 +8,7 @@ import kotlin.math.abs
  * @param maxAb2WithAzimuth collection that contains only abs max AB/2 points with their azimuth
  */
 class MapSizer(
-    val center: WGS,
+    val center: Wgs,
     private val maxAb2WithAzimuth: Collection<AzimuthPoint>,
     val scale: Double
 ) {
@@ -45,14 +45,14 @@ class MapSizer(
     /**
      * Calculated bottom left corner of rectangle in WSG
      */
-    val bottomLeftCorner: WGS by lazy {
+    val bottomLeftCorner: Wgs by lazy {
         center - Offset(maxAbsXFromCenterInMeters * coefficient, maxAbsYFromCenterInMeters * coefficient)
     }
 
     /**
      * Calculated upper right corner of rectangle in WSG
      */
-    val upperRightCorner: WGS by lazy {
+    val upperRightCorner: Wgs by lazy {
         center + Offset(maxAbsXFromCenterInMeters * coefficient, maxAbsYFromCenterInMeters * coefficient)
     }
 }

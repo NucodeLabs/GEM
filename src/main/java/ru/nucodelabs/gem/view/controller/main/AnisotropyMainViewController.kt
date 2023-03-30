@@ -7,6 +7,7 @@ import javafx.scene.chart.XYChart.Data
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyMapImageProvider
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList
@@ -15,8 +16,7 @@ import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
 import ru.nucodelabs.gem.view.controller.AbstractController
-import ru.nucodelabs.gem.view.controller.charts.AnisotropyMapImageProvider
-import ru.nucodelabs.geo.map.*
+import ru.nucodelabs.geo.anisotropy.calc.map.*
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
@@ -258,7 +258,7 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun setupSatelliteChart(scale: Double = 1.0) {
-        val center = WGS(82.654444, 54.568056)
+        val center = Wgs(82.654444, 54.568056)
         val maxAb2WithAzimuth = listOf(
             AzimuthPoint(117.5, 0.0),
             AzimuthPoint(117.5, 45.0),

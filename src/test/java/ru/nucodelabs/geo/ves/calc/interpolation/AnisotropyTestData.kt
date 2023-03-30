@@ -2,8 +2,8 @@ package ru.nucodelabs.geo.ves.calc.interpolation
 
 import javafx.scene.chart.XYChart
 import ru.nucodelabs.ShiraPicket
-import ru.nucodelabs.geo.map.xFromCenter
-import ru.nucodelabs.geo.map.yFromCenter
+import ru.nucodelabs.geo.anisotropy.calc.map.xFromCenter
+import ru.nucodelabs.geo.anisotropy.calc.map.yFromCenter
 
 object AnisotropyTestData {
     val points: List<XYChart.Data<Number, Number>>

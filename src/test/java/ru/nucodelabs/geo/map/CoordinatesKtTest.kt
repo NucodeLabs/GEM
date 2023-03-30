@@ -16,13 +16,13 @@ internal class CoordinatesKtTest {
     fun xFromCenter() {
         val a = 285.0
         val ref = distValue * cos(toRadians(15.0)) * -1
-        assertTrue(abs(ref - xFromCenter(distValue, a)) < eps)
+        assertTrue(abs(ref - ru.nucodelabs.geo.anisotropy.calc.map.xFromCenter(distValue, a)) < eps)
     }
 
     @Test
     fun yFromCenter() {
         val a = 285.0
         val ref = distValue * sin(toRadians(15.0))
-        assertTrue(abs(ref - yFromCenter(distValue, a)) < eps)
+        assertTrue(abs(ref - ru.nucodelabs.geo.anisotropy.calc.map.yFromCenter(distValue, a)) < eps)
     }
 }

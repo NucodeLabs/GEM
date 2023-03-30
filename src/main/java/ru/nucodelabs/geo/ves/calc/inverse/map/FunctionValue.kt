@@ -1,8 +1,8 @@
 package ru.nucodelabs.geo.ves.calc.inverse.map
 
 import org.apache.commons.math3.analysis.MultivariateFunction
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import ru.nucodelabs.gem.util.fx.Point as PointFX
-import ru.nucodelabs.geo.map.Point
 
 class FunctionValue(redPoints: List<Point>) : MultivariateFunction {
 

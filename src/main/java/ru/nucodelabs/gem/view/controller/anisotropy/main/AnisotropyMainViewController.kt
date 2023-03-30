@@ -2,18 +2,16 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
 import javafx.fxml.FXML
-import javafx.scene.chart.ScatterChart
-import javafx.scene.chart.XYChart.Data
-import javafx.scene.chart.XYChart.Series
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
-import ru.nucodelabs.geo.map.xFromCenter
-import ru.nucodelabs.geo.map.yFromCenter
+import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
+import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
+import ru.nucodelabs.gem.view.controller.anisotropy.main.map.toPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
-import ru.nucodelabs.kfx.ext.toObservableList
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -24,33 +22,35 @@ import javax.inject.Named
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
     @Named("JSON") private val fileChooser: FileChooser,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val colorMapper: ColorMapper,
 ) : AbstractViewController<VBox>() {
     @FXML
-    lateinit var chart: ScatterChart<Number, Number>
+    lateinit var mapChart: ImageScatterChart
+
+    @FXML
+    lateinit var chart: SmartInterpolationMap
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
-        val convert = {
-            val seriesList =
-                appModel.observablePoint.azimuthSignals.map { observableAzimuthSignals ->
-                    observableAzimuthSignals.signals.sortedSignals.map { signal ->
-                        Data<Number, Number>(
-                            xFromCenter(signal.ab2, observableAzimuthSignals.azimuth),
-                            yFromCenter(signal.ab2, observableAzimuthSignals.azimuth)
-                        )
-                    }
-                }.map {
-                    Series(it.toObservableList())
-                }
-
-            seriesList.toObservableList()
-        }
-        chart.data = convert()
+        chart.colorMapper = colorMapper
+        chart.data = toPoints(appModel.observablePoint.azimuthSignals)
         chart.dataProperty().bind(
             Bindings.createObjectBinding(
-                convert,
+                { toPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
+            )
+        )
+        mapChart.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { toPoints(appModel.observablePoint.azimuthSignals) },
+                appModel.observablePoint.azimuthSignals,
+            )
+        )
+        mapChart.imageProperty().bind(
+            Bindings.createObjectBinding(
+                { appModel.mapImage() },
+                appModel.observablePoint.centerProperty()
             )
         )
     }
@@ -72,5 +72,4 @@ class AnisotropyMainViewController @Inject constructor(
             appModel.saveProject(file)
         }
     }
-
 }

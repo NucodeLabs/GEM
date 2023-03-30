@@ -2,11 +2,14 @@ package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.image.Image
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
+import ru.nucodelabs.geo.anisotropy.calc.map.maxAb2WithAzimuth
 import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
@@ -17,7 +20,8 @@ class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
     private val fxModelMapper: AnisotropyFxModelMapper,
     @Named("initial") private val project: Project<Point>,
-    private val projectFileService: ProjectFileService<Point>
+    private val projectFileService: ProjectFileService<Point>,
+    private val mapImageProvider: AnisotropyMapImageProvider
 ) {
     private val point by project::data
 
@@ -51,5 +55,20 @@ class AnisotropyFxAppModel @Inject constructor(
 
     fun isProjectSaved(): Boolean {
         return projectFileService.lastSavedProject() == project && projectFileService.lastSavedProjectFile() != null
+    }
+
+    fun mapImage(): Image? {
+        return if (point.center != null) {
+            val mapSizer = MapSizer(
+                center = point.center!!,
+                maxAb2WithAzimuth(point.azimuthSignals),
+                scale = 1.0
+            )
+            mapImageProvider.satImage(
+                mapSizer = mapSizer
+            )
+        } else {
+            null
+        }
     }
 }

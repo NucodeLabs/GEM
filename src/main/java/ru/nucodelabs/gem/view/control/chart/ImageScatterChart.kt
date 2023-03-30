@@ -23,8 +23,7 @@ class ImageScatterChart @JvmOverloads constructor(
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
-            newImg!!
-            setupImage(newImg)
+            setupImage(newImg ?: generateImage(256, 256, Color.WHITE))
         }
     }
 

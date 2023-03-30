@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.config.AnisotropyProjectModule
-import ru.nucodelabs.gem.config.MappersModule
+import ru.nucodelabs.gem.config.AppModule
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.Signal
@@ -66,8 +66,8 @@ class PointProjectFileServiceImplTest {
         }
 
     val injector = Guice.createInjector(
-        MappersModule(),
-        AnisotropyProjectModule()
+        AnisotropyProjectModule(),
+        AppModule()
     )
 
     val projectFileService: ProjectFileService<Point> = injector.getInstance(

@@ -6,7 +6,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer
-import ru.nucodelabs.geo.map.Point
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
 
 class InverseSolver(private val redPoints: List<Point>) {
     //Размер симплекса (по каждому измерению)

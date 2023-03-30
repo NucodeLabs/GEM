@@ -1,9 +1,9 @@
 package ru.nucodelabs.geo.ves.calc.inverse.map
 
-import ru.nucodelabs.gem.util.fx.Point as PointFX
-import ru.nucodelabs.geo.map.Point
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import java.util.function.Function
 import kotlin.math.hypot
+import ru.nucodelabs.gem.util.fx.Point as PointFX
 
 class DistanceToRectangle(private val points: List<Point>) : Function<Pair<PointFX<Double, Double>, PointFX<Double, Double>>, Double> {
     override fun apply(
