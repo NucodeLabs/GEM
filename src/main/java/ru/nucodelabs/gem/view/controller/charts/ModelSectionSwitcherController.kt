@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.controller.charts
 
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.VBox
@@ -49,6 +50,15 @@ class ModelSectionSwitcherController @Inject constructor(
                 MenuItem("Переключить на линейный масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = true }
                 },
+                CheckMenuItem("Показывать сопротивления").apply{
+                    isSelected = false
+                    onAction = if (!this.isSelected){
+                        EventHandler { logSectionBoxController.setupNames(this.isSelected)}
+
+                    }else {
+                        EventHandler { logSectionBoxController.setupNames(this.isSelected) }
+                    }
+                },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {
                         logSectionBox.saveSnapshotAsPng(fc)?.also {
@@ -67,6 +77,15 @@ class ModelSectionSwitcherController @Inject constructor(
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на псевдо-логарифмический масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = false }
+                },
+                CheckMenuItem("Показывать сопротивления").apply{
+                    isSelected = false
+                    onAction = if (!this.isSelected){
+                        EventHandler { linearSectionBoxController.setupNames(this.isSelected)}
+
+                    }else {
+                        EventHandler { linearSectionBoxController.setupNames(this.isSelected) }
+                    }
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {
