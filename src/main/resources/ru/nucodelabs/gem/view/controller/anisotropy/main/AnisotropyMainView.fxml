@@ -6,10 +6,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.chart.ScatterChart?>
 <?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.control.Button?>
+
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
-      prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../common.css"
+      maxHeight="Infinity" maxWidth="Infinity" stylesheets="@../../../common.css, ../../charts/MapPseudoSection.css"
+      prefWidth="1280"
+      prefHeight="720"
       fx:id="root">
     <MenuBar>
         <Menu text="%file">
@@ -17,12 +32,211 @@
             <MenuItem text="%saveProject" onAction="#saveProject"/>
         </Menu>
     </MenuBar>
-    <ScatterChart fx:id="chart">
-        <xAxis>
-            <NucodeNumberAxis/>
-        </xAxis>
-        <yAxis>
-            <NucodeNumberAxis/>
-        </yAxis>
-    </ScatterChart>
+    <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
+        <Tab text="Сигналы" closable="false">
+            <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
+                       VBox.vgrow="ALWAYS" fx:id="Split1">
+
+                <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity" maxWidth="Infinity"
+                           VBox.vgrow="ALWAYS" fx:id="Split2">
+                    <VBox alignment="BOTTOM_CENTER">
+                        <HBox alignment="BASELINE_RIGHT">
+                            <VBox alignment="TOP_CENTER">
+                                <Label alignment="TOP_CENTER" text="Широта"/>
+                                <TextField fx:id="Text1" alignment="TOP_CENTER" promptText="Широта" maxWidth="100"/>
+                            </VBox>
+                            <VBox alignment="TOP_CENTER">
+                                <Label alignment="TOP_CENTER" text="Долгота"/>
+                                <TextField fx:id="Text2" alignment="TOP_CENTER" promptText="Долгота" maxWidth="100"/>
+                            </VBox>
+                        </HBox>
+                        <ScatterChart fx:id="Chart" maxWidth="800" maxHeight="400">
+                            <xAxis>
+                                <NumberAxis/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis/>
+                            </yAxis>
+                        </ScatterChart>
+                    </VBox>
+
+                    <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="table2" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS"
+                                   editable="true">
+                            <columns>
+                                <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
+                                             styleClass="centered-column"
+                                             resizable="false" editable="false" fx:id="indexColq"/>
+                                <TableColumn fx:id="ab2Colq" sortable="false">
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+                        <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                               style="-fx-text-fill: Gray" text="График с отношениями сигналов друг к другу"/>
+                        <ScatterChart fx:id="chart2" maxWidth="800" maxHeight="400">
+                            <xAxis>
+                                <NucodeNumberAxis autoRanging="false"/>
+                            </xAxis>
+                            <yAxis>
+                                <NucodeNumberAxis autoRanging="false"/>
+                            </yAxis>
+                        </ScatterChart>
+                    </VBox>
+                </SplitPane>
+
+
+                <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                    <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
+                               VBox.vgrow="ALWAYS" fx:id="Split3">
+                        <TableView fx:id="table3" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS"
+                                   editable="true">
+                            <columns>
+                                <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
+                                             styleClass="centered-column"
+                                             resizable="false" editable="false" fx:id="indexCol"/>
+                                <TableColumn fx:id="ab2Col" sortable="false">
+                                    <graphic>
+                                        <Label text="%ab2">
+                                            <tooltip>
+                                                <Tooltip text="%ab2Full"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="mn2Col" sortable="false">
+                                    <graphic>
+                                        <Label text="%mn2">
+                                            <tooltip>
+                                                <Tooltip text="%mn2Full"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="resistanceApparentCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%resistanceApparent">
+                                            <tooltip>
+                                                <Tooltip text="%resistanceApparentFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="errorResistanceCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%errorResistanceApparent">
+                                            <tooltip>
+                                                <Tooltip text="%errorResistanceApparentFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="amperageCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%amperage">
+                                            <tooltip>
+                                                <Tooltip text="%amperageFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="voltageCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%voltage">
+                                            <tooltip>
+                                                <Tooltip text="%voltageFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+
+
+                        <LineChart fx:id="chart3" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <NucodeNumberAxis/>
+                            </xAxis>
+                            <yAxis>
+                                <NucodeNumberAxis/>
+                            </yAxis>
+                        </LineChart>
+                    </SplitPane>
+                </VBox>
+
+            </SplitPane>
+        </Tab>
+
+        <Tab text="Инверсия" closable="false">
+            <SplitPane dividerPositions="0.5" maxHeight="Infinity" maxWidth="Infinity"
+                       VBox.vgrow="ALWAYS" fx:id="Split4">
+
+                <SplitPane orientation="HORIZONTAL" dividerPositions="0.5" maxHeight="Infinity" maxWidth="Infinity"
+                           VBox.vgrow="ALWAYS" fx:id="Split5">
+                    <VBox>
+                        <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
+                                   VBox.vgrow="ALWAYS" fx:id="Split6">
+                            <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                                   style="-fx-text-fill: Gray" text="Сигнал"/>
+                            <ScatterChart fx:id="chart4" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                    <NucodeNumberAxis/>
+                                </xAxis>
+                                <yAxis>
+                                    <NucodeNumberAxis/>
+                                </yAxis>
+                            </ScatterChart>
+                            <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                                   style="-fx-text-fill: Gray" text="Отличие сигналов"/>
+                            <ScatterChart fx:id="chart5" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                    <NucodeNumberAxis/>
+                                </xAxis>
+                                <yAxis>
+                                    <NucodeNumberAxis/>
+                                </yAxis>
+                            </ScatterChart>
+                        </SplitPane>
+                    </VBox>
+
+                </SplitPane>
+                <VBox>
+
+                    <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
+                               VBox.vgrow="ALWAYS" fx:id="Split7">
+                        <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                               style="-fx-text-fill: Gray" text="Синтетика"/>
+                        <ScatterChart fx:id="chart6" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <NucodeNumberAxis/>
+                            </xAxis>
+                            <yAxis>
+                                <NucodeNumberAxis/>
+                            </yAxis>
+                        </ScatterChart>
+                        <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
+                               style="-fx-text-fill: Gray" text="Модель"/>
+
+                        <TableView fx:id="table8" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS"
+                                   editable="true">
+                            <columns>
+                                <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
+                                             styleClass="centered-column"
+                                             resizable="false" editable="false" fx:id="indexCo3lq"/>
+                                <TableColumn fx:id="ab2Co33lq" sortable="false">
+                                </TableColumn>
+                            </columns>
+                        </TableView>
+
+                        <Button alignment="BOTTOM_RIGHT" text="Обратная задача" fx:id="button1">
+                        </Button>
+
+
+                    </SplitPane>
+                </VBox>
+            </SplitPane>
+
+        </Tab>
+
+    </TabPane>
+
 </VBox>
