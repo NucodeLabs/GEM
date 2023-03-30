@@ -12,7 +12,7 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
-import ru.nucodelabs.gem.view.control.chart.PolygonChart
+import ru.nucodelabs.gem.view.control.chart.PolygonWithNamesChart
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.geo.ves.ExperimentalData
@@ -24,6 +24,7 @@ import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -33,7 +34,8 @@ private const val LAST_COEF = 0.5
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
     private val colorMapper: ColorMapper,
-    private val formatter: StringConverter<Number>
+    private val formatter: StringConverter<Number>,
+    private val df: DecimalFormat
 ) : AbstractController() {
 
     /**
@@ -65,7 +67,7 @@ class ModelSectionController @Inject constructor(
     private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
-    private lateinit var chart: PolygonChart
+    private lateinit var chart: PolygonWithNamesChart
 
     override val stage: Stage?
         get() = chart.scene.window as Stage?
@@ -139,11 +141,14 @@ class ModelSectionController @Inject constructor(
                 )
 
                 chart.data += series
+                series.name = df.format(picket.modelData[i].resistance)
                 chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
             }
         }
     }
-
+     fun setupNames(boolean: Boolean){
+      chart.namesVisibleProperty().set(boolean)
+     }
     private fun setupXAxisMarks() {
         val section = observableSection.asSection()
         xAxis.forceMarks.setAll(

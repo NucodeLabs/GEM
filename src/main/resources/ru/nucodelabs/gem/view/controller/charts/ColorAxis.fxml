@@ -11,6 +11,9 @@
       fx:controller="ru.nucodelabs.gem.view.controller.charts.ColorAxisController"
       maxHeight="Infinity" maxWidth="70" minWidth="70" stylesheets="@ModelSection.css"
       onContextMenuRequested="#openContextMenu" style="-fx-padding: 0 0 0 -10;" fx:id="root">
+    <HBox alignment="TOP_CENTER">
+        <Label fx:id="title" text="[Ω⋅m]" styleClass="chart-label"/>
+    </HBox>
     <fx:define>
         <Stage fx:id="configWindow" resizable="false" title="Настройки цветовой шкалы">
             <scene>
