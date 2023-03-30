@@ -7,4 +7,5 @@ interface ProjectFileService<T> {
     fun saveProject(file: File, project: Project<T>)
     fun lastSavedProject(): Project<T>?
     fun lastSavedProjectFile(): File?
+    fun resetSave()
 }

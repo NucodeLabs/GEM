@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.control.Button?>
+
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
@@ -31,7 +32,6 @@
             <MenuItem text="%saveProject" onAction="#saveProject"/>
         </Menu>
     </MenuBar>
-
     <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
         <Tab text="Сигналы" closable="false">
             <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"

@@ -33,6 +33,11 @@ abstract class AbstractProjectFileServiceImpl<T> @Inject constructor(
         return lastSavedProjectFile
     }
 
+    override fun resetSave() {
+        lastSavedProject = null
+        lastSavedProjectFile = null
+    }
+
     protected abstract fun mapFromDto(projectDto: ProjectDto<*>): Project<T>
 
     protected abstract fun mapToDto(project: Project<T>): ProjectDto<*>
