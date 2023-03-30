@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.anisotropy.main
 
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -34,4 +35,5 @@ class AnisotropyMainViewController @Inject constructor(
             appModel.saveProject(file)
         }
     }
+
 }
