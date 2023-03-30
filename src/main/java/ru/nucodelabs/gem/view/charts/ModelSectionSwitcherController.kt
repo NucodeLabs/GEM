@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.charts
 
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.VBox
@@ -11,11 +12,14 @@ import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.util.fx.bindTo
 import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.view.AbstractController
+import java.awt.CheckboxMenuItem
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
+import javax.swing.JCheckBoxMenuItem
+
 
 class ModelSectionSwitcherController @Inject constructor(
     @Named("PNG") private val fc: FileChooser,
@@ -37,6 +41,7 @@ class ModelSectionSwitcherController @Inject constructor(
         get() = linearSectionBox.scene?.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+
         logSectionBox.managedProperty() bindTo logSectionBox.visibleProperty()
         linearSectionBox.managedProperty() bindTo linearSectionBox.visibleProperty()
 
@@ -48,6 +53,15 @@ class ModelSectionSwitcherController @Inject constructor(
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на линейный масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = true }
+                },
+                CheckMenuItem("Показывать сопротивления").apply{
+                    isSelected = false
+                    onAction = if (!this.isSelected){
+                        EventHandler { logSectionBoxController.setupNames(this.isSelected)}
+
+                    }else {
+                        EventHandler { logSectionBoxController.setupNames(this.isSelected) }
+                    }
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {
@@ -67,6 +81,15 @@ class ModelSectionSwitcherController @Inject constructor(
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на псевдо-логарифмический масштаб").apply {
                     onAction = EventHandler { linearSectionBox.isVisible = false }
+                },
+                CheckMenuItem("Показывать сопротивления").apply{
+                    isSelected = false
+                    onAction = if (!this.isSelected){
+                        EventHandler { linearSectionBoxController.setupNames(this.isSelected)}
+
+                    }else {
+                        EventHandler { linearSectionBoxController.setupNames(this.isSelected) }
+                    }
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {

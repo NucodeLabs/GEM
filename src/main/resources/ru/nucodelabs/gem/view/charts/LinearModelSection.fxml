@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis?>
-<?import ru.nucodelabs.gem.view.control.chart.PolygonChart?>
+
+<?import ru.nucodelabs.gem.view.control.chart.PolygonWithNamesChart?>
 <?import ru.nucodelabs.gem.view.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -16,7 +17,8 @@
     <HBox alignment="CENTER_LEFT">
         <Label fx:id="title" text="Модель, разрез" styleClass="chart-label"/>
     </HBox>
-    <PolygonChart fx:id="chart" maxWidth="Infinity"
+
+    <PolygonWithNamesChart fx:id="chart" maxWidth="Infinity"
                   maxHeight="Infinity" animated="false" legendVisible="false" styleClass="padded-chart"
                   VBox.vgrow="ALWAYS">
         <xAxis>
@@ -31,5 +33,6 @@
                 </prefWidth>
             </NucodeNumberAxis>
         </yAxis>
-    </PolygonChart>
+
+    </PolygonWithNamesChart>
 </VBox>
