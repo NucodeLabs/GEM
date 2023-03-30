@@ -35,6 +35,8 @@ data class WGS(val longitudeInDegrees: Double, val latitudeInDegrees: Double)
 
 data class Offset(val dXInMeters: Double = 0.0, val dYInMeters: Double = 0.0)
 
+data class Point(val x: Int = 0, val y: Int = 0)
+
 operator fun WGS.plus(offset: Offset): WGS {
     //Coordinate offsets in radians
     val dLat = offset.dYInMeters / R_EARTH
