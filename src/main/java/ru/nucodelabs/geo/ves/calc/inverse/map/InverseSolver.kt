@@ -10,7 +10,7 @@ import ru.nucodelabs.geo.map.Point
 
 class InverseSolver(private val redPoints: List<Point>) {
     //Размер симплекса (по каждому измерению)
-    private val SIDE_LENGTH_DEFAULT = 1.0
+    private val SIDE_LENGTH_DEFAULT = 100.0
 
     //Какие-то константы для SimplexOptimize
     private val RELATIVE_THRESHOLD_DEFAULT = 1e-10
