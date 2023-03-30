@@ -2,19 +2,45 @@ package ru.nucodelabs.geo.map
 
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
+import kotlin.random.Random
 
 internal class InverseTest {
     @Test
     fun myTest() {
         val points = mutableListOf<Point>()
-        for (i in 0..400) {
-            points.add(Point(0, i))
-            points.add(Point(i, 0))
-            points.add(Point(400, i))
-            points.add(Point(i, 400))
+        var range = 400
+        var start = 0
+        for (i in start..range) {
+            points.add(Point(start, i))
+            points.add(Point(i, start))
+            points.add(Point(range, i))
+            points.add(Point(i, range))
+        }
+//        range = 401
+//        start = -1
+//        for (i in start..range) {
+//            points.add(Point(start, i))
+//            points.add(Point(i, start))
+//            points.add(Point(range, i))
+//            points.add(Point(i, range))
+//        }
+//        range = 402
+//        start = -2
+//        for (i in start..range) {
+//            points.add(Point(start, i))
+//            points.add(Point(i, start))
+//            points.add(Point(range, i))
+//            points.add(Point(i, range))
+//        }
+
+        val points1 = mutableSetOf<Point>()
+        for (i in 1..100) {
+            points1.add(Point(Random.nextInt(-200, 800), Random.nextInt(-200, 800)))
         }
 
-        val initialPoints = Pair(Point(-100,-100), Point(600, 600))
+        points += points1
+
+        val initialPoints = Pair(Point(180,180), Point(220, 220))
 
         val solver = InverseSolver(points)
         val e = solver.getOptimizedAngles(initialPoints)
