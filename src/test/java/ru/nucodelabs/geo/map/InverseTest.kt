@@ -1,6 +1,7 @@
 package ru.nucodelabs.geo.map
 
 import org.junit.jupiter.api.Test
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
 import kotlin.random.Random
 
