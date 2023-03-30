@@ -20,8 +20,8 @@ class DistanceToRectangle(private val points: List<Point>) : Function<Pair<Point
         val a = points.first
         val b = points.second
         val c = PointFX(a.xValue, b.yValue)
-        val d = PointFX(a.yValue, b.xValue)
-        val segments = listOf(Pair(a, b), Pair(b, c), Pair(c, d), Pair(d, a))
+        val d = PointFX(b.xValue, a.yValue)
+        val segments = listOf(Pair(a, c), Pair(c, b), Pair(b, d), Pair(d, a))
         val results = segments.map { segment -> distanceToSegment(from, segment) }
         return results.min()
     }
