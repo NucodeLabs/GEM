@@ -16,16 +16,16 @@ import ru.nucodelabs.gem.util.fx.*
 class ImageScatterChart @JvmOverloads constructor(
     @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
-    image: Image = generateImage(450, 450, Color.WHITE)
+    image: Image = generateImage(256, 256, Color.WHITESMOKE)
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     private var plotArea = this.lookup(".chart-plot-background") as Region
     private var _plotBackgroundProperty = plotArea.backgroundProperty()
-    private var plotBackground: Background? by _plotBackgroundProperty
+    //private var plotBackground: Background? by _plotBackgroundProperty
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
-            setupImage(newImg ?: generateImage(450, 450, Color.WHITE))
+            setupImage(newImg ?: generateImage(256, 256, Color.WHITE))
         }
     }
 
