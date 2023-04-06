@@ -14,7 +14,7 @@ import ru.nucodelabs.gem.util.fx.*
 class ImageScatterChart @JvmOverloads constructor(
     @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
-    image: Image = generateImage(256, 256, Color.WHITESMOKE)
+    image: Image = generateImage(256, 256, Color.RED)
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     private val plotArea = this.lookup(".chart-plot-background") as Region
@@ -23,7 +23,7 @@ class ImageScatterChart @JvmOverloads constructor(
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
-            setupImage(newImg ?: generateImage(256, 256, Color.WHITE))
+            setupImage(newImg ?: generateImage(256, 256, Color.RED))
         }
     }
 

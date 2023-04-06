@@ -43,8 +43,8 @@ class AnisotropyMainViewController @Inject constructor(
         super.initialize(location, resources)
         interpolChart.colorMapper = colorMapper
         stage?.onShown = EventHandler {
-            setupInterpolationChart()
-            setupSatelliteChart()
+            //setupInterpolationChart()
+            //setupSatelliteChart()
         }
     }
 
