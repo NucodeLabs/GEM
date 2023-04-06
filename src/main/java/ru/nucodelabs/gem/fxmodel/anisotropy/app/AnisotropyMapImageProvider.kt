@@ -2,11 +2,13 @@ package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import javafx.scene.image.Image
 import ru.nucodelabs.gem.net.MapImageProvider
+import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
 import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
 import ru.nucodelabs.geo.anisotropy.calc.map.Offset
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import ru.nucodelabs.geo.anisotropy.calc.map.plus
 import javax.inject.Inject
+import kotlin.math.abs
 
 class AnisotropyMapImageProvider @Inject constructor(
     private val mapImageProvider: MapImageProvider
@@ -18,14 +20,30 @@ class AnisotropyMapImageProvider @Inject constructor(
     fun satImage(mapSizer: MapSizer): Image {
         val bottomLeft = mapSizer.bottomLeftCorner
         val upperRight = mapSizer.upperRightCorner
+
+        val stream = mapImageProvider.requestImage(
+            lonBottomLeft = bottomLeft.longitudeInDegrees,
+            latBottomLeft = bottomLeft.latitudeInDegrees,
+            lonUpperRight = upperRight.longitudeInDegrees,
+            latUpperRight = upperRight.latitudeInDegrees,
+            width = 450,
+            height = 450
+        )
+        return Image(stream)
+    }
+
+    fun getRealSize(mapSizer: MapSizer): Double {
+        val bottomLeft = mapSizer.bottomLeftCorner
+        val upperRight = mapSizer.upperRightCorner
         val upperLeft = mapSizer.center + Offset(
             -mapSizer.maxAbsXFromCenterInMeters,
             mapSizer.maxAbsYFromCenterInMeters
-            )
+        )
         val bottomRight = mapSizer.center + Offset(
             mapSizer.maxAbsXFromCenterInMeters,
             -mapSizer.maxAbsYFromCenterScaledInMeters
         )
+
         val imageWithSquare = mapImageProvider.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
@@ -38,17 +56,12 @@ class AnisotropyMapImageProvider @Inject constructor(
             width = 450,
             height = 450
         )
+
         val points = imageParser(Image(imageWithSquare))
-        //println(points)
-        val stream = mapImageProvider.requestImage(
-            lonBottomLeft = bottomLeft.longitudeInDegrees,
-            latBottomLeft = bottomLeft.latitudeInDegrees,
-            lonUpperRight = upperRight.longitudeInDegrees,
-            latUpperRight = upperRight.latitudeInDegrees,
-            width = 450,
-            height = 450
-        )
-        return Image(stream)
+        val solver = InverseSolver(points)
+        val corners = solver.getOptimizedAngles(Pair(Point(0, 0), Point(450, 450)))
+        val expected = mapSizer.maxAbsYFromCenterInMeters
+        return expected + pixelsToMeters(abs(corners.first.x - corners.second.x), corners.second.x, expected)
     }
 
     private fun imageParser(image: Image): MutableList<Point> {
@@ -71,9 +84,6 @@ class AnisotropyMapImageProvider @Inject constructor(
 
     private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double): Double {
         val extraInPixels = 450.0 - xCord.toDouble()
-        println("---End of line: $xCord")
-        println("---Line length in pixels: $pixelCount")
-        println("---Extra length in pixels: $extraInPixels")
         val metersInPixel = (maxDist * 2.0) / pixelCount.toDouble()
         return extraInPixels * metersInPixel
     }
