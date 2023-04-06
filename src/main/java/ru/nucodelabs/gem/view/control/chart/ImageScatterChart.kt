@@ -54,9 +54,9 @@ class ImageScatterChart @JvmOverloads constructor(
             )
         )
 
-        Platform.runLater {
-            plotArea = this.lookup(".chart-plot-background") as Region
-            _plotBackgroundProperty = plotArea.backgroundProperty()
+        //Platform.runLater {
+            //plotArea = this.lookup(".chart-plot-background") as Region
+            //_plotBackgroundProperty = plotArea.backgroundProperty()
 /*            plotBackground = Background(
                 BackgroundImage(
                     img,
@@ -73,7 +73,7 @@ class ImageScatterChart @JvmOverloads constructor(
                     }, observableListOf(img)
                 )
             )
-        }
+        //}
     }
 
     private fun bindChartSizeToImageSize(img: Image) {
