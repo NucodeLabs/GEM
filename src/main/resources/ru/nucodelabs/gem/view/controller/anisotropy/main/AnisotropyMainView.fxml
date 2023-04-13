@@ -162,10 +162,10 @@
                                style="-fx-text-fill: Gray" text="Сигнал"/>
                         <SmartInterpolationMap fx:id="chart" maxWidth="800" maxHeight="400" VBox.vgrow="ALWAYS">
                             <xAxis>
-                                <NucodeNumberAxis/>
+                                <NucodeNumberAxis autoRanging="true"/>
                             </xAxis>
                             <yAxis>
-                                <NucodeNumberAxis/>
+                                <NucodeNumberAxis autoRanging="true"/>
                             </yAxis>
                         </SmartInterpolationMap>
                         <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
