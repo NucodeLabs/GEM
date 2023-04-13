@@ -5,12 +5,14 @@ import javafx.beans.NamedArg
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.ValueAxis
 import javafx.scene.image.Image
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.util.fx.*
+import kotlin.math.round
 
 
 class ImageScatterChart @JvmOverloads constructor(
@@ -41,6 +43,18 @@ class ImageScatterChart @JvmOverloads constructor(
         bindChartSizeToImageSize(img)
         layoutChildren()
         layoutPlotChildren()
+    }
+
+    fun setAxisRange(range: Double) {
+        xAxis.isAutoRanging = false
+        xAxis.upperBound = range
+        xAxis.lowerBound = -range
+        xAxis.tickLength = range / 46
+
+        yAxis.isAutoRanging = false
+        yAxis.upperBound = range
+        yAxis.lowerBound = -range
+        yAxis.tickLength = range / 46
     }
 
     private fun setImageAsBackground(img: Image) {
