@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
 import javafx.fxml.FXML
+import javafx.scene.chart.NumberAxis
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
@@ -18,6 +19,7 @@ import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.math.round
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
@@ -61,6 +63,10 @@ class AnisotropyMainViewController @Inject constructor(
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             appModel.loadProject(file)
+            val distance: Double? = appModel.mapDistance()?.let { round(it) }
+            if (distance != null) {
+                mapChart.setAxisRange(distance)
+            }
         }
     }
 
