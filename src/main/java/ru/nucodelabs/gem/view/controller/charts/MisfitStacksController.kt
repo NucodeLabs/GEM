@@ -17,11 +17,12 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.controller.AbstractController
+import ru.nucodelabs.geo.target.TargetFunction
+import ru.nucodelabs.geo.target.invoke
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
-import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.SquaresDiff
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -35,7 +36,8 @@ class MisfitStacksController @Inject constructor(
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val misfitsFunction: MisfitsFunction,
     private val decimalFormat: DecimalFormat,
-    private val forwardSolver: ForwardSolver
+    private val forwardSolver: ForwardSolver,
+    private val targetFunction: TargetFunction.WithError
 ) : AbstractController() {
     @FXML
     private lateinit var text: Label
@@ -92,10 +94,10 @@ class MisfitStacksController @Inject constructor(
                 val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
                 val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
                 val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
-                val targetFun = SquaresDiff()
-                val targetFunValue = targetFun.apply(
+                val targetFunValue = targetFunction(
                     forwardSolver(picket.effectiveExperimentalData, picket.modelData),
-                    picket.effectiveExperimentalData.map { it.resistanceApparent }
+                    picket.effectiveExperimentalData.map { it.resistanceApparent },
+                    picket.effectiveExperimentalData.map { it.errorResistanceApparent }
                 )
                 text.text =
                     "целевая функция: f = ${dfFour.format(targetFunValue)}" +
