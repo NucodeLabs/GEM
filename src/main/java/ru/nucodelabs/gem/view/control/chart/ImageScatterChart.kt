@@ -19,7 +19,6 @@ class ImageScatterChart @JvmOverloads constructor(
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
     private val plotArea = this.lookup(".chart-plot-background") as Region
-    private val backgroundImages = observableListOf(image)
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
     //private var plotBackground: Background? by _plotBackgroundProperty
 
@@ -37,7 +36,7 @@ class ImageScatterChart @JvmOverloads constructor(
             Bindings.createObjectBinding(
                 {
                     imageToBackground()
-                }, backgroundImages
+                }, _imageProperty
             )
         )
         setupImage(image)
@@ -45,22 +44,25 @@ class ImageScatterChart @JvmOverloads constructor(
 
     private fun setupImage(img: Image) {
         //setImageAsBackground(img)
-        backgroundImages.add(img)
         bindChartSizeToImageSize(img)
         layoutChildren()
         layoutPlotChildren()
     }
 
-    private fun imageToBackground(): Background {
-        return Background(
-            BackgroundImage(
-                image,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT
+    private fun imageToBackground(): Background? {
+        return if (_imageProperty.get() != null) {
+            Background(
+                BackgroundImage(
+                    image,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.DEFAULT,
+                    BackgroundSize.DEFAULT
+                )
             )
-        )
+        } else {
+            null
+        }
     }
 
     fun setAxisRange(range: Double) {
