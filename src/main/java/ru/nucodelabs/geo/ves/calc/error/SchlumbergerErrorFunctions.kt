@@ -1,13 +1,13 @@
 package ru.nucodelabs.geo.ves.calc.error
 
-import ru.nucodelabs.gem.util.std.asFraction
 import ru.nucodelabs.gem.util.std.asPercent
+import ru.nucodelabs.gem.util.std.fromPercent
 import ru.nucodelabs.mathves.SchlumbergerErrorFunctions
 
 data class MinMax(val min: Double, val max: Double)
 
 fun measureError(value: Double, aError: Double, bError: Double): MinMax {
-    val res = SchlumbergerErrorFunctions.calculateMeasureError(value, aError.asFraction(), bError)
+    val res = SchlumbergerErrorFunctions.calculateMeasureError(value, aError.fromPercent(), bError)
     return MinMax(res[0], res[1])
 }
 
@@ -16,7 +16,7 @@ data class ValueMinMax(val value: Double, val min: Double, val max: Double)
 infix fun MinMax.withValue(value: Double) = ValueMinMax(value, min, max)
 
 fun kWithError(ab2: Double, mn2: Double, distAError: Double, distBError: Double): ValueMinMax {
-    val res = SchlumbergerErrorFunctions.calculateKError(ab2, mn2, distAError.asFraction(), distBError)
+    val res = SchlumbergerErrorFunctions.calculateKError(ab2, mn2, distAError.fromPercent(), distBError)
     return ValueMinMax(res[0], res[1], res[2])
 }
 

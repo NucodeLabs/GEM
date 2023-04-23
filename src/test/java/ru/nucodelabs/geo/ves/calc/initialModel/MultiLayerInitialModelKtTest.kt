@@ -10,7 +10,7 @@ class MultiLayerInitialModelKtTest {
     private val forwardSolver = ForwardSolver()
     private val signals = ShiraPicket.picket.effectiveExperimentalData
 
-    val objectMapper = jacksonObjectMapper()
+    private val objectMapper = jacksonObjectMapper()
 
     @Test
     fun multiLayerInitialModel_test() {
@@ -21,6 +21,9 @@ class MultiLayerInitialModelKtTest {
             model.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistance}") }
             println(targetFunctionValue)
         }
+
+        println("RESULT:")
+        result.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistance}") }
 
         println(objectMapper.writeValueAsString(result))
     }

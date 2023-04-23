@@ -9,16 +9,22 @@ import ru.nucodelabs.geo.ves.calc.divide
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.geo.ves.calc.inverse.invoke
+import kotlin.math.log2
 import kotlin.math.pow
 
 const val MAX_LAYERS_COUNT = 10
-const val MIN_TARGET_FUN_VALUE = 0.1
 const val MAX_EVAL_INVERSE = 10_000_000
+const val MIN_TARGET_FUNCTION_VALUE = 0.05
 
 private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
-    SimpleInitialModel.threeLayersInitialModel(signals)
+    listOf(
+        ModelLayer(
+            power = 0.0,
+            resistance = 2.0.pow(signals.map { log2(it.ab2) }.average())
+        )
+    )
 
-private fun fines(count: Int): List<Double> = List(count) { x -> 1.2.pow(x) }
+// сопр среднее по логарифму, потом обратно в степень, с 1 слоем
 
 fun multiLayerInitialModel(
     signals: List<ExperimentalData>,
@@ -27,8 +33,8 @@ fun multiLayerInitialModel(
     targetFunction: TargetFunction.WithError = SquareDiffTargetFunction(),
     inverseSolver: InverseSolver = InverseSolver(forwardSolver, targetFunction),
     maxLayersCount: Int = MAX_LAYERS_COUNT,
-    minTargetFunctionValue: Double = MIN_TARGET_FUN_VALUE,
     maxEval: Int = MAX_EVAL_INVERSE,
+    minTargetFunctionValue: Double = MIN_TARGET_FUNCTION_VALUE,
     iterationCallback: (
         model: List<ModelLayer>,
         targetFunctionValue: Double,
@@ -40,6 +46,8 @@ fun multiLayerInitialModel(
     check(initialLayersCount in 1 until maxLayersCount)
 
     for (i in initialLayersCount..maxLayersCount) {
+        model = inverseSolver(signals, model, maxEval)
+
         val targetFunctionValue = targetFunction(
             forwardSolver(signals, model),
             signals.map { it.resistanceApparent },
@@ -52,10 +60,13 @@ fun multiLayerInitialModel(
             break
         }
 
-        val maxLayer = model.maxBy { it.power }
-        val zeroPowerLayer = model.last()
-        model = model - maxLayer - zeroPowerLayer + maxLayer.divide().toList() + zeroPowerLayer
-        model = inverseSolver(signals, model, maxEval)
+        model = if (model.size >= 2) {
+            val maxLayer = model.maxBy { it.power }
+            val zeroPowerLayer = model.last()
+            model - maxLayer - zeroPowerLayer + maxLayer.divide().toList() + zeroPowerLayer
+        } else {
+            listOf(model.first().copy(power = signals.maxOf { it.ab2 } / 4), model.first())
+        }
     }
 
     return model
