@@ -6,7 +6,7 @@ import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
-import ru.nucodelabs.gem.net.MapImageData
+import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager

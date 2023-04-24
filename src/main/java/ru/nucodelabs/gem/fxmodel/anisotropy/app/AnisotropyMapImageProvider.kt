@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
-import ru.nucodelabs.gem.net.MapImageData
+import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.net.MapImageProvider
 import ru.nucodelabs.gem.net.MapImageRequest
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals

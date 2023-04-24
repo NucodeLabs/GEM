@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.net
+package ru.nucodelabs.gem.fxmodel.map
 
 import javafx.scene.image.Image
 

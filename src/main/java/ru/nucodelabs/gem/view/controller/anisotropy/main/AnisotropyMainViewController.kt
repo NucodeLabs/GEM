@@ -7,7 +7,7 @@ import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
-import ru.nucodelabs.gem.net.MapImageData
+import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
