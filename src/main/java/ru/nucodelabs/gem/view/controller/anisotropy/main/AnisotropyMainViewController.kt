@@ -7,6 +7,7 @@ import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
+import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
@@ -18,6 +19,7 @@ import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.math.round
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
@@ -49,7 +51,7 @@ class AnisotropyMainViewController @Inject constructor(
         )
         mapChart.imageProperty().bind(
             Bindings.createObjectBinding(
-                { appModel.mapImage() },
+                { appModel.mapImage()?.image },
                 appModel.observablePoint.centerProperty()
             )
         )
@@ -61,6 +63,17 @@ class AnisotropyMainViewController @Inject constructor(
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             appModel.loadProject(file)
+
+            val mapImage: MapImageData? = appModel.mapImage()
+
+            if (mapImage != null) {
+                mapChart.setAxisRange(
+                    round(mapImage.xLowerBound),
+                    round(mapImage.xUpperBound),
+                    round(mapImage.yLowerBound),
+                    round(mapImage.yUpperBound)
+                )
+            }
         }
     }
 
