@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
 import javafx.fxml.FXML
-import javafx.scene.chart.NumberAxis
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
@@ -51,7 +50,7 @@ class AnisotropyMainViewController @Inject constructor(
         )
         mapChart.imageProperty().bind(
             Bindings.createObjectBinding(
-                { appModel.mapImage() },
+                { appModel.mapImage()!!.getImage() },
                 appModel.observablePoint.centerProperty()
             )
         )
@@ -63,7 +62,7 @@ class AnisotropyMainViewController @Inject constructor(
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             appModel.loadProject(file)
-            val distance: Double? = appModel.mapDistance()?.let { round(it) }
+            val distance: Double? = appModel.mapImage()?.getDistFromCenter()?.let { round(it) }
             if (distance != null) {
                 mapChart.setAxisRange(distance)
             }

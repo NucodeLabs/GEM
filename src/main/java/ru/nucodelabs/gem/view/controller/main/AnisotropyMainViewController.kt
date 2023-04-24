@@ -273,7 +273,7 @@ class AnisotropyMainViewController @Inject constructor(
         (satChart.yAxis as NucodeNumberAxis).lowerBound = -mapSizer.maxAbsYFromCenterScaledInMeters
         (satChart.yAxis as NucodeNumberAxis).upperBound = +mapSizer.maxAbsYFromCenterScaledInMeters
 
-        satChart.image = satImg
+        satChart.image = satImg.getImage()!!
         satChart.data = chartPointsData()
     }
 

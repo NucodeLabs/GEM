@@ -20,6 +20,8 @@ import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
 import ru.nucodelabs.gem.net.MapImageProvider;
+import ru.nucodelabs.gem.net.MapRequest;
+import ru.nucodelabs.gem.net.YandexMapRequest;
 import ru.nucodelabs.gem.net.YandexMapsImageProvider;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
@@ -51,6 +53,7 @@ public class AppModule extends AbstractModule {
         install(new FileChoosersModule());
         install(new MappersModule());
         bind(MapImageProvider.class).to(YandexMapsImageProvider.class);
+        bind(MapRequest.class).to(YandexMapRequest.class);
     }
 
     @Provides

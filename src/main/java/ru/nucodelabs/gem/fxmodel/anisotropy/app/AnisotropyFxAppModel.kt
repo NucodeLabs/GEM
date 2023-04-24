@@ -2,11 +2,11 @@ package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.image.Image
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
+import ru.nucodelabs.gem.net.MapImage
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
 import ru.nucodelabs.geo.anisotropy.calc.map.maxAb2WithAzimuth
@@ -57,7 +57,7 @@ class AnisotropyFxAppModel @Inject constructor(
         return projectFileService.lastSavedProject() == project && projectFileService.lastSavedProjectFile() != null
     }
 
-    fun mapDistance(): Double? {
+/*    fun mapDistance(): Double? {
         return if (point.center != null) {
             val mapSizer = MapSizer(
                 center = point.center!!,
@@ -70,9 +70,9 @@ class AnisotropyFxAppModel @Inject constructor(
         } else {
             null
         }
-    }
+    }*/
 
-    fun mapImage(): Image? {
+    fun mapImage(): MapImage? {
         return if (point.center != null) {
             val mapSizer = MapSizer(
                 center = point.center!!,
