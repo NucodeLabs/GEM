@@ -3,9 +3,9 @@ package ru.nucodelabs.gem.net
 import java.io.InputStream
 import java.net.URL
 
-class YandexMapsImageProvider : MapImageProvider {
+class YandexMapsClient {
 
-    override fun requestImage(
+    fun requestImage(
         lonBottomLeft: Double,
         latBottomLeft: Double,
         lonUpperRight: Double,
@@ -18,7 +18,7 @@ class YandexMapsImageProvider : MapImageProvider {
         )
     }
 
-    override fun requestImage(
+    fun requestImage(
         lonBottomLeft: Double,
         latBottomLeft: Double,
         lonUpperRight: Double,
@@ -34,7 +34,7 @@ class YandexMapsImageProvider : MapImageProvider {
         )
     }
 
-    override fun requestImage(
+    fun requestImage(
         lonBottomLeft: Double,
         latBottomLeft: Double,
         lonUpperRight: Double,

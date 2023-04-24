@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
+import javafx.beans.binding.Bindings
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.chart.ScatterChart
@@ -19,7 +20,6 @@ class ImageScatterChart @JvmOverloads constructor(
 
     private val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
-    private var plotBackground: Background? by _plotBackgroundProperty
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
@@ -31,26 +31,47 @@ class ImageScatterChart @JvmOverloads constructor(
     fun imageProperty() = _imageProperty
 
     init {
+        _plotBackgroundProperty.bind(
+            Bindings.createObjectBinding(
+                {
+                    imageToBackground()
+                }, _imageProperty
+            )
+        )
         setupImage(image)
     }
 
     private fun setupImage(img: Image) {
-        setImageAsBackground(img)
+        //setImageAsBackground(img)
         bindChartSizeToImageSize(img)
         layoutChildren()
         layoutPlotChildren()
     }
 
-    private fun setImageAsBackground(img: Image) {
-        plotBackground = Background(
-            BackgroundImage(
-                img,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT
+    private fun imageToBackground(): Background? {
+        return if (_imageProperty.get() != null) {
+            Background(
+                BackgroundImage(
+                    image,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.DEFAULT,
+                    BackgroundSize.DEFAULT
+                )
             )
-        )
+        } else {
+            null
+        }
+    }
+
+    fun setAxisRange(xLower: Double, xUpper: Double, yLower: Double, yUpper: Double) {
+        xAxis.isAutoRanging = false
+        xAxis.upperBound = xUpper
+        xAxis.lowerBound = xLower
+
+        yAxis.isAutoRanging = false
+        yAxis.upperBound = yUpper
+        yAxis.lowerBound = yLower
     }
 
     private fun bindChartSizeToImageSize(img: Image) {

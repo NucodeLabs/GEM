@@ -19,8 +19,7 @@ import ru.nucodelabs.gem.app.GemApplication;
 import ru.nucodelabs.gem.app.io.JacksonJsonFileManager;
 import ru.nucodelabs.gem.app.io.JsonFileManager;
 import ru.nucodelabs.gem.app.io.SonetImportManager;
-import ru.nucodelabs.gem.net.MapImageProvider;
-import ru.nucodelabs.gem.net.YandexMapsImageProvider;
+import ru.nucodelabs.gem.net.*;
 import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 import ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController;
@@ -50,7 +49,7 @@ public class AppModule extends AbstractModule {
     protected void configure() {
         install(new FileChoosersModule());
         install(new MappersModule());
-        bind(MapImageProvider.class).to(YandexMapsImageProvider.class);
+        bind(MapImageProvider.class).to(YandexMapImageProviderImpl.class);
     }
 
     @Provides

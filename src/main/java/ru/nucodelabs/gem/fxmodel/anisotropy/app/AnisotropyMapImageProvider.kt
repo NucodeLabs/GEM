@@ -1,11 +1,12 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
-import javafx.scene.image.Image
+import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.net.MapImageProvider
+import ru.nucodelabs.gem.net.MapImageRequest
+import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
-import ru.nucodelabs.geo.anisotropy.calc.map.Offset
-import ru.nucodelabs.geo.anisotropy.calc.map.Point
-import ru.nucodelabs.geo.anisotropy.calc.map.plus
+import ru.nucodelabs.geo.anisotropy.calc.map.Wgs
+import ru.nucodelabs.geo.anisotropy.calc.map.maxAb2WithAzimuth
 import javax.inject.Inject
 
 class AnisotropyMapImageProvider @Inject constructor(
@@ -15,66 +16,22 @@ class AnisotropyMapImageProvider @Inject constructor(
      * Returns satellite image
      * @throws ru.nucodelabs.gem.net.WrongResponseException if API call response is not image
      */
-    fun satImage(mapSizer: MapSizer): Image {
-        val bottomLeft = mapSizer.bottomLeftCorner
-        val upperRight = mapSizer.upperRightCorner
-        val upperLeft = mapSizer.center + Offset(
-            -mapSizer.maxAbsXFromCenterInMeters,
-            mapSizer.maxAbsYFromCenterInMeters
-            )
-        val bottomRight = mapSizer.center + Offset(
-            mapSizer.maxAbsXFromCenterInMeters,
-            -mapSizer.maxAbsYFromCenterScaledInMeters
+    fun satImage(center: Wgs, signals: List<AzimuthSignals>): MapImageData {
+        val expectedMaxDistanceFromCenter: Double
+        val mapSizer = MapSizer(
+            center = center,
+            maxAb2WithAzimuth(signals),
+            scale = 1.0
         )
-        val imageWithSquare = mapImageProvider.requestImage(
-            lonBottomLeft = bottomLeft.longitudeInDegrees,
-            latBottomLeft = bottomLeft.latitudeInDegrees,
-            lonUpperRight = upperRight.longitudeInDegrees,
-            latUpperRight = upperRight.latitudeInDegrees,
-            lonUpperLeft = upperLeft.longitudeInDegrees,
-            latUpperLeft = upperLeft.latitudeInDegrees,
-            lonBottomRight = bottomRight.longitudeInDegrees,
-            latBottomRight = bottomRight.latitudeInDegrees,
-            width = 450,
-            height = 450
+        expectedMaxDistanceFromCenter = mapSizer.maxAbsXFromCenterInMeters
+        val mapImageRequest = MapImageRequest(center, expectedMaxDistanceFromCenter)
+        val mapImageResponse = mapImageProvider.requestImage(mapImageRequest)
+        return MapImageData(
+            mapImageResponse.image,
+            -mapImageResponse.actualDistanceFromCenterInMeters,
+            mapImageResponse.actualDistanceFromCenterInMeters,
+            -mapImageResponse.actualDistanceFromCenterInMeters,
+            mapImageResponse.actualDistanceFromCenterInMeters
         )
-        val points = imageParser(Image(imageWithSquare))
-        //println(points)
-        val stream = mapImageProvider.requestImage(
-            lonBottomLeft = bottomLeft.longitudeInDegrees,
-            latBottomLeft = bottomLeft.latitudeInDegrees,
-            lonUpperRight = upperRight.longitudeInDegrees,
-            latUpperRight = upperRight.latitudeInDegrees,
-            width = 450,
-            height = 450
-        )
-        return Image(stream)
-    }
-
-    private fun imageParser(image: Image): MutableList<Point> {
-        val pixelReader = image.pixelReader
-        val redPoints = mutableListOf<Point>()
-        for (y in 0 until image.height.toInt()) {
-            for (x in 0 until image.width.toInt()) {
-                val pixel = pixelReader.getArgb(x, y)
-                val red = pixel shr 16 and 0xff
-                val green = pixel shr 8 and 0xff
-                val blue = pixel and 0xff
-                if (red > 200 && green < 30 && blue < 30) {
-                    val point = Point(x, y)
-                    redPoints.add(point)
-                }
-            }
-        }
-        return redPoints
-    }
-
-    private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double): Double {
-        val extraInPixels = 450.0 - xCord.toDouble()
-        println("---End of line: $xCord")
-        println("---Line length in pixels: $pixelCount")
-        println("---Extra length in pixels: $extraInPixels")
-        val metersInPixel = (maxDist * 2.0) / pixelCount.toDouble()
-        return extraInPixels * metersInPixel
     }
 }
