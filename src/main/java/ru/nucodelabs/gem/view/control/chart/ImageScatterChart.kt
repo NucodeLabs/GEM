@@ -65,14 +65,14 @@ class ImageScatterChart @JvmOverloads constructor(
         }
     }
 
-    fun setAxisRange(range: Double) {
+    fun setAxisRange(xLower: Double, xUpper: Double, yLower: Double, yUpper: Double) {
         xAxis.isAutoRanging = false
-        xAxis.upperBound = range
-        xAxis.lowerBound = -range
+        xAxis.upperBound = xUpper
+        xAxis.lowerBound = xLower
 
         yAxis.isAutoRanging = false
-        yAxis.upperBound = range
-        yAxis.lowerBound = -range
+        yAxis.upperBound = yUpper
+        yAxis.lowerBound = yLower
     }
 
 /*    private fun setImageAsBackground(img: Image) {

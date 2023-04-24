@@ -257,7 +257,7 @@ class AnisotropyMainViewController @Inject constructor(
         interpolChart.data = chartPointsData()
     }
 
-    private fun setupSatelliteChart(scale: Double = 1.0) {
+/*    private fun setupSatelliteChart(scale: Double = 1.0) {
         val center = Wgs(82.654444, 54.568056)
         val maxAb2WithAzimuth = listOf(
             AzimuthPoint(117.5, 0.0),
@@ -273,12 +273,12 @@ class AnisotropyMainViewController @Inject constructor(
         (satChart.yAxis as NucodeNumberAxis).lowerBound = -mapSizer.maxAbsYFromCenterScaledInMeters
         (satChart.yAxis as NucodeNumberAxis).upperBound = +mapSizer.maxAbsYFromCenterScaledInMeters
 
-        satChart.image = satImg.getImage()!!
+        satChart.image = satImg.image
         satChart.data = chartPointsData()
-    }
+    }*/
 
-    @FXML
+/*    @FXML
     private fun applyScale() {
         setupSatelliteChart(scaleTf.text.toDoubleOrNull() ?: 1.0)
-    }
+    }*/
 }
