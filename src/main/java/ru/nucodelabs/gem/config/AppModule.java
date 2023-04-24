@@ -49,8 +49,7 @@ public class AppModule extends AbstractModule {
     protected void configure() {
         install(new FileChoosersModule());
         install(new MappersModule());
-        bind(MapImageProvider.class).to(YandexMapsImageProvider.class);
-        bind(MapImageProviderPort.class).to(YandexMapImageProviderImpl.class);
+        bind(MapImageProvider.class).to(YandexMapImageProviderImpl.class);
     }
 
     @Provides

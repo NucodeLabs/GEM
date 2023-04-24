@@ -7,8 +7,8 @@ import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
 import kotlin.math.abs
 
 class YandexMapImageProviderImpl @Inject constructor(
-    private val mapImageProvider: MapImageProvider
-) : MapImageProviderPort {
+    private val yandexMapsClient: YandexMapsClient
+) : MapImageProvider {
     override fun requestImage(mapImageRequest: MapImageRequest): MapImageResponse {
         val offset = Offset(
             mapImageRequest.expectedDistanceFromCenterInMeters,
@@ -19,7 +19,7 @@ class YandexMapImageProviderImpl @Inject constructor(
         val upperRight = mapImageRequest.center + offset
 
 
-        val stream = mapImageProvider.requestImage(
+        val stream = yandexMapsClient.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
             lonUpperRight = upperRight.longitudeInDegrees,
@@ -52,7 +52,7 @@ class YandexMapImageProviderImpl @Inject constructor(
             -expectedMaxDistance
         )
 
-        val imageWithSquare = mapImageProvider.requestImage(
+        val imageWithSquare = yandexMapsClient.requestImage(
             lonBottomLeft = bottomLeft.longitudeInDegrees,
             latBottomLeft = bottomLeft.latitudeInDegrees,
             lonUpperRight = upperRight.longitudeInDegrees,

@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import ru.nucodelabs.gem.net.MapImageData
-import ru.nucodelabs.gem.net.MapImageProviderPort
+import ru.nucodelabs.gem.net.MapImageProvider
 import ru.nucodelabs.gem.net.MapImageRequest
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
@@ -10,7 +10,7 @@ import ru.nucodelabs.geo.anisotropy.calc.map.maxAb2WithAzimuth
 import javax.inject.Inject
 
 class AnisotropyMapImageProvider @Inject constructor(
-    private val mapImageProvider: MapImageProviderPort
+    private val mapImageProvider: MapImageProvider
 ) {
     /**
      * Returns satellite image
