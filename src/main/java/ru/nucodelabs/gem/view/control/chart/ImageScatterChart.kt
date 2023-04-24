@@ -20,7 +20,6 @@ class ImageScatterChart @JvmOverloads constructor(
 
     private val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
-    //private var plotBackground: Background? by _plotBackgroundProperty
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
@@ -74,18 +73,6 @@ class ImageScatterChart @JvmOverloads constructor(
         yAxis.upperBound = yUpper
         yAxis.lowerBound = yLower
     }
-
-/*    private fun setImageAsBackground(img: Image) {
-            plotBackground = Background(
-                BackgroundImage(
-                    img,
-                    BackgroundRepeat.NO_REPEAT,
-                    BackgroundRepeat.NO_REPEAT,
-                    BackgroundPosition.DEFAULT,
-                    BackgroundSize.DEFAULT
-                )
-            )
-    }*/
 
     private fun bindChartSizeToImageSize(img: Image) {
         val xOffset = this.widthProperty() - plotArea.widthProperty()

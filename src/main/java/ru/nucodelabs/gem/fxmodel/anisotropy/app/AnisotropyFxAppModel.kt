@@ -55,21 +55,6 @@ class AnisotropyFxAppModel @Inject constructor(
         return projectFileService.lastSavedProject() == project && projectFileService.lastSavedProjectFile() != null
     }
 
-/*    fun mapDistance(): Double? {
-        return if (point.center != null) {
-            val mapSizer = MapSizer(
-                center = point.center!!,
-                maxAb2WithAzimuth(point.azimuthSignals),
-                scale = 1.0
-            )
-            mapImageProvider.getRealSize(
-                mapSizer = mapSizer
-            )
-        } else {
-            null
-        }
-    }*/
-
     fun mapImage(): MapImageData? {
         return if (point.center != null) {
             mapImageProvider.satImage(
