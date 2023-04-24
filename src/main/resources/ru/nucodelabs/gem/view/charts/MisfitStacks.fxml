@@ -19,6 +19,8 @@
         <Label styleClass="chart-label" text="Погрешность подбора модели" VBox.vgrow="NEVER"/>
         <HBox HBox.hgrow="ALWAYS"/>
         <Label fx:id="text" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
+        <Label fx:id="text2" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
+        <Label fx:id="text3" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity"
                minHeight="0" minWidth="0" animated="false" styleClass="padded-chart" legendVisible="false">
