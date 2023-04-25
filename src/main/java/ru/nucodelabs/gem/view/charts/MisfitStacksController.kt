@@ -39,13 +39,13 @@ class MisfitStacksController @Inject constructor(
     private val forwardSolver: ForwardSolver
 ) : AbstractController() {
     @FXML
-    private lateinit var text: Label
+    private lateinit var  targetFunctionText: Label
 
     @FXML
-    private lateinit var text2: Label
+    private lateinit var deviationText: Label
 
     @FXML
-    private lateinit var text3: Label
+    private lateinit var inaccuracyText: Label
 
     @FXML
     private lateinit var lineChart: LineChart<Number, Number>
@@ -104,16 +104,16 @@ class MisfitStacksController @Inject constructor(
                     forwardSolver(picket.effectiveExperimentalData, picket.modelData),
                     picket.effectiveExperimentalData.map { it.resistanceApparent }
                 )
-                text.text =
+                targetFunctionText.text =
                     "целевая функция: f = ${dfFour.format(targetFunValue)}" +
                             " | "
-                text2.text =
+                deviationText.text =
                     "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
                                 dfFour.format(
                                     maxWithoutErr
                                 )
                             }" + " | "
-                text3.text =
+                inaccuracyText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
                 installTooltipsforTerms()
             }
@@ -138,22 +138,22 @@ class MisfitStacksController @Inject constructor(
     }
 
     private fun installTooltipsforTerms() {
-        val t = "Целевая функция - это \n" +
+        val tooltipForTargetFunction = "Целевая функция - это \n" +
                 "функция, значение которой минимизируется \n" +
                 "при решении обратной задачи\n"
-        Tooltip.install(text, Tooltip(t).forCharts())
-        text.text.forEach { Tooltip.install(text,Tooltip(t).forCharts()) }
-        val t2 = "Отклонение - это \n" +
+        Tooltip.install(targetFunctionText, Tooltip(tooltipForTargetFunction).forCharts())
+        targetFunctionText.text.forEach { Tooltip.install(targetFunctionText,Tooltip(tooltipForTargetFunction).forCharts()) }
+        val tooltipForDeviation = "Отклонение - это \n" +
                 "отклонение теоретических \n" +
                 "сигналов от экспериментальных \n"
-        Tooltip.install(text2, Tooltip(t2).forCharts())
-        text2.text.forEach { Tooltip.install(text2,Tooltip(t2).forCharts()) }
-        val t3 = "Погрешность - это \n" +
+        Tooltip.install(deviationText, Tooltip(tooltipForDeviation).forCharts())
+        deviationText.text.forEach { Tooltip.install(deviationText,Tooltip(tooltipForDeviation).forCharts()) }
+        val tooltipForInaccuracy = "Погрешность - это \n" +
                 "отклонение теоретических сигналов от \n" +
                 "экспериментальных в процентах, относительно \n" +
                 "погрешности измерения \n"
-        Tooltip.install(text3, Tooltip(t3).forCharts())
-        text3.text.forEach { Tooltip.install(text3,Tooltip(t3).forCharts()) }
+        Tooltip.install(inaccuracyText, Tooltip(tooltipForInaccuracy).forCharts())
+        inaccuracyText.text.forEach { Tooltip.install(inaccuracyText,Tooltip(tooltipForInaccuracy).forCharts()) }
     }
     private fun colorizeMisfitStacksSeries() {
         val data = dataProperty.get()
