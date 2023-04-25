@@ -17,31 +17,34 @@ const val MAX_EVAL_INVERSE = 10_000_000
 const val MIN_TARGET_FUNCTION_VALUE = 0.05
 
 private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
-    listOf(
-        ModelLayer(
-            power = 0.0,
-            resistance = 2.0.pow(signals.map { log2(it.ab2) }.average())
+        listOf(
+                ModelLayer(
+                        power = 0.0,
+                        resistance = 2.0.pow(signals.map { log2(it.ab2) }.average())
+                )
         )
-    )
 
 // сопр среднее по логарифму, потом обратно в степень, с 1 слоем
 
 fun multiLayerInitialModel(
-    signals: List<ExperimentalData>,
-    initialModel: List<ModelLayer> = initialModel(signals),
-    forwardSolver: ForwardSolver = ForwardSolver(),
-    targetFunction: TargetFunction.WithError = SquareDiffTargetFunction(),
-    inverseSolver: InverseSolver = InverseSolver(forwardSolver, targetFunction),
-    maxLayersCount: Int = MAX_LAYERS_COUNT,
-    maxEval: Int = MAX_EVAL_INVERSE,
-    minTargetFunctionValue: Double = MIN_TARGET_FUNCTION_VALUE,
-    iterationCallback: (
-        model: List<ModelLayer>,
-        targetFunctionValue: Double,
-    ) -> Unit = { _, _ -> }
+        signals: List<ExperimentalData>,
+        initialModel: List<ModelLayer> = initialModel(signals),
+        forwardSolver: ForwardSolver = ForwardSolver(),
+        targetFunction: TargetFunction.WithError = SquareDiffTargetFunction(),
+        inverseSolver: InverseSolver = InverseSolver(forwardSolver, targetFunction),
+        maxLayersCount: Int = MAX_LAYERS_COUNT,
+        maxEval: Int = MAX_EVAL_INVERSE,
+        minTargetFunctionValue: Double = MIN_TARGET_FUNCTION_VALUE,
+        breakAfterFoundResult: Boolean = true,
+        iterationInterceptor: (
+                model: List<ModelLayer>,
+                targetFunctionValue: Double,
+                isResult: Boolean,
+        ) -> Unit = { _, _, _ -> },
 ): List<ModelLayer> {
     var model = initialModel
     val initialLayersCount = model.size
+    var result: List<ModelLayer>? = null
 
     check(initialLayersCount in 1 until maxLayersCount)
 
@@ -49,15 +52,21 @@ fun multiLayerInitialModel(
         model = inverseSolver(signals, model, maxEval)
 
         val targetFunctionValue = targetFunction(
-            forwardSolver(signals, model),
-            signals.map { it.resistanceApparent },
-            signals.map { it.errorResistanceApparent }
+                forwardSolver(signals, model),
+                signals.map { it.resistanceApparent },
+                signals.map { it.errorResistanceApparent }
         )
 
-        iterationCallback(model, targetFunctionValue)
 
-        if (targetFunctionValue <= minTargetFunctionValue) {
-            break
+        val isResult = targetFunctionValue <= minTargetFunctionValue && result == null
+
+        iterationInterceptor(model, targetFunctionValue, isResult)
+
+        if (isResult) {
+            result = model
+            if (breakAfterFoundResult) {
+                break
+            }
         }
 
         model = if (model.size >= 2) {
