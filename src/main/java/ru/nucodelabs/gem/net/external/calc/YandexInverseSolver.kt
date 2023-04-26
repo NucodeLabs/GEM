@@ -1,4 +1,4 @@
-package ru.nucodelabs.geo.ves.calc.inverse.map
+package ru.nucodelabs.gem.net.external.calc
 
 import org.apache.commons.math3.optim.InitialGuess
 import org.apache.commons.math3.optim.MaxEval
@@ -8,7 +8,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
 
-class InverseSolver(private val redPoints: List<Point>) {
+class YandexInverseSolver(private val redPoints: List<Point>) {
     //Размер симплекса (по каждому измерению)
     private val SIDE_LENGTH_DEFAULT = 10.0
 

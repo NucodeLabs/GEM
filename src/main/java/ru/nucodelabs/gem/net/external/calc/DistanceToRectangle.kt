@@ -1,4 +1,4 @@
-package ru.nucodelabs.geo.ves.calc.inverse.map
+package ru.nucodelabs.gem.net.external.calc
 
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import java.util.function.Function
