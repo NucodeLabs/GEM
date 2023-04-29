@@ -25,6 +25,8 @@ import ru.nucodelabs.gem.view.color.ColorMapper;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 import ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController;
 import ru.nucodelabs.gem.view.controller.main.MainViewController;
+import ru.nucodelabs.geo.target.SquareDiffTargetFunction;
+import ru.nucodelabs.geo.target.TargetFunction;
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 
 import java.io.File;
@@ -222,5 +224,11 @@ public class AppModule extends AbstractModule {
     @Singleton
     ForwardSolver forwardSolver() {
         return ForwardSolver.createDefault();
+    }
+
+    @Provides
+    @Singleton
+    TargetFunction.WithError targetFunction() {
+        return new SquareDiffTargetFunction();
     }
 }

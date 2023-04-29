@@ -578,7 +578,13 @@ class MainViewController @Inject constructor(
         try {
             historyManager.snapshotAfter {
                 observableSection.pickets[picketIndex] =
-                    picket.copy(modelData = inverseSolver.getOptimizedModelData(picket))
+                    picket.copy(
+                        modelData = inverseSolver.getOptimizedModelData(
+                            picket.effectiveExperimentalData,
+                            picket.modelData,
+                            InverseSolver.MAX_EVAL_DEFAULT
+                        )
+                    )
             }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()

@@ -8,12 +8,11 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
-import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.FunctionValue;
-import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.SquaresDiff;
+import ru.nucodelabs.geo.target.TargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
-import ru.nucodelabs.geo.ves.Picket;
+import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
+import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.FunctionValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -24,25 +23,28 @@ import java.util.stream.Collectors;
 public class InverseSolver {
 
     //Размер симплекса (по каждому измерению)
-    private static final double SIDE_LENGTH_DEFAULT = 1.0;
+    public static final double SIDE_LENGTH_DEFAULT = 1.0;
 
     //Какие-то константы для SimplexOptimize
-    private static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
-    private static final double ABSOLUTE_THRESHOLD_DEFAULT = 1e-30;
+    public static final double RELATIVE_THRESHOLD_DEFAULT = 1e-10;
+    public static final double ABSOLUTE_THRESHOLD_DEFAULT = 1e-30;
 
-    private Picket picket;
+    public static final int MAX_EVAL_DEFAULT = 100000;
+
     private final double sideLength;
     private final double relativeThreshold;
     private final double absoluteThreshold;
     private final ForwardSolver forwardSolver;
+    private final TargetFunction.WithError targetFunction;
 
     @Inject
-    public InverseSolver(ForwardSolver forwardSolver) {
+    public InverseSolver(ForwardSolver forwardSolver, TargetFunction.WithError targetFunction) {
         this(
                 SIDE_LENGTH_DEFAULT,
                 RELATIVE_THRESHOLD_DEFAULT,
                 ABSOLUTE_THRESHOLD_DEFAULT,
-                forwardSolver
+                forwardSolver,
+                targetFunction
         );
     }
 
@@ -50,12 +52,14 @@ public class InverseSolver {
             double sideLength,
             double relativeThreshold,
             double absoluteThreshold,
-            ForwardSolver forwardSolver
+            ForwardSolver forwardSolver,
+            TargetFunction.WithError targetFunction
     ) {
         this.sideLength = sideLength;
         this.relativeThreshold = relativeThreshold;
         this.absoluteThreshold = absoluteThreshold;
         this.forwardSolver = forwardSolver;
+        this.targetFunction = targetFunction;
     }
 
     private void setLimitValues(
@@ -76,11 +80,11 @@ public class InverseSolver {
         }
     }
 
-    public List<ModelLayer> getOptimizedModelData(Picket inputPicket) {
-        final int MAX_EVAL = 100000;
-        this.picket = inputPicket;
-
-        List<ModelLayer> modelData = picket.getModelData();
+    public List<ModelLayer> getOptimizedModelData(
+            List<ExperimentalData> experimentalData,
+            List<ModelLayer> modelData,
+            final int maxEval
+    ) {
 
         //Изменяемые сопротивления и мощности
         List<Double> modelResistance = modelData.stream()
@@ -89,12 +93,12 @@ public class InverseSolver {
                 .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
-        double minPower = picket.getEffectiveExperimentalData().stream()
+        double minPower = experimentalData.stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .min()
                 .orElseThrow(NoSuchElementException::new);
-        double maxPower = picket.getEffectiveExperimentalData().stream()
+        double maxPower = experimentalData.stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
@@ -114,7 +118,10 @@ public class InverseSolver {
         SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
 
         MultivariateFunction multivariateFunction = new FunctionValue(
-                picket.getEffectiveExperimentalData(), new SquaresDiff(), modelData, forwardSolver
+                experimentalData,
+                targetFunction,
+                modelData,
+                forwardSolver
         );
 
         //anyArray = resistance.size...(model.size - 1)
@@ -133,7 +140,7 @@ public class InverseSolver {
 
         //Передавать только изменяемые параметры
         PointValuePair pointValuePair = optimizer.optimize(
-                new MaxEval(MAX_EVAL),
+                new MaxEval(maxEval),
                 new ObjectiveFunction(multivariateFunction),
                 GoalType.MINIMIZE,
                 initialGuess,

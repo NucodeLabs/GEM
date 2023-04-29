@@ -1,6 +1,6 @@
 package ru.nucodelabs.geo.ves.calc
 
-import ru.nucodelabs.gem.util.std.asFraction
+import ru.nucodelabs.gem.util.std.fromPercent
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.mathves.Normalization
 
@@ -21,7 +21,7 @@ fun normalizeExperimentalData(
         experimentalData.map { it.ab2 }.toDoubleArray(),
         idxMap.map { it.toShort() }.toShortArray(),
         experimentalData.map { it.resistanceApparent }.toDoubleArray(),
-        experimentalData.map { it.errorResistanceApparent.asFraction() }.toDoubleArray(),
+        experimentalData.map { it.errorResistanceApparent.fromPercent() }.toDoubleArray(),
         add
     ).toList() to add.toList()
 }
