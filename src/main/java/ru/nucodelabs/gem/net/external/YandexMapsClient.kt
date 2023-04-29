@@ -1,5 +1,6 @@
-package ru.nucodelabs.gem.net
+package ru.nucodelabs.gem.net.external
 
+import ru.nucodelabs.gem.net.WrongResponseException
 import java.io.InputStream
 import java.net.URL
 

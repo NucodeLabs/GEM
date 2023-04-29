@@ -1,9 +1,15 @@
-package ru.nucodelabs.gem.net
+package ru.nucodelabs.gem.net.external
 
 import com.google.inject.Inject
 import javafx.scene.image.Image
-import ru.nucodelabs.geo.anisotropy.calc.map.*
-import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
+import ru.nucodelabs.gem.net.MapImageProvider
+import ru.nucodelabs.gem.net.MapImageRequest
+import ru.nucodelabs.gem.net.MapImageResponse
+import ru.nucodelabs.gem.net.external.calc.YandexInverseSolver
+import ru.nucodelabs.geo.anisotropy.calc.map.Offset
+import ru.nucodelabs.geo.anisotropy.calc.map.Point
+import ru.nucodelabs.geo.anisotropy.calc.map.minus
+import ru.nucodelabs.geo.anisotropy.calc.map.plus
 import kotlin.math.abs
 
 class YandexMapImageProviderImpl @Inject constructor(
@@ -70,7 +76,7 @@ class YandexMapImageProviderImpl @Inject constructor(
     private fun calculateSize(imageWithSquare: Image, expectedMaxDistance: Double): Double {
 
         val points = imageParser(imageWithSquare)
-        val solver = InverseSolver(points)
+        val solver = YandexInverseSolver(points)
         val corners = solver.getOptimizedAngles(Pair(Point(0, 0), Point(450, 450)))
         return expectedMaxDistance + pixelsToMeters(
             abs(corners.first.x - corners.second.x),

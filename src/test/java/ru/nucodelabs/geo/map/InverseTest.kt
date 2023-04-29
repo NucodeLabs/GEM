@@ -1,8 +1,8 @@
 package ru.nucodelabs.geo.map
 
 import org.junit.jupiter.api.Test
+import ru.nucodelabs.gem.net.external.calc.YandexInverseSolver
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
-import ru.nucodelabs.geo.ves.calc.inverse.map.InverseSolver
 import kotlin.random.Random
 
 internal class InverseTest {
@@ -43,7 +43,7 @@ internal class InverseTest {
 
         val initialPoints = Pair(Point(180,180), Point(220, 220))
 
-        val solver = InverseSolver(points)
+        val solver = YandexInverseSolver(points)
         val e = solver.getOptimizedAngles(initialPoints)
         println(e)
     }

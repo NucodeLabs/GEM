@@ -30,6 +30,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
+
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
@@ -40,7 +41,13 @@ class MisfitStacksController @Inject constructor(
     private val targetFunction: TargetFunction.WithError
 ) : AbstractController() {
     @FXML
-    private lateinit var text: Label
+    private lateinit var  targetFunctionText: Label
+
+    @FXML
+    private lateinit var misfitText: Label
+
+    @FXML
+    private lateinit var errorText: Label
 
     @FXML
     private lateinit var lineChart: LineChart<Number, Number>
@@ -99,16 +106,20 @@ class MisfitStacksController @Inject constructor(
                     picket.effectiveExperimentalData.map { it.resistanceApparent },
                     picket.effectiveExperimentalData.map { it.errorResistanceApparent }
                 )
-                text.text =
+                targetFunctionText.text =
                     "целевая функция: f = ${dfFour.format(targetFunValue)}" +
-                            "  |  " +
-                            "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
+                            " | "
+                misfitText.text =
+                    "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
                                 dfFour.format(
                                     maxWithoutErr
                                 )
-                            }" + "  |  " +
-                            "погрешность: avg = ${dfTwo.format(avg)}%, max = ${dfTwo.format(max)}%"
+                            }" + " | "
+                errorText.text =
+                    "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
+                installTooltipsforTerms()
             }
+
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
         } catch (e: IllegalStateException) {
@@ -128,6 +139,24 @@ class MisfitStacksController @Inject constructor(
         }
     }
 
+    private fun installTooltipsforTerms() {
+        val tooltipForTargetFunction = "Целевая функция - это \n" +
+                "функция, значение которой минимизируется \n" +
+                "при решении обратной задачи\n"
+        Tooltip.install(targetFunctionText, Tooltip(tooltipForTargetFunction).forCharts())
+        targetFunctionText.text.forEach { Tooltip.install(targetFunctionText,Tooltip(tooltipForTargetFunction).forCharts()) }
+        val tooltipForMisfit = "Отклонение - это \n" +
+                "отклонение теоретических \n" +
+                "сигналов от экспериментальных \n"
+        Tooltip.install(misfitText, Tooltip(tooltipForMisfit).forCharts())
+        misfitText.text.forEach { Tooltip.install(misfitText,Tooltip(tooltipForMisfit).forCharts()) }
+        val tooltipForError = "Погрешность - это \n" +
+                "отклонение теоретических сигналов от \n" +
+                "экспериментальных в процентах, относительно \n" +
+                "погрешности измерения \n"
+        Tooltip.install(errorText, Tooltip(tooltipForError).forCharts())
+        errorText.text.forEach { Tooltip.install(errorText,Tooltip(tooltipForError).forCharts()) }
+    }
     private fun colorizeMisfitStacksSeries() {
         val data = dataProperty.get()
         for (series in data) {
