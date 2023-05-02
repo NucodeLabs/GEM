@@ -17,9 +17,9 @@ import java.lang.Double.max
 import kotlin.math.min
 
 class InterpolationMap @JvmOverloads constructor(
-    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
-    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
-    @NamedArg("colorMapper") colorMapper: ColorMapper? = null
+        @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+        @NamedArg("yAxis") yAxis: ValueAxis<Number>,
+        @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
 
     var canvasBlendMode: BlendMode by canvas.blendModeProperty()
@@ -29,6 +29,8 @@ class InterpolationMap @JvmOverloads constructor(
     private lateinit var interpolationParser: InterpolationParser
 
     private var canBeInterpolated = true
+
+    private var interpolatorIsInitialized = false
 
     fun interpolateSeriesIndexProperty() = _interpolateSeriesIndex
     var interpolateSeriesIndex
@@ -70,56 +72,30 @@ class InterpolationMap @JvmOverloads constructor(
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
-        if (::interpolator.isInitialized) {
-            draw(canvas)
-        }
-    }
-
-    override fun seriesAdded(series: Series<Number, Number>?, seriesIndex: Int) {
-        super.seriesAdded(series, seriesIndex)
-        if (seriesIndex == interpolateSeriesIndex) {
+        if (!interpolatorIsInitialized) {
             initInterpolator()
+            interpolatorIsInitialized = true
         }
-    }
-
-    override fun seriesRemoved(series: Series<Number, Number>?) {
-        super.seriesRemoved(series)
-        if (data.getOrNull(interpolateSeriesIndex) == null
-            || data[interpolateSeriesIndex].data.isEmpty()
-        ) {
-            canvas.clear()
-        }
+        draw(canvas)
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
         super.dataItemAdded(series, itemIndex, item)
-        if (series == data[interpolateSeriesIndex]) {
-            initInterpolator()
-        }
+        interpolatorIsInitialized = false
     }
 
     override fun dataItemRemoved(item: Data<Number, Number>?, series: Series<Number, Number>?) {
         super.dataItemRemoved(item, series)
-        if (series == data[interpolateSeriesIndex]) {
-            if (series?.data?.isNotEmpty() == true) {
-                initInterpolator()
-            } else {
-                canvas.clear()
-            }
-        }
+        interpolatorIsInitialized = false
     }
 
     override fun dataItemChanged(item: Data<Number, Number>?) {
         super.dataItemChanged(item)
-        if (item in data[interpolateSeriesIndex].data) {
-            initInterpolator()
-        }
+        interpolatorIsInitialized = false
     }
 
     private fun draw(canvas: Canvas) {
-        if (data.isEmpty()
-            || data[interpolateSeriesIndex].data.isEmpty()
-        ) {
+        if (data.isEmpty() || data[interpolateSeriesIndex].data.isEmpty()) {
             canvas.clear()
             return
         }
@@ -160,9 +136,11 @@ class InterpolationMap @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
+        if (data.isEmpty()) {
+            return
+        }
         val series = data[interpolateSeriesIndex]
         if (series.data.isEmpty()) {
-            canvas.clear()
             return
         }
         val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
@@ -170,7 +148,7 @@ class InterpolationMap @JvmOverloads constructor(
         try {
             groupByX[0] = groupByX[0].map {
                 Data(
-                    0.0,
+                        0.0,
                     it.yValue,
                     it.extraValue
                 )
