@@ -3,7 +3,6 @@ package ru.nucodelabs.gem.view.control.chart
 import javafx.beans.NamedArg
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.collections.ListChangeListener
 import javafx.scene.chart.ValueAxis
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -18,6 +17,7 @@ class SmartInterpolationMap(
 ) : AbstractMap(xAxis, yAxis) {
 
     private val _colorMapper = SimpleObjectProperty(colorMapper)
+    private var interpolatorIsInitialized = false
     fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
     var colorMapper: ColorMapper?
         set(value) = _colorMapper.set(value)
@@ -43,42 +43,34 @@ class SmartInterpolationMap(
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
+        if (!interpolatorIsInitialized) {
+            initInterpolator()
+            interpolatorIsInitialized = true
+        }
         draw()
-    }
-
-    override fun seriesAdded(series: Series<Number, Number>?, seriesIndex: Int) {
-        super.seriesAdded(series, seriesIndex)
-        initInterpolator()
-    }
-
-    override fun seriesChanged(c: ListChangeListener.Change<out Series<Any, Any>>?) {
-        super.seriesChanged(c)
-        initInterpolator()
-    }
-
-    override fun seriesRemoved(series: Series<Number, Number>?) {
-        super.seriesRemoved(series)
-        initInterpolator()
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
         super.dataItemAdded(series, itemIndex, item)
-        initInterpolator()
+        interpolatorIsInitialized = false
     }
 
     override fun dataItemChanged(item: Data<Number, Number>?) {
         super.dataItemChanged(item)
-        initInterpolator()
+        interpolatorIsInitialized = false
     }
 
     override fun dataItemRemoved(item: Data<Number, Number>?, series: Series<Number, Number>?) {
         super.dataItemRemoved(item, series)
-        initInterpolator()
+        interpolatorIsInitialized = false
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
-        interpolator2D.build(data.flatMap { it.data as List<Data<Double, Double>> })
+        //TODO: поставить нормальную проверку на корректность data для build
+        if (!data.isEmpty()) {
+            interpolator2D.build(data.flatMap { it.data as List<Data<Double, Double>> })
+        }
     }
 
     fun draw() {
