@@ -139,17 +139,17 @@ class MisfitStacksController @Inject constructor(
     }
 
     private fun installTooltipsForTerms() {
-        val tooltipForTargetFunction = "Целевая функция - это \n" +
+        val tooltipForTargetFunction = "Целевая функция - \n" +
                 "функция, значение которой минимизируется \n" +
                 "при решении обратной задачи\n"
         Tooltip.install(targetFunctionText, Tooltip(tooltipForTargetFunction).forCharts())
 
-        val tooltipForMisfit = "Отклонение - это \n" +
+        val tooltipForMisfit = "Отклонение - \n" +
                 "отклонение теоретических \n" +
                 "сигналов от экспериментальных \n"
         Tooltip.install(misfitText, Tooltip(tooltipForMisfit).forCharts())
 
-        val tooltipForError = "Погрешность - это \n" +
+        val tooltipForError = "Погрешность - \n" +
                 "отклонение теоретических сигналов от \n" +
                 "экспериментальных в процентах, относительно \n" +
                 "погрешности измерения \n"
