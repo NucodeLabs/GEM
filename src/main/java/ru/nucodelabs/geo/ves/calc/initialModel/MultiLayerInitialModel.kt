@@ -14,7 +14,7 @@ import kotlin.math.pow
 
 const val MAX_LAYERS_COUNT = 10
 const val MAX_EVAL_INVERSE = 10_000_000
-const val MIN_TARGET_FUNCTION_VALUE = 0.05
+const val MIN_TARGET_FUNCTION_VALUE = 1.0
 
 private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
         listOf(
@@ -48,15 +48,14 @@ fun multiLayerInitialModel(
 
     check(initialLayersCount in 1 until maxLayersCount)
 
-    for (i in initialLayersCount until maxLayersCount) {
+    while (model.size <= maxLayersCount) {
         model = inverseSolver(signals, model, maxEval)
 
         val targetFunctionValue = targetFunction(
-                forwardSolver(signals, model),
-                signals.map { it.resistanceApparent },
-                signals.map { it.errorResistanceApparent }
+            forwardSolver(signals, model),
+            signals.map { it.resistanceApparent },
+            signals.map { it.errorResistanceApparent }
         )
-
 
         val isResult = targetFunctionValue <= minTargetFunctionValue && result == null
 
@@ -67,6 +66,10 @@ fun multiLayerInitialModel(
             if (breakAfterFoundResult) {
                 break
             }
+        }
+
+        if (model.size == maxLayersCount) {
+            break
         }
 
         model = if (model.size >= 2) {
