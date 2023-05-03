@@ -24,6 +24,7 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.app.snapshot.snapshotOf
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -50,13 +51,13 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class MainViewController @Inject constructor(
-    @Named("MainView") private val mainViewProvider: Provider<Stage>,
-    @Named("AnisotropyMainView") private val anisotropyMainViewProvider: Provider<Stage>,
-    @Named("EXP") private val expFileChooser: FileChooser,
-    @Named("MOD") private val modFileChooser: FileChooser,
-    @Named("JSON") private val jsonFileChooser: FileChooser,
-    @Named("Save") private val saveDialogProvider: Provider<Dialog<ButtonType>>,
-    @Named("CSS") private val stylesheet: String,
+    @Named(ArgNames.View.MAIN_VIEW) private val mainViewProvider: Provider<Stage>,
+    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) private val anisotropyMainViewProvider: Provider<Stage>,
+    @Named(ArgNames.File.EXP) private val expFileChooser: FileChooser,
+    @Named(ArgNames.File.MOD) private val modFileChooser: FileChooser,
+    @Named(ArgNames.File.JSON) private val jsonFileChooser: FileChooser,
+    @Named(ArgNames.SAVE) private val saveDialogProvider: Provider<Dialog<ButtonType>>,
+    @Named(ArgNames.CSS) private val stylesheet: String,
     private val picketObservable: ObservableObjectValue<Picket>,
     private val picketIndexProperty: IntegerProperty,
     private val observableSection: ObservableSection,

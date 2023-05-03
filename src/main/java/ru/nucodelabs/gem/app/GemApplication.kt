@@ -9,6 +9,7 @@ import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
 import ru.nucodelabs.gem.config.AppModule
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.main.MainViewController
 import ru.nucodelabs.kfx.core.GuiceApplication
@@ -81,7 +82,7 @@ class GemApplication : GuiceApplication(AppModule()) {
             processParams(params)
         } else {
             logger.info("Starting MainView without parameters")
-            guiceInjector.getInstance(Key.get(Stage::class.java, Names.named("MainView"))).show()
+            guiceInjector.getInstance(Key.get(Stage::class.java, Names.named(ArgNames.View.MAIN_VIEW))).show()
         }
     }
 
@@ -125,5 +126,5 @@ class GemApplication : GuiceApplication(AppModule()) {
     private fun fxmlLoaderAfterShow(): FXMLLoader = mainViewFxmlLoader().also { it.load<Stage>().show() }
 
     private fun mainViewFxmlLoader() =
-        guiceInjector.getInstance(Key.get(FXMLLoader::class.java, Names.named("MainView")))
+        guiceInjector.getInstance(Key.get(FXMLLoader::class.java, Names.named(ArgNames.View.MAIN_VIEW)))
 }

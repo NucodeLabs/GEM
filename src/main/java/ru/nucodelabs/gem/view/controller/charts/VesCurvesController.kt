@@ -22,6 +22,7 @@ import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.get
@@ -72,7 +73,7 @@ class VesCurvesController @Inject constructor(
     private val decimalFormat: DecimalFormat,
     private val formatter: StringConverter<Number>,
     private val forwardSolver: ForwardSolver,
-    @Named("PNG") private val fc: FileChooser,
+    @Named(ArgNames.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
 
