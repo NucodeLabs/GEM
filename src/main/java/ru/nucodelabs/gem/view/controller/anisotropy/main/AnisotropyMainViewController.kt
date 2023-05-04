@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
 import javafx.fxml.FXML
+import javafx.scene.control.Tooltip
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
@@ -11,8 +12,10 @@ import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
+import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.controller.anisotropy.main.map.toPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
+import ru.nucodelabs.kfx.ext.forCharts
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -43,6 +46,7 @@ class AnisotropyMainViewController @Inject constructor(
                 appModel.observablePoint.azimuthSignals,
             )
         )
+
         mapChart.dataProperty().bind(
             Bindings.createObjectBinding(
                 { toPoints(appModel.observablePoint.azimuthSignals) },
@@ -73,6 +77,14 @@ class AnisotropyMainViewController @Inject constructor(
                     round(mapImage.yLowerBound),
                     round(mapImage.yUpperBound)
                 )
+                mapChart.installTooltips { seriesIndex, series, pointIndex, _ ->
+                    Tooltip(
+                        """
+                            ${appModel.observablePoint.azimuthSignals[0]
+                                .signals.sortedSignals[pointIndex / 2].ab2}
+                        """.trimIndent()
+                    ).forCharts()
+                }
             }
         }
     }
