@@ -46,7 +46,7 @@ fun multiLayerInitialModel(
     val initialLayersCount = model.size
     var result: List<ModelLayer>? = null
 
-    check(initialLayersCount in 1 until maxLayersCount)
+    check(initialLayersCount in 1..maxLayersCount)
 
     while (model.size <= maxLayersCount) {
         model = inverseSolver(signals, model, maxEval)
