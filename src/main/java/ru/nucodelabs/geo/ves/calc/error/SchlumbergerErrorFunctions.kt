@@ -48,6 +48,50 @@ fun resistanceApparentWithError(
     )
 }
 
+fun approximateResistanceApparentWithError(
+    k: ValueMinMax,
+    u: ValueMinMax,
+    i: ValueMinMax
+): ValueMinMaxAvgError {
+    val res = SchlumbergerErrorFunctions.approximateCalculateResistanceApparentError(
+        k.value, k.min, k.max,
+        u.value, u.min, u.max,
+        i.value, i.min, i.max
+    )
+
+    return ValueMinMaxAvgError(
+        res[0],
+        res[1],
+        res[2],
+        res[3],
+        res[4].asPercent(),
+    )
+//    val k = _k.value
+//    val k_min = _k.min
+//    val k_max = _k.max
+//    val U = _u.value
+//    val U_min = _u.min
+//    val U_max = _u.max
+//    val I = _i.value
+//    val I_min = _i.min
+//    val I_max = _i.max
+//
+//    val sigma_U = (U_max - U_min) / 6.0;
+//    val sigma_I = (I_max - I_min) / 6.0;
+//    val Ro = U / I;
+//    val variance_Ro = ((U * U) / (I * I)) * (((sigma_U * sigma_U) / (U * U)) + ((sigma_I * sigma_I) / (I * I)));
+//
+//    val variance_k = ((k_max - k_min) / 6.0) * ((k_max - k_min) / 6.0);
+//    val Rok = k * Ro;
+//    val Rok_avg = Rok;
+//    val sigma_Rok = sqrt((variance_k + (k * k)) * (variance_Ro + (Ro * Ro)) - (Ro * Ro) * (k * k));
+//    val Rok_min = Rok - 3.0 * sigma_Rok;
+//    val Rok_max = Rok + 3.0 * sigma_Rok;
+//    val Rok_err = (Rok_avg - Rok_min) / (Rok_avg);
+//
+//    return ValueMinMaxAvgError(Rok, Rok_min, Rok_max, Rok_avg, Rok_err)
+}
+
 fun resistanceApparentErrorForDistance(k: ValueMinMax, u: Double, i: Double): Double {
     return resistanceApparentWithError(
         k,

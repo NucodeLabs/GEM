@@ -40,6 +40,7 @@
                             <Label text="mV" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
                             <Label text="mA" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
                         </GridPane>
+                        <ComboBox fx:id="errorFormula" prefWidth="150.0"/>
                         <Label text="Формулы" styleClass="window-header"/>
                         <ImageView preserveRatio="true" fitHeight="55">
                             <Image url="@../../../../../../img/rhoA.png"/>

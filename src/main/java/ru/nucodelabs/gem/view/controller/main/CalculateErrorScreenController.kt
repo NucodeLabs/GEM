@@ -9,10 +9,7 @@ import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
-import javafx.scene.control.TextField
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.*
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
@@ -54,6 +51,9 @@ class CalculateErrorScreenController @Inject constructor(
     private val picketIndexProp: IntegerProperty,
     private val vesFxModelMapper: VesFxModelMapper
 ) : AbstractController() {
+    @FXML
+    private lateinit var errorFormula: ComboBox<ErrorFunction>
+
     @FXML
     private lateinit var resAvgCol: TableColumn<ObservableExperimentalData, String>
 
@@ -113,12 +113,24 @@ class CalculateErrorScreenController @Inject constructor(
 
     val data = observableListOf<ExperimentalData>()
 
+    private enum class ErrorFunction {
+        NEW {
+            override fun toString(): String = "Новая версия"
+        },
+        OLD {
+            override fun toString(): String = "Старая версия"
+        }
+    }
+
+    private lateinit var errorFunctionVersion: ErrorFunction
+
     override fun initialize(location: URL, resources: ResourceBundle) {
         table.selectionModel.isCellSelectionEnabled = false
         listenData()
         setupTextFields()
         setupCellFactories()
         setupCellValueFactories()
+        setupComboBox()
     }
 
     private fun listenData() {
@@ -142,6 +154,22 @@ class CalculateErrorScreenController @Inject constructor(
     }
 
     private fun Number.fmt(): String = df.format(this)
+
+    private fun setupComboBox() {
+        errorFormula.items.setAll(ErrorFunction.NEW, ErrorFunction.OLD)
+        errorFormula.selectionModel.selectedItemProperty().addListener { _, _, newValue: ErrorFunction ->
+            errorFunctionVersion = when (newValue) {
+                ErrorFunction.NEW -> {
+                    ErrorFunction.NEW
+                }
+
+                ErrorFunction.OLD -> {
+                    ErrorFunction.OLD
+                }
+            }
+        }
+        errorFormula.selectionModel.selectFirst()
+    }
 
     private fun setupCellValueFactories() {
         ab2Col.cellValueFactory = Callback { f ->
@@ -233,7 +261,8 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
         resAvgCol.cellValueFactory = Callback { f ->
@@ -249,7 +278,8 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
         errorResistanceCol.cellValueFactory = Callback { f ->
@@ -265,30 +295,35 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
     }
 
-    private fun resAppWithError(data: ExperimentalData) =
-        resistanceApparentWithError(
-            kWithError(
-                data.ab2,
-                data.mn2,
-                distAErrorTf.textFormatter.value as Double,
-                distBErrorTf.textFormatter.value as Double
-            ),
-            measureError(
-                data.voltage,
-                uAErrorTf.textFormatter.value as Double,
-                uBErrorTf.textFormatter.value as Double
-            ).withValue(data.voltage),
-            measureError(
-                data.amperage,
-                iAErrorTf.textFormatter.value as Double,
-                iBErrorTf.textFormatter.value as Double
-            ).withValue(data.amperage)
+    private fun resAppWithError(data: ExperimentalData): ValueMinMaxAvgError {
+        val k = kWithError(
+            data.ab2,
+            data.mn2,
+            distAErrorTf.textFormatter.value as Double,
+            distBErrorTf.textFormatter.value as Double
         )
+        val u = measureError(
+            data.voltage,
+            uAErrorTf.textFormatter.value as Double,
+            uBErrorTf.textFormatter.value as Double
+        ).withValue(data.voltage)
+        val i = measureError(
+            data.amperage,
+            iAErrorTf.textFormatter.value as Double,
+            iBErrorTf.textFormatter.value as Double
+        ).withValue(data.amperage)
+        return if (errorFunctionVersion == ErrorFunction.OLD) resistanceApparentWithError(
+            k,
+            u,
+            i
+        ) else approximateResistanceApparentWithError(k, u, i)
+    }
 
     private fun resAppErrorForDist(data: ExperimentalData) =
         resistanceApparentErrorForDistance(
