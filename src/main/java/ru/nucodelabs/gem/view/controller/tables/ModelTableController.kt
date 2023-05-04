@@ -33,7 +33,6 @@ import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.divide
-import ru.nucodelabs.geo.ves.calc.initialModel.SimpleInitialModel.threeLayersInitialModel
 import ru.nucodelabs.geo.ves.calc.join
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.geo.ves.toTabulatedTable
@@ -448,14 +447,7 @@ class ModelTableController @Inject constructor(
 
     @FXML
     fun simpleInitialModel() {
-        try {
-            val newModelData = threeLayersInitialModel(picket.sortedExperimentalData)
-            historyManager.snapshotAfter {
-                observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData)
-            }
-        } catch (e: IllegalStateException) {
-            alertsFactory.simpleExceptionAlert(e, stage).show()
-        }
+        appModel.applySimpleInitialModel()
     }
 
     @FXML
