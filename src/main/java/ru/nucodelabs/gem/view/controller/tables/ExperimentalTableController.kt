@@ -19,6 +19,7 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
@@ -61,7 +62,7 @@ class ExperimentalTableController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat,
-    @Named("CSS") private val css: String,
+    @Named(ArgNames.CSS) private val css: String,
     fileImporterProvider: Provider<FileImporter>,
     private val mapper: VesFxModelMapper
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {

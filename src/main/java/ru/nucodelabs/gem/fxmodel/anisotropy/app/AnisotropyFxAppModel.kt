@@ -4,6 +4,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
@@ -17,7 +18,7 @@ import javax.inject.Named
 class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
     private val fxModelMapper: AnisotropyFxModelMapper,
-    @Named("initial") private val project: Project<Point>,
+    @Named(ArgNames.INITIAL) private val project: Project<Point>,
     private val projectFileService: ProjectFileService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider
 ) {

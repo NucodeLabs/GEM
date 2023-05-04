@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -23,7 +24,7 @@ import kotlin.math.round
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
-    @Named("JSON") private val fileChooser: FileChooser,
+    @Named(ArgNames.File.JSON) private val fileChooser: FileChooser,
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
 ) : AbstractViewController<VBox>() {

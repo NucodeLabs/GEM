@@ -16,6 +16,7 @@ import javafx.scene.control.TextFormatter
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
@@ -45,7 +46,7 @@ const val DEFAULT_I_B_ERROR = 0.5 // mA
 const val LEQ_S = '≤'
 
 class CalculateErrorScreenController @Inject constructor(
-    @Named("Precise") private val preciseFormat: DecimalFormat,
+    @Named(ArgNames.PRECISE) private val preciseFormat: DecimalFormat,
     private val df: DecimalFormat,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
