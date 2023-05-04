@@ -13,7 +13,6 @@ class InitialModelService @Inject constructor(
     private val forwardSolver: ForwardSolver,
     private val inverseSolver: InverseSolver,
     private val targetFunction: TargetFunction.WithError,
-    private var minTargetFunctionValue: Double
 ) {
     fun arbitraryInitialModel(
         signals: List<ExperimentalData>,

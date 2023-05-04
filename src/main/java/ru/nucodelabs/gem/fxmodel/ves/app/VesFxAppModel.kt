@@ -4,6 +4,8 @@ import javafx.beans.property.IntegerProperty
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.initialModel.MAX_LAYERS_COUNT
+import ru.nucodelabs.geo.ves.calc.initialModel.MIN_TARGET_FUNCTION_VALUE
 import javax.inject.Inject
 
 /**
@@ -39,5 +41,12 @@ class VesFxAppModel @Inject constructor(
         historyManager.snapshotAfter {
             observableSection.pickets[selectedIndex] = newPicket
         }
+    }
+
+    companion object DefaultParameters {
+        val DEFAULT_INITIAL_MODEL_PARAMETERS = ArbitraryInitialModelParameters(
+            minTargetFunctionValue = MIN_TARGET_FUNCTION_VALUE,
+            maxLayersCount = MAX_LAYERS_COUNT
+        )
     }
 }

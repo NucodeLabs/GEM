@@ -19,6 +19,9 @@
     <!--            </graphic>-->
     <!--        </Button>-->
     <!--    </HBox>-->
+    <fx:define>
+        <fx:include source="../main/InitialModelConfigurationView.fxml" fx:id="initialModelConfigurationView"/>
+    </fx:define>
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <placeholder>
             <VBox alignment="CENTER" fx:id="dragDropPlaceholder" spacing="5" minHeight="0"
@@ -30,8 +33,11 @@
                 <HBox alignment="CENTER" spacing="3">
                     <Button text="%pasteFromClipboard" onAction="#pasteFromClipboard"/>
                     <fx:script>
+
+                        import javafx.scene.Scene
                         import javafx.scene.control.Alert
                         import javafx.scene.layout.VBox
+                        import javafx.stage.Stage
                         import ru.nucodelabs.gem.view.controller.tables.ModelTableControllerKt
 
                         def showHelp() {
@@ -42,11 +48,29 @@
                             help.initOwner((root as VBox).scene.window)
                             help.show()
                         }
+
+                        def showInitialModelConfiguration() {
+                            initialModelConfigWindow = initialModelConfigurationView.scene?.window
+                            if (initialModelConfigWindow == null) {
+                                initialModelConfigWindow = new Stage()
+                                initialModelConfigWindow.title = "Параметры подбора стартовой модели"
+                                initialModelConfigWindow.resizable = false
+                                Scene scene = new Scene(initialModelConfigurationView as VBox)
+                                scene.stylesheets.addAll((root as VBox).scene.stylesheets)
+                                initialModelConfigWindow.scene = scene
+                                initialModelConfigWindow.icons.setAll(((root as VBox).scene.window as Stage).icons)
+                                initialModelConfigWindow.initOwner((root as VBox).scene.window)
+                            }
+                            initialModelConfigWindow.show()
+                        }
                     </fx:script>
                     <Button text="?" onAction="showHelp()"/>
                 </HBox>
                 <Button text="Трехслойная первичная модель" onAction="#simpleInitialModel"/>
-                <Button text="Произвольная первичная модель" onAction="#multiLayerInitialModel"/>
+                <HBox alignment="BASELINE_CENTER" spacing="5">
+                    <Button text="Произвольная первичная модель" onAction="#multiLayerInitialModel"/>
+                    <Button text="Параметры" onAction="showInitialModelConfiguration()"/>
+                </HBox>
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importMOD"/>
