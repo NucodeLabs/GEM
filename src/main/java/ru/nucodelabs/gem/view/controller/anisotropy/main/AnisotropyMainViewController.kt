@@ -1,7 +1,9 @@
 package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
+import javafx.scene.chart.XYChart
 import javafx.scene.control.Tooltip
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -59,7 +61,18 @@ class AnisotropyMainViewController @Inject constructor(
                 appModel.observablePoint.centerProperty()
             )
         )
+        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
+            mapChart.installTooltips(::tooltipFactory)
+        })
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun tooltipFactory(seriesIndex: Int, series: XYChart.Series<Number, Number>, pointIndex: Int, point: XYChart.Data<Number, Number>): Tooltip {
+        val azimuthSignal = appModel.observablePoint.azimuthSignals[0].signals.sortedSignals[pointIndex / 2].ab2
+        val tooltipText = "$azimuthSignal"
+        return Tooltip(tooltipText).apply { forCharts() }
+    }
+
 
     @FXML
     fun loadProject() {
@@ -77,14 +90,6 @@ class AnisotropyMainViewController @Inject constructor(
                     round(mapImage.yLowerBound),
                     round(mapImage.yUpperBound)
                 )
-                mapChart.installTooltips { seriesIndex, series, pointIndex, _ ->
-                    Tooltip(
-                        """
-                            ${appModel.observablePoint.azimuthSignals[0]
-                                .signals.sortedSignals[pointIndex / 2].ab2}
-                        """.trimIndent()
-                    ).forCharts()
-                }
             }
         }
     }
