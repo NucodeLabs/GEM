@@ -4,12 +4,18 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
+import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.stage.Stage
+import org.jdesktop.swingx.JXLabel.*
+import org.jdesktop.swingx.JXLabel.TextAlignment.CENTER
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.line
@@ -115,7 +121,7 @@ class MisfitStacksController @Inject constructor(
                             }" + " | "
                 errorText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
-                installTooltipsforTerms()
+                installTooltipsForTerms()
             }
 
         } catch (e: UnsatisfiedLinkError) {
@@ -137,23 +143,44 @@ class MisfitStacksController @Inject constructor(
         }
     }
 
-    private fun installTooltipsforTerms() {
-        val tooltipForTargetFunction = "Целевая функция - это \n" +
+    private fun installTooltipsForTerms() {
+        val imageForTargetFunction = Image(
+            javaClass.getResourceAsStream("/img/targetFunction.png")
+        )
+        val  tooltipForTargetFunction = Tooltip()
+        tooltipForTargetFunction.text = "Целевая функция - это \n" +
                 "функция, значение которой минимизируется \n" +
                 "при решении обратной задачи\n"
-        Tooltip.install(targetFunctionText, Tooltip(tooltipForTargetFunction).forCharts())
-        targetFunctionText.text.forEach { Tooltip.install(targetFunctionText,Tooltip(tooltipForTargetFunction).forCharts()) }
-        val tooltipForMisfit = "Отклонение - это \n" +
+        tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
+        tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
+        targetFunctionText.text.forEach { _ -> Tooltip.install(targetFunctionText, tooltipForTargetFunction.forCharts()) }
+
+        val imageForMisfit = Image(
+            javaClass.getResourceAsStream("/img/misfit.png")
+        )
+        val  tooltipForMisfit = Tooltip()
+        tooltipForMisfit.text = "Отклонение - это \n" +
                 "отклонение теоретических \n" +
                 "сигналов от экспериментальных \n"
-        Tooltip.install(misfitText, Tooltip(tooltipForMisfit).forCharts())
-        misfitText.text.forEach { Tooltip.install(misfitText,Tooltip(tooltipForMisfit).forCharts()) }
-        val tooltipForError = "Погрешность - это \n" +
+        tooltipForMisfit.graphic = ImageView(imageForMisfit)
+        tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(misfitText, tooltipForMisfit.forCharts())
+        misfitText.text.forEach { _ -> Tooltip.install(misfitText,tooltipForMisfit.forCharts()) }
+
+        val imageForError = Image(
+            javaClass.getResourceAsStream("/img/error.png")
+        )
+        val  tooltipForError = Tooltip()
+        tooltipForError.text = "Погрешность - это \n" +
                 "отклонение теоретических сигналов от \n" +
                 "экспериментальных в процентах, относительно \n" +
                 "погрешности измерения \n"
-        Tooltip.install(errorText, Tooltip(tooltipForError).forCharts())
-        errorText.text.forEach { Tooltip.install(errorText,Tooltip(tooltipForError).forCharts()) }
+        tooltipForError.graphic = ImageView(imageForError)
+        tooltipForError.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(errorText, tooltipForError.forCharts())
+        errorText.text.forEach { _ -> Tooltip.install(errorText, tooltipForError.forCharts()) }
+
     }
     private fun colorizeMisfitStacksSeries() {
         val data = dataProperty.get()
