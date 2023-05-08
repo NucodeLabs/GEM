@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import ru.nucodelabs.gem.view.control.chart.*?>
+<?import ru.nucodelabs.gem.view.control.chart.CombinedChart ?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
@@ -35,14 +36,14 @@
                                 <TextField fx:id="Text2" alignment="TOP_CENTER" promptText="Долгота" maxWidth="100"/>
                             </VBox>
                         </HBox>
-                        <ImageScatterChart fx:id="mapChart">
+                        <CombinedChart fx:id="combinedChart">
                             <xAxis>
                                 <NumberAxis/>
                             </xAxis>
                             <yAxis>
                                 <NumberAxis/>
                             </yAxis>
-                        </ImageScatterChart>
+                        </CombinedChart>
                     </VBox>
 
                     <VBox alignment="CENTER" VBox.vgrow="ALWAYS">

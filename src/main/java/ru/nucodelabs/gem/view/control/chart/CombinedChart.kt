@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.ValueAxis
+import javafx.scene.effect.BlendMode
 import javafx.scene.image.Image
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -16,15 +17,22 @@ import ru.nucodelabs.geo.ves.calc.interpolation.ApacheInterpolator2D
 import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
-
-class ImageScatterChart @JvmOverloads constructor(
+class CombinedChart @JvmOverloads constructor(
     @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
+    @NamedArg("colorMapper") colorMapper: ColorMapper? = null,
     image: Image = generateImage(256, 256, Color.WHITESMOKE)
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
+    private val _colorMapper = SimpleObjectProperty(colorMapper)
+    private var interpolatorIsInitialized = false
+    fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
+    var colorMapper: ColorMapper?
+        set(value) = _colorMapper.set(value)
+        get() = _colorMapper.get()
     private val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
+    val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
         addListener { _, _, newImg: Image? ->
@@ -32,12 +40,18 @@ class ImageScatterChart @JvmOverloads constructor(
         }
     }
 
-    val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
-
     var image: Image by _imageProperty
     fun imageProperty() = _imageProperty
 
+
     init {
+        canvas.blendMode = BlendMode.SOFT_LIGHT
+        plotChildren += canvas
+        canvas.layoutX = 0.0
+        canvas.layoutY = 0.0
+        canvas.widthProperty().bind(plotArea.widthProperty())
+        canvas.heightProperty().bind(plotArea.heightProperty())
+        canvas.viewOrder = 1.0
         _plotBackgroundProperty.bind(
             Bindings.createObjectBinding(
                 {
@@ -46,12 +60,11 @@ class ImageScatterChart @JvmOverloads constructor(
             )
         )
         setupImage(image)
-        plotChildren += canvas
-        canvas.layoutX = 0.0
-        canvas.layoutY = 0.0
-        canvas.widthProperty().bind(plotArea.widthProperty())
-        canvas.heightProperty().bind(plotArea.heightProperty())
-        canvas.viewOrder = 1.0
+        colorMapperProperty().addListener { _, _, new ->
+            startListening(new)
+            draw()
+        }
+        startListening(colorMapper)
     }
 
     private fun setupImage(img: Image) {
@@ -121,5 +134,59 @@ class ImageScatterChart @JvmOverloads constructor(
 
         this.maxHeight = newHeight
         this.maxHeightProperty().bind(newHeightBinding)
+    }
+
+    private fun startListening(colorMapper: ColorMapper?) {
+        colorMapper?.minValueProperty()?.addListener { _, _, _ -> draw() }
+        colorMapper?.maxValueProperty()?.addListener { _, _, _ -> draw() }
+        colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> draw() }
+        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> draw() }
+    }
+
+
+    private val interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
+
+    override fun layoutPlotChildren() {
+        super.layoutPlotChildren()
+        if (!interpolatorIsInitialized) {
+            initInterpolator()
+            interpolatorIsInitialized = true
+        }
+        draw()
+    }
+
+    override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
+        super.dataItemAdded(series, itemIndex, item)
+        interpolatorIsInitialized = false
+    }
+
+    override fun dataItemChanged(item: Data<Number, Number>?) {
+        super.dataItemChanged(item)
+        interpolatorIsInitialized = false
+    }
+
+    override fun dataItemRemoved(item: Data<Number, Number>?, series: Series<Number, Number>?) {
+        super.dataItemRemoved(item, series)
+        interpolatorIsInitialized = false
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun initInterpolator() {
+        //TODO: поставить нормальную проверку на корректность data для build
+        if (!data.isEmpty()) {
+            interpolator2D.build(data.flatMap { it.data as List<Data<Double, Double>> })
+        }
+    }
+
+    fun draw() {
+        for (x in 0 until canvas.width.toInt()) {
+            for (y in 0 until canvas.height.toInt()) {
+                val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
+                val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
+                canvas.graphicsContext2D.pixelWriter.run {
+                    setColor(x, y, colorMapper?.colorFor(interpolator2D.getValue(xValue, yValue)) ?: Color.WHITE)
+                }
+            }
+        }
     }
 }

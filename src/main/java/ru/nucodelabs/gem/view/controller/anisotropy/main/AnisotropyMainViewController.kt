@@ -12,6 +12,7 @@ import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.CombinedChart
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
 import ru.nucodelabs.gem.view.control.chart.installTooltips
@@ -32,11 +33,14 @@ class AnisotropyMainViewController @Inject constructor(
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
 ) : AbstractViewController<VBox>() {
-    @FXML
-    lateinit var mapChart: ImageScatterChart
+/*    @FXML
+    lateinit var mapChart: ImageScatterChart*/
 
     @FXML
     lateinit var chart: SmartInterpolationMap
+
+    @FXML
+    lateinit var combinedChart: CombinedChart
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
@@ -49,7 +53,7 @@ class AnisotropyMainViewController @Inject constructor(
             )
         )
 
-        mapChart.dataProperty().bind(
+/*        mapChart.dataProperty().bind(
             Bindings.createObjectBinding(
                 { toPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
@@ -60,9 +64,31 @@ class AnisotropyMainViewController @Inject constructor(
                 { appModel.mapImage()?.image },
                 appModel.observablePoint.centerProperty()
             )
+        )*/
+
+        combinedChart.colorMapper = colorMapper
+        combinedChart.data = toPoints(appModel.observablePoint.azimuthSignals)
+        combinedChart.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { toPoints(appModel.observablePoint.azimuthSignals) },
+                appModel.observablePoint.azimuthSignals,
+            )
+        )
+
+        combinedChart.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { toPoints(appModel.observablePoint.azimuthSignals) },
+                appModel.observablePoint.azimuthSignals,
+            )
+        )
+        combinedChart.imageProperty().bind(
+            Bindings.createObjectBinding(
+                { appModel.mapImage()?.image },
+                appModel.observablePoint.centerProperty()
+            )
         )
         appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
-            mapChart.installTooltips(::tooltipFactory)
+            combinedChart.installTooltips(::tooltipFactory)
         })
     }
 
@@ -84,13 +110,16 @@ class AnisotropyMainViewController @Inject constructor(
             val mapImage: MapImageData? = appModel.mapImage()
 
             if (mapImage != null) {
-                mapChart.setAxisRange(
+                combinedChart.setAxisRange(
                     round(mapImage.xLowerBound),
                     round(mapImage.xUpperBound),
                     round(mapImage.yLowerBound),
                     round(mapImage.yUpperBound)
                 )
             }
+            //mapChart.colorMapper = chart.colorMapper
+            //mapChart.interpolator2D = chart.getInterpolator2D()
+            //mapChart.draw()
         }
     }
 
