@@ -135,11 +135,7 @@ class MisfitStacksController @Inject constructor(
                             }" + " | "
                 errorText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
-<<<<<<< HEAD
                 installTooltipForTerms()
-=======
-                installTooltipsForTerms()
->>>>>>> 6d386674 (Added formulas)
             }
 
         } catch (e: UnsatisfiedLinkError) {
@@ -161,72 +157,33 @@ class MisfitStacksController @Inject constructor(
         }
     }
 
-<<<<<<< HEAD
-
     private fun installTooltipForTerms() {
-=======
-    private fun installTooltipsForTerms() {
->>>>>>> 6d386674 (Added formulas)
         val imageForTargetFunction = Image(
             javaClass.getResourceAsStream("/img/targetFunction.png")
         )
         val  tooltipForTargetFunction = Tooltip()
-<<<<<<< HEAD
         tooltipForTargetFunction.text = textForTargetFunction
         tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
         tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
-=======
-        tooltipForTargetFunction.text = "Целевая функция - это \n" +
-                "функция, значение которой минимизируется \n" +
-                "при решении обратной задачи\n"
-        tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
-        tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
-        targetFunctionText.text.forEach { _ -> Tooltip.install(targetFunctionText, tooltipForTargetFunction.forCharts()) }
->>>>>>> 6d386674 (Added formulas)
 
         val imageForMisfit = Image(
             javaClass.getResourceAsStream("/img/misfit.png")
         )
-<<<<<<< HEAD
         val tooltipForMisfit = Tooltip()
         tooltipForMisfit.text = textForMisfit
         tooltipForMisfit.graphic = ImageView(imageForMisfit)
         tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(misfitText, tooltipForMisfit.forCharts())
-=======
-        val  tooltipForMisfit = Tooltip()
-        tooltipForMisfit.text = "Отклонение - это \n" +
-                "отклонение теоретических \n" +
-                "сигналов от экспериментальных \n"
-        tooltipForMisfit.graphic = ImageView(imageForMisfit)
-        tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(misfitText, tooltipForMisfit.forCharts())
-        misfitText.text.forEach { _ -> Tooltip.install(misfitText,tooltipForMisfit.forCharts()) }
->>>>>>> 6d386674 (Added formulas)
 
         val imageForError = Image(
             javaClass.getResourceAsStream("/img/error.png")
         )
-<<<<<<< HEAD
         val tooltipForError = Tooltip()
         tooltipForError.text = textForError
         tooltipForError.graphic = ImageView(imageForError)
         tooltipForError.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(errorText, tooltipForError.forCharts())
-=======
-        val  tooltipForError = Tooltip()
-        tooltipForError.text = "Погрешность - это \n" +
-                "отклонение теоретических сигналов от \n" +
-                "экспериментальных в процентах, относительно \n" +
-                "погрешности измерения \n"
-        tooltipForError.graphic = ImageView(imageForError)
-        tooltipForError.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(errorText, tooltipForError.forCharts())
-        errorText.text.forEach { _ -> Tooltip.install(errorText, tooltipForError.forCharts()) }
->>>>>>> 6d386674 (Added formulas)
-
     }
     private fun colorizeMisfitStacksSeries() {
         val data = dataProperty.get()
