@@ -62,6 +62,18 @@ class MisfitStacksController @Inject constructor(
     @FXML
     private lateinit var lineChartYAxis: NumberAxis
 
+    private val textForTargetFunction = "Целевая функция - это \n" +
+            "функция, значение которой минимизируется \n" +
+            "при решении обратной задачи\n"
+
+    private val textForMisfit = "Отклонение - это \n" +
+    "отклонение теоретических \n" +
+    "сигналов от экспериментальных \n"
+
+    private val textForError = "Погрешность - это \n" +
+    "отклонение теоретических сигналов от \n" +
+    "экспериментальных в процентах, относительно \n" +
+    "погрешности измерения \n"
     override val stage: Stage
         get() = lineChartXAxis.scene.window as Stage
 
@@ -148,38 +160,28 @@ class MisfitStacksController @Inject constructor(
             javaClass.getResourceAsStream("/img/targetFunction.png")
         )
         val  tooltipForTargetFunction = Tooltip()
-        tooltipForTargetFunction.text = "Целевая функция - это \n" +
-                "функция, значение которой минимизируется \n" +
-                "при решении обратной задачи\n"
+        tooltipForTargetFunction.text = textForTargetFunction
         tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
         tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
-        targetFunctionText.text.forEach { _ -> Tooltip.install(targetFunctionText, tooltipForTargetFunction.forCharts()) }
 
         val imageForMisfit = Image(
             javaClass.getResourceAsStream("/img/misfit.png")
         )
         val  tooltipForMisfit = Tooltip()
-        tooltipForMisfit.text = "Отклонение - это \n" +
-                "отклонение теоретических \n" +
-                "сигналов от экспериментальных \n"
+        tooltipForMisfit.text = textForMisfit
         tooltipForMisfit.graphic = ImageView(imageForMisfit)
         tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(misfitText, tooltipForMisfit.forCharts())
-        misfitText.text.forEach { _ -> Tooltip.install(misfitText,tooltipForMisfit.forCharts()) }
 
         val imageForError = Image(
             javaClass.getResourceAsStream("/img/error.png")
         )
         val  tooltipForError = Tooltip()
-        tooltipForError.text = "Погрешность - это \n" +
-                "отклонение теоретических сигналов от \n" +
-                "экспериментальных в процентах, относительно \n" +
-                "погрешности измерения \n"
+        tooltipForError.text = textForError
         tooltipForError.graphic = ImageView(imageForError)
         tooltipForError.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(errorText, tooltipForError.forCharts())
-        errorText.text.forEach { _ -> Tooltip.install(errorText, tooltipForError.forCharts()) }
 
     }
     private fun colorizeMisfitStacksSeries() {
