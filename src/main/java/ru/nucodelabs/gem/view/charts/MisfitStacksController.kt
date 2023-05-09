@@ -48,6 +48,12 @@ class MisfitStacksController @Inject constructor(
     private lateinit var errorText: Label
 
     @FXML
+    private lateinit var text2: Label
+
+    @FXML
+    private lateinit var text3: Label
+
+    @FXML
     private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
