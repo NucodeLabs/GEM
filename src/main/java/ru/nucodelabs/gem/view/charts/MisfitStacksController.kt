@@ -4,7 +4,6 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
-import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Series
@@ -14,8 +13,6 @@ import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
-import org.jdesktop.swingx.JXLabel.*
-import org.jdesktop.swingx.JXLabel.TextAlignment.CENTER
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.line
