@@ -53,9 +53,6 @@ class MisfitStacksController @Inject constructor(
     private lateinit var deviationText: Label
 
     @FXML
-    private lateinit var inaccuracyText: Label
-
-    @FXML
     private lateinit var lineChart: LineChart<Number, Number>
 
     @FXML
@@ -157,6 +154,7 @@ class MisfitStacksController @Inject constructor(
         }
     }
 
+
     private fun installTooltipForTerms() {
         val imageForTargetFunction = Image(
             javaClass.getResourceAsStream("/img/targetFunction.png")
@@ -184,6 +182,7 @@ class MisfitStacksController @Inject constructor(
         tooltipForError.graphic = ImageView(imageForError)
         tooltipForError.contentDisplay = ContentDisplay.BOTTOM
         Tooltip.install(errorText, tooltipForError.forCharts())
+
     }
     private fun colorizeMisfitStacksSeries() {
         val data = dataProperty.get()
