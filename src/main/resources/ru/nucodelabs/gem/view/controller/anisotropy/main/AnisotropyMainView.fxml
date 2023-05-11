@@ -23,9 +23,9 @@
     </MenuBar>
     <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
         <Tab text="Сигналы" closable="false">
-            <VBox>
-                <HBox>
-                    <VBox>
+            <VBox maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                <HBox maxWidth="Infinity" VBox.vgrow="ALWAYS">
+                    <VBox maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <Label styleClass="chart-label">Карта</Label>
                         <HBox>
                             <VBox spacing="5" style="-fx-padding: 20;">
@@ -34,6 +34,7 @@
                                 <TextField/>
                                 <Label>Долгота</Label>
                                 <TextField/>
+                                <Button>Применить</Button>
                                 <Label styleClass="uc-header">Параметры наложения</Label>
                                 <ComboBox/>
                             </VBox>
@@ -47,7 +48,7 @@
                             </ImageScatterChart>
                         </HBox>
                     </VBox>
-                    <VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Отношения сигналов</Label>
                         <LineChart legendVisible="false">
                             <xAxis>
@@ -59,10 +60,10 @@
                         </LineChart>
                     </VBox>
                 </HBox>
-                <HBox>
-                    <VBox>
+                <HBox maxWidth="Infinity">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Кривые ВЭЗ</Label>
-                        <LineChart>
+                        <LineChart legendVisible="false" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                             <xAxis>
                                 <NumberAxis/>
                             </xAxis>
@@ -71,26 +72,97 @@
                             </yAxis>
                         </LineChart>
                     </VBox>
-                    <VBox>
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Сигналы</Label>
-                        <TableView/>
+                        <TableView HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                            <columns>
+                                <TableColumn fx:id="isHiddenCol" sortable="false" maxWidth="35" prefWidth="35"
+                                             minWidth="35"
+                                             resizable="false">
+                                    <graphic>
+                                        <Label text="    ">
+                                            <tooltip>
+                                                <Tooltip text="%effectivePoints"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
+                                             styleClass="centered-column"
+                                             resizable="false" editable="false" fx:id="indexCol"/>
+                                <TableColumn fx:id="ab2Col" sortable="false">
+                                    <graphic>
+                                        <Label text="%ab2">
+                                            <tooltip>
+                                                <Tooltip text="%ab2Full"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="mn2Col" sortable="false">
+                                    <graphic>
+                                        <Label text="%mn2">
+                                            <tooltip>
+                                                <Tooltip text="%mn2Full"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="resistanceApparentCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%resistanceApparent">
+                                            <tooltip>
+                                                <Tooltip text="%resistanceApparentFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="errorResistanceCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%errorResistanceApparent">
+                                            <tooltip>
+                                                <Tooltip text="%errorResistanceApparentFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="amperageCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%amperage">
+                                            <tooltip>
+                                                <Tooltip text="%amperageFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="voltageCol" sortable="false">
+                                    <graphic>
+                                        <Label text="%voltage">
+                                            <tooltip>
+                                                <Tooltip text="%voltageFull"/>
+                                            </tooltip>
+                                        </Label>
+                                    </graphic>
+                                </TableColumn>
+                            </columns>
+                        </TableView>
                     </VBox>
                 </HBox>
             </VBox>
         </Tab>
 
         <Tab text="Инверсия" closable="false">
-            <VBox>
-                <HBox>
-                    <VBox>
-                        <HBox>
+            <VBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                    <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER">
+                        <HBox HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER">
                             <VBox>
                                 <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
                                        styleClass="chart-label" text="Сигналы"/>
                                 <SmartInterpolationMap fx:id="signalsInterpolation"
-                                                       maxWidth="450" maxHeight="450"
-                                                       minWidth="450" minHeight="450"
-                                                       VBox.vgrow="ALWAYS">
+                                                       maxWidth="400" maxHeight="400"
+                                                       minWidth="400" minHeight="400"
+                                                       legendVisible="false">
                                     <xAxis>
                                         <NucodeNumberAxis autoRanging="true"/>
                                     </xAxis>
@@ -102,7 +174,11 @@
                             <VBox>
                                 <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
                                        styleClass="chart-label" text="Синтетика"/>
-                                <SmartInterpolationMap maxWidth="400" maxHeight="400" VBox.vgrow="ALWAYS">
+                                <SmartInterpolationMap maxWidth="400"
+                                                       minWidth="400"
+                                                       maxHeight="400"
+                                                       minHeight="400"
+                                                       legendVisible="false">
                                     <xAxis>
                                         <NucodeNumberAxis autoRanging="true"/>
                                     </xAxis>
@@ -114,10 +190,15 @@
                         </HBox>
                         <Placeholder text="Цветовая шкала"/>
                     </VBox>
-                    <VBox>
+                    <VBox alignment="TOP_CENTER">
                         <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"
                                styleClass="chart-label" text="Отличие сигналов"/>
-                        <SmartInterpolationMap maxWidth="400" maxHeight="400" VBox.vgrow="ALWAYS">
+                        <SmartInterpolationMap
+                                maxWidth="400"
+                                maxHeight="400"
+                                minWidth="400"
+                                minHeight="400"
+                                legendVisible="false">
                             <xAxis>
                                 <NucodeNumberAxis autoRanging="true"/>
                             </xAxis>
@@ -128,9 +209,45 @@
                         <Placeholder text="Цветовая шкала"/>
                     </VBox>
                 </HBox>
-                <VBox>
+                <VBox maxWidth="Infinity">
                     <Label styleClass="chart-label">Модель</Label>
-                    <TableView/>
+                    <TableView>
+                        <columns>
+                            <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
+                                         styleClass="centered-column"
+                                         resizable="false" editable="false"/>
+                            <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                                         sortable="false">
+                                <graphic>
+                                    <Label text="%power">
+                                        <tooltip>
+                                            <Tooltip text="%powerFull"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                            <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                                         sortable="false">
+                                <graphic>
+                                    <Label text="%resistance">
+                                        <tooltip>
+                                            <Tooltip text="%resistanceFull"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                            <TableColumn fx:id="zCol" maxWidth="Infinity" minWidth="20.0"
+                                         sortable="false" editable="false" prefWidth="100">
+                                <graphic>
+                                    <Label text="%z">
+                                        <tooltip>
+                                            <Tooltip text="%zFull"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                        </columns>
+                    </TableView>
                 </VBox>
             </VBox>
         </Tab>

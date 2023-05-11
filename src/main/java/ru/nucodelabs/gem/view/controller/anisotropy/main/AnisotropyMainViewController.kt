@@ -12,7 +12,7 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
-import ru.nucodelabs.gem.view.controller.anisotropy.main.map.toPoints
+import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
 import java.io.File
 import java.net.URL
@@ -39,29 +39,28 @@ class AnisotropyMainViewController @Inject constructor(
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
         signalsInterpolation.colorMapper = colorMapper
-        signalsInterpolation.data = toPoints(appModel.observablePoint.azimuthSignals)
+        signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         setupListeners()
     }
 
     private fun setupListeners() {
         signalsInterpolation.dataProperty().bind(
             Bindings.createObjectBinding(
-                { toPoints(appModel.observablePoint.azimuthSignals) },
+                { mapToPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
             )
         )
         signalsMap.dataProperty().bind(
             Bindings.createObjectBinding(
-                { toPoints(appModel.observablePoint.azimuthSignals) },
+                { mapToPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
             )
         )
-        appModel.observablePoint.centerProperty().addListener { _, _, _ -> updateSignalsMap() }
-        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMap() })
-
+        appModel.observablePoint.centerProperty().addListener { _, _, _ -> updateSignalsMapImage() }
+        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMapImage() })
     }
 
-    private fun updateSignalsMap() {
+    private fun updateSignalsMapImage() {
         val mapImage = appModel.mapImage(MAP_IMAGE_SIZE)
 
         if (mapImage != null) {
