@@ -29,16 +29,31 @@ data class ValueMinMaxAvgError(
 )
 
 fun resistanceApparentWithError(
+    isNew: Boolean = false,
     k: ValueMinMax,
     u: ValueMinMax,
     i: ValueMinMax
 ): ValueMinMaxAvgError {
-    val res = SchlumbergerErrorFunctions.calculateResistanceApparentError(
-        k.value, k.min, k.max,
-        u.value, u.min, u.max,
-        i.value, i.min, i.max
-    )
-
+    val res: DoubleArray
+    if (isNew) {
+        val muI = i.value
+        val sigmaI = (i.max - i.min) / 6.0
+        val cv = sigmaI / muI
+        check(cv < 0.1) {
+            "Коэффициент вариации > 0.1\nИспользуйте старую версию"
+        }
+        res = SchlumbergerErrorFunctions.approximateCalculateResistanceApparentError(
+            k.value, k.min, k.max,
+            u.value, u.min, u.max,
+            i.value, i.min, i.max
+        )
+    } else {
+        res = SchlumbergerErrorFunctions.calculateResistanceApparentError(
+            k.value, k.min, k.max,
+            u.value, u.min, u.max,
+            i.value, i.min, i.max
+        )
+    }
     return ValueMinMaxAvgError(
         res[0],
         res[1],
@@ -47,25 +62,6 @@ fun resistanceApparentWithError(
         res[4].asPercent(),
     )
 }
-
-fun approximateResistanceApparentWithError(
-    k: ValueMinMax,
-    u: ValueMinMax,
-    i: ValueMinMax
-): ValueMinMaxAvgError {
-    val res = SchlumbergerErrorFunctions.approximateCalculateResistanceApparentError(
-        k.value, k.min, k.max,
-        u.value, u.min, u.max,
-        i.value, i.min, i.max
-    )
-
-    return ValueMinMaxAvgError(
-        res[0],
-        res[1],
-        res[2],
-        res[3],
-        res[4].asPercent(),
-    )
 //    val k = _k.value
 //    val k_min = _k.min
 //    val k_max = _k.max
@@ -90,7 +86,6 @@ fun approximateResistanceApparentWithError(
 //    val Rok_err = (Rok_avg - Rok_min) / (Rok_avg);
 //
 //    return ValueMinMaxAvgError(Rok, Rok_min, Rok_max, Rok_avg, Rok_err)
-}
 
 fun resistanceApparentErrorForDistance(k: ValueMinMax, u: Double, i: Double): Double {
     return resistanceApparentWithError(

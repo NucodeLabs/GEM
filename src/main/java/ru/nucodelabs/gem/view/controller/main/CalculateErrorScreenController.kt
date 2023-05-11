@@ -318,11 +318,7 @@ class CalculateErrorScreenController @Inject constructor(
             iAErrorTf.textFormatter.value as Double,
             iBErrorTf.textFormatter.value as Double
         ).withValue(data.amperage)
-        return if (errorFunctionVersion == ErrorFunction.OLD) resistanceApparentWithError(
-            k,
-            u,
-            i
-        ) else approximateResistanceApparentWithError(k, u, i)
+        return resistanceApparentWithError(errorFunctionVersion == ErrorFunction.NEW, k, u, i)
     }
 
     private fun resAppErrorForDist(data: ExperimentalData) =
