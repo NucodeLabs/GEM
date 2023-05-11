@@ -31,6 +31,7 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
+
 const val TARGET_FUNCTION_DESCRIPTION = "Целевая функция - это \n" +
         "функция, значение которой минимизируется \n" +
         "при решении обратной задачи\n"
