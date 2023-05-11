@@ -2,6 +2,8 @@
 <?language groovy?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
@@ -66,13 +68,20 @@
                     </fx:script>
                     <Button text="?" onAction="showHelp()"/>
                 </HBox>
-                <Button text="Трехслойная первичная модель" onAction="#simpleInitialModel"/>
-                <HBox alignment="BASELINE_CENTER">
-                    <Button text="Произвольная первичная модель" onAction="#multiLayerInitialModel"
-                            style="-fx-border-radius: 5 0 0 5;"/>
-                    <Button text="Параметры" onAction="showInitialModelConfiguration()"
-                            style="-fx-border-radius: 0 5 5 0;"/>
-                </HBox>
+                <VBox spacing="5" style="-fx-padding: 20;" alignment="CENTER">
+                    <Label>Построение стартовой модели</Label>
+                    <Button text="Трехслойная стартовая модель" onAction="#simpleInitialModel"/>
+                    <HBox alignment="BASELINE_CENTER" spacing="3">
+                        <Button text="Многослойная стартовая модель" onAction="#multiLayerInitialModel"/>
+                        <Button onAction="showInitialModelConfiguration()" contentDisplay="GRAPHIC_ONLY">
+                            <graphic>
+                                <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
+                                    <Image url="@../../../../../../img/ui_icons/settings.png"/>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                </VBox>
                 <HBox alignment="BASELINE_CENTER" VBox.vgrow="NEVER">
                     <VBox alignment="BASELINE_CENTER">
                         <Button text="%import" onAction="#importMOD"/>

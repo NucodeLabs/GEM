@@ -17,7 +17,6 @@ import javax.inject.Inject
 class InitialModelConfigurationViewController @Inject constructor(
     private val decimalFormat: DecimalFormat,
     private val alertsFactory: AlertsFactory,
-    private val appModel: VesFxAppModel
 ) : AbstractViewController<VBox>() {
 
     var parameters = VesFxAppModel.DEFAULT_INITIAL_MODEL_PARAMETERS
