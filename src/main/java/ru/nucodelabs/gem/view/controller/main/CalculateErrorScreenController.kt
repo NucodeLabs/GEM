@@ -323,6 +323,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun resAppErrorForDist(data: ExperimentalData) =
         resistanceApparentErrorForDistance(
+            errorFunctionVersion == ErrorFunction.NEW,
             kWithError(
                 data.ab2,
                 data.mn2,
@@ -335,6 +336,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun resAppErrorForVolt(data: ExperimentalData) =
         resistanceApparentErrorForVoltage(
+            errorFunctionVersion == ErrorFunction.NEW,
             measureError(
                 data.voltage,
                 uAErrorTf.textFormatter.value as Double,
@@ -347,6 +349,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun resAppErrorForAmp(data: ExperimentalData) =
         resistanceApparentErrorForAmperage(
+            errorFunctionVersion == ErrorFunction.NEW,
             measureError(
                 data.amperage,
                 iAErrorTf.textFormatter.value as Double,
