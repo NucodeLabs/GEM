@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.controller.anisotropy.main
 
 import javafx.beans.binding.Bindings
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -8,7 +9,6 @@ import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
-import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
@@ -22,6 +22,8 @@ import javax.inject.Inject
 import javax.inject.Named
 import kotlin.math.round
 
+const val MAP_IMAGE_SIZE = 350
+
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
     @Named(ArgNames.File.JSON) private val fileChooser: FileChooser,
@@ -29,33 +31,49 @@ class AnisotropyMainViewController @Inject constructor(
     private val colorMapper: ColorMapper,
 ) : AbstractViewController<VBox>() {
     @FXML
-    lateinit var mapChart: ImageScatterChart
+    lateinit var signalsMap: ImageScatterChart
 
     @FXML
-    lateinit var chart: SmartInterpolationMap
+    lateinit var signalsInterpolation: SmartInterpolationMap
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
-        chart.colorMapper = colorMapper
-        chart.data = toPoints(appModel.observablePoint.azimuthSignals)
-        chart.dataProperty().bind(
+        signalsInterpolation.colorMapper = colorMapper
+        signalsInterpolation.data = toPoints(appModel.observablePoint.azimuthSignals)
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        signalsInterpolation.dataProperty().bind(
             Bindings.createObjectBinding(
                 { toPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
             )
         )
-        mapChart.dataProperty().bind(
+        signalsMap.dataProperty().bind(
             Bindings.createObjectBinding(
                 { toPoints(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
             )
         )
-        mapChart.imageProperty().bind(
-            Bindings.createObjectBinding(
-                { appModel.mapImage()?.image },
-                appModel.observablePoint.centerProperty()
+        appModel.observablePoint.centerProperty().addListener { _, _, _ -> updateSignalsMap() }
+        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMap() })
+
+    }
+
+    private fun updateSignalsMap() {
+        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE)
+
+        if (mapImage != null) {
+            signalsMap.setAxisRange(
+                round(mapImage.xLowerBound),
+                round(mapImage.xUpperBound),
+                round(mapImage.yLowerBound),
+                round(mapImage.yUpperBound)
             )
-        )
+        }
+
+        signalsMap.image = mapImage?.image
     }
 
     @FXML
@@ -64,17 +82,6 @@ class AnisotropyMainViewController @Inject constructor(
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             appModel.loadProject(file)
-
-            val mapImage: MapImageData? = appModel.mapImage()
-
-            if (mapImage != null) {
-                mapChart.setAxisRange(
-                    round(mapImage.xLowerBound),
-                    round(mapImage.xUpperBound),
-                    round(mapImage.yLowerBound),
-                    round(mapImage.yUpperBound)
-                )
-            }
         }
     }
 
