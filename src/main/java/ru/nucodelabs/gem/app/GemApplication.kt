@@ -13,12 +13,8 @@ import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.main.MainViewController
 import ru.nucodelabs.kfx.core.GuiceApplication
-import ru.nucodelabs.kfx.core.OS
 import ru.nucodelabs.kfx.core.OS.macOS
 import java.io.File
-import java.time.LocalDate.now
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter.ofPattern
 import java.util.logging.Logger
 import com.sun.glass.ui.Application as LowLevelApplication
 
@@ -61,18 +57,12 @@ class GemApplication : GuiceApplication(AppModule()) {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            alertsFactory.uncaughtExceptionAlert(e).show()
-            if (parameters.raw.contains("--print-trace")) {
-                e.printStackTrace()
-            } else {
-                val log =
-                    File(
-                        "err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}_${LocalTime.now()}.txt"
-                    ).also { it.createNewFile() }
-                log.writeText(e.stackTraceToString())
-            }
-        }
+        Thread.setDefaultUncaughtExceptionHandler(
+            ExceptionHandler(
+                alertsFactory,
+                parameters.raw.contains("--print-trace")
+            )
+        )
         val params: List<String> = parameters.raw + macOSHandledFiles
         if (
             params.any {

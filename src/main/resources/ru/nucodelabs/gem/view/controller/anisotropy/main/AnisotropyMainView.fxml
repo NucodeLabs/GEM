@@ -31,10 +31,10 @@
                             <VBox spacing="5" style="-fx-padding: 20;">
                                 <Label styleClass="uc-header">Координаты центра установки</Label>
                                 <Label>Ширина</Label>
-                                <TextField/>
+                                <TextField fx:id="centerLatitudeTf"/>
                                 <Label>Долгота</Label>
-                                <TextField/>
-                                <Button>Применить</Button>
+                                <TextField fx:id="centerLongitudeTf"/>
+                                <Button onAction="#modifyPointCenter">Применить</Button>
                                 <Label styleClass="uc-header">Параметры наложения</Label>
                                 <ComboBox/>
                             </VBox>

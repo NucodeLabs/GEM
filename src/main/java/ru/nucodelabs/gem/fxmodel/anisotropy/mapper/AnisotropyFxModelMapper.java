@@ -2,10 +2,7 @@ package ru.nucodelabs.gem.fxmodel.anisotropy.mapper;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableModelLayer;
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint;
@@ -19,7 +16,8 @@ import ru.nucodelabs.geo.anisotropy.calc.map.Wgs;
 
 @Mapper(
         unmappedSourcePolicy = ReportingPolicy.ERROR,
-        unmappedTargetPolicy = ReportingPolicy.ERROR
+        unmappedTargetPolicy = ReportingPolicy.ERROR,
+        nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
 )
 public abstract class AnisotropyFxModelMapper {
     protected <T> ObservableList<T> createObservableList() {
@@ -30,7 +28,7 @@ public abstract class AnisotropyFxModelMapper {
 
     public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
 
-    public ObservableWgs map(Wgs wgs) {
+    public ObservableWgs mapWgs(Wgs wgs) {
         if (wgs == null) {
             return null;
         }
