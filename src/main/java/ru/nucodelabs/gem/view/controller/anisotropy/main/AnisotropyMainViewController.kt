@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -10,6 +11,7 @@ import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
+import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -26,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import kotlin.math.round
 
-const val MAP_IMAGE_SIZE = 350
+private const val MAP_IMAGE_SIZE = 350
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
@@ -36,6 +38,9 @@ class AnisotropyMainViewController @Inject constructor(
     @Named(ArgNames.PRECISE) private val preciseDecimalFormat: DecimalFormat,
     private val alertsFactory: AlertsFactory
 ) : AbstractViewController<VBox>() {
+
+    @FXML
+    private lateinit var mapOverlayType: ComboBox<MapOverlayType>
 
     @FXML
     private lateinit var centerLongitudeTf: TextField
@@ -51,12 +56,20 @@ class AnisotropyMainViewController @Inject constructor(
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
-        signalsInterpolation.colorMapper = colorMapper
-        signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
-        setupListeners()
+        initControls()
+        initAndSetupListeners()
     }
 
-    private fun setupListeners() {
+    private fun initControls() {
+        signalsInterpolation.colorMapper = colorMapper
+        mapOverlayType.items += MapOverlayType.values()
+        mapOverlayType.selectionModel.select(MapOverlayType.NONE)
+    }
+
+    private fun initAndSetupListeners() {
+        signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
+        signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
+
         signalsInterpolation.dataProperty().bind(
             Bindings.createObjectBinding(
                 { mapToPoints(appModel.observablePoint.azimuthSignals) },
@@ -69,6 +82,8 @@ class AnisotropyMainViewController @Inject constructor(
                 appModel.observablePoint.azimuthSignals,
             )
         )
+        updatePointCenterTextFields()
+        updateSignalsMapImage()
         appModel.observablePoint.centerProperty().addListener { _, _, _ ->
             updateSignalsMapImage()
             updatePointCenterTextFields()

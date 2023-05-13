@@ -36,7 +36,7 @@
                                 <TextField fx:id="centerLongitudeTf"/>
                                 <Button onAction="#modifyPointCenter">Применить</Button>
                                 <Label styleClass="uc-header">Параметры наложения</Label>
-                                <ComboBox/>
+                                <ComboBox fx:id="mapOverlayType"/>
                             </VBox>
                             <ImageScatterChart fx:id="signalsMap" legendVisible="false">
                                 <xAxis>

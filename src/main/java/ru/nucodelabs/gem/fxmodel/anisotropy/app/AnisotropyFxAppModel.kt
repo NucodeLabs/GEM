@@ -79,13 +79,18 @@ class AnisotropyFxAppModel @Inject constructor(
 
     fun editCenter(latitude: Double, longitude: Double) {
         val newCenter = Wgs(longitude, latitude)
-        val violations = validator.validate(newCenter)
-        if (violations.isNotEmpty()) {
-            throw IllegalStateException(violations.toString())
-        }
+
+        validateModel(newCenter)
 
         doWithPoint {
             it.center = newCenter
+        }
+    }
+
+    private fun validateModel(modelObject: Any) {
+        val violations = validator.validate(modelObject)
+        if (violations.isNotEmpty()) {
+            throw IllegalStateException(violations.toString())
         }
     }
 }
