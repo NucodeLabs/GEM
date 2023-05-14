@@ -10,7 +10,7 @@ import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper
 import ru.nucodelabs.geo.anisotropy.Point
 
-class PointProjectSnapshotServiceImplTest {
+class PointProjectSnapshotWrapperImplTest {
 
     private val project = Project(
         data = Point()
@@ -20,7 +20,7 @@ class PointProjectSnapshotServiceImplTest {
 
     private val mapper = Guice.createInjector(MappersModule()).getInstance(AnisotropyProjectDtoMapper::class.java)
 
-    private val uut = PointProjectSnapshotServiceImpl(projectContext, mapper)
+    private val uut = PointProjectSnapshotWrapperImpl(projectContext, mapper)
 
     @Test
     fun test() {
