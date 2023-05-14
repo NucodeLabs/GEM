@@ -37,7 +37,11 @@ class AnisotropyFxAppModel @Inject constructor(
         fxModelMapper.updateObservable(observablePoint, point)
     }
 
-    private fun doWithPoint(block: (Point) -> Unit) {
+    /**
+     * Сохраняет модификацию в истории,
+     * обновляет JavaFX-модель
+     */
+    private fun modelModification(block: (Point) -> Unit) {
         historyManager.snapshotAfter {
             block(point)
         }
@@ -54,6 +58,7 @@ class AnisotropyFxAppModel @Inject constructor(
         val loadedProject = projectFileService.loadProject(file)
         project.restoreFromSnapshot(loadedProject.snapshot())
         historyManager.clear()
+        historyManager.snapshot()
         updateObservable()
     }
 
@@ -78,19 +83,30 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     fun editCenter(latitude: Double, longitude: Double) {
-        val newCenter = Wgs(longitude, latitude)
-
-        validateModel(newCenter)
-
-        doWithPoint {
+        val newCenter = Wgs(longitude, latitude).validated()
+        modelModification {
             it.center = newCenter
         }
     }
 
-    private fun validateModel(modelObject: Any) {
-        val violations = validator.validate(modelObject)
+    /**
+     * Возвращает тот же объект, если значения валиды, IllegalStageException иначе
+     */
+    private fun <T> T.validated(): T {
+        val violations = validator.validate(this)
         if (violations.isNotEmpty()) {
             throw IllegalStateException(violations.toString())
         }
+        return this
+    }
+
+    fun undo() {
+        historyManager.undo()
+        updateObservable()
+    }
+
+    fun redo() {
+        historyManager.redo()
+        updateObservable()
     }
 }

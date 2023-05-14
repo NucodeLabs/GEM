@@ -146,4 +146,14 @@ class AnisotropyMainViewController @Inject constructor(
             }
         }
     }
+
+    @FXML
+    private fun undo() {
+        appModel.undo()
+    }
+
+    @FXML
+    private fun redo() {
+        appModel.redo()
+    }
 }

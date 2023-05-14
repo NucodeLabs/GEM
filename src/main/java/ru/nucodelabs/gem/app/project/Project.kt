@@ -7,7 +7,7 @@ data class Project<T>(
     var data: T
 ) : Snapshot.Originator<Project<T>> {
     override fun snapshot(): Snapshot<Project<T>> {
-        return snapshotOf(this)
+        return snapshotOf(this.copy())
     }
 
     override fun restoreFromSnapshot(snapshot: Snapshot<Project<T>>) {

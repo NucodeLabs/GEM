@@ -5,9 +5,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import ru.nucodelabs.gem.app.project.PointProjectFileServiceImpl;
 import ru.nucodelabs.gem.app.project.Project;
 import ru.nucodelabs.gem.app.project.ProjectFileService;
+import ru.nucodelabs.gem.app.project.ProjectSnapshotService;
+import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectFileServiceImpl;
+import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectSnapshotServiceImpl;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel;
 import ru.nucodelabs.geo.anisotropy.Point;
@@ -35,7 +37,16 @@ public class AnisotropyProjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    HistoryManager<Project<Point>> historyManager(@Named("initial") Project<Point> project) {
-        return new HistoryManager<>(project);
+    ProjectSnapshotService<Point> projectSnapshotService(
+            @Named(ArgNames.INITIAL) Project<Point> project,
+            AnisotropyProjectDtoMapper dtoMapper
+    ) {
+        return new PointProjectSnapshotServiceImpl(project, dtoMapper);
+    }
+
+    @Provides
+    @Singleton
+    HistoryManager<Project<Point>> historyManager(ProjectSnapshotService<Point> projectSnapshotService) {
+        return new HistoryManager<>(projectSnapshotService);
     }
 }

@@ -17,6 +17,10 @@
             <MenuItem text="%openProject" onAction="#loadProject"/>
             <MenuItem text="%saveProject" onAction="#saveProject"/>
         </Menu>
+        <Menu text="%edit">
+            <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
+            <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
+        </Menu>
         <Menu text="Азимут">
             <MenuItem text="Редактировать"/>
         </Menu>
