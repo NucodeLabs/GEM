@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectFileService
+import ru.nucodelabs.gem.app.project.ProjectSnapshotService
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
@@ -13,6 +14,7 @@ import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.calc.map.Wgs
 import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.kfx.snapshot.snapshotOf
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -22,6 +24,7 @@ class AnisotropyFxAppModel @Inject constructor(
     private val fxModelMapper: AnisotropyFxModelMapper,
     @Named(ArgNames.INITIAL) private val project: Project<Point>,
     private val projectFileService: ProjectFileService<Point>,
+    private val projectSnapshotService: ProjectSnapshotService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
 ) {
@@ -49,14 +52,14 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     fun newProject() {
-        project.restoreFromSnapshot(Project(Point()).snapshot())
+        projectSnapshotService.restoreFromSnapshot(snapshotOf(NEW_PROJECT))
         projectFileService.resetSave()
         historyManager.clear()
     }
 
     fun loadProject(file: File) {
         val loadedProject = projectFileService.loadProject(file)
-        project.restoreFromSnapshot(loadedProject.snapshot())
+        projectSnapshotService.restoreFromSnapshot(snapshotOf(loadedProject))
         historyManager.clear()
         historyManager.snapshot()
         updateObservable()
@@ -108,5 +111,9 @@ class AnisotropyFxAppModel @Inject constructor(
     fun redo() {
         historyManager.redo()
         updateObservable()
+    }
+
+    companion object Defaults {
+        val NEW_PROJECT = Project(Point())
     }
 }
