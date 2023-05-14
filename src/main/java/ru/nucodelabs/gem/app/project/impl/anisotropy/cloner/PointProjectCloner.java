@@ -28,6 +28,10 @@ public abstract class PointProjectCloner {
     protected abstract ModelLayer cloneLayer(ModelLayer layer);
 
     protected Signals cloneSignals(Signals signals) {
-        return new Signals(signals.getSortedSignals());
+        return new Signals(
+                signals.getSortedSignals().stream()
+                        .map(this::cloneSignal)
+                        .toList()
+        );
     }
 }
