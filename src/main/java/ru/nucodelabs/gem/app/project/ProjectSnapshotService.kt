@@ -6,8 +6,11 @@ import ru.nucodelabs.kfx.snapshot.snapshotOf
 import javax.inject.Inject
 
 abstract class ProjectSnapshotService<T> @Inject constructor(
-    private val project: Project<T>
+    private val projectContext: ProjectContext<T>
 ) : Snapshot.Originator<Project<T>> {
+
+    private val project by projectContext::project
+
     override fun snapshot(): Snapshot<Project<T>> {
         val dto = mapToDto(project)
         val snapshot = mapFromDto(dto)

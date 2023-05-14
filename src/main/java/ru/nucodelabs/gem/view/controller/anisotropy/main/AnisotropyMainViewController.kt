@@ -156,4 +156,9 @@ class AnisotropyMainViewController @Inject constructor(
     private fun redo() {
         appModel.redo()
     }
+
+    @FXML
+    private fun newProject() {
+        appModel.newProject()
+    }
 }

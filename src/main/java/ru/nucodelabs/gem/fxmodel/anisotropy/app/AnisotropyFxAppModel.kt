@@ -1,40 +1,32 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import jakarta.validation.Validator
-import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.SimpleObjectProperty
 import ru.nucodelabs.gem.app.project.Project
+import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
-import ru.nucodelabs.gem.app.project.ProjectSnapshotService
-import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.calc.map.Wgs
-import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.kfx.snapshot.snapshotOf
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Named
 
 class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
     private val fxModelMapper: AnisotropyFxModelMapper,
-    @Named(ArgNames.INITIAL) private val project: Project<Point>,
+    private val projectContext: ProjectContext<Point>,
     private val projectFileService: ProjectFileService<Point>,
-    private val projectSnapshotService: ProjectSnapshotService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
+    private val reloadService: ReloadService<Point>
 ) {
+
+    private val project by projectContext::project
     private val point by project::data
 
-    private val observablePointProperty: ReadOnlyObjectProperty<ObservablePoint> =
-        SimpleObjectProperty(fxModelMapper.toObservable(project.data))
-
-    fun observablePointProperty() = observablePointProperty
-    val observablePoint: ObservablePoint by observablePointProperty
+    val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
 
     private fun updateObservable() {
         fxModelMapper.updateObservable(observablePoint, point)
@@ -52,16 +44,13 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     fun newProject() {
-        projectSnapshotService.restoreFromSnapshot(snapshotOf(NEW_PROJECT))
+        reloadService.reloadProject(newProject)
         projectFileService.resetSave()
-        historyManager.clear()
     }
 
     fun loadProject(file: File) {
         val loadedProject = projectFileService.loadProject(file)
-        projectSnapshotService.restoreFromSnapshot(snapshotOf(loadedProject))
-        historyManager.clear()
-        historyManager.snapshot()
+        reloadService.reloadProject(loadedProject)
         updateObservable()
     }
 
@@ -114,6 +103,7 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     companion object Defaults {
-        val NEW_PROJECT = Project(Point())
+        val newProject
+            get() = Project(Point())
     }
 }

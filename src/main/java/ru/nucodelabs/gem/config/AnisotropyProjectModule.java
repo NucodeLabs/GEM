@@ -4,16 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import ru.nucodelabs.gem.app.project.Project;
+import ru.nucodelabs.gem.app.project.ProjectContext;
 import ru.nucodelabs.gem.app.project.ProjectFileService;
 import ru.nucodelabs.gem.app.project.ProjectSnapshotService;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectFileServiceImpl;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectSnapshotServiceImpl;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel;
+import ru.nucodelabs.gem.fxmodel.anisotropy.app.ReloadService;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.kfx.snapshot.HistoryManager;
+import ru.nucodelabs.kfx.snapshot.Snapshot;
 
 public class AnisotropyProjectModule extends AbstractModule {
     @Override
@@ -23,9 +25,8 @@ public class AnisotropyProjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.INITIAL)
-    Project<Point> pointProject() {
-        return new Project<>(new Point());
+    ProjectContext<Point> projectContext() {
+        return new ProjectContext<>(AnisotropyFxAppModel.Defaults.getNewProject());
     }
 
 
@@ -38,15 +39,27 @@ public class AnisotropyProjectModule extends AbstractModule {
     @Provides
     @Singleton
     ProjectSnapshotService<Point> projectSnapshotService(
-            @Named(ArgNames.INITIAL) Project<Point> project,
+            ProjectContext<Point> projectContext,
             AnisotropyProjectDtoMapper dtoMapper
     ) {
-        return new PointProjectSnapshotServiceImpl(project, dtoMapper);
+        return new PointProjectSnapshotServiceImpl(projectContext, dtoMapper);
     }
 
     @Provides
     @Singleton
-    HistoryManager<Project<Point>> historyManager(ProjectSnapshotService<Point> projectSnapshotService) {
-        return new HistoryManager<>(projectSnapshotService);
+    Snapshot.Originator<Project<Point>> originator(ProjectSnapshotService<Point> snapshotService) {
+        return snapshotService;
+    }
+
+    @Provides
+    @Singleton
+    HistoryManager<Project<Point>> historyManager(Snapshot.Originator<Project<Point>> originator) {
+        return new HistoryManager<>(originator);
+    }
+
+    @Provides
+    @Singleton
+    ReloadService<Point> reloadService(HistoryManager<Project<Point>> historyManager, Snapshot.Originator<Project<Point>> originator) {
+        return new ReloadService<>(historyManager, originator);
     }
 }

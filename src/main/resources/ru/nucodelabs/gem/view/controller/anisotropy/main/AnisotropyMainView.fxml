@@ -14,6 +14,7 @@
       fx:id="root">
     <MenuBar>
         <Menu text="%file">
+            <MenuItem text="Новый проект" onAction="#newProject"/>
             <MenuItem text="%openProject" onAction="#loadProject"/>
             <MenuItem text="%saveProject" onAction="#saveProject"/>
         </Menu>

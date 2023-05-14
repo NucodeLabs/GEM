@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.gem.app.project.Project
+import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.config.MappersModule
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper
 import ru.nucodelabs.geo.anisotropy.Point
@@ -15,9 +16,11 @@ class PointProjectSnapshotServiceImplTest {
         data = Point()
     )
 
+    private val projectContext = ProjectContext(project)
+
     private val mapper = Guice.createInjector(MappersModule()).getInstance(AnisotropyProjectDtoMapper::class.java)
 
-    private val uut = PointProjectSnapshotServiceImpl(project, mapper)
+    private val uut = PointProjectSnapshotServiceImpl(projectContext, mapper)
 
     @Test
     fun test() {
