@@ -44,13 +44,13 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     fun newProject() {
-        reloadService.reloadProject(newProject)
         projectFileService.resetSave()
+        reloadService.reloadProject(newProject)
         updateObservable()
     }
 
     fun loadProject(file: File) {
-        val loadedProject = projectFileService.loadProject(file)
+        val loadedProject = projectFileService.loadProject(file).validated()
         reloadService.reloadProject(loadedProject)
         updateObservable()
     }

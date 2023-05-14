@@ -4,7 +4,7 @@ import ru.nucodelabs.kfx.snapshot.Snapshot
 import ru.nucodelabs.kfx.snapshot.snapshotOf
 import javax.inject.Inject
 
-abstract class ProjectSnapshotWrapper<T> @Inject constructor(
+abstract class ProjectSnapshotService<T> @Inject constructor(
     private val projectContext: ProjectContext<T>
 ) : Snapshot.Originator<Project<T>> {
 

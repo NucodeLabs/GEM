@@ -7,9 +7,9 @@ import com.google.inject.Singleton;
 import ru.nucodelabs.gem.app.project.Project;
 import ru.nucodelabs.gem.app.project.ProjectContext;
 import ru.nucodelabs.gem.app.project.ProjectFileService;
-import ru.nucodelabs.gem.app.project.ProjectSnapshotWrapper;
+import ru.nucodelabs.gem.app.project.ProjectSnapshotService;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectFileServiceImpl;
-import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectSnapshotWrapperImpl;
+import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectSnapshotServiceImpl;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.cloner.PointProjectCloner;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel;
@@ -39,16 +39,16 @@ public class AnisotropyProjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    ProjectSnapshotWrapper<Point> projectSnapshotService(
+    ProjectSnapshotService<Point> projectSnapshotService(
             ProjectContext<Point> projectContext,
             PointProjectCloner cloner
     ) {
-        return new PointProjectSnapshotWrapperImpl(projectContext, cloner);
+        return new PointProjectSnapshotServiceImpl(projectContext, cloner);
     }
 
     @Provides
     @Singleton
-    Snapshot.Originator<Project<Point>> originator(ProjectSnapshotWrapper<Point> snapshotService) {
+    Snapshot.Originator<Project<Point>> originator(ProjectSnapshotService<Point> snapshotService) {
         return snapshotService;
     }
 
