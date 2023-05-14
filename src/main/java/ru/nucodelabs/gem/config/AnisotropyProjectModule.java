@@ -10,6 +10,7 @@ import ru.nucodelabs.gem.app.project.ProjectFileService;
 import ru.nucodelabs.gem.app.project.ProjectSnapshotWrapper;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectFileServiceImpl;
 import ru.nucodelabs.gem.app.project.impl.anisotropy.PointProjectSnapshotWrapperImpl;
+import ru.nucodelabs.gem.app.project.impl.anisotropy.cloner.PointProjectCloner;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel;
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.ReloadService;
@@ -40,9 +41,9 @@ public class AnisotropyProjectModule extends AbstractModule {
     @Singleton
     ProjectSnapshotWrapper<Point> projectSnapshotService(
             ProjectContext<Point> projectContext,
-            AnisotropyProjectDtoMapper dtoMapper
+            PointProjectCloner cloner
     ) {
-        return new PointProjectSnapshotWrapperImpl(projectContext, dtoMapper);
+        return new PointProjectSnapshotWrapperImpl(projectContext, cloner);
     }
 
     @Provides
