@@ -4,26 +4,21 @@ import javafx.beans.NamedArg
 import javafx.beans.binding.Bindings
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.ValueAxis
 import javafx.scene.image.Image
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.util.fx.*
-import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.geo.ves.calc.interpolation.ApacheInterpolator2D
-import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
-import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
 
-class ImageScatterChart @JvmOverloads constructor(
+open class ImageScatterChart @JvmOverloads constructor(
     @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
     image: Image = generateImage(256, 256, Color.WHITESMOKE)
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
-    private val plotArea = this.lookup(".chart-plot-background") as Region
+    protected val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
@@ -31,8 +26,6 @@ class ImageScatterChart @JvmOverloads constructor(
             setupImage(newImg ?: generateImage(256, 256, Color.WHITE))
         }
     }
-
-    val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
 
     var image: Image by _imageProperty
     fun imageProperty() = _imageProperty
@@ -46,12 +39,6 @@ class ImageScatterChart @JvmOverloads constructor(
             )
         )
         setupImage(image)
-        plotChildren += canvas
-        canvas.layoutX = 0.0
-        canvas.layoutY = 0.0
-        canvas.widthProperty().bind(plotArea.widthProperty())
-        canvas.heightProperty().bind(plotArea.heightProperty())
-        canvas.viewOrder = 1.0
     }
 
     private fun setupImage(img: Image) {

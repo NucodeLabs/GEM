@@ -26,6 +26,7 @@ import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.math.round
+import kotlin.math.sign
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
