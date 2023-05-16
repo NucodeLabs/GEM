@@ -28,7 +28,7 @@ public abstract class AnisotropyFxModelMapper {
 
     public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
 
-    public ObservableWgs mapWgs(Wgs wgs) {
+    public ObservableWgs toObservable(Wgs wgs) {
         if (wgs == null) {
             return null;
         }
@@ -43,4 +43,6 @@ public abstract class AnisotropyFxModelMapper {
     @Mapping(target = "isFixedResistance", source = "fixedResistance")
     @Mapping(target = "isFixedPower", source = "fixedPower")
     public abstract ObservableModelLayer toObservable(ModelLayer modelLayer);
+
+    public abstract Wgs toModel(ObservableWgs observableWgs);
 }

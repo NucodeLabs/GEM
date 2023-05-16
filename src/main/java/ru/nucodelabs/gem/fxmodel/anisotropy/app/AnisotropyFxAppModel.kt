@@ -7,8 +7,8 @@ import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
+import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.geo.anisotropy.Point
-import ru.nucodelabs.geo.anisotropy.calc.map.Wgs
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -75,15 +75,15 @@ class AnisotropyFxAppModel @Inject constructor(
         }
     }
 
-    fun editCenter(latitude: Double, longitude: Double) {
-        val newCenter = Wgs(longitude, latitude).validated()
+    fun editCenter(center: ObservableWgs) {
+        val newCenter = fxModelMapper.toModel(center).validated()
         modelModification {
             it.center = newCenter
         }
     }
 
     /**
-     * Возвращает тот же объект, если значения валиды, IllegalStageException иначе
+     * Возвращает тот же объект, если значения валиды, IllegalStateException иначе
      */
     private fun <T> T.validated(): T {
         val violations = validator.validate(this)

@@ -12,6 +12,7 @@ import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
+import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -140,7 +141,7 @@ class AnisotropyMainViewController @Inject constructor(
 
         if (newLatitude != null && newLongitude != null) {
             try {
-                appModel.editCenter(newLatitude, newLongitude)
+                appModel.editCenter(ObservableWgs(newLongitude, newLatitude))
             } catch (e: Exception) {
                 alertsFactory.simpleExceptionAlert(e).show()
             }
