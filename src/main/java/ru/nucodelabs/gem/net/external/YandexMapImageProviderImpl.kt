@@ -30,8 +30,8 @@ class YandexMapImageProviderImpl @Inject constructor(
             latBottomLeft = bottomLeft.latitudeInDegrees,
             lonUpperRight = upperRight.longitudeInDegrees,
             latUpperRight = upperRight.latitudeInDegrees,
-            width = 450,
-            height = 450
+            width = mapImageRequest.size,
+            height = mapImageRequest.size
         )
         val imageWithSquare = makeRequestSquare(
             mapImageRequest, mapImageRequest.expectedDistanceFromCenterInMeters
@@ -67,21 +67,28 @@ class YandexMapImageProviderImpl @Inject constructor(
             latUpperLeft = upperLeft.latitudeInDegrees,
             lonBottomRight = bottomRight.longitudeInDegrees,
             latBottomRight = bottomRight.latitudeInDegrees,
-            width = 450,
-            height = 450
+            width = mapImageRequest.size,
+            height = mapImageRequest.size
         )
-         return Image(imageWithSquare)
+        return Image(imageWithSquare)
     }
 
     private fun calculateSize(imageWithSquare: Image, expectedMaxDistance: Double): Double {
 
         val points = imageParser(imageWithSquare)
         val solver = YandexInverseSolver(points)
-        val corners = solver.getOptimizedAngles(Pair(Point(0, 0), Point(450, 450)))
+        val imgSize = imageWithSquare.width.toInt()
+        val corners = solver.getOptimizedAngles(
+            Pair(
+                Point(0, 0),
+                Point(imgSize, imgSize)
+            )
+        )
         return expectedMaxDistance + pixelsToMeters(
             abs(corners.first.x - corners.second.x),
             corners.second.x,
-            expectedMaxDistance
+            expectedMaxDistance,
+            imgSize
         )
     }
 
@@ -103,8 +110,8 @@ class YandexMapImageProviderImpl @Inject constructor(
         return redPoints
     }
 
-    private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double): Double {
-        val extraInPixels = 450.0 - xCord.toDouble()
+    private fun pixelsToMeters(pixelCount: Int, xCord: Int, maxDist: Double, imgSize: Int): Double {
+        val extraInPixels = imgSize - xCord.toDouble()
         val metersInPixel = (maxDist * 2.0) / pixelCount.toDouble()
         return extraInPixels * metersInPixel
     }

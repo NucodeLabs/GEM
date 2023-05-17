@@ -12,12 +12,14 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.input.*
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
+import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
 import ru.nucodelabs.gem.util.TextToTableParser
 import ru.nucodelabs.gem.util.fx.getValue
@@ -26,12 +28,11 @@ import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
+import ru.nucodelabs.gem.view.controller.main.InitialModelConfigurationViewController
 import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.divide
-import ru.nucodelabs.geo.ves.calc.initialModel.SimpleInitialModel.threeLayersInitialModel
-import ru.nucodelabs.geo.ves.calc.initialModel.multiLayerInitialModel
 import ru.nucodelabs.geo.ves.calc.join
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.geo.ves.toTabulatedTable
@@ -63,7 +64,8 @@ class ModelTableController @Inject constructor(
     private val historyManager: HistoryManager<Section>,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat,
-    private val mapper: VesFxModelMapper
+    private val mapper: VesFxModelMapper,
+    private val appModel: VesFxAppModel
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
 
     @FXML
@@ -86,6 +88,12 @@ class ModelTableController @Inject constructor(
 
     @FXML
     private lateinit var table: TableView<ObservableModelLayer>
+
+    @FXML
+    private lateinit var initialModelConfigurationView: VBox
+
+    @FXML
+    private lateinit var initialModelConfigurationViewController: InitialModelConfigurationViewController
 
     override val stage: Stage?
         get() = table.scene.window as Stage?
@@ -439,26 +447,12 @@ class ModelTableController @Inject constructor(
 
     @FXML
     fun simpleInitialModel() {
-        try {
-            val newModelData = threeLayersInitialModel(picket.sortedExperimentalData)
-            historyManager.snapshotAfter {
-                observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData)
-            }
-        } catch (e: IllegalStateException) {
-            alertsFactory.simpleExceptionAlert(e, stage).show()
-        }
+        appModel.applySimpleInitialModel()
     }
 
     @FXML
     fun multiLayerInitialModel() {
-        try {
-            val newModelData = multiLayerInitialModel(picket.sortedExperimentalData)
-            historyManager.snapshotAfter {
-                observableSection.pickets[picketIndex] = picket.copy(modelData = newModelData)
-            }
-        } catch (e: IllegalStateException) {
-            alertsFactory.simpleExceptionAlert(e, stage).show()
-        }
+        appModel.applyArbitraryInitialModel(initialModelConfigurationViewController.parameters)
     }
 
     @FXML

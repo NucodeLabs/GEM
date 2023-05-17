@@ -62,31 +62,31 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named("CSS")
+    @Named(ArgNames.CSS)
     @Singleton
     private String provideStylesheet() {
         return "ru/nucodelabs/gem/view/common.css";
     }
 
     @Provides
-    @Named("MainView")
+    @Named(ArgNames.View.MAIN_VIEW)
     private URL provideMainViewFXML() {
         return MainViewController.class.getResource("MainSplitLayoutView.fxml");
     }
 
     @Provides
-    @Named("AnisotropyMainView")
+    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW)
     URL anisotropyMainView() {
         return AnisotropyMainViewController.class.getResource("AnisotropyMainView.fxml");
     }
 
     @Provides
-    @Named("AnisotropyMainView")
+    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW)
     private Stage anisotropyMainViewWindow(
             ResourceBundle uiProperties,
             Injector injector,
-            @Named("AnisotropyMainView") URL url,
-            @Named("MainView") Stage mainStage
+            @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) URL url,
+            @Named(ArgNames.View.MAIN_VIEW) Stage mainStage
     ) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new AnisotropyProjectModule())::getInstance);
@@ -100,16 +100,16 @@ public class AppModule extends AbstractModule {
 
 
     @Provides
-    @Named("MainView")
-    private FXMLLoader provideFXMLLoader(ResourceBundle uiProperties, Injector injector, @Named("MainView") URL url) {
+    @Named(ArgNames.View.MAIN_VIEW)
+    private FXMLLoader provideFXMLLoader(ResourceBundle uiProperties, Injector injector, @Named(ArgNames.View.MAIN_VIEW) URL url) {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new MainViewModule())::getInstance);
         return fxmlLoader;
     }
 
     @Provides
-    @Named("MainView")
-    private Stage create(@Named("MainView") FXMLLoader loader) throws IOException {
+    @Named(ArgNames.View.MAIN_VIEW)
+    private Stage create(@Named(ArgNames.View.MAIN_VIEW) FXMLLoader loader) throws IOException {
         return loader.load();
     }
 
@@ -138,7 +138,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named("Precise")
+    @Named(ArgNames.PRECISE)
     DecimalFormat preciseFormat() {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -206,14 +206,14 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named("CLR")
+    @Named(ArgNames.CLR)
     File clrFile() {
         return Paths.get("colormap/default.clr").toFile();
     }
 
     @Provides
     @Singleton
-    ColorMapper colorMapper(@Named("CLR") File clrFile, Logger log) {
+    ColorMapper colorMapper(@Named(ArgNames.CLR) File clrFile, Logger log) {
         ClrParser clrParser = new ClrParser(clrFile);
         log.info("Colormap CLR file path: " + clrFile.getAbsolutePath());
         List<ColorNode> valueColorList = clrParser.getColorNodes();

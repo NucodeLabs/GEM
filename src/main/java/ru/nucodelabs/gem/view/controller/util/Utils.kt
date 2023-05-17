@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.controller.anisotropy.main.map
+package ru.nucodelabs.gem.view.controller.util
 
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
@@ -9,7 +9,7 @@ import ru.nucodelabs.geo.anisotropy.calc.map.xFromCenter
 import ru.nucodelabs.geo.anisotropy.calc.map.yFromCenter
 import ru.nucodelabs.kfx.ext.toObservableList
 
-fun toPoints(azimuthSignals: ObservableList<ObservableAzimuthSignals>): ObservableList<Series<Number, Number>> {
+fun mapToPoints(azimuthSignals: ObservableList<ObservableAzimuthSignals>): ObservableList<Series<Number, Number>> {
     val seriesList =
         azimuthSignals.map { observableAzimuthSignals ->
             observableAzimuthSignals.signals.sortedSignals.map { signal ->

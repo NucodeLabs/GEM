@@ -27,7 +27,7 @@ open class ImageScatterChart @JvmOverloads constructor(
         }
     }
 
-    var image: Image by _imageProperty
+    var image: Image? by _imageProperty
     fun imageProperty() = _imageProperty
 
     init {

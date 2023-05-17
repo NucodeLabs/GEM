@@ -8,8 +8,8 @@ import javafx.scene.control.Dialog;
 
 public class DialogsModule extends AbstractModule {
     @Provides
-    @Named("Save")
-    private Dialog<ButtonType> provideSaveDialog(@Named("CSS") String stylesheet) {
+    @Named(ArgNames.SAVE)
+    Dialog<ButtonType> provideSaveDialog(@Named(ArgNames.CSS) String stylesheet) {
         Dialog<ButtonType> saveDialog = new Dialog<>();
         saveDialog.setTitle("Сохранение");
         saveDialog.setContentText("Сохранить изменения?");

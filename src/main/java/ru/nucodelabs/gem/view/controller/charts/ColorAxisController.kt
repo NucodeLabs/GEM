@@ -12,6 +12,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.*
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -30,12 +31,12 @@ import javax.inject.Named
 
 
 class ColorAxisController @Inject constructor(
-    @Named("CLR") private val clrFile: File,
+    @Named(ArgNames.CLR) private val clrFile: File,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val stringConverter: StringConverter<Number>,
     private val decimalFormat: DecimalFormat,
-    @Named("PNG") private val fc: FileChooser,
+    @Named(ArgNames.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
 
