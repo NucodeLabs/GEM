@@ -23,30 +23,33 @@ class CombinedChart @JvmOverloads constructor(
 
     private val _colorMapper = SimpleObjectProperty(colorMapper)
     private var interpolatorIsInitialized = false
-    fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
-    var colorMapper: ColorMapper?
-        set(value) = _colorMapper.set(value)
-        get() = _colorMapper.get()
-
+    private fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
+    var colorMapper by _colorMapper
     val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
-
+    private val _blendMode = SimpleObjectProperty(canvas.blendMode)
+    fun canvasBlendModeProperty(): ObjectProperty<BlendMode?> = _blendMode
+    fun getCanvasBlendMode(): BlendMode? = canvasBlendModeProperty().get()
+    fun setCanvasBlendMode(mode: BlendMode) = canvasBlendModeProperty().set(mode)
     var interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
 
     init {
-        canvas.blendMode = BlendMode.SOFT_LIGHT
+        _blendMode.addListener { _, _, newBlendMode ->
+            canvas.blendMode = newBlendMode
+        }
+        setCanvasBlendMode(BlendMode.SOFT_LIGHT)
         plotChildren += canvas
         canvas.layoutX = 0.0
         canvas.layoutY = 0.0
         canvas.widthProperty().bind(plotArea.widthProperty())
         canvas.heightProperty().bind(plotArea.heightProperty())
         canvas.viewOrder = 1.0
-        colorMapperProperty().addListener{
-            _, _, new -> ChartUtils.startListening(new) {
+        colorMapperProperty().addListener { _, _, new ->
+            ChartUtils.startListening(new) {
                 draw()
-        }
+            }
             draw()
         }
-        ChartUtils.startListening(colorMapper) {draw()}
+        ChartUtils.startListening(colorMapper) { draw() }
     }
 
     override fun layoutPlotChildren() {
@@ -62,11 +65,7 @@ class CombinedChart @JvmOverloads constructor(
 
 
     private fun initInterpolator() {
-        try {
-            ChartUtils.initInterpolator(data, interpolator2D)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        ChartUtils.initInterpolator(data, interpolator2D)
     }
 
     fun draw() {

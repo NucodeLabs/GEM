@@ -38,14 +38,14 @@
                                 <Label styleClass="uc-header">Параметры наложения</Label>
                                 <ComboBox/>
                             </VBox>
-                            <ImageScatterChart fx:id="signalsMap" legendVisible="false">
+                            <CombinedChart fx:id="signalsMap" legendVisible="false">
                                 <xAxis>
                                     <NucodeNumberAxis autoRanging="true"/>
                                 </xAxis>
                                 <yAxis>
                                     <NucodeNumberAxis autoRanging="true"/>
                                 </yAxis>
-                            </ImageScatterChart>
+                            </CombinedChart>
                         </HBox>
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">

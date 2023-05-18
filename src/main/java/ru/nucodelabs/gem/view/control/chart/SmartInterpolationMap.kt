@@ -4,15 +4,14 @@ import javafx.beans.NamedArg
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.chart.ValueAxis
-import javafx.scene.paint.Color
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.geo.ves.calc.interpolation.ApacheInterpolator2D
 import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
 class SmartInterpolationMap(
-    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
-    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
+    @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
 
@@ -25,19 +24,11 @@ class SmartInterpolationMap(
 
     init {
         colorMapperProperty().addListener { _, _, new ->
-            startListening(new)
+            ChartUtils.startListening(new) { draw() }
             draw()
         }
-        startListening(colorMapper)
+        ChartUtils.startListening(colorMapper) { draw() }
     }
-
-    private fun startListening(colorMapper: ColorMapper?) {
-        colorMapper?.minValueProperty()?.addListener { _, _, _ -> draw() }
-        colorMapper?.maxValueProperty()?.addListener { _, _, _ -> draw() }
-        colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> draw() }
-        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> draw() }
-    }
-
 
     private val interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
 
@@ -65,23 +56,11 @@ class SmartInterpolationMap(
         interpolatorIsInitialized = false
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
-        //TODO: поставить нормальную проверку на корректность data для build
-        if (!data.isEmpty()) {
-            interpolator2D.build(data.flatMap { it.data as List<Data<Double, Double>> })
-        }
+        ChartUtils.initInterpolator(data, interpolator2D)
     }
 
     fun draw() {
-        for (x in 0 until canvas.width.toInt()) {
-            for (y in 0 until canvas.height.toInt()) {
-                val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
-                val yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
-                canvas.graphicsContext2D.pixelWriter.run {
-                    setColor(x, y, colorMapper?.colorFor(interpolator2D.getValue(xValue, yValue)) ?: Color.WHITE)
-                }
-            }
-        }
+        ChartUtils.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 }

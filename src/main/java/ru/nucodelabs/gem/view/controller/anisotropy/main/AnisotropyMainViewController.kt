@@ -10,7 +10,7 @@ import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
+import ru.nucodelabs.gem.view.control.chart.CombinedChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
 import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
@@ -31,7 +31,7 @@ class AnisotropyMainViewController @Inject constructor(
     private val colorMapper: ColorMapper,
 ) : AbstractViewController<VBox>() {
     @FXML
-    lateinit var signalsMap: ImageScatterChart
+    lateinit var signalsMap: CombinedChart
 
     @FXML
     lateinit var signalsInterpolation: SmartInterpolationMap
@@ -40,6 +40,8 @@ class AnisotropyMainViewController @Inject constructor(
         super.initialize(location, resources)
         signalsInterpolation.colorMapper = colorMapper
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
+        signalsMap.colorMapper = colorMapper
+        signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         setupListeners()
     }
 
