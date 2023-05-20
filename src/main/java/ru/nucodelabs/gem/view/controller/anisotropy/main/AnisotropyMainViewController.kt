@@ -72,9 +72,9 @@ class AnisotropyMainViewController @Inject constructor(
         val resistance = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[pointIndex / 2].resistanceApparent
         val azimuth = appModel.observablePoint.azimuthSignals[seriesIndex].azimuth
         val tooltipText = """
-            Distance: $azimuthSignal
-            Resistance: $resistance
-            Azimuth: $azimuth
+            AB/2[m]: $azimuthSignal
+            Сопротивление: $resistance
+            Азимут: $azimuth
         """.trimIndent()
         return Tooltip(tooltipText).apply { forCharts() }
     }
