@@ -10,8 +10,8 @@ import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
 class SmartInterpolationMap(
-    @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
-    @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
+    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
 
@@ -24,10 +24,10 @@ class SmartInterpolationMap(
 
     init {
         colorMapperProperty().addListener { _, _, new ->
-            ChartUtils.startListening(new) { draw() }
+            ChartUtil.startListening(new) { draw() }
             draw()
         }
-        ChartUtils.startListening(colorMapper) { draw() }
+        ChartUtil.startListening(colorMapper) { draw() }
     }
 
     private val interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
@@ -57,10 +57,10 @@ class SmartInterpolationMap(
     }
 
     private fun initInterpolator() {
-        ChartUtils.initInterpolator(data, interpolator2D)
+        ChartUtil.initInterpolator(data, interpolator2D)
     }
 
-    fun draw() {
-        ChartUtils.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
+    private fun draw() {
+        ChartUtil.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 }

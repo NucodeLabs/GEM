@@ -5,12 +5,14 @@ import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
+import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.CombinedChart
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
 import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
@@ -29,7 +31,14 @@ class AnisotropyMainViewController @Inject constructor(
     @Named(ArgNames.File.JSON) private val fileChooser: FileChooser,
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
+    private val formatter: StringConverter<Number>
 ) : AbstractViewController<VBox>() {
+    @FXML
+    private lateinit var signalsMapAxisY: NucodeNumberAxis
+
+    @FXML
+    private lateinit var signalsMapAxisX: NucodeNumberAxis
+
     @FXML
     lateinit var signalsMap: CombinedChart
 
@@ -38,6 +47,10 @@ class AnisotropyMainViewController @Inject constructor(
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
+
+        signalsMapAxisY.tickLabelFormatter = formatter
+        signalsMapAxisX.tickLabelFormatter = formatter
+
         signalsInterpolation.colorMapper = colorMapper
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         signalsMap.colorMapper = colorMapper
@@ -66,12 +79,11 @@ class AnisotropyMainViewController @Inject constructor(
         val mapImage = appModel.mapImage(MAP_IMAGE_SIZE)
 
         if (mapImage != null) {
-            signalsMap.setAxisRange(
-                round(mapImage.xLowerBound),
-                round(mapImage.xUpperBound),
-                round(mapImage.yLowerBound),
-                round(mapImage.yUpperBound)
-            )
+            signalsMapAxisX.lowerBound = mapImage.xLowerBound
+            signalsMapAxisX.upperBound = mapImage.xUpperBound
+
+            signalsMapAxisY.lowerBound = mapImage.yLowerBound
+            signalsMapAxisY.upperBound = mapImage.yUpperBound
         }
 
         signalsMap.image = mapImage?.image

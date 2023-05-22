@@ -2,13 +2,13 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.collections.ObservableList
 import javafx.scene.canvas.Canvas
-import javafx.scene.chart.ValueAxis
+import javafx.scene.chart.Axis
 import javafx.scene.chart.XYChart
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
-object ChartUtils {
+object ChartUtil {
     fun startListening(colorMapper: ColorMapper?, draw: () -> Unit) {
         colorMapper?.minValueProperty()?.addListener { _, _, _ -> draw() }
         colorMapper?.maxValueProperty()?.addListener { _, _, _ -> draw() }
@@ -23,7 +23,7 @@ object ChartUtils {
         }
     }
 
-    fun draw(canvas: Canvas, xAxis: ValueAxis<Number>, yAxis: ValueAxis<Number>, interpolator2D: SmartInterpolator, colorMapper: ColorMapper?) {
+    fun draw(canvas: Canvas, xAxis: Axis<Number>, yAxis: Axis<Number>, interpolator2D: SmartInterpolator, colorMapper: ColorMapper?) {
         for (x in 0 until canvas.width.toInt()) {
             for (y in 0 until canvas.height.toInt()) {
                 val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()

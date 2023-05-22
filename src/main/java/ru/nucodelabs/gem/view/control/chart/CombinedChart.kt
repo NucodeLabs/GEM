@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.control.chart
 
-import javafx.application.Platform
 import javafx.beans.NamedArg
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -10,33 +9,36 @@ import javafx.scene.effect.BlendMode
 import javafx.scene.layout.*
 import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.ChartUtils.draw
+import ru.nucodelabs.gem.view.control.chart.ChartUtil.draw
 import ru.nucodelabs.geo.ves.calc.interpolation.ApacheInterpolator2D
 import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
 
+/**
+ * График с двумя слоями,
+ * верхний -- canvas, нижний -- image
+ */
 class CombinedChart @JvmOverloads constructor(
-    @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
-    @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
+    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null,
 ) : ImageScatterChart(xAxis, yAxis) {
 
-    private val _colorMapper = SimpleObjectProperty(colorMapper)
+    private val _colorMapper: ObjectProperty<ColorMapper?> = SimpleObjectProperty(null)
     private var interpolatorIsInitialized = false
     private fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
     var colorMapper by _colorMapper
     val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
     private val _blendMode = SimpleObjectProperty(canvas.blendMode)
     fun canvasBlendModeProperty(): ObjectProperty<BlendMode?> = _blendMode
-    fun getCanvasBlendMode(): BlendMode? = canvasBlendModeProperty().get()
-    fun setCanvasBlendMode(mode: BlendMode) = canvasBlendModeProperty().set(mode)
+    var canvasBlendMode: BlendMode by _blendMode
     var interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
 
     init {
         _blendMode.addListener { _, _, newBlendMode ->
             canvas.blendMode = newBlendMode
         }
-        setCanvasBlendMode(BlendMode.SOFT_LIGHT)
+        canvasBlendMode = BlendMode.SOFT_LIGHT
         plotChildren += canvas
         canvas.layoutX = 0.0
         canvas.layoutY = 0.0
@@ -44,31 +46,29 @@ class CombinedChart @JvmOverloads constructor(
         canvas.heightProperty().bind(plotArea.heightProperty())
         canvas.viewOrder = 1.0
         colorMapperProperty().addListener { _, _, new ->
-            ChartUtils.startListening(new) {
+            ChartUtil.startListening(new) {
                 draw()
             }
             draw()
         }
-        ChartUtils.startListening(colorMapper) { draw() }
+        ChartUtil.startListening(colorMapper) { draw() }
     }
 
     override fun layoutPlotChildren() {
-        Platform.runLater {
-            super.layoutPlotChildren()
-            if (!interpolatorIsInitialized) {
-                initInterpolator()
-                interpolatorIsInitialized = true
-            }
-            draw()
+        super.layoutPlotChildren()
+        if (!interpolatorIsInitialized) {
+            initInterpolator()
+            interpolatorIsInitialized = true
         }
+        draw()
     }
 
 
     private fun initInterpolator() {
-        ChartUtils.initInterpolator(data, interpolator2D)
+        ChartUtil.initInterpolator(data, interpolator2D)
     }
 
-    fun draw() {
+    private fun draw() {
         draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 

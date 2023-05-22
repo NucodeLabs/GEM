@@ -38,12 +38,12 @@
                                 <Label styleClass="uc-header">Параметры наложения</Label>
                                 <ComboBox/>
                             </VBox>
-                            <CombinedChart fx:id="signalsMap" legendVisible="false">
+                            <CombinedChart fx:id="signalsMap">
                                 <xAxis>
-                                    <NucodeNumberAxis autoRanging="true"/>
+                                    <NucodeNumberAxis fx:id="signalsMapAxisX" autoRanging="true"/>
                                 </xAxis>
                                 <yAxis>
-                                    <NucodeNumberAxis autoRanging="true"/>
+                                    <NucodeNumberAxis fx:id="signalsMapAxisY" autoRanging="true"/>
                                 </yAxis>
                             </CombinedChart>
                         </HBox>
