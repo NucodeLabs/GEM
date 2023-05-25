@@ -21,7 +21,7 @@ public class AnisotropyProjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named("initial")
+    @Named(ArgNames.INITIAL)
     Project<Point> pointProject() {
         return new Project<>(new Point());
     }

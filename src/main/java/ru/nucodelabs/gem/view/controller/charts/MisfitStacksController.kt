@@ -7,8 +7,11 @@ import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart.Series
+import javafx.scene.control.ContentDisplay
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
@@ -30,7 +33,19 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
-
+const val TARGET_FUNCTION_DESCRIPTION = "Целевая функция - это \n" +
+        "функция, значение которой минимизируется \n" +
+        "при решении обратной задачи\n"
+const val MISFIT_DESCRIPTION = "Отклонение - это \n" +
+        "отклонение теоретических \n" +
+        "сигналов от экспериментальных \n"
+const val ERROR_DESCRIPTION = "Погрешность - это \n" +
+        "отклонение теоретических сигналов от \n" +
+        "экспериментальных в процентах, относительно \n" +
+        "погрешности измерения \n"
+const val TARGET_FUNCTION_FORMULA_IMAGE_PATH = "/img/targetFunction.png"
+const val MISFIT_FORMULA_IMAGE_PATH ="/img/misfit.png"
+const val ERROR_FORMULA_IMAGE_PATH = "/img/error.png"
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
@@ -116,7 +131,7 @@ class MisfitStacksController @Inject constructor(
                     }"
                 errorText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
-                installTooltipsForTerms()
+                installTooltipForTerms()
             }
 
         } catch (e: UnsatisfiedLinkError) {
@@ -138,22 +153,33 @@ class MisfitStacksController @Inject constructor(
         }
     }
 
-    private fun installTooltipsForTerms() {
-        val tooltipForTargetFunction = "Целевая функция - \n" +
-                "функция, значение которой минимизируется \n" +
-                "при решении обратной задачи\n"
-        Tooltip.install(targetFunctionText, Tooltip(tooltipForTargetFunction).forCharts())
+    private fun installTooltipForTerms() {
+        val imageForTargetFunction = Image(
+            javaClass.getResourceAsStream(TARGET_FUNCTION_FORMULA_IMAGE_PATH)
+        )
+        val  tooltipForTargetFunction = Tooltip()
+        tooltipForTargetFunction.text = TARGET_FUNCTION_DESCRIPTION
+        tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
+        tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
 
-        val tooltipForMisfit = "Отклонение - \n" +
-                "отклонение теоретических \n" +
-                "сигналов от экспериментальных \n"
-        Tooltip.install(misfitText, Tooltip(tooltipForMisfit).forCharts())
+        val imageForMisfit = Image(
+            javaClass.getResourceAsStream(MISFIT_FORMULA_IMAGE_PATH)
+        )
+        val tooltipForMisfit = Tooltip()
+        tooltipForMisfit.text = MISFIT_DESCRIPTION
+        tooltipForMisfit.graphic = ImageView(imageForMisfit)
+        tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(misfitText, tooltipForMisfit.forCharts())
 
-        val tooltipForError = "Погрешность - \n" +
-                "отклонение теоретических сигналов от \n" +
-                "экспериментальных в процентах, относительно \n" +
-                "погрешности измерения \n"
-        Tooltip.install(errorText, Tooltip(tooltipForError).forCharts())
+        val imageForError = Image(
+            javaClass.getResourceAsStream(ERROR_FORMULA_IMAGE_PATH)
+        )
+        val tooltipForError = Tooltip()
+        tooltipForError.text = ERROR_DESCRIPTION
+        tooltipForError.graphic = ImageView(imageForError)
+        tooltipForError.contentDisplay = ContentDisplay.BOTTOM
+        Tooltip.install(errorText, tooltipForError.forCharts())
     }
 
     private fun colorizeMisfitStacksSeries() {

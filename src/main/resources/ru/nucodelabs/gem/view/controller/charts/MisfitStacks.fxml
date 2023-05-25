@@ -21,6 +21,7 @@
         <Label fx:id="targetFunctionText" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
         <Label fx:id="misfitText" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
         <Label fx:id="errorText" styleClass="chart-label" text="-" VBox.vgrow="NEVER"/>
+
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity"
                minHeight="0" minWidth="0" animated="false" styleClass="padded-chart" legendVisible="false">

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ru.nucodelabs.gem.view.controller.main.InitialModelConfigurationViewController"
+      stylesheets="@../../common.css" spacing="15" style="-fx-padding: 25;">
+    <VBox spacing="5">
+        <Label text="Минимальное значение целевой функции"/>
+        <TextField text="-" fx:id="minTargetFunctionValueTextField" maxWidth="70"/>
+    </VBox>
+    <VBox spacing="5">
+        <Label text="Максимальное число слоев"/>
+        <TextField text="-" fx:id="maxLayersCountTextField" maxWidth="70"/>
+    </VBox>
+    <Button text="Применить" defaultButton="true" onAction="#apply"/>
+</VBox>

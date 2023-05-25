@@ -9,13 +9,11 @@ import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Series
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
-import javafx.scene.control.TextField
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.*
 import javafx.stage.Stage
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
@@ -42,10 +40,10 @@ const val DEFAULT_U_B_ERROR = 0.5 // mV
 const val DEFAULT_I_A_ERROR = 0.5
 const val DEFAULT_I_B_ERROR = 0.5 // mA
 
-const val LEQ_S = '≤'
+const val LEQ_SIGN = '≤'
 
 class CalculateErrorScreenController @Inject constructor(
-    @Named("Precise") private val preciseFormat: DecimalFormat,
+    @Named(ArgNames.PRECISE) private val preciseFormat: DecimalFormat,
     private val df: DecimalFormat,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
@@ -53,6 +51,9 @@ class CalculateErrorScreenController @Inject constructor(
     private val picketIndexProp: IntegerProperty,
     private val vesFxModelMapper: VesFxModelMapper
 ) : AbstractController() {
+    @FXML
+    private lateinit var errorFormula: ComboBox<ErrorFunctionType>
+
     @FXML
     private lateinit var resAvgCol: TableColumn<ObservableExperimentalData, String>
 
@@ -112,12 +113,24 @@ class CalculateErrorScreenController @Inject constructor(
 
     val data = observableListOf<ExperimentalData>()
 
+    private enum class ErrorFunctionType {
+        USING_VARIANCE {
+            override fun toString(): String = "По правилу трех сигма (по дисперсии)"
+        },
+        USING_TRUST_INTERVALS {
+            override fun toString(): String = "По доверительным интервалам"
+        }
+    }
+
+    private lateinit var errorFunctionVersion: ErrorFunctionType
+
     override fun initialize(location: URL, resources: ResourceBundle) {
         table.selectionModel.isCellSelectionEnabled = false
         listenData()
         setupTextFields()
         setupCellFactories()
         setupCellValueFactories()
+        setupComboBox()
     }
 
     private fun listenData() {
@@ -142,6 +155,22 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun Number.fmt(): String = df.format(this)
 
+    private fun setupComboBox() {
+        errorFormula.items.setAll(ErrorFunctionType.USING_VARIANCE, ErrorFunctionType.USING_TRUST_INTERVALS)
+        errorFormula.selectionModel.selectedItemProperty().addListener { _, _, newValue: ErrorFunctionType ->
+            errorFunctionVersion = when (newValue) {
+                ErrorFunctionType.USING_VARIANCE -> {
+                    ErrorFunctionType.USING_VARIANCE
+                }
+
+                ErrorFunctionType.USING_TRUST_INTERVALS -> {
+                    ErrorFunctionType.USING_TRUST_INTERVALS
+                }
+            }
+        }
+        errorFormula.selectionModel.selectFirst()
+    }
+
     private fun setupCellValueFactories() {
         ab2Col.cellValueFactory = Callback { f ->
             createStringBinding(
@@ -151,7 +180,7 @@ class CalculateErrorScreenController @Inject constructor(
                         distAErrorTf.textFormatter.value as Double,
                         distBErrorTf.textFormatter.value as Double
                     )
-                    "${min.fmt()} $LEQ_S ${f.value.ab2.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${f.value.ab2.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.ab2Property(),
                 distAErrorTf.textFormatter.valueProperty(),
@@ -166,7 +195,7 @@ class CalculateErrorScreenController @Inject constructor(
                         distAErrorTf.textFormatter.value as Double,
                         distBErrorTf.textFormatter.value as Double
                     )
-                    "${min.fmt()} $LEQ_S ${f.value.mn2.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${f.value.mn2.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.mn2Property(),
                 distAErrorTf.textFormatter.valueProperty(),
@@ -182,7 +211,7 @@ class CalculateErrorScreenController @Inject constructor(
                         distAErrorTf.textFormatter.value as Double,
                         distBErrorTf.textFormatter.value as Double
                     )
-                    "${min.fmt()} $LEQ_S ${k.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${k.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.ab2Property(),
                 f.value.mn2Property(),
@@ -198,7 +227,7 @@ class CalculateErrorScreenController @Inject constructor(
                         iAErrorTf.textFormatter.value as Double,
                         iBErrorTf.textFormatter.value as Double
                     )
-                    "${min.fmt()} $LEQ_S ${f.value.amperage.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${f.value.amperage.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.amperageProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
@@ -213,7 +242,7 @@ class CalculateErrorScreenController @Inject constructor(
                         uAErrorTf.textFormatter.value as Double,
                         uBErrorTf.textFormatter.value as Double
                     )
-                    "${min.fmt()} $LEQ_S ${f.value.voltage.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${f.value.voltage.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.voltageProperty(),
                 uAErrorTf.textFormatter.valueProperty(),
@@ -224,7 +253,7 @@ class CalculateErrorScreenController @Inject constructor(
             createStringBinding(
                 {
                     val (rhoA, min, max, _, _) = resAppWithError(vesFxModelMapper.toModel(f.value))
-                    "${min.fmt()} $LEQ_S ${rhoA.fmt()} $LEQ_S ${max.fmt()}"
+                    "${min.fmt()} $LEQ_SIGN ${rhoA.fmt()} $LEQ_SIGN ${max.fmt()}"
                 },
                 f.value.ab2Property(),
                 distAErrorTf.textFormatter.valueProperty(),
@@ -232,7 +261,8 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
         resAvgCol.cellValueFactory = Callback { f ->
@@ -248,7 +278,8 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
         errorResistanceCol.cellValueFactory = Callback { f ->
@@ -264,33 +295,35 @@ class CalculateErrorScreenController @Inject constructor(
                 uAErrorTf.textFormatter.valueProperty(),
                 uBErrorTf.textFormatter.valueProperty(),
                 iAErrorTf.textFormatter.valueProperty(),
-                iBErrorTf.textFormatter.valueProperty()
+                iBErrorTf.textFormatter.valueProperty(),
+                errorFormula.selectionModel.selectedItemProperty()
             )
         }
     }
 
-    private fun resAppWithError(data: ExperimentalData) =
-        resistanceApparentWithError(
-            kWithError(
-                data.ab2,
-                data.mn2,
-                distAErrorTf.textFormatter.value as Double,
-                distBErrorTf.textFormatter.value as Double
-            ),
-            measureError(
-                data.voltage,
-                uAErrorTf.textFormatter.value as Double,
-                uBErrorTf.textFormatter.value as Double
-            ).withValue(data.voltage),
-            measureError(
-                data.amperage,
-                iAErrorTf.textFormatter.value as Double,
-                iBErrorTf.textFormatter.value as Double
-            ).withValue(data.amperage)
+    private fun resAppWithError(data: ExperimentalData): ValueMinMaxAvgError {
+        val k = kWithError(
+            data.ab2,
+            data.mn2,
+            distAErrorTf.textFormatter.value as Double,
+            distBErrorTf.textFormatter.value as Double
         )
+        val u = measureError(
+            data.voltage,
+            uAErrorTf.textFormatter.value as Double,
+            uBErrorTf.textFormatter.value as Double
+        ).withValue(data.voltage)
+        val i = measureError(
+            data.amperage,
+            iAErrorTf.textFormatter.value as Double,
+            iBErrorTf.textFormatter.value as Double
+        ).withValue(data.amperage)
+        return resistanceApparentWithError(errorFunctionVersion == ErrorFunctionType.USING_VARIANCE, k, u, i)
+    }
 
     private fun resAppErrorForDist(data: ExperimentalData) =
         resistanceApparentErrorForDistance(
+            errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             kWithError(
                 data.ab2,
                 data.mn2,
@@ -303,6 +336,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun resAppErrorForVolt(data: ExperimentalData) =
         resistanceApparentErrorForVoltage(
+            errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             measureError(
                 data.voltage,
                 uAErrorTf.textFormatter.value as Double,
@@ -315,6 +349,7 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun resAppErrorForAmp(data: ExperimentalData) =
         resistanceApparentErrorForAmperage(
+            errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             measureError(
                 data.amperage,
                 iAErrorTf.textFormatter.value as Double,

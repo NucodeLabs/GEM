@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.util.fx.bindTo
 import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -19,7 +20,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ModelSectionSwitcherController @Inject constructor(
-    @Named("PNG") private val fc: FileChooser,
+    @Named(ArgNames.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
     @FXML
