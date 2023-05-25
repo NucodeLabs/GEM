@@ -14,9 +14,8 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
-import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.gem.view.control.chart.installTooltips
-import ru.nucodelabs.gem.view.controller.anisotropy.main.map.toPoints
+import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.forCharts
 import java.io.File
@@ -61,6 +60,11 @@ class AnisotropyMainViewController @Inject constructor(
                 appModel.observablePoint.azimuthSignals,
             )
         )
+
+        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
+            signalsMap.installTooltips(::tooltipFactory)
+        })
+
         appModel.observablePoint.centerProperty().addListener { _, _, _ -> updateSignalsMapImage() }
         appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMapImage() })
     }
@@ -75,10 +79,6 @@ class AnisotropyMainViewController @Inject constructor(
                 round(mapImage.yLowerBound),
                 round(mapImage.yUpperBound)
             )
-        )
-        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
-            mapChart.installTooltips(::tooltipFactory)
-        })
         }
 
         signalsMap.image = mapImage?.image
