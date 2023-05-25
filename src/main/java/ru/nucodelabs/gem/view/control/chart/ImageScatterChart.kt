@@ -44,7 +44,7 @@ open class ImageScatterChart @JvmOverloads constructor(
     private fun setupImage(img: Image) {
         bindChartSizeToImageSize(img)
         layoutChildren()
-        layoutPlotChildren()
+        super.layoutPlotChildren()
     }
 
     private fun imageToBackground(): Background? {
