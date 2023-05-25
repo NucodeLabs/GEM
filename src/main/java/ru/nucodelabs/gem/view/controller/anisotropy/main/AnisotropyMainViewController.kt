@@ -85,9 +85,15 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun tooltipFactory(seriesIndex: Int, series: XYChart.Series<Number, Number>, pointIndex: Int, point: XYChart.Data<Number, Number>): Tooltip {
+    private fun tooltipFactory(
+        seriesIndex: Int,
+        series: XYChart.Series<Number, Number>,
+        pointIndex: Int,
+        point: XYChart.Data<Number, Number>
+    ): Tooltip {
         val azimuthSignal = appModel.observablePoint.azimuthSignals[0].signals.sortedSignals[pointIndex / 2].ab2
-        val resistance = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[pointIndex / 2].resistanceApparent
+        val resistance =
+            appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[pointIndex / 2].resistanceApparent
         val azimuth: Double = if (pointIndex % 2 == 0) {
             appModel.observablePoint.azimuthSignals[seriesIndex].azimuth
         } else {
