@@ -22,7 +22,6 @@ import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.math.round
 
 const val MAP_IMAGE_SIZE = 350
 
@@ -81,7 +80,11 @@ class AnisotropyMainViewController @Inject constructor(
         if (mapImage != null) {
             signalsMapAxisX.lowerBound = mapImage.xLowerBound
             signalsMapAxisX.upperBound = mapImage.xUpperBound
+            signalsMapAxisX.forceMarks.add(0.0)
+            signalsMapAxisX.forceMarks.add(0.0)
 
+            signalsMapAxisY.forceMarks.add(0.0)
+            signalsMapAxisY.forceMarks.add(0.0)
             signalsMapAxisY.lowerBound = mapImage.yLowerBound
             signalsMapAxisY.upperBound = mapImage.yUpperBound
         }
