@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.control.chart
 import javafx.beans.NamedArg
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
@@ -33,7 +34,9 @@ class CombinedChart @JvmOverloads constructor(
     fun canvasBlendModeProperty(): ObjectProperty<BlendMode?> = _blendMode
     var canvasBlendMode: BlendMode by _blendMode
     var interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
-
+    private val _opacity = SimpleObjectProperty(canvas.opacity)
+    fun canvasOpacityProperty(): ObjectProperty<Double> = _opacity
+    var canvasOpacity: Double by _opacity
     init {
         _blendMode.addListener { _, _, newBlendMode ->
             canvas.blendMode = newBlendMode
