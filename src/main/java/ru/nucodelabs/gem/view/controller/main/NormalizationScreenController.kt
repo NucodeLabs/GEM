@@ -21,8 +21,8 @@ import ru.nucodelabs.gem.util.fx.setValue
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.controller.AbstractController
-import ru.nucodelabs.gem.view.controller.tables.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.controller.tables.STYLE_FOR_FIXED
+import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.FixableValue

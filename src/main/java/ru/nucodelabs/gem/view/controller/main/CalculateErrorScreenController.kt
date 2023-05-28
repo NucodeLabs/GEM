@@ -21,7 +21,7 @@ import ru.nucodelabs.gem.util.fx.DoubleValidationConverter
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.controller.AbstractController
-import ru.nucodelabs.gem.view.controller.tables.indexCellFactory
+import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section

@@ -22,10 +22,12 @@
             <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
             <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
         </Menu>
-        <Menu text="Азимут">
-            <MenuItem text="Редактировать"/>
-        </Menu>
     </MenuBar>
+    <HBox style="-fx-background-color: white; -fx-padding: 5;" spacing="5" alignment="BASELINE_LEFT">
+        <Label>Азимут</Label>
+        <ComboBox/>
+        <Button>Редактировать</Button>
+    </HBox>
     <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
         <Tab text="Сигналы" closable="false">
             <VBox maxHeight="Infinity" VBox.vgrow="ALWAYS">
@@ -42,6 +44,8 @@
                                 <Button onAction="#modifyPointCenter">Применить</Button>
                                 <Label styleClass="uc-header">Параметры наложения</Label>
                                 <ComboBox fx:id="mapOverlayType"/>
+                                <Label styleClass="uc-header">Прозрачность</Label>
+                                <Slider/>
                             </VBox>
                             <ImageScatterChart fx:id="signalsMap" legendVisible="false">
                                 <xAxis>
@@ -79,7 +83,7 @@
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Сигналы</Label>
-                        <TableView HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                        <TableView HBox.hgrow="ALWAYS" maxWidth="Infinity" fx:id="signalsTable">
                             <columns>
                                 <TableColumn fx:id="isHiddenCol" sortable="false" maxWidth="35" prefWidth="35"
                                              minWidth="35"
@@ -158,6 +162,9 @@
 
         <Tab text="Инверсия" closable="false">
             <VBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                <HBox style="-fx-background-color: white; -fx-padding: 5;" spacing="5" alignment="BASELINE_LEFT">
+                    <Button>Решение обратной задачи</Button>
+                </HBox>
                 <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER">
                         <HBox HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER">

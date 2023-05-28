@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.controller.tables
+package ru.nucodelabs.gem.view.controller.util
 
 import javafx.beans.binding.Bindings
 import javafx.scene.control.TableCell

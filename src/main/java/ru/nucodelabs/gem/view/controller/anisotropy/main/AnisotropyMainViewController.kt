@@ -4,12 +4,17 @@ import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.ComboBox
+import javafx.scene.control.TableColumn
+import javafx.scene.control.TableView
 import javafx.scene.control.TextField
+import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
+import javafx.util.Callback
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
@@ -18,8 +23,11 @@ import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
+import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
+import ru.nucodelabs.kfx.ext.bidirectionalNot
+import ru.nucodelabs.kfx.ext.observableListOf
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
@@ -39,6 +47,37 @@ class AnisotropyMainViewController @Inject constructor(
     @Named(ArgNames.PRECISE) private val preciseDecimalFormat: DecimalFormat,
     private val alertsFactory: AlertsFactory
 ) : AbstractViewController<VBox>() {
+
+    /* SIGNALS TABLE COLUMNS **************************************************************************************************/
+
+    @FXML
+    private lateinit var signalsTable: TableView<ObservableSignal>
+
+    @FXML
+    private lateinit var voltageCol: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var amperageCol: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var errorResistanceCol: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var resistanceApparentCol: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var mn2Col: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var ab2Col: TableColumn<ObservableSignal, Double>
+
+    @FXML
+    private lateinit var indexCol: TableColumn<Any, Int>
+
+    @FXML
+    private lateinit var isHiddenCol: TableColumn<ObservableSignal, Boolean>
+
+    /******************************************************************************************************************/
 
     @FXML
     private lateinit var mapOverlayType: ComboBox<MapOverlayType>
@@ -67,6 +106,25 @@ class AnisotropyMainViewController @Inject constructor(
         mapOverlayType.selectionModel.select(MapOverlayType.NONE)
     }
 
+    private fun initSignalsTable() {
+        setupSignalsTableCellFactories()
+        setupSignalsTableCellValueFactories()
+    }
+
+    private fun setupSignalsTableCellValueFactories() {
+
+        isHiddenCol.cellValueFactory = Callback { features -> features.value.hiddenProperty().bidirectionalNot() }
+
+
+    }
+
+    private fun setupSignalsTableCellFactories() {
+        indexCol.cellFactory = indexCellFactory()
+
+        isHiddenCol.cellFactory = CheckBoxTableCell.forTableColumn(isHiddenCol)
+
+    }
+
     private fun initAndSetupListeners() {
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
@@ -90,6 +148,16 @@ class AnisotropyMainViewController @Inject constructor(
             updatePointCenterTextFields()
         }
         appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMapImage() })
+
+        signalsTable.itemsProperty().bind(
+            Bindings.createObjectBinding(
+                {
+                    appModel.selectedSignals?.signals?.sortedSignals ?: observableListOf()
+                },
+                appModel.observablePoint.azimuthSignals,
+                appModel.selectedAzimuthProperty()
+            )
+        )
     }
 
     private fun updateSignalsMapImage() {

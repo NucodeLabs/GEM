@@ -1,6 +1,8 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import jakarta.validation.Validator
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
@@ -20,13 +22,22 @@ class AnisotropyFxAppModel @Inject constructor(
     private val projectFileService: ProjectFileService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
-    private val reloadService: ReloadService<Point>
+    private val reloadService: ReloadService<Point>,
 ) {
 
     private val project by projectContext::project
     private val point by project::data
 
     val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
+
+    private val selectedAzimuthProperty = SimpleDoubleProperty(0.0)
+    fun selectedAzimuthProperty(): ReadOnlyDoubleProperty = selectedAzimuthProperty
+    var selectedAzimuth
+        get() = selectedAzimuthProperty.get()
+        private set(value) = selectedAzimuthProperty.set(value)
+
+    val selectedSignals
+        get() = observablePoint.azimuthSignals.find { it.azimuth == selectedAzimuth }
 
     private fun updateObservable() {
         fxModelMapper.updateObservable(observablePoint, point)
