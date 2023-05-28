@@ -1,9 +1,9 @@
 package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
+import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
@@ -25,23 +25,21 @@ class CombinedChart @JvmOverloads constructor(
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null,
 ) : ImageScatterChart(xAxis, yAxis) {
 
+    private var interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
+
     private val _colorMapper: ObjectProperty<ColorMapper?> = SimpleObjectProperty(null)
     private var interpolatorIsInitialized = false
     private fun colorMapperProperty(): ObjectProperty<ColorMapper?> = _colorMapper
     var colorMapper by _colorMapper
     val canvas: Canvas = Canvas(plotArea.width, plotArea.height)
-    private val _blendMode = SimpleObjectProperty(canvas.blendMode)
-    fun canvasBlendModeProperty(): ObjectProperty<BlendMode?> = _blendMode
-    var canvasBlendMode: BlendMode by _blendMode
-    var interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
-    private val _opacity = SimpleObjectProperty(canvas.opacity)
-    fun canvasOpacityProperty(): ObjectProperty<Double> = _opacity
-    var canvasOpacity: Double by _opacity
+
+    fun canvasBlendModeProperty(): ObjectProperty<BlendMode?> = canvas.blendModeProperty()
+    var canvasBlendMode: BlendMode? by canvasBlendModeProperty()
+
+    fun canvasOpacityProperty(): DoubleProperty = canvas.opacityProperty()
+    var canvasOpacity: Double by canvasOpacityProperty()
+
     init {
-        _blendMode.addListener { _, _, newBlendMode ->
-            canvas.blendMode = newBlendMode
-        }
-        canvasBlendMode = BlendMode.SOFT_LIGHT
         plotChildren += canvas
         canvas.layoutX = 0.0
         canvas.layoutY = 0.0
