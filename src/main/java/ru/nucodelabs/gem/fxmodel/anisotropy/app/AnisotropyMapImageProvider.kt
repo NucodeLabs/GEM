@@ -16,14 +16,14 @@ class AnisotropyMapImageProvider @Inject constructor(
      * Returns satellite image
      * @throws ru.nucodelabs.gem.net.WrongResponseException if API call response is not image
      */
-    fun satImage(center: Wgs, signals: List<AzimuthSignals>, size: Int): MapImageData {
+    fun satImage(center: Wgs, signals: List<AzimuthSignals>, size: Int, scale: Double): MapImageData {
         val expectedMaxDistanceFromCenter: Double
         val mapSizer = MapSizer(
             center = center,
             maxAb2WithAzimuth(signals),
-            scale = 1.0
+            scale = scale
         )
-        expectedMaxDistanceFromCenter = mapSizer.maxAbsXFromCenterInMeters
+        expectedMaxDistanceFromCenter = mapSizer.maxAbsXFromCenterScaledInMeters
         val mapImageRequest = MapImageRequest(center, expectedMaxDistanceFromCenter, size)
         val mapImageResponse = mapImageProvider.requestImage(mapImageRequest)
         return MapImageData(

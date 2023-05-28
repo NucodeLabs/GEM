@@ -61,7 +61,8 @@ class AnisotropyFxAppModel @Inject constructor(
             mapImageProvider.satImage(
                 center = point.center!!,
                 signals = point.azimuthSignals.toList(),
-                size = size
+                size = size,
+                scale = 1.0
             )
         } else {
             null
