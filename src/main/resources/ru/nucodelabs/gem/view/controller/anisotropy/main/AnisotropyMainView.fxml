@@ -14,8 +14,13 @@
       fx:id="root">
     <MenuBar>
         <Menu text="%file">
+            <MenuItem text="Новый проект" onAction="#newProject"/>
             <MenuItem text="%openProject" onAction="#loadProject"/>
             <MenuItem text="%saveProject" onAction="#saveProject"/>
+        </Menu>
+        <Menu text="%edit">
+            <MenuItem text="%undo" onAction="#undo" accelerator="Shortcut+Z"/>
+            <MenuItem text="%redo" onAction="#redo" accelerator="Shift+Shortcut+Z"/>
         </Menu>
         <Menu text="Азимут">
             <MenuItem text="Редактировать"/>
@@ -29,14 +34,14 @@
                         <Label styleClass="chart-label">Карта</Label>
                         <HBox>
                             <VBox spacing="5" style="-fx-padding: 20;">
-                                <Label styleClass="uc-header">Координаты центра установки</Label>
-                                <Label>Ширина</Label>
-                                <TextField/>
+                                <Label styleClass="uc-header">Координаты центра установки (WGS84)</Label>
+                                <Label>Широта</Label>
+                                <TextField fx:id="centerLatitudeTf"/>
                                 <Label>Долгота</Label>
-                                <TextField/>
-                                <Button>Применить</Button>
+                                <TextField fx:id="centerLongitudeTf"/>
+                                <Button onAction="#modifyPointCenter">Применить</Button>
                                 <Label styleClass="uc-header">Параметры наложения</Label>
-                                <ComboBox/>
+                                <ComboBox fx:id="mapOverlayType"/>
                             </VBox>
                             <ImageScatterChart fx:id="signalsMap" legendVisible="false">
                                 <xAxis>

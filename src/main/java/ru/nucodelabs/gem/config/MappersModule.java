@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.mapstruct.factory.Mappers;
+import ru.nucodelabs.gem.app.project.impl.anisotropy.cloner.PointProjectCloner;
 import ru.nucodelabs.gem.file.dto.mapper.DtoMapper;
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper;
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper;
@@ -43,5 +44,11 @@ public class MappersModule extends AbstractModule {
     @Singleton
     AnisotropyProjectDtoMapper projectDtoMapper(Injector injector) {
         return injector.getInstance(Mappers.getMapperClass(AnisotropyProjectDtoMapper.class));
+    }
+
+    @Provides
+    @Singleton
+    PointProjectCloner pointProjectCloner(Injector injector) {
+        return injector.getInstance(Mappers.getMapperClass(PointProjectCloner.class));
     }
 }
