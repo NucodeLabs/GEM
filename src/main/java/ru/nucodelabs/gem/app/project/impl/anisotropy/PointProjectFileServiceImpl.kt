@@ -1,6 +1,8 @@
-package ru.nucodelabs.gem.app.project
+package ru.nucodelabs.gem.app.project.impl.anisotropy
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import ru.nucodelabs.gem.app.project.AbstractProjectFileServiceImpl
+import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.file.dto.anisotropy.PointDto
 import ru.nucodelabs.gem.file.dto.project.AnisotropyProjectDtoMapper
 import ru.nucodelabs.gem.file.dto.project.ProjectDto

@@ -12,7 +12,7 @@
 <Stage xmlns:fx="http://javafx.com/fxml"
        xmlns="http://javafx.com/javafx"
        fx:controller="ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController" fx:id="root"
-       title="Рассчет погрешности" width="1280">
+       title="Расчет погрешности" width="1280">
     <scene>
         <Scene stylesheets="@../../common.css, @CalculateErrorScreen.css">
             <VBox alignment="TOP_CENTER" style="-fx-padding: 15;" maxHeight="Infinity" maxWidth="Infinity">

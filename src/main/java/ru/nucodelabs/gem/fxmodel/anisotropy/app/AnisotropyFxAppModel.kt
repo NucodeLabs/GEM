@@ -1,51 +1,58 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
-import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.SimpleObjectProperty
+import jakarta.validation.Validator
 import ru.nucodelabs.gem.app.project.Project
+import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
-import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
+import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.geo.anisotropy.Point
-import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Named
 
 class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
     private val fxModelMapper: AnisotropyFxModelMapper,
-    @Named(ArgNames.INITIAL) private val project: Project<Point>,
+    private val projectContext: ProjectContext<Point>,
     private val projectFileService: ProjectFileService<Point>,
-    private val mapImageProvider: AnisotropyMapImageProvider
+    private val mapImageProvider: AnisotropyMapImageProvider,
+    private val validator: Validator,
+    private val reloadService: ReloadService<Point>
 ) {
+
+    private val project by projectContext::project
     private val point by project::data
 
-    private val observablePointProperty: ReadOnlyObjectProperty<ObservablePoint> =
-        SimpleObjectProperty(fxModelMapper.toObservable(project.data))
+    val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
 
-    fun observablePointProperty() = observablePointProperty
-    val observablePoint: ObservablePoint by observablePointProperty
+    private fun updateObservable() {
+        fxModelMapper.updateObservable(observablePoint, point)
+    }
 
-    private fun doWithPoint(block: (Point) -> Unit) {
+    /**
+     * Сохраняет модификацию в истории,
+     * обновляет JavaFX-модель
+     */
+    private fun modelModification(block: (Point) -> Unit) {
         historyManager.snapshotAfter {
             block(point)
         }
-        fxModelMapper.updateObservable(observablePoint, point)
+        updateObservable()
     }
 
     fun newProject() {
-        project.restoreFromSnapshot(Project(Point()).snapshot())
         projectFileService.resetSave()
+        reloadService.reloadProject(newProject)
+        updateObservable()
     }
 
     fun loadProject(file: File) {
-        val loadedProject = projectFileService.loadProject(file)
-        project.restoreFromSnapshot(loadedProject.snapshot())
-        fxModelMapper.updateObservable(observablePoint, point)
+        val loadedProject = projectFileService.loadProject(file).validated()
+        reloadService.reloadProject(loadedProject)
+        updateObservable()
     }
 
     fun saveProject(file: File) {
@@ -67,5 +74,38 @@ class AnisotropyFxAppModel @Inject constructor(
         } else {
             null
         }
+    }
+
+    fun editCenter(center: ObservableWgs) {
+        val newCenter = fxModelMapper.toModel(center).validated()
+        modelModification {
+            it.center = newCenter
+        }
+    }
+
+    /**
+     * Возвращает тот же объект, если значения валиды, IllegalStateException иначе
+     */
+    private fun <T> T.validated(): T {
+        val violations = validator.validate(this)
+        if (violations.isNotEmpty()) {
+            throw IllegalStateException(violations.toString())
+        }
+        return this
+    }
+
+    fun undo() {
+        historyManager.undo()
+        updateObservable()
+    }
+
+    fun redo() {
+        historyManager.redo()
+        updateObservable()
+    }
+
+    companion object Defaults {
+        val newProject
+            get() = Project(Point())
     }
 }
