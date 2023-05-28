@@ -47,7 +47,7 @@
                                 <Label styleClass="uc-header">Прозрачность</Label>
                                 <Slider fx:id="transparencySlider" max="1"/>
                             </VBox>
-                            <CombinedChart fx:id="signalsMap">
+                            <CombinedChart fx:id="signalsMap" legendVisible="false">
                                 <xAxis>
                                     <NucodeNumberAxis fx:id="signalsMapAxisX" autoRanging="true"/>
                                 </xAxis>

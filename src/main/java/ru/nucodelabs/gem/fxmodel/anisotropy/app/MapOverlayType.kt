@@ -22,6 +22,6 @@ enum class MapOverlayType(val fxMode: BlendMode?) {
         override fun toString(): String = "Жесткий свет"
     },
     NONE(null) {
-        override fun toString(): String = "Не накладывать"
+        override fun toString(): String = "Обычный"
     },
 }
