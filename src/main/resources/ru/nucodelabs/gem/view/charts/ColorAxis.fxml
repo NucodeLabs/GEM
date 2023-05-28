@@ -53,10 +53,11 @@
             <NucodeNumberAxis autoRanging="false" visible="false" managed="false" tickLabelsVisible="false"
                               minorTickVisible="false"
                               opacity="0"/>
+
         </xAxis>
         <yAxis>
             <NucodeNumberAxis fx:id="linearYAxis" autoRanging="false" minorTickVisible="false" prefWidth="35"
-                              side="RIGHT" inverted="true"/>
+                              side="RIGHT" inverted="false"/>
         </yAxis>
     </PolygonChart>
     <PolygonChart fx:id="logChart" minWidth="0" minHeight="0" legendVisible="false" maxHeight="Infinity"
