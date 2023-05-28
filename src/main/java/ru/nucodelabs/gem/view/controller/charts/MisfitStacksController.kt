@@ -13,6 +13,7 @@ import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
+import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.line
@@ -20,11 +21,7 @@ import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.controller.AbstractController
-import ru.nucodelabs.geo.target.TargetFunction
-import ru.nucodelabs.geo.target.invoke
 import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
-import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import java.math.RoundingMode
 import java.net.URL
@@ -50,10 +47,8 @@ class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
-    private val misfitsFunction: MisfitsFunction,
     private val decimalFormat: DecimalFormat,
-    private val forwardSolver: ForwardSolver,
-    private val targetFunction: TargetFunction.WithError
+    private val appModel: VesFxAppModel,
 ) : AbstractController() {
     @FXML
     private lateinit var targetFunctionText: Label
@@ -86,12 +81,13 @@ class MisfitStacksController @Inject constructor(
             }
         }
         lineChart.dataProperty().bind(dataProperty)
+        installTooltipForTerms()
     }
 
     private fun update() {
         var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
         try {
-            val misfits = picket.vesCurvesContext.misfitsBy(misfitsFunction)
+            val misfits = appModel.misfits()
             val expPoints = picket.vesCurvesContext.experimentalCurve
 
             misfitStacksSeriesList = observableListOf()
@@ -106,32 +102,19 @@ class MisfitStacksController @Inject constructor(
                     )
                 }
 
-                val avg = misfits.map { abs(it) }.average()
-                val max = misfits.maxOfOrNull { abs(it) } ?: 0.0
+                val targetFunction = appModel.targetFunction()
+                val (misfitsAvg, misfitsMax) = appModel.misfitsAvgMax()
+                val (errorAvg, errorMax) = appModel.errorAvgMax()
 
-                val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
-                val misfitsWithoutErr =
-                    expPoints.mapIndexed { idx, (_, resApp) -> ((resApp - theorPoints[idx].y) / resApp) * 100}
-                val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
-                val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
                 val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
                 val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
-                val targetFunValue = targetFunction(
-                    forwardSolver(picket.effectiveExperimentalData, picket.modelData),
-                    picket.effectiveExperimentalData.map { it.resistanceApparent },
-                    picket.effectiveExperimentalData.map { it.errorResistanceApparent }
-                )
+
                 targetFunctionText.text =
-                    "целевая функция: f = ${dfFour.format(targetFunValue)}"
+                    "целевая функция: f = ${dfFour.format(targetFunction)}"
                 misfitText.text =
-                    "отклонение: avg = ${dfTwo.format(avgWithoutErr)}%, max = ${
-                        dfTwo.format(
-                            maxWithoutErr
-                        )
-                    }"
+                    "отклонение: avg = ${dfTwo.format(misfitsAvg)}%, max = ${dfTwo.format(misfitsMax)}%"
                 errorText.text =
-                    "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
-                installTooltipForTerms()
+                    "погрешность: avg = ${dfTwo.format(errorAvg)}% , max = ${dfTwo.format(errorMax)}%"
             }
 
         } catch (e: UnsatisfiedLinkError) {
