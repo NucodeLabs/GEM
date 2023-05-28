@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.fxmodel.ves.app
 import javafx.beans.property.IntegerProperty
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
+import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.initialModel.MAX_LAYERS_COUNT
 import ru.nucodelabs.geo.ves.calc.initialModel.MIN_TARGET_FUNCTION_VALUE
@@ -15,9 +16,13 @@ class VesFxAppModel @Inject constructor(
     selectedIndexObservable: IntegerProperty,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
-    private val initialModelService: InitialModelService
+    private val initialModelService: InitialModelService,
+    private val metricsService: MetricsService,
 ) {
     private val selectedIndex: Int by selectedIndexObservable::value
+
+    private val picket: Picket
+        get() = observableSection.pickets[selectedIndex]
 
     fun applySimpleInitialModel() {
         val picket = observableSection.pickets[selectedIndex]
@@ -41,6 +46,26 @@ class VesFxAppModel @Inject constructor(
         historyManager.snapshotAfter {
             observableSection.pickets[selectedIndex] = newPicket
         }
+    }
+
+    fun misfits(): List<Double> {
+        return metricsService.misfitsValue(picket.effectiveExperimentalData, picket.modelData)
+    }
+
+    fun misfitsAvgMax(): AvgMax {
+        return metricsService.misfitsAvgMax(picket.effectiveExperimentalData, picket.modelData)
+    }
+
+    fun error(): List<Double> {
+        return metricsService.errorValue(picket.effectiveExperimentalData, picket.modelData)
+    }
+
+    fun errorAvgMax(): AvgMax {
+        return metricsService.errorAvgMax(picket.effectiveExperimentalData, picket.modelData)
+    }
+
+    fun targetFunction(): Double {
+        return metricsService.targetFunctionValue(picket.effectiveExperimentalData, picket.modelData)
     }
 
     companion object DefaultParameters {

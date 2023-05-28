@@ -10,6 +10,7 @@ import javafx.scene.control.TextField
 import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
+import javafx.util.StringConverter
 import javafx.util.Callback
 import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
@@ -21,7 +22,8 @@ import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.ImageScatterChart
+import ru.nucodelabs.gem.view.control.chart.CombinedChart
+import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.gem.view.controller.util.mapToPoints
@@ -35,9 +37,9 @@ import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.math.round
 
 private const val MAP_IMAGE_SIZE = 350
+private const val DEFAULT_MAP_IMAGE_SCALE = 1.0
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
@@ -45,7 +47,8 @@ class AnisotropyMainViewController @Inject constructor(
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
     @Named(ArgNames.PRECISE) private val preciseDecimalFormat: DecimalFormat,
-    private val alertsFactory: AlertsFactory
+    private val alertsFactory: AlertsFactory,
+    private val formatter: StringConverter<Number>
 ) : AbstractViewController<VBox>() {
 
     /* SIGNALS TABLE COLUMNS **************************************************************************************************/
@@ -89,13 +92,27 @@ class AnisotropyMainViewController @Inject constructor(
     private lateinit var centerLatitudeTf: TextField
 
     @FXML
-    private lateinit var signalsMap: ImageScatterChart
+    private lateinit var signalsMapAxisY: NucodeNumberAxis
 
     @FXML
-    private lateinit var signalsInterpolation: SmartInterpolationMap
+    private lateinit var signalsMapAxisX: NucodeNumberAxis
+
+    @FXML
+    lateinit var signalsMap: CombinedChart
+
+    @FXML
+    lateinit var signalsInterpolation: SmartInterpolationMap
 
     override fun initialize(location: URL, resources: ResourceBundle) {
         super.initialize(location, resources)
+
+        signalsMapAxisY.tickLabelFormatter = formatter
+        signalsMapAxisX.tickLabelFormatter = formatter
+
+        signalsInterpolation.colorMapper = colorMapper
+        signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
+        signalsMap.colorMapper = colorMapper
+        signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         initControls()
         initAndSetupListeners()
     }
@@ -161,15 +178,18 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun updateSignalsMapImage() {
-        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE)
+        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE, DEFAULT_MAP_IMAGE_SCALE)
 
         if (mapImage != null) {
-            signalsMap.setAxisRange(
-                round(mapImage.xLowerBound),
-                round(mapImage.xUpperBound),
-                round(mapImage.yLowerBound),
-                round(mapImage.yUpperBound)
-            )
+            signalsMapAxisX.lowerBound = mapImage.xLowerBound
+            signalsMapAxisX.upperBound = mapImage.xUpperBound
+            signalsMapAxisX.forceMarks.add(0.0)
+            signalsMapAxisX.forceMarks.add(0.0)
+
+            signalsMapAxisY.forceMarks.add(0.0)
+            signalsMapAxisY.forceMarks.add(0.0)
+            signalsMapAxisY.lowerBound = mapImage.yLowerBound
+            signalsMapAxisY.upperBound = mapImage.yUpperBound
         }
 
         signalsMap.image = mapImage?.image

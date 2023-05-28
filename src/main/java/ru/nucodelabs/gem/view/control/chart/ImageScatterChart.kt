@@ -12,13 +12,13 @@ import javafx.scene.paint.Color
 import ru.nucodelabs.gem.util.fx.*
 
 
-class ImageScatterChart @JvmOverloads constructor(
-    @NamedArg("xAxis") private val xAxis: ValueAxis<Number>,
-    @NamedArg("yAxis") private val yAxis: ValueAxis<Number>,
-    image: Image = generateImage(256, 256, Color.WHITESMOKE)
+open class ImageScatterChart @JvmOverloads constructor(
+    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
+    @NamedArg("image") image: Image = generateImage(256, 256, Color.WHITESMOKE)
 ) : ScatterChart<Number, Number>(xAxis, yAxis) {
 
-    private val plotArea = this.lookup(".chart-plot-background") as Region
+    protected val plotArea = this.lookup(".chart-plot-background") as Region
     private val _plotBackgroundProperty = plotArea.backgroundProperty()
 
     private val _imageProperty: ObjectProperty<Image> = SimpleObjectProperty(image).apply {
@@ -42,14 +42,12 @@ class ImageScatterChart @JvmOverloads constructor(
     }
 
     private fun setupImage(img: Image) {
-        //setImageAsBackground(img)
         bindChartSizeToImageSize(img)
         layoutChildren()
-        layoutPlotChildren()
     }
 
     private fun imageToBackground(): Background? {
-        return if (_imageProperty.get() != null) {
+        return if (image != null) {
             Background(
                 BackgroundImage(
                     image,
@@ -62,16 +60,6 @@ class ImageScatterChart @JvmOverloads constructor(
         } else {
             null
         }
-    }
-
-    fun setAxisRange(xLower: Double, xUpper: Double, yLower: Double, yUpper: Double) {
-        xAxis.isAutoRanging = false
-        xAxis.upperBound = xUpper
-        xAxis.lowerBound = xLower
-
-        yAxis.isAutoRanging = false
-        yAxis.upperBound = yUpper
-        yAxis.lowerBound = yLower
     }
 
     private fun bindChartSizeToImageSize(img: Image) {
