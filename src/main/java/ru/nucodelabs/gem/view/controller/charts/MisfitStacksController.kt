@@ -122,13 +122,13 @@ class MisfitStacksController @Inject constructor(
                     picket.effectiveExperimentalData.map { it.errorResistanceApparent }
                 )
                 targetFunctionText.text =
-                    "целевая функция: f = ${dfFour.format(targetFunValue)} | "
+                    "целевая функция: f = ${dfFour.format(targetFunValue)}"
                 misfitText.text =
                     "отклонение: avg = ${dfTwo.format(avgWithoutErr)}%, max = ${
                         dfTwo.format(
                             maxWithoutErr
                         )
-                    } + | "
+                    }"
                 errorText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
                 installTooltipForTerms()
