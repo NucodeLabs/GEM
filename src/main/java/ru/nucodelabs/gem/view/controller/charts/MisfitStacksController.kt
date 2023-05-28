@@ -111,7 +111,7 @@ class MisfitStacksController @Inject constructor(
 
                 val theorPoints = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver)
                 val misfitsWithoutErr =
-                    expPoints.mapIndexed { idx, (_, resApp) -> (resApp - theorPoints[idx].y) / resApp }
+                    expPoints.mapIndexed { idx, (_, resApp) -> ((resApp - theorPoints[idx].y) / resApp) * 100}
                 val avgWithoutErr = misfitsWithoutErr.map { abs(it) }.average()
                 val maxWithoutErr = misfitsWithoutErr.maxOfOrNull { abs(it) } ?: 0.0
                 val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
@@ -122,13 +122,13 @@ class MisfitStacksController @Inject constructor(
                     picket.effectiveExperimentalData.map { it.errorResistanceApparent }
                 )
                 targetFunctionText.text =
-                    "целевая функция: f = ${dfFour.format(targetFunValue)}"
+                    "целевая функция: f = ${dfFour.format(targetFunValue)} | "
                 misfitText.text =
-                    "отклонение: avg = ${dfFour.format(avgWithoutErr)}, max = ${
-                        dfFour.format(
+                    "отклонение: avg = ${dfTwo.format(avgWithoutErr)}%, max = ${
+                        dfTwo.format(
                             maxWithoutErr
                         )
-                    }"
+                    } + | "
                 errorText.text =
                     "погрешность: avg = ${dfTwo.format(avg)}% , max = ${dfTwo.format(max)}%"
                 installTooltipForTerms()
