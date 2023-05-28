@@ -75,7 +75,6 @@ class AnisotropyMainViewController @Inject constructor(
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
 
-    private fun setupListeners() {
         signalsInterpolation.dataProperty().bind(
             Bindings.createObjectBinding(
                 { mapToPoints(appModel.observablePoint.azimuthSignals) },
