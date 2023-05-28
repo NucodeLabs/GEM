@@ -30,8 +30,8 @@ import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
 
-const val MAP_IMAGE_SIZE = 350
-const val MAP_IMAGE_SCALE = 1.0
+private const val MAP_IMAGE_SIZE = 350
+private const val DEFAULT_MAP_IMAGE_SCALE = 1.0
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
@@ -110,7 +110,7 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun updateSignalsMapImage() {
-        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE, MAP_IMAGE_SCALE)
+        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE, DEFAULT_MAP_IMAGE_SCALE)
 
         if (mapImage != null) {
             signalsMapAxisX.lowerBound = mapImage.xLowerBound
