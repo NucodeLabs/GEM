@@ -56,13 +56,13 @@ class AnisotropyFxAppModel @Inject constructor(
         return projectFileService.lastSavedProject() == project && projectFileService.lastSavedProjectFile() != null
     }
 
-    fun mapImage(size: Int): MapImageData? {
+    fun mapImage(size: Int, scale: Double): MapImageData? {
         return if (point.center != null) {
             mapImageProvider.satImage(
                 center = point.center!!,
                 signals = point.azimuthSignals.toList(),
                 size = size,
-                scale = 1.0
+                scale = scale
             )
         } else {
             null
