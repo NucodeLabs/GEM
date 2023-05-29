@@ -25,7 +25,7 @@
     </MenuBar>
     <HBox style="-fx-background-color: white; -fx-padding: 5;" spacing="5" alignment="BASELINE_LEFT">
         <Label>Азимут</Label>
-        <ComboBox/>
+        <ComboBox fx:id="azimuthDropdown"/>
         <Button>Редактировать</Button>
     </HBox>
     <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">

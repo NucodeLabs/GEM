@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import jakarta.validation.Validator
+import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import ru.nucodelabs.gem.app.project.Project
@@ -30,9 +31,9 @@ class AnisotropyFxAppModel @Inject constructor(
 
     val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
 
-    private val selectedAzimuthProperty = SimpleDoubleProperty(0.0)
+    private val selectedAzimuthProperty: DoubleProperty = SimpleDoubleProperty(0.0)
     fun selectedAzimuthProperty(): ReadOnlyDoubleProperty = selectedAzimuthProperty
-    var selectedAzimuth
+    var selectedAzimuth: Double
         get() = selectedAzimuthProperty.get()
         private set(value) = selectedAzimuthProperty.set(value)
 
@@ -95,7 +96,7 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     /**
-     * Возвращает тот же объект, если значения валиды, IllegalStateException иначе
+     * Возвращает тот же объект, если значения валидно, IllegalStateException иначе
      */
     private fun <T> T.validated(): T {
         val violations = validator.validate(this)
@@ -113,6 +114,13 @@ class AnisotropyFxAppModel @Inject constructor(
     fun redo() {
         historyManager.redo()
         updateObservable()
+    }
+
+    fun selectAzimuth(new: Double): Double {
+        if (point.azimuthSignals.any { it.azimuth == new }) {
+            selectedAzimuth = new
+        }
+        return selectedAzimuth
     }
 
     companion object Defaults {
