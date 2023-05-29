@@ -3,6 +3,7 @@ package ru.nucodelabs.gem.view.controller.anisotropy.main
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
+import javafx.scene.chart.XYChart
 import javafx.scene.control.*
 import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.control.cell.TextFieldTableCell
@@ -17,12 +18,14 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
+import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.CombinedChart
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.SmartInterpolationMap
+import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.gem.view.controller.util.mapToPoints
 import ru.nucodelabs.kfx.core.AbstractViewController
@@ -115,7 +118,7 @@ class AnisotropyMainViewController @Inject constructor(
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         signalsMap.colorMapper = colorMapper
         signalsMap.data = mapToPoints(appModel.observablePoint.azimuthSignals)
-
+        signalsMap.installTooltips(::tooltipFactory)
         initControls()
         initAndSetupListeners()
     }
@@ -231,6 +234,29 @@ class AnisotropyMainViewController @Inject constructor(
     private fun updatePointCenterTextFields() {
         centerLatitudeTf.text = preciseDecimalFormat.format(appModel.observablePoint.center?.latitudeInDegrees ?: 0)
         centerLongitudeTf.text = preciseDecimalFormat.format(appModel.observablePoint.center?.longitudeInDegrees ?: 0)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun tooltipFactory(
+        seriesIndex: Int,
+        series: XYChart.Series<Number, Number>,
+        pointIndex: Int,
+        point: XYChart.Data<Number, Number>
+    ): Tooltip {
+        val azimuthSignal = appModel.observablePoint.azimuthSignals[0].signals.sortedSignals[pointIndex / 2].ab2
+        val resistance =
+            appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[pointIndex / 2].resistanceApparent
+        val azimuth: Double = if (pointIndex % 2 == 0) {
+            appModel.observablePoint.azimuthSignals[seriesIndex].azimuth
+        } else {
+            appModel.observablePoint.azimuthSignals[seriesIndex].azimuth + 180
+        }
+        val tooltipText = """
+            AB/2[m]: $azimuthSignal
+            Сопротивление ρₐ[Ω‧m]: $resistance
+            Азимут[°]: $azimuth
+        """.trimIndent()
+        return Tooltip(tooltipText).apply { forCharts() }
     }
 
     @FXML
