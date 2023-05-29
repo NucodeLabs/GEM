@@ -29,6 +29,8 @@ import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.InitialModelConfigurationViewController
+import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
+import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
