@@ -169,7 +169,7 @@ class AnisotropyMainViewController @Inject constructor(
             )
         )
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
-            appModel.selectAzimuth(new)
+            appModel.selectAzimuth(new ?: 0.0)
         }
         azimuthDropdown.itemsProperty().addListener { _, _, _ ->
             azimuthDropdown.selectionModel.selectFirst()
