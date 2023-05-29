@@ -60,6 +60,10 @@ fun <X, Y> XYChart<X, Y>.installTooltips(factory: (seriesIndex: Int, series: Ser
 
     fun listenEachSeries() {
         data.forEachIndexed { sIdx, series ->
+            series.data.forEachIndexed { pointIndex, point ->
+                val tooltip = factory(sIdx, series, pointIndex, point)
+                Tooltip.install(point.node, tooltip)
+            }
             series.data.addListener(ListChangeListener { c ->
                 while (c.next()) {
                     val added = c.addedSubList
