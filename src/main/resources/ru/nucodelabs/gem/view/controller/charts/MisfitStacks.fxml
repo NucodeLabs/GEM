@@ -14,7 +14,7 @@
       minWidth="0"
       stylesheets="@../../common.css, @MisfitStacks.css"
       VBox.vgrow="ALWAYS"
-      fx:controller="ru.nucodelabs.gem.view.controller.charts.MisfitStacksController">
+      fx:controller="ru.nucodelabs.gem.view.controller.charts.MisfitStacksController" fx:id="root">
     <HBox maxWidth="Infinity">
         <Label styleClass="chart-label" text="Погрешность подбора модели" VBox.vgrow="NEVER"/>
         <HBox HBox.hgrow="ALWAYS"/>

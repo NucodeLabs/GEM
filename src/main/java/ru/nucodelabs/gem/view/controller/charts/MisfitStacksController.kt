@@ -12,7 +12,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.stage.Stage
+import javafx.scene.layout.VBox
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.util.fx.Point
 import ru.nucodelabs.gem.util.fx.forCharts
@@ -20,9 +20,9 @@ import ru.nucodelabs.gem.util.fx.line
 import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.kfx.core.AbstractViewController
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -43,13 +43,14 @@ const val ERROR_DESCRIPTION = "Погрешность - это \n" +
 const val TARGET_FUNCTION_FORMULA_IMAGE_PATH = "/img/targetFunction.png"
 const val MISFIT_FORMULA_IMAGE_PATH ="/img/misfit.png"
 const val ERROR_FORMULA_IMAGE_PATH = "/img/error.png"
+
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val decimalFormat: DecimalFormat,
     private val appModel: VesFxAppModel,
-) : AbstractController() {
+) : AbstractViewController<VBox>() {
     @FXML
     private lateinit var targetFunctionText: Label
 
@@ -67,9 +68,6 @@ class MisfitStacksController @Inject constructor(
 
     @FXML
     private lateinit var lineChartYAxis: NumberAxis
-
-    override val stage: Stage
-        get() = lineChartXAxis.scene.window as Stage
 
     private val picket: Picket
         get() = picketObservable.get()!!
