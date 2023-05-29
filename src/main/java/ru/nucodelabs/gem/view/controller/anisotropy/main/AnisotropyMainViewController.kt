@@ -93,10 +93,7 @@ class AnisotropyMainViewController @Inject constructor(
             updateSignalsMapImage()
             updatePointCenterTextFields()
         }
-
-        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
-            signalsMap.installTooltips(::tooltipFactory)
-        })
+        signalsMap.installTooltips(::tooltipFactory)
 
         appModel.observablePoint.centerProperty().addListener { _, _, _ -> updateSignalsMapImage() }
         appModel.observablePoint.azimuthSignals.addListener(ListChangeListener { updateSignalsMapImage() })
