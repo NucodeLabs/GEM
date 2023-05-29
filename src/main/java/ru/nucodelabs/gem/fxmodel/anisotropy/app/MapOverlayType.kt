@@ -13,7 +13,7 @@ enum class MapOverlayType(val fxMode: BlendMode?) {
         override fun toString(): String = "Color Burn"
     },
     OVERLAY(BlendMode.OVERLAY) {
-        override fun toString(): String = "Наложение"
+        override fun toString(): String = "Перекрытие"
     },
     SCREEN(BlendMode.SCREEN) {
         override fun toString(): String = "Экран"

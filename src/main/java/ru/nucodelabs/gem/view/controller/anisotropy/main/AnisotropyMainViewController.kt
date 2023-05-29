@@ -127,9 +127,9 @@ class AnisotropyMainViewController @Inject constructor(
         signalsInterpolation.colorMapper = colorMapper
         mapOverlayType.items += MapOverlayType.values()
 
-        mapOverlayType.selectionModel.select(MapOverlayType.NONE)
+        mapOverlayType.selectionModel.select(MapOverlayType.OVERLAY)
 
-        signalsMap.canvasBlendMode = MapOverlayType.NONE.fxMode
+        signalsMap.canvasBlendMode = MapOverlayType.OVERLAY.fxMode
         signalsMap.canvasBlendModeProperty().bind(
             Bindings.createObjectBinding(
                 { mapOverlayType.selectionModel.selectedItem.fxMode },
@@ -137,7 +137,7 @@ class AnisotropyMainViewController @Inject constructor(
             )
         )
 
-        transparencySlider.value = 1.0
+        transparencySlider.value = 0.5
         signalsMap.canvasOpacityProperty().bind(transparencySlider.valueProperty().asObject())
 
         initSignalsTable()
