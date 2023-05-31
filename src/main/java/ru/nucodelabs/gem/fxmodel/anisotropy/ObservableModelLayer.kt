@@ -12,6 +12,7 @@ class ObservableModelLayer(
     isFixedPower: Boolean,
     isFixedResistance: Boolean,
     verticalAnisotropyCoefficient: Double,
+    azimuth: Double,
     azimuthAnisotropyCoefficient: Double,
 ) {
     private val powerProperty: DoubleProperty = SimpleDoubleProperty(power)
@@ -34,6 +35,11 @@ class ObservableModelLayer(
         SimpleDoubleProperty(verticalAnisotropyCoefficient)
     var verticalAnisotropyCoefficient by verticalAnisotropyCoefficientProperty
     fun verticalAnisotropyCoefficientProperty() = verticalAnisotropyCoefficientProperty
+
+    private val azimuthProperty: DoubleProperty =
+        SimpleDoubleProperty(azimuth)
+    var azimuth by azimuthProperty
+    fun azimuthProperty() = azimuthProperty
 
     private val azimuthAnisotropyCoefficientProperty: DoubleProperty =
         SimpleDoubleProperty(azimuthAnisotropyCoefficient)

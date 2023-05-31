@@ -9,6 +9,7 @@ import jakarta.validation.constraints.DecimalMin
  * @property isFixedPower Значение зафиксировано для обратной задачи
  * @property isFixedResistance Значение зафиксировано для обратной задачи
  * @property verticalAnisotropyCoefficient коэффициент анизотропии по оси Z
+ * @property azimuth азимутальный угол анизотропии
  * @property azimuthAnisotropyCoefficient коэффициент анизотропии в азимутальной плоскости XY
  */
 data class ModelLayer(
@@ -17,5 +18,6 @@ data class ModelLayer(
     var isFixedPower: Boolean = false,
     var isFixedResistance: Boolean = false,
     var verticalAnisotropyCoefficient: Double,
+    var azimuth: Double,
     var azimuthAnisotropyCoefficient: Double,
 )

@@ -9,5 +9,6 @@ data class ModelLayerDto(
     val isFixedPower: Boolean?,
     val isFixedResistance: Boolean?,
     var verticalAnisotropyCoefficient: Double,
+    var azimuth: Double,
     var azimuthAnisotropyCoefficient: Double,
 )
