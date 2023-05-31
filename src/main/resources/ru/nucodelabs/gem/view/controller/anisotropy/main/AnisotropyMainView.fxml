@@ -8,7 +8,8 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
-      maxHeight="Infinity" maxWidth="Infinity" stylesheets="@../../../common.css, @AnisotropyMainView.css"
+      maxHeight="Infinity" maxWidth="Infinity"
+      stylesheets="@../../../common.css, @AnisotropyMainView.css, @../../../controller/charts/VesCurves.css"
       prefWidth="1280"
       prefHeight="720"
       fx:id="root">
@@ -72,12 +73,12 @@
                 <HBox maxWidth="Infinity">
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Кривые ВЭЗ</Label>
-                        <LineChart legendVisible="false" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                        <LineChart fx:id="vesCurves" maxWidth="Infinity" HBox.hgrow="ALWAYS" animated="false">
                             <xAxis>
-                                <NumberAxis/>
+                                <NumberAxis autoRanging="true"/>
                             </xAxis>
                             <yAxis>
-                                <NumberAxis/>
+                                <NumberAxis autoRanging="true"/>
                             </yAxis>
                         </LineChart>
                     </VBox>

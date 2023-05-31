@@ -16,7 +16,7 @@ class SonetForwardSolverAdapter : ForwardSolver {
             modelResistance.toDoubleArray(),
             modelPower.toDoubleArray(),
             modelPower.size,
-            experimentalMn2.toDoubleArray(),
+            experimentalAb2.toDoubleArray(),
             experimentalMn2.toDoubleArray(),
             experimentalAb2.size
         ).toList()

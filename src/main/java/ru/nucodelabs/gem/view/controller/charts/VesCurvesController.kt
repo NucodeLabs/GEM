@@ -23,6 +23,7 @@ import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.get
@@ -30,9 +31,7 @@ import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.util.std.exp10
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.applyLegendStyleAccordingToSeries
-import ru.nucodelabs.gem.view.control.chart.installTooltips
-import ru.nucodelabs.gem.view.control.chart.length
+import ru.nucodelabs.gem.view.control.chart.*
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -76,19 +75,6 @@ class VesCurvesController @Inject constructor(
     @Named(ArgNames.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
-
-    // SERIES CSS STYLE CLASSES
-    private val modelLineStyle = "model-line"
-    private val theorLineStyle = "theor-line"
-    private val transparentLineStyle = "transparent-line"
-
-    // SYMBOL CSS STYLE CLASSES
-    private val modelSymbolStyle = "model-symbol"
-    private val theorSymbolStyle = "theor-symbol"
-    private val expSymbolStyle = "exp-symbol"
-    private val expUpperSymbolStyle = "exp-upper-symbol"
-    private val expLowerSymbolStyle = "exp-lower-symbol"
-    private val hiddenSymbolStyle = "hidden-symbol"
 
     private val picketIndex
         get() = _picketIndex.get()
@@ -433,25 +419,20 @@ class VesCurvesController @Inject constructor(
     }
 
     private fun applyStyle() {
-        fun Series<*, *>.lineStyle(style: String) {
-            node.lookup(".chart-series-line").styleClass += style
-        }
-        lineChart.data[EXP_CURVE_SERIES_INDEX].lineStyle(transparentLineStyle)
-        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].lineStyle(transparentLineStyle)
-        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].lineStyle(transparentLineStyle)
-        lineChart.data[HIDDEN_SERIES_INDEX].lineStyle(transparentLineStyle)
-        lineChart.data[THEOR_CURVE_SERIES_INDEX].lineStyle(theorLineStyle)
-        lineChart.data[MOD_CURVE_SERIES_INDEX].lineStyle(modelLineStyle)
 
-        fun Series<*, *>.symbolStyle(style: String) {
-            data.forEach { it.node.lookup(".chart-line-symbol").styleClass += style }
-        }
-        lineChart.data[EXP_CURVE_SERIES_INDEX].symbolStyle(expSymbolStyle)
-        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].symbolStyle(expUpperSymbolStyle)
-        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].symbolStyle(expLowerSymbolStyle)
-        lineChart.data[HIDDEN_SERIES_INDEX].symbolStyle(hiddenSymbolStyle)
-        lineChart.data[THEOR_CURVE_SERIES_INDEX].symbolStyle(theorSymbolStyle)
-        lineChart.data[MOD_CURVE_SERIES_INDEX].symbolStyle(modelSymbolStyle)
+        lineChart.data[EXP_CURVE_SERIES_INDEX].lineStyle(Style.Class.TRANSPARENT_LINE)
+        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].lineStyle(Style.Class.TRANSPARENT_LINE)
+        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].lineStyle(Style.Class.TRANSPARENT_LINE)
+        lineChart.data[HIDDEN_SERIES_INDEX].lineStyle(Style.Class.TRANSPARENT_LINE)
+        lineChart.data[THEOR_CURVE_SERIES_INDEX].lineStyle(Style.Class.THEOR_LINE)
+        lineChart.data[MOD_CURVE_SERIES_INDEX].lineStyle(Style.Class.MODEL_LINE)
+
+        lineChart.data[EXP_CURVE_SERIES_INDEX].symbolStyle(Style.Class.EXP_SYMBOL)
+        lineChart.data[EXP_CURVE_ERROR_UPPER_SERIES_INDEX].symbolStyle(Style.Class.EXP_ERROR_UPPER_SYMBOL)
+        lineChart.data[EXP_CURVE_ERROR_LOWER_SERIES_INDEX].symbolStyle(Style.Class.EXP_ERROR_LOWER_SYMBOL)
+        lineChart.data[HIDDEN_SERIES_INDEX].symbolStyle(Style.Class.HIDDEN_SYMBOL)
+        lineChart.data[THEOR_CURVE_SERIES_INDEX].symbolStyle(Style.Class.THEOR_SYMBOL)
+        lineChart.data[MOD_CURVE_SERIES_INDEX].symbolStyle(Style.Class.MODEL_SYMBOL)
 
         lineChart.applyLegendStyleAccordingToSeries()
     }
