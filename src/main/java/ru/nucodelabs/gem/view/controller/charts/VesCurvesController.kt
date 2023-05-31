@@ -36,9 +36,9 @@ import ru.nucodelabs.gem.view.control.chart.length
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.controller.AbstractController
+import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.*
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import java.lang.Double.max

@@ -2,13 +2,13 @@ package ru.nucodelabs.geo.ves.calc.initialModel
 
 import org.junit.jupiter.api.Test
 import ru.nucodelabs.ShiraPicket
-import ru.nucodelabs.geo.target.SquareDiffTargetFunction
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter
+import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction
 
 class MultiLayerInitialModelKtTest {
 
     private val targetFunction = SquareDiffTargetFunction()
-    private val forwardSolver = ForwardSolver()
+    private val forwardSolver = SonetForwardSolverAdapter()
     private val signals = ShiraPicket.picket.effectiveExperimentalData
 
     @Test

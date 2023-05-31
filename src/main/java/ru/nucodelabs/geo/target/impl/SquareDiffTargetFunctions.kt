@@ -1,6 +1,7 @@
-package ru.nucodelabs.geo.target
+package ru.nucodelabs.geo.target.impl
 
 import ru.nucodelabs.gem.util.std.fromPercent
+import ru.nucodelabs.geo.target.TargetFunction
 import kotlin.math.pow
 
 /**

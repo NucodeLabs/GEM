@@ -163,7 +163,6 @@ task distClr(type: Copy) {
 
 tasks.withType(JavaExec) {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
-//    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath]
     workingDir = file(runDir)
     finalizedBy cleanRunDir

@@ -1,7 +1,8 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 

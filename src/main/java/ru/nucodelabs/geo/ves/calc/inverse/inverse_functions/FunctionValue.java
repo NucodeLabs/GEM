@@ -1,10 +1,11 @@
 package ru.nucodelabs.geo.ves.calc.inverse.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.TargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
+import ru.nucodelabs.geo.ves.calc.adapter.ForwardSolverAdapterKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class FunctionValue implements MultivariateFunction {
             newModelLayers.add(new ModelLayer(newModelPower.get(i), newModelResistance.get(i), false, false));
         }
 
-        List<Double> solvedResistance = forwardSolver.invoke(experimentalData, newModelLayers);
+        List<Double> solvedResistance = ForwardSolverAdapterKt.invoke(forwardSolver, experimentalData, newModelLayers);
 
         double diffValue = targetFunction.apply(
                 solvedResistance,
