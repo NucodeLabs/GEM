@@ -97,8 +97,7 @@ dependencies {
     implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8"
     implementation 'org.codehaus.groovy:groovy-all:3.0.16'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
