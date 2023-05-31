@@ -80,7 +80,7 @@ public class FunctionValue implements MultivariateFunction {
 
         List<Double> solvedResistance = ForwardSolverAdapterKt.invoke(forwardSolver, experimentalData, newModelLayers);
 
-        double diffValue = targetFunction.apply(
+        double diffValue = targetFunction.invoke(
                 solvedResistance,
                 experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList(),
                 experimentalData.stream().map(ExperimentalData::getErrorResistanceApparent).toList()

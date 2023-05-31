@@ -4,7 +4,6 @@ import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter
 import ru.nucodelabs.geo.target.TargetFunction
 import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction
-import ru.nucodelabs.geo.target.invoke
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
