@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
+import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction;
 
 import java.util.ArrayList;

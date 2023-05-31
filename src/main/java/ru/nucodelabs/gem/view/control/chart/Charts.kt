@@ -1,10 +1,12 @@
 package ru.nucodelabs.gem.view.control.chart
 
 import com.sun.javafx.charts.Legend
+import javafx.application.Platform
 import javafx.beans.binding.DoubleBinding
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.chart.Axis
 import javafx.scene.chart.ValueAxis
 import javafx.scene.chart.XYChart
@@ -117,6 +119,23 @@ fun Axis<*>.limitTickLabelsWidth(maxWidth: Double, minFontSize: Double = 8.0, ma
     widthProperty().addListener { _, _, _ -> correctFontSize() }
 }
 
+fun XYChart<*, *>.installLegendStyleAccordingToSeries() {
+    this.applyLegendStyleAccordingToSeries()
+    data.addListener(ListChangeListener {
+        while (it.next()) {
+            Platform.runLater { this.applyLegendStyleAccordingToSeries() }
+        }
+    })
+    dataProperty().addListener { _, _, newValue ->
+        Platform.runLater { this.applyLegendStyleAccordingToSeries() }
+        newValue?.addListener(ListChangeListener {
+            while (it.next()) {
+                Platform.runLater { this.applyLegendStyleAccordingToSeries() }
+            }
+        })
+    }
+}
+
 fun XYChart<*, *>.applyLegendStyleAccordingToSeries() {
     for (legend in childrenUnmodifiable.filterIsInstance<Legend>()) {
         for (label in legend.childrenUnmodifiable.filterIsInstance<Label>()) {
@@ -125,4 +144,32 @@ fun XYChart<*, *>.applyLegendStyleAccordingToSeries() {
                 ?.addAll(data.find { it.name == label.text }?.data?.getOrNull(0)?.node?.styleClass ?: continue)
         }
     }
+}
+
+fun Series<*, *>.lineStyle(style: String) {
+    node?.addSeriesLineStyle(style)
+    nodeProperty().addListener { _, _, newValue ->
+        Platform.runLater {
+            newValue?.addSeriesLineStyle(style)
+        }
+    }
+}
+
+private fun Node.addSeriesLineStyle(styleClass: String) {
+    this.lookup(".chart-series-line")?.styleClass?.add(styleClass)
+}
+
+fun Series<*, *>.symbolStyle(style: String) {
+    data.forEach {
+        it.node?.addSeriesSymbolStyle(style)
+        it.nodeProperty().addListener { _, _, newValue ->
+            Platform.runLater {
+                newValue?.addSeriesSymbolStyle(style)
+            }
+        }
+    }
+}
+
+private fun Node.addSeriesSymbolStyle(styleClass: String) {
+    this.lookup(".chart-line-symbol")?.styleClass?.add(styleClass)
 }

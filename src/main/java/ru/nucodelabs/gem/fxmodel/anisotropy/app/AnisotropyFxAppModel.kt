@@ -8,10 +8,15 @@ import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
+import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentLowerBoundByError
+import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -24,6 +29,7 @@ class AnisotropyFxAppModel @Inject constructor(
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
     private val reloadService: ReloadService<Point>,
+    private val forwardSolver: ForwardSolver,
 ) {
 
     private val project by projectContext::project
@@ -37,8 +43,13 @@ class AnisotropyFxAppModel @Inject constructor(
         get() = selectedAzimuthProperty.get()
         private set(value) = selectedAzimuthProperty.set(value)
 
-    val selectedSignals
+    val selectedObservableSignals
         get() = observablePoint.azimuthSignals.find { it.azimuth == selectedAzimuth }
+
+
+    private fun selectedSignals(): AzimuthSignals? {
+        return point.azimuthSignals.find { it.azimuth == selectedAzimuth }
+    }
 
     private fun updateObservable() {
         fxModelMapper.updateObservable(observablePoint, point)
@@ -121,6 +132,24 @@ class AnisotropyFxAppModel @Inject constructor(
             selectedAzimuth = new
         }
         return selectedAzimuth
+    }
+
+    fun upperErrorBoundSignals(): List<ObservableSignal> {
+        val selectedSignals = selectedSignals()
+        return selectedSignals?.signals?.effectiveSignals?.map {
+            it.copy(resistanceApparent = it.resistanceApparentUpperBoundByError)
+        }?.map {
+            fxModelMapper.toObservable(it)
+        } ?: emptyList()
+    }
+
+    fun lowerErrorBoundSignals(): List<ObservableSignal> {
+        val selectedSignals = selectedSignals()
+        return selectedSignals?.signals?.effectiveSignals?.map {
+            it.copy(resistanceApparent = it.resistanceApparentLowerBoundByError)
+        }?.map {
+            fxModelMapper.toObservable(it)
+        } ?: emptyList()
     }
 
     companion object Defaults {
