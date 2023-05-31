@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.anisotropy.main
 
+import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
@@ -39,6 +40,7 @@ import java.util.*
 import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.concurrent.thread
 
 private const val MAP_IMAGE_SIZE = 350
 private const val DEFAULT_MAP_IMAGE_SCALE = 1.0
@@ -280,23 +282,27 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun updateSignalsMapImage() {
-        val mapImage = appModel.mapImage(MAP_IMAGE_SIZE, DEFAULT_MAP_IMAGE_SCALE)
+        thread(start = true) {
+            val mapImage = appModel.mapImage(MAP_IMAGE_SIZE, DEFAULT_MAP_IMAGE_SCALE)
 
-        if (mapImage != null) {
-            signalsMapAxisX.lowerBound = mapImage.xLowerBound
-            signalsMapAxisX.upperBound = mapImage.xUpperBound
+            Platform.runLater {
+                if (mapImage != null) {
+                    signalsMapAxisX.lowerBound = mapImage.xLowerBound
+                    signalsMapAxisX.upperBound = mapImage.xUpperBound
 
-            signalsMapAxisX.forceMarks.add(0.0)
-            signalsMapAxisX.forceMarks.add(0.0)
+                    signalsMapAxisX.forceMarks.add(0.0)
+                    signalsMapAxisX.forceMarks.add(0.0)
 
-            signalsMapAxisY.lowerBound = mapImage.yLowerBound
-            signalsMapAxisY.upperBound = mapImage.yUpperBound
+                    signalsMapAxisY.lowerBound = mapImage.yLowerBound
+                    signalsMapAxisY.upperBound = mapImage.yUpperBound
 
-            signalsMapAxisY.forceMarks.add(0.0)
-            signalsMapAxisY.forceMarks.add(0.0)
+                    signalsMapAxisY.forceMarks.add(0.0)
+                    signalsMapAxisY.forceMarks.add(0.0)
+                }
+
+                signalsMap.image = mapImage?.image
+            }
         }
-
-        signalsMap.image = mapImage?.image
     }
 
     private fun updatePointCenterTextFields() {
