@@ -148,6 +148,7 @@ class AnisotropyMainViewController @Inject constructor(
         signalsInterpolation.data = mapToPoints(appModel.observablePoint.azimuthSignals)
         signalsMap.colorMapper = colorMapper
         signalsMap.installTooltips(::tooltipFactory)
+        signalsInterpolation.installTooltips(::tooltipFactory)
         signalsMap.canvasBlendMode = MapOverlayType.OVERLAY.fxMode
         signalsMap.canvasBlendModeProperty().bind(
             Bindings.createObjectBinding(
