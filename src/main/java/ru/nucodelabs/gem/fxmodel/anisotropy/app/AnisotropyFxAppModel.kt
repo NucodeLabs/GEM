@@ -10,6 +10,7 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
+import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelUpdater
 import ru.nucodelabs.gem.fxmodel.exception.DataValidationException
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
     private val fxModelMapper: AnisotropyFxModelMapper,
+    private val fxModelUpdater: AnisotropyFxModelUpdater,
     private val projectContext: ProjectContext<Point>,
     private val projectFileService: ProjectFileService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider,
@@ -49,7 +51,7 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     private fun updateObservable() {
-        fxModelMapper.updateObservable(observablePoint, point)
+        fxModelUpdater.updateObservable(observablePoint, point)
     }
 
     /**
