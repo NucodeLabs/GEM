@@ -16,8 +16,7 @@ import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
-import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentLowerBoundByError
-import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.anisotropy.calc.*
 import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.ext.setValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
@@ -146,6 +145,31 @@ class AnisotropyFxAppModel @Inject constructor(
         }?.map {
             fxModelMapper.toObservable(it)
         } ?: emptyList()
+    }
+
+    fun signalsRelations(): List<SignalRelation> {
+        val selectedSignals = selectedSignals()
+        return if (selectedSignals != null) {
+            ru.nucodelabs.geo.anisotropy.calc.signalsRelations(selectedSignals, point.azimuthSignals)
+        } else {
+            emptyList()
+        }
+    }
+
+    fun theoreticalSignals(): List<ObservableAzimuthSignals> {
+        return forwardSolve(point.azimuthSignals, point.model).map {
+            fxModelMapper.toObservable(it)
+        }
+    }
+
+    fun zOfModelLayers(): List<Double> {
+        return point.zOfModelLayers()
+    }
+
+    fun inverseSolve() {
+        modelModification {
+            inverseSolveInPlace(point.azimuthSignals, point.model)
+        }
     }
 
     companion object Defaults {

@@ -5,12 +5,14 @@ import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
+import ru.nucodelabs.geo.anisotropy.calc.SignalRelation
 import ru.nucodelabs.geo.anisotropy.calc.map.not
 import ru.nucodelabs.geo.anisotropy.calc.map.xFromCenter
 import ru.nucodelabs.geo.anisotropy.calc.map.yFromCenter
 import ru.nucodelabs.kfx.ext.toObservableList
+import java.text.DecimalFormat
 
-fun mapAzimuthSignals(azimuthSignals: ObservableList<ObservableAzimuthSignals>): ObservableList<Series<Number, Number>> {
+fun mapAzimuthSignals(azimuthSignals: List<ObservableAzimuthSignals>): ObservableList<Series<Number, Number>> {
     val seriesList =
         azimuthSignals.map { observableAzimuthSignals ->
             observableAzimuthSignals.signals.sortedSignals.map { signal ->
@@ -45,4 +47,19 @@ fun mapSignals(signals: List<ObservableSignal>): Series<Number, Number> {
             }
         }.toObservableList()
     )
+}
+
+fun mapSignalsRelations(
+    signalRelations: List<SignalRelation>,
+    df: DecimalFormat
+): ObservableList<Series<Number, Number>> {
+    return signalRelations.map { series ->
+        Series(
+            series.relations.map {
+                Data(it.ab2 as Number, it.value as Number)
+            }.toObservableList()
+        ).apply {
+            name = df.format(series.azimuth)
+        }
+    }.toObservableList()
 }

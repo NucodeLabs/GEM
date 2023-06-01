@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import ru.nucodelabs.gem.view.control.chart.*?>
@@ -60,12 +60,13 @@
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity">
                         <Label styleClass="chart-label">Отношения сигналов</Label>
-                        <LineChart legendVisible="false">
+                        <LineChart fx:id="signalsRelation" maxWidth="Infinity" HBox.hgrow="ALWAYS" animated="false"
+                                   legendSide="RIGHT">
                             <xAxis>
-                                <NumberAxis/>
+                                <NucodeNumberAxis autoRanging="true" fx:id="signalsRelationAxisX"/>
                             </xAxis>
                             <yAxis>
-                                <NumberAxis/>
+                                <NucodeNumberAxis autoRanging="true" fx:id="signalsRelationAxisY"/>
                             </yAxis>
                         </LineChart>
                     </VBox>
@@ -164,7 +165,7 @@
         <Tab text="Инверсия" closable="false">
             <VBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
                 <HBox style="-fx-background-color: white; -fx-padding: 5;" spacing="5" alignment="BASELINE_LEFT">
-                    <Button>Решение обратной задачи</Button>
+                    <Button onAction="#inverseSolve">Решение обратной задачи</Button>
                 </HBox>
                 <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
                     <VBox HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER">
@@ -191,12 +192,12 @@
                                                        minWidth="400"
                                                        maxHeight="400"
                                                        minHeight="400"
-                                                       legendVisible="false">
+                                                       legendVisible="false" fx:id="theoreticalSignals">
                                     <xAxis>
-                                        <NucodeNumberAxis autoRanging="true"/>
+                                        <NucodeNumberAxis autoRanging="true" fx:id="theoreticalSignalsAxisX"/>
                                     </xAxis>
                                     <yAxis>
-                                        <NucodeNumberAxis autoRanging="true"/>
+                                        <NucodeNumberAxis autoRanging="true" fx:id="theoreticalSignalsAxisY"/>
                                     </yAxis>
                                 </SmartInterpolationMap>
                             </VBox>
@@ -224,11 +225,11 @@
                 </HBox>
                 <VBox maxWidth="Infinity">
                     <Label styleClass="chart-label">Модель</Label>
-                    <TableView>
+                    <TableView fx:id="modelTable">
                         <columns>
                             <TableColumn maxWidth="35" prefWidth="35" sortable="false" text="№"
                                          styleClass="centered-column"
-                                         resizable="false" editable="false"/>
+                                         resizable="false" editable="false" fx:id="modelIndexCol"/>
                             <TableColumn fx:id="powerCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
                                          sortable="false">
                                 <graphic>

@@ -7,9 +7,12 @@ import ru.nucodelabs.geo.anisotropy.Signals
 import ru.nucodelabs.mathves.AnizotropyFunctions
 
 fun forwardSolve(
-    azimuthSignalsList: MutableList<AzimuthSignals>,
-    model: MutableList<ModelLayer>
+    azimuthSignalsList: List<AzimuthSignals>,
+    model: List<ModelLayer>
 ): List<AzimuthSignals> {
+    if (azimuthSignalsList.isEmpty() || model.isEmpty()) {
+        return emptyList()
+    }
     val signalsOut = azimuthSignalsList.map { it.signals.effectiveSignals }.flatten().map { 0.0 }.toDoubleArray()
     val nSignals = signalsOut.size.toShort()
     if (AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(

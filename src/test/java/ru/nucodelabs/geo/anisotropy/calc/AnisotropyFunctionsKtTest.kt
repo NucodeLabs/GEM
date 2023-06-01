@@ -1,7 +1,10 @@
 package ru.nucodelabs.geo.anisotropy.calc
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mapstruct.factory.Mappers
+import ru.nucodelabs.gem.file.dto.mapper.DtoMapper
 import ru.nucodelabs.geo.anisotropy.*
 import ru.nucodelabs.mathves.AnizotropyFunctions
 import java.util.*
@@ -50,18 +53,7 @@ class AnisotropyFunctionsKtTest {
             )
         )
 
-        val model = arrayListOf<ModelLayer>()
-        for (i in 0 until n_layers) {
-            model.add(
-                ModelLayer(
-                    FixableValue(h[i], false),
-                    FixableValue(ro_avg[i], false),
-                    FixableValue(kanisotropy_vert[i], false),
-                    FixableValue(azimuth[i], false),
-                    FixableValue(kanisotropy_azimuth[i], false)
-                )
-            )
-        }
+        val model = modelLayers(n_layers, h, ro_avg, kanisotropy_vert, azimuth, kanisotropy_azimuth)
 
         val signalsOut = forwardSolve(azimuthSignals, model)
         println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
@@ -158,18 +150,9 @@ class AnisotropyFunctionsKtTest {
             )
         )
 
-        val model = arrayListOf<ModelLayer>()
-        for (i in 0 until n_layers) {
-            model.add(
-                ModelLayer(
-                    FixableValue(h[i], false),
-                    FixableValue(ro_avg[i], false),
-                    FixableValue(kanisotropy_vert[i], false),
-                    FixableValue(azimuth[i], false),
-                    FixableValue(kanisotropy_azimuth[i], false)
-                )
-            )
-        }
+        val model = modelLayers(n_layers, h, ro_avg, kanisotropy_vert, azimuth, kanisotropy_azimuth)
+        val mapper = Mappers.getMapper(DtoMapper::class.java)
+        jacksonObjectMapper().writeValueAsString(model.map { mapper.toDto(it) }).also { println(it) }
 
         val signalsOut = forwardSolve(azimuthSignals, model)
         println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
@@ -195,6 +178,29 @@ class AnisotropyFunctionsKtTest {
             signals,
             signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
                 .flatten().toDoubleArray())
+    }
+
+    private fun modelLayers(
+        n_layers: Short,
+        h: DoubleArray,
+        ro_avg: DoubleArray,
+        kanisotropy_vert: DoubleArray,
+        azimuth: DoubleArray,
+        kanisotropy_azimuth: DoubleArray
+    ): ArrayList<ModelLayer> {
+        val model = arrayListOf<ModelLayer>()
+        for (i in 0 until n_layers) {
+            model.add(
+                ModelLayer(
+                    FixableValue(h[i], false),
+                    FixableValue(ro_avg[i], false),
+                    FixableValue(kanisotropy_vert[i], false),
+                    FixableValue(azimuth[i], false),
+                    FixableValue(kanisotropy_azimuth[i], false)
+                )
+            )
+        }
+        return model
     }
 
     @Test

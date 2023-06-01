@@ -4,10 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import ru.nucodelabs.gem.file.dto.anisotropy.AzimuthSignalsDto;
-import ru.nucodelabs.gem.file.dto.anisotropy.FixableDoubleValueDto;
-import ru.nucodelabs.gem.file.dto.anisotropy.PointDto;
-import ru.nucodelabs.gem.file.dto.anisotropy.SignalDto;
+import ru.nucodelabs.gem.file.dto.anisotropy.*;
 import ru.nucodelabs.geo.anisotropy.*;
 
 import java.util.List;
@@ -51,4 +48,6 @@ public abstract class DtoMapper {
     protected abstract AzimuthSignalsDto toDto(AzimuthSignals azimuthSignals);
 
     public abstract PointDto toDto(Point point);
+
+    public abstract ModelLayerDto toDto(ModelLayer modelLayer);
 }

@@ -68,10 +68,10 @@ class ColorAxisController @Inject constructor(
     private lateinit var ctxMenu: ContextMenu
 
     @FXML
-    private lateinit var linearYAxis: NucodeNumberAxis
+    private lateinit var axis: NucodeNumberAxis
 
     @FXML
-    private lateinit var logYAxis: LogarithmicAxis
+    private lateinit var logAxis: LogarithmicAxis
 
     @FXML
     private lateinit var linearChart: PolygonChart
@@ -109,18 +109,18 @@ class ColorAxisController @Inject constructor(
     }
 
     private fun setupAxes() {
-        linearYAxis.lowerBoundProperty() bindTo colorMapper.minValueProperty()
-        linearYAxis.upperBoundProperty() bindTo colorMapper.maxValueProperty()
+        axis.lowerBoundProperty() bindTo colorMapper.minValueProperty()
+        axis.upperBoundProperty() bindTo colorMapper.maxValueProperty()
 
-        logYAxis.lowerBoundProperty() bindTo linearYAxis.lowerBoundProperty()
-        logYAxis.upperBoundProperty() bindTo linearYAxis.upperBoundProperty()
+        logAxis.lowerBoundProperty() bindTo axis.lowerBoundProperty()
+        logAxis.upperBoundProperty() bindTo axis.upperBoundProperty()
 
-        linearYAxis.tickLabelFormatter = stringConverter
-        logYAxis.tickLabelFormatter = stringConverter
-        linearYAxis.limitTickLabelsWidth(35.0)
-        logYAxis.limitTickLabelsWidth(35.0)
+        axis.tickLabelFormatter = stringConverter
+        logAxis.tickLabelFormatter = stringConverter
+        axis.limitTickLabelsWidth(35.0)
+        logAxis.limitTickLabelsWidth(35.0)
 
-        linearYAxis.tickUnitProperty() bindTo (colorMapper.maxValueProperty() - colorMapper.minValueProperty()) / colorMapper.numberOfSegmentsProperty()
+        axis.tickUnitProperty() bindTo (colorMapper.maxValueProperty() - colorMapper.minValueProperty()) / colorMapper.numberOfSegmentsProperty()
     }
 
     private fun lazyConfigWindowInitOwner() {

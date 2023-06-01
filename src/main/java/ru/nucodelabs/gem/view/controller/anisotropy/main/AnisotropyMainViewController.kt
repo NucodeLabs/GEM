@@ -18,6 +18,7 @@ import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
@@ -28,9 +29,11 @@ import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.*
+import ru.nucodelabs.gem.view.controller.tables.STYLE_FOR_FIXED
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.gem.view.mapping.mapAzimuthSignals
 import ru.nucodelabs.gem.view.mapping.mapSignals
+import ru.nucodelabs.gem.view.mapping.mapSignalsRelations
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.bidirectionalNot
 import ru.nucodelabs.kfx.ext.observableListOf
@@ -63,7 +66,40 @@ class AnisotropyMainViewController @Inject constructor(
 ) : AbstractViewController<VBox>() {
 
     @FXML
-    lateinit var vesCurves: LineChart<Number, Number>
+    private lateinit var modelTable: TableView<ObservableModelLayer>
+
+    @FXML
+    private lateinit var modelIndexCol: TableColumn<Any, Int>
+
+    @FXML
+    private lateinit var zCol: TableColumn<ObservableModelLayer, Double>
+
+    @FXML
+    private lateinit var resistanceCol: TableColumn<ObservableModelLayer, Double>
+
+    @FXML
+    private lateinit var powerCol: TableColumn<ObservableModelLayer, Double>
+
+    @FXML
+    private lateinit var theoreticalSignals: SmartInterpolationMap
+
+    @FXML
+    private lateinit var theoreticalSignalsAxisX: NucodeNumberAxis
+
+    @FXML
+    private lateinit var theoreticalSignalsAxisY: NucodeNumberAxis
+
+    @FXML
+    private lateinit var signalsRelation: LineChart<Number, Number>
+
+    @FXML
+    private lateinit var signalsRelationAxisX: NucodeNumberAxis
+
+    @FXML
+    private lateinit var signalsRelationAxisY: NucodeNumberAxis
+
+    @FXML
+    private lateinit var vesCurves: LineChart<Number, Number>
 
     @FXML
     private lateinit var vesCurvesAxisX: NucodeNumberAxis
@@ -137,11 +173,25 @@ class AnisotropyMainViewController @Inject constructor(
 
     private fun initControls() {
         initSignalsMap()
-
-
+        initSignalsRelation()
         initAzimuthDropdown()
         initSignalsTable()
+        initModelTable()
         initVesCurves()
+        initTheoreticalSignals()
+    }
+
+    private fun initSignalsRelation() {
+        signalsRelationAxisX.tickLabelFormatter = formatter
+        signalsRelationAxisY.tickLabelFormatter = formatter
+
+        signalsRelation.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { mapSignalsRelations(appModel.signalsRelations(), df) },
+                appModel.observablePoint.azimuthSignals,
+                appModel.selectedObservableSignalsProperty()
+            )
+        )
     }
 
     private fun initSignalsMap() {
@@ -187,6 +237,21 @@ class AnisotropyMainViewController @Inject constructor(
         )
     }
 
+    private fun initTheoreticalSignals() {
+        theoreticalSignalsAxisX.tickLabelFormatter = formatter
+        theoreticalSignalsAxisY.tickLabelFormatter = formatter
+
+        theoreticalSignals.colorMapper = colorMapper
+        theoreticalSignals.data = mapAzimuthSignals(appModel.theoreticalSignals())
+        theoreticalSignals.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { mapAzimuthSignals(appModel.theoreticalSignals()) },
+                appModel.observablePoint.azimuthSignals,
+            )
+        )
+        theoreticalSignals.installTooltips(::mapTooltipFactory)
+    }
+
     private fun initAzimuthDropdown() {
         azimuthDropdown.converter = object : StringConverter<ObservableAzimuthSignals>() {
             override fun toString(item: ObservableAzimuthSignals?): String {
@@ -208,6 +273,71 @@ class AnisotropyMainViewController @Inject constructor(
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
             appModel.selectedObservableSignals = new
         }
+    }
+
+    private fun initModelTable() {
+        modelTable.itemsProperty().bind(
+            Bindings.createObjectBinding(
+                { appModel.observablePoint.model },
+                appModel.observablePoint.model
+            )
+        )
+        modelIndexCol.cellFactory = indexCellFactory()
+        powerCol.cellValueFactory = Callback { features -> features.value.power.valueProperty() }
+        resistanceCol.cellValueFactory = Callback { features -> features.value.resistance.valueProperty() }
+        zCol.cellFactory = Callback {
+            TableCell<ObservableModelLayer, Double>().apply {
+                textProperty().bind(
+                    Bindings.createStringBinding(
+                        {
+                            if (!isEmpty && index >= 0
+                                && index < appModel.observablePoint.model.size
+                            ) {
+                                df.format(appModel.zOfModelLayers()[index])
+                            } else {
+                                ""
+                            }
+                        },
+                        emptyProperty(),
+                        indexProperty(),
+                        appModel.observablePoint.model
+                    )
+                )
+            }
+        }
+
+        val editableColumns = listOf(
+            powerCol,
+            resistanceCol
+        )
+        editableColumns.forEach {
+            it.cellFactory = Callback { col ->
+                TextFieldTableCell.forTableColumn<ObservableModelLayer, Double>(doubleStringConverter).call(col).apply {
+                    when (col) {
+                        powerCol -> indexProperty().addListener { _, _, _ ->
+                            if (index >= 0 && index <= appModel.observablePoint.model.lastIndex) {
+                                style = if (appModel.observablePoint.model[index].power.isFixed) {
+                                    STYLE_FOR_FIXED
+                                } else {
+                                    ""
+                                }
+                            }
+                        }
+
+                        resistanceCol -> indexProperty().addListener { _, _, _ ->
+                            if (index >= 0 && index <= appModel.observablePoint.model.lastIndex) {
+                                style = if (appModel.observablePoint.model[index].resistance.isFixed) {
+                                    STYLE_FOR_FIXED
+                                } else {
+                                    ""
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun initSignalsTable() {
@@ -338,8 +468,7 @@ class AnisotropyMainViewController @Inject constructor(
         val index = pointIndex / 2
         val ab2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].ab2
         val mn2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].mn2
-        val resistance =
-            appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].resistanceApparent
+        val resistance = point.extraValue as Double
         val azimuth: Double = if (pointIndex % 2 == 0) {
             appModel.observablePoint.azimuthSignals[seriesIndex].azimuth
         } else {
@@ -375,7 +504,6 @@ class AnisotropyMainViewController @Inject constructor(
             """.trimIndent()
         ).forCharts()
     }
-
 
     @FXML
     private fun loadProject() {
@@ -427,5 +555,10 @@ class AnisotropyMainViewController @Inject constructor(
     @FXML
     private fun newProject() {
         appModel.newProject()
+    }
+
+    @FXML
+    private fun inverseSolve() {
+        appModel.inverseSolve()
     }
 }
