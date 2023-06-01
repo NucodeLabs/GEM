@@ -16,7 +16,7 @@ fun forwardSolveAnizotropy(
             azimuthSignals.map { it.azimuth }.toDoubleArray(),
             nSignals,
             azimuthSignals.mapIndexed { index, azimuthSignalsMap ->
-                List(azimuthSignalsMap.signals.effectiveSignals.size) { index + 1 }
+                List(azimuthSignalsMap.signals.effectiveSignals.size) { index }
             }.flatten().map {
                 it.toShort()
             }.toShortArray(),
@@ -35,4 +35,26 @@ fun forwardSolveAnizotropy(
     }
 
     return signalsOut.toMutableList()
+}
+
+fun inverseSolveAnizotropy(
+    azimuthSignals: MutableList<@Valid AzimuthSignals>,
+    model: MutableList<@Valid ModelLayer>,
+    fixKanisotropy_vert: List<Boolean>,
+): MutableList<Double> {
+    val n_azimuth = azimuthSignals.size
+    val signals_azimuth = azimuthSignals.map { it.azimuth }.toDoubleArray()
+    val signals = azimuthSignals.map { it.signals.effectiveSignals }.flatten()
+    val n_signals = signals.size
+    val idx_azimuth = azimuthSignals.mapIndexed { index, azimuthSignalsMap ->
+        List(azimuthSignalsMap.signals.effectiveSignals.size) { index }
+    }.flatten().map {
+        it.toShort()
+    }.toShortArray()
+    val AB2 = signals.map { it.ab2 }
+    val MN2 = signals.map { it.mn2 }
+    val rel_error = signals.map { it.errorResistanceApparent / 100.0 }
+    val n_layers = model.size
+
+    return arrayListOf()
 }

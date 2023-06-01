@@ -113,9 +113,9 @@ class AnizotropyFunctionsKtTest {
         val n_layers: Short = 3
         val h = doubleArrayOf(117.5 / 12.0, 117.5 / 12.0, Double.NaN)
         val ro_avg = doubleArrayOf(27.0, 40.0, 285.0)
-        val kanisotropy_vert = doubleArrayOf(0.0, 0.0, 0.0)
-        val azimuth = doubleArrayOf(0.0, 0.0, 0.0)
-        val kanisotropy_azimuth = doubleArrayOf(0.0, 0.0, 0.0)
+        val kanisotropy_vert = doubleArrayOf(0.2, 0.3, 0.4)
+        val azimuth = doubleArrayOf(0.0, 45.0, 0.0)
+        val kanisotropy_azimuth = doubleArrayOf(1.0, 2.0, 1.0)
 
         val azimuthSignals = arrayListOf<AzimuthSignals>()
         azimuthSignals.add(
