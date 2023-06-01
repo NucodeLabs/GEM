@@ -6,6 +6,7 @@ object ArgNames {
     const val CLR = "CLR"
     const val PRECISE = "Precise"
     const val SAVE = "SAVE"
+    const val DIFF = "DIFF"
 
     object View {
         const val MAIN_VIEW = "MainView"

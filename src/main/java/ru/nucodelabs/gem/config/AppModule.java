@@ -223,6 +223,16 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
+    @Named(ArgNames.DIFF)
+    ColorMapper diffColorMapper(@Named(ArgNames.CLR) File clrFile, Logger log) {
+        ClrParser clrParser = new ClrParser(clrFile);
+        log.info("Colormap CLR file path: " + clrFile.getAbsolutePath());
+        List<ColorNode> valueColorList = clrParser.getColorNodes();
+        return new ColorPalette(valueColorList, 0, 2, 15);
+    }
+
+    @Provides
+    @Singleton
     ForwardSolver forwardSolver() {
         return new SonetForwardSolverAdapter();
     }

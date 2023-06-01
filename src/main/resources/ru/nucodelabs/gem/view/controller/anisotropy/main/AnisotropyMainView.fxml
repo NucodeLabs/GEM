@@ -4,7 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import ru.nucodelabs.gem.view.control.chart.*?>
-<?import ru.nucodelabs.gem.view.control.Placeholder?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
@@ -212,15 +211,16 @@
                                 maxHeight="400"
                                 minWidth="400"
                                 minHeight="400"
-                                legendVisible="false">
+                                legendVisible="false"
+                                fx:id="signalsDifference">
                             <xAxis>
-                                <NucodeNumberAxis autoRanging="true"/>
+                                <NucodeNumberAxis fx:id="signalsDifferenceAxisX" autoRanging="true"/>
                             </xAxis>
                             <yAxis>
-                                <NucodeNumberAxis autoRanging="true"/>
+                                <NucodeNumberAxis fx:id="signalsDifferenceAxisY" autoRanging="true"/>
                             </yAxis>
                         </SmartInterpolationMap>
-                        <Placeholder text="Цветовая шкала"/>
+                        <fx:include source="../../charts/HorizontalColorAxis.fxml" fx:id="signalsDifferenceColorAxis"/>
                     </VBox>
                 </HBox>
                 <VBox maxWidth="Infinity">
@@ -256,6 +256,38 @@
                                     <Label text="%z">
                                         <tooltip>
                                             <Tooltip text="%zFull"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                            <TableColumn fx:id="verticalAnisotropyCoefCol" maxWidth="Infinity" minWidth="20.0"
+                                         prefWidth="100.0"
+                                         sortable="false">
+                                <graphic>
+                                    <Label text="k(V)">
+                                        <tooltip>
+                                            <Tooltip text="Коэффициент вертикальной анизотропии"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                            <TableColumn fx:id="azimuthAnisotropyCoefCol" maxWidth="Infinity" minWidth="20.0"
+                                         prefWidth="100.0"
+                                         sortable="false">
+                                <graphic>
+                                    <Label text="k(A)">
+                                        <tooltip>
+                                            <Tooltip text="Коэффициент азимутальной анизотропии"/>
+                                        </tooltip>
+                                    </Label>
+                                </graphic>
+                            </TableColumn>
+                            <TableColumn fx:id="azimuthCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0"
+                                         sortable="false">
+                                <graphic>
+                                    <Label text="α [°]">
+                                        <tooltip>
+                                            <Tooltip text="Азимутальный угол анизотропии"/>
                                         </tooltip>
                                     </Label>
                                 </graphic>

@@ -58,6 +58,7 @@ class AnisotropyMainViewController @Inject constructor(
     @Named(ArgNames.File.JSON) private val fileChooser: FileChooser,
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
+    @Named(ArgNames.DIFF) private val diffColorMapper: ColorMapper,
     @Named(ArgNames.PRECISE) private val preciseDecimalFormat: DecimalFormat,
     private val df: DecimalFormat,
     private val alertsFactory: AlertsFactory,
@@ -66,7 +67,25 @@ class AnisotropyMainViewController @Inject constructor(
 ) : AbstractViewController<VBox>() {
 
     @FXML
+    private lateinit var signalsDifferenceAxisX: NucodeNumberAxis
+
+    @FXML
+    private lateinit var signalsDifferenceAxisY: NucodeNumberAxis
+
+    @FXML
+    private lateinit var signalsDifference: SmartInterpolationMap
+
+    @FXML
     private lateinit var modelTable: TableView<ObservableModelLayer>
+
+    @FXML
+    private lateinit var azimuthCol: TableColumn<ObservableModelLayer, Double>
+
+    @FXML
+    private lateinit var azimuthAnisotropyCoefCol: TableColumn<ObservableModelLayer, Double>
+
+    @FXML
+    private lateinit var verticalAnisotropyCoefCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
     private lateinit var modelIndexCol: TableColumn<Any, Int>
@@ -179,6 +198,23 @@ class AnisotropyMainViewController @Inject constructor(
         initModelTable()
         initVesCurves()
         initTheoreticalSignals()
+        initSignalsDifference()
+    }
+
+    private fun initSignalsDifference() {
+        signalsDifferenceAxisX.tickLabelFormatter = formatter
+        signalsDifferenceAxisY.tickLabelFormatter = formatter
+
+        signalsDifference.colorMapper = diffColorMapper
+
+        signalsDifference.data = mapAzimuthSignals(appModel.signalsDifference())
+        signalsDifference.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { mapAzimuthSignals(appModel.signalsDifference()) },
+                appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.modelProperty()
+            )
+        )
     }
 
     private fun initSignalsRelation() {
@@ -189,6 +225,7 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { mapSignalsRelations(appModel.signalsRelations(), df) },
                 appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.azimuthSignalsProperty(),
                 appModel.selectedObservableSignalsProperty()
             )
         )
@@ -206,6 +243,7 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { mapAzimuthSignals(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.azimuthSignalsProperty()
             )
         )
 
@@ -233,6 +271,7 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { mapAzimuthSignals(appModel.observablePoint.azimuthSignals) },
                 appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.azimuthSignalsProperty()
             )
         )
     }
@@ -247,6 +286,8 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { mapAzimuthSignals(appModel.theoreticalSignals()) },
                 appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.azimuthSignalsProperty(),
+                appModel.observablePoint.modelProperty()
             )
         )
 //        theoreticalSignals.installTooltips(::mapTooltipFactory)
@@ -267,7 +308,8 @@ class AnisotropyMainViewController @Inject constructor(
         azimuthDropdown.itemsProperty().bind(
             Bindings.createObjectBinding(
                 { appModel.observablePoint.azimuthSignals },
-                appModel.observablePoint.azimuthSignals
+                appModel.observablePoint.azimuthSignals,
+                appModel.observablePoint.azimuthSignalsProperty()
             )
         )
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
@@ -290,6 +332,11 @@ class AnisotropyMainViewController @Inject constructor(
         modelIndexCol.cellFactory = indexCellFactory()
         powerCol.cellValueFactory = Callback { features -> features.value.power.valueProperty() }
         resistanceCol.cellValueFactory = Callback { features -> features.value.resistance.valueProperty() }
+        verticalAnisotropyCoefCol.cellValueFactory =
+            Callback { features -> features.value.verticalAnisotropyCoefficient.valueProperty() }
+        azimuthAnisotropyCoefCol.cellValueFactory =
+            Callback { features -> features.value.azimuthAnisotropyCoefficient.valueProperty() }
+        azimuthCol.cellValueFactory = Callback { features -> features.value.azimuth.valueProperty() }
         zCol.cellFactory = Callback {
             TableCell<ObservableModelLayer, Double>().apply {
                 textProperty().bind(
@@ -313,7 +360,10 @@ class AnisotropyMainViewController @Inject constructor(
 
         val editableColumns = listOf(
             powerCol,
-            resistanceCol
+            resistanceCol,
+            verticalAnisotropyCoefCol,
+            azimuthAnisotropyCoefCol,
+            azimuthCol
         )
         editableColumns.forEach {
             it.cellFactory = Callback { col ->
