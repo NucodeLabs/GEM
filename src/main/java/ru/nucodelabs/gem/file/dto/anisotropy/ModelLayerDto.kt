@@ -7,6 +7,6 @@ data class ModelLayerDto(
     val power: FixableDoubleValueDto,
     val resistance: FixableDoubleValueDto,
     var verticalAnisotropyCoefficient: FixableDoubleValueDto,
-    var azimuth: Double,
+    var azimuth: FixableDoubleValueDto,
     var azimuthAnisotropyCoefficient: FixableDoubleValueDto,
 )

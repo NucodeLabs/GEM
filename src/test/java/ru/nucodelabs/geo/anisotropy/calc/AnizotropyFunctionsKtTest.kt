@@ -2,10 +2,7 @@ package ru.nucodelabs.geo.anisotropy.calc
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.geo.anisotropy.AzimuthSignals
-import ru.nucodelabs.geo.anisotropy.ModelLayer
-import ru.nucodelabs.geo.anisotropy.Signal
-import ru.nucodelabs.geo.anisotropy.Signals
+import ru.nucodelabs.geo.anisotropy.*
 import ru.nucodelabs.mathves.AnizotropyFunctions
 import java.util.*
 
@@ -57,13 +54,11 @@ class AnizotropyFunctionsKtTest {
         for (i in 0 until n_layers) {
             model.add(
                 ModelLayer(
-                    h[i],
-                    ro_avg[i],
-                    false,
-                    false,
-                    kanisotropy_vert[i],
-                    azimuth[i],
-                    kanisotropy_azimuth[i]
+                    FixableValue(h[i], false),
+                    FixableValue(ro_avg[i], false),
+                    FixableValue(kanisotropy_vert[i], false),
+                    FixableValue(azimuth[i], false),
+                    FixableValue(kanisotropy_azimuth[i], false)
                 )
             )
         }
@@ -163,13 +158,11 @@ class AnizotropyFunctionsKtTest {
         for (i in 0 until n_layers) {
             model.add(
                 ModelLayer(
-                    h[i],
-                    ro_avg[i],
-                    false,
-                    false,
-                    kanisotropy_vert[i],
-                    azimuth[i],
-                    kanisotropy_azimuth[i]
+                    FixableValue(h[i], false),
+                    FixableValue(ro_avg[i], false),
+                    FixableValue(kanisotropy_vert[i], false),
+                    FixableValue(azimuth[i], false),
+                    FixableValue(kanisotropy_azimuth[i], false)
                 )
             )
         }

@@ -24,11 +24,11 @@ fun forwardSolveAnizotropy(
             azimuthSignals.map { it.signals.effectiveSignals.map { it.mn2 } }.flatten().toDoubleArray(),
             signalsOut,
             model.size.toShort(),
-            model.map { it.power }.toDoubleArray(),
-            model.map { it.resistance }.toDoubleArray(),
-            model.map { it.verticalAnisotropyCoefficient }.toDoubleArray(),
-            model.map { it.azimuth }.toDoubleArray(),
-            model.map { it.azimuthAnisotropyCoefficient }.toDoubleArray()
+            model.map { it.power.value }.toDoubleArray(),
+            model.map { it.resistance.value }.toDoubleArray(),
+            model.map { it.verticalAnisotropyCoefficient.value }.toDoubleArray(),
+            model.map { it.azimuth.value }.toDoubleArray(),
+            model.map { it.azimuthAnisotropyCoefficient.value }.toDoubleArray()
         ) != 0
     ) {
         throw RuntimeException("forwardSolveAnizotropy error")

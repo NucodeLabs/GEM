@@ -12,6 +12,6 @@ data class ModelLayer(
     var power: FixableValue<Double>,
     var resistance: FixableValue<Double>,
     var verticalAnisotropyCoefficient: FixableValue<Double>,
-    var azimuth: Double,
+    var azimuth: FixableValue<Double>,
     var azimuthAnisotropyCoefficient: FixableValue<Double>,
 )
