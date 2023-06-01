@@ -288,9 +288,6 @@ class AnisotropyMainViewController @Inject constructor(
 
             Platform.runLater {
                 if (mapImage != null) {
-                    signalsMapAxisX.lowerBound = mapImage.xLowerBound
-                    signalsMapAxisX.upperBound = mapImage.xUpperBound
-                    signalsMapAxisX.isForceMarksOnly = true
                     val maxDist =
                         appModel
                             .selectedObservableSignals
@@ -298,6 +295,10 @@ class AnisotropyMainViewController @Inject constructor(
                             ?.sortedSignals
                             ?.get(appModel.selectedObservableSignals!!.signals.sortedSignals.size - 1)
                             ?.ab2
+
+                    signalsMapAxisX.lowerBound = mapImage.xLowerBound
+                    signalsMapAxisX.upperBound = mapImage.xUpperBound
+                    signalsMapAxisX.isForceMarksOnly = true
                     signalsMapAxisX.forceMarks.addAll(calculateTicks(maxDist))
 
                     signalsMapAxisY.lowerBound = mapImage.yLowerBound
@@ -313,16 +314,13 @@ class AnisotropyMainViewController @Inject constructor(
 
     private fun calculateTicks(maxDist: Double?): List<Double> {
         var i = 0.0
-        val step = maxDist?.div(6)?.let { round(it) }
         val values = LinkedList<Double>()
         while (i < maxDist!!) {
             values.add(i)
             if (i != 0.0) {
                 values.add(-i)
             }
-            if (step != null) {
-                i += step
-            }
+            i += 10.0
         }
         values.add(maxDist)
         values.add(-maxDist)
