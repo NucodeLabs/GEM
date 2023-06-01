@@ -134,6 +134,10 @@ class AnisotropyFxAppModel @Inject constructor(
         return selectedAzimuth
     }
 
+    fun experimentalSignals(): List<ObservableSignal> {
+        return selectedObservableSignals?.signals?.effectiveSignals ?: emptyList()
+    }
+
     fun upperErrorBoundSignals(): List<ObservableSignal> {
         val selectedSignals = selectedSignals()
         return selectedSignals?.signals?.effectiveSignals?.map {
