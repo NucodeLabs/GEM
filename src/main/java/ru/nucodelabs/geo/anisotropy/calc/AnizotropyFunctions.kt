@@ -1,15 +1,14 @@
 package ru.nucodelabs.geo.anisotropy.calc
 
-import jakarta.validation.Valid
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.FixableValue
 import ru.nucodelabs.geo.anisotropy.ModelLayer
 import ru.nucodelabs.mathves.AnizotropyFunctions
 
-fun forwardSolveAnizotropy(
-    azimuthSignals: MutableList<@Valid AzimuthSignals>,
-    model: MutableList<@Valid ModelLayer>
-): MutableList<Double> {
+fun forwardSolve(
+    azimuthSignals: MutableList<AzimuthSignals>,
+    model: MutableList<ModelLayer>
+): List<Double> {
     val signalsOut = azimuthSignals.map { it.signals.sortedSignals }.flatten().map { 0.0 }.toDoubleArray()
     val nSignals = signalsOut.size.toShort()
     if (AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
@@ -35,12 +34,12 @@ fun forwardSolveAnizotropy(
         throw RuntimeException("forwardSolveAnizotropy error")
     }
 
-    return signalsOut.toMutableList()
+    return signalsOut.toList()
 }
 
-fun inverseSolveAnizotropy(
-    azimuthSignals: MutableList<@Valid AzimuthSignals>,
-    model: MutableList<@Valid ModelLayer>
+fun inverseSolveInPlace(
+    azimuthSignals: List<AzimuthSignals>,
+    model: List<ModelLayer>
 ) {
     val n_azimuth = azimuthSignals.size.toShort()
     val signals_azimuth = azimuthSignals.map { it.azimuth }.toDoubleArray()
@@ -104,10 +103,10 @@ fun inverseSolveAnizotropy(
     }
 }
 
-fun startModelAnizotropy(
-    models: MutableList<MutableList<@Valid ru.nucodelabs.geo.ves.ModelLayer>>,
-    azimuths: MutableList<Double>
-): MutableList<ModelLayer> {
+fun convertModel(
+    models: List<List<ru.nucodelabs.geo.ves.ModelLayer>>,
+    azimuths: List<Double>
+): List<ModelLayer> {
     val singleLayer = models.first()
     val allLayers = models.flatten()
 

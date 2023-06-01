@@ -63,7 +63,7 @@ class AnizotropyFunctionsKtTest {
             )
         }
 
-        val signalsOut = forwardSolveAnizotropy(azimuthSignals, model)
+        val signalsOut = forwardSolve(azimuthSignals, model)
         println(signalsOut)
 
         AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
@@ -167,7 +167,7 @@ class AnizotropyFunctionsKtTest {
             )
         }
 
-        val signalsOut = forwardSolveAnizotropy(azimuthSignals, model)
+        val signalsOut = forwardSolve(azimuthSignals, model)
         println(signalsOut)
 
         AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
