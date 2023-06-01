@@ -39,7 +39,7 @@ fun mapAzimuthSignals(azimuthSignals: ObservableList<ObservableAzimuthSignals>):
 fun mapSignals(signals: List<ObservableSignal>): Series<Number, Number> {
     return Series(
         signals.map {
-            Data(it.ab2 as Number, it.resistanceApparent as Number).apply {
+            Data(it.ab2 as Number, it.resistanceApparent as Number, it).apply {
                 XValueProperty().bind(it.ab2Property())
                 YValueProperty().bind(it.resistanceApparentProperty())
             }

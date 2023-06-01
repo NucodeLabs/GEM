@@ -75,10 +75,10 @@
                         <Label styleClass="chart-label">Кривые ВЭЗ</Label>
                         <LineChart fx:id="vesCurves" maxWidth="Infinity" HBox.hgrow="ALWAYS" animated="false">
                             <xAxis>
-                                <NumberAxis autoRanging="true"/>
+                                <NucodeNumberAxis autoRanging="true" fx:id="vesCurvesAxisX"/>
                             </xAxis>
                             <yAxis>
-                                <NumberAxis autoRanging="true"/>
+                                <NucodeNumberAxis autoRanging="true" fx:id="vesCurvesAxisY"/>
                             </yAxis>
                         </LineChart>
                     </VBox>

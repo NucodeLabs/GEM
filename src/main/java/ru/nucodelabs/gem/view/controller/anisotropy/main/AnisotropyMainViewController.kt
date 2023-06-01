@@ -17,12 +17,13 @@ import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
+import ru.nucodelabs.gem.fxmodel.exception.validation
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.gem.util.fx.forCharts
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -65,7 +66,13 @@ class AnisotropyMainViewController @Inject constructor(
     lateinit var vesCurves: LineChart<Number, Number>
 
     @FXML
-    lateinit var azimuthDropdown: ComboBox<Double>
+    private lateinit var vesCurvesAxisX: NucodeNumberAxis
+
+    @FXML
+    private lateinit var vesCurvesAxisY: NucodeNumberAxis
+
+    @FXML
+    lateinit var azimuthDropdown: ComboBox<ObservableAzimuthSignals>
 
     @FXML
     private lateinit var transparencySlider: Slider
@@ -158,8 +165,8 @@ class AnisotropyMainViewController @Inject constructor(
         signalsMap.colorMapper = colorMapper
         signalsInterpolation.colorMapper = colorMapper
 
-        signalsMap.installTooltips(::tooltipFactory)
-        signalsInterpolation.installTooltips(::tooltipFactory)
+        signalsMap.installTooltips(::mapTooltipFactory)
+        signalsInterpolation.installTooltips(::mapTooltipFactory)
         signalsMap.canvasBlendMode = MapOverlayType.OVERLAY.fxMode
         signalsMap.canvasBlendModeProperty().bind(
             Bindings.createObjectBinding(
@@ -169,22 +176,37 @@ class AnisotropyMainViewController @Inject constructor(
         )
         transparencySlider.value = DEFAULT_TRANSPARENCY
         signalsMap.canvasOpacityProperty().bind(transparencySlider.valueProperty().asObject())
+
+        signalsInterpolation.data = mapAzimuthSignals(appModel.observablePoint.azimuthSignals)
+
+        signalsInterpolation.dataProperty().bind(
+            Bindings.createObjectBinding(
+                { mapAzimuthSignals(appModel.observablePoint.azimuthSignals) },
+                appModel.observablePoint.azimuthSignals,
+            )
+        )
     }
 
     private fun initAzimuthDropdown() {
-        azimuthDropdown.converter = doubleStringConverter
-        azimuthDropdown.items = appModel.observablePoint.azimuthSignals.map { it.azimuth }.toObservableList()
+        azimuthDropdown.converter = object : StringConverter<ObservableAzimuthSignals>() {
+            override fun toString(item: ObservableAzimuthSignals?): String {
+                return df.format(item?.azimuth ?: 0.0)
+            }
+
+            override fun fromString(string: String?): ObservableAzimuthSignals {
+                throw IllegalStateException()
+            }
+        }
+
+        azimuthDropdown.items = appModel.observablePoint.azimuthSignals
         azimuthDropdown.itemsProperty().bind(
             Bindings.createObjectBinding(
-                { appModel.observablePoint.azimuthSignals.map { it.azimuth }.toObservableList() },
+                { appModel.observablePoint.azimuthSignals },
                 appModel.observablePoint.azimuthSignals
             )
         )
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
-            appModel.selectAzimuth(new ?: 0.0)
-        }
-        azimuthDropdown.itemsProperty().addListener { _, _, _ ->
-            azimuthDropdown.selectionModel.selectFirst()
+            appModel.selectedObservableSignals = new
         }
     }
 
@@ -196,12 +218,17 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { appModel.selectedObservableSignals?.signals?.sortedSignals ?: observableListOf() },
                 appModel.observablePoint.azimuthSignals,
-                appModel.selectedAzimuthProperty()
+                appModel.selectedObservableSignalsProperty()
             )
         )
     }
 
     private fun initVesCurves() {
+        vesCurves.installTooltips(::vesCurvesTooltipFactory)
+
+        vesCurvesAxisX.tickLabelFormatter = formatter
+        vesCurvesAxisY.tickLabelFormatter = formatter
+
         vesCurves.installLegendStyleAccordingToSeries()
         vesCurves.data = observableListOf(
             mapSignals(appModel.selectedObservableSignals?.signals?.effectiveSignals ?: emptyList())
@@ -210,7 +237,7 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 {
                     observableListOf(
-                        mapSignals(appModel.selectedObservableSignals?.signals?.effectiveSignals ?: emptyList()).apply {
+                        mapSignals(appModel.experimentalSignals()).apply {
                             name = EXP_SIGNALS
                             lineStyle(Style.Class.TRANSPARENT_LINE)
                             symbolStyle(Style.Class.EXP_SYMBOL)
@@ -228,7 +255,7 @@ class AnisotropyMainViewController @Inject constructor(
                     )
                 },
                 appModel.observablePoint.azimuthSignals,
-                appModel.selectedAzimuthProperty()
+                appModel.selectedObservableSignalsProperty()
             )
         )
 
@@ -263,15 +290,6 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun initAndSetupListeners() {
-        signalsInterpolation.data = mapAzimuthSignals(appModel.observablePoint.azimuthSignals)
-
-        signalsInterpolation.dataProperty().bind(
-            Bindings.createObjectBinding(
-                { mapAzimuthSignals(appModel.observablePoint.azimuthSignals) },
-                appModel.observablePoint.azimuthSignals,
-            )
-        )
-
         updatePointCenterTextFields()
         updateSignalsMapImage()
         appModel.observablePoint.centerProperty().addListener { _, _, _ ->
@@ -311,14 +329,15 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun tooltipFactory(
+    private fun mapTooltipFactory(
         seriesIndex: Int,
         series: XYChart.Series<Number, Number>,
         pointIndex: Int,
         point: XYChart.Data<Number, Number>
     ): Tooltip {
         val index = pointIndex / 2
-        val azimuthSignal = appModel.observablePoint.azimuthSignals[0].signals.sortedSignals[index].ab2
+        val ab2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].ab2
+        val mn2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].mn2
         val resistance =
             appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].resistanceApparent
         val azimuth: Double = if (pointIndex % 2 == 0) {
@@ -328,19 +347,45 @@ class AnisotropyMainViewController @Inject constructor(
         }
         val tooltipText = """
             № ${index + 1}
-            AB/2 = ${df.format(azimuthSignal)} m
+            AB/2 = ${df.format(ab2)} m
+            MN/2 = ${df.format(mn2)} m
             ρₐ = ${df.format(resistance)} Ω‧m
             Азимут = ${df.format(azimuth)} °
         """.trimIndent()
         return Tooltip(tooltipText).forCharts()
     }
 
+    private fun vesCurvesTooltipFactory(
+        seriesIndex: Int,
+        series: XYChart.Series<Number, Number>,
+        pointIndex: Int,
+        point: XYChart.Data<Number, Number>
+    ): Tooltip {
+        val signal = point.extraValue as ObservableSignal
+        val ab2 = signal.ab2
+        val mn2 = signal.mn2
+        val resistance = signal.resistanceApparent
+
+        return Tooltip(
+            """
+                № ${pointIndex + 1}
+                AB/2 = ${df.format(ab2)} m
+                MN/2 = ${df.format(mn2)} m
+                ρₐ = ${df.format(resistance)} Ω‧m
+            """.trimIndent()
+        ).forCharts()
+    }
+
+
     @FXML
     private fun loadProject() {
         val file: File? = fileChooser.showOpenDialog(stage)
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
-            appModel.loadProject(file)
+            validation(alertsFactory) {
+                appModel.loadProject(file)
+                azimuthDropdown.selectionModel.selectFirst()
+            }
         }
     }
 
@@ -363,10 +408,8 @@ class AnisotropyMainViewController @Inject constructor(
         }
 
         if (newLatitude != null && newLongitude != null) {
-            try {
+            validation(alertsFactory) {
                 appModel.editCenter(ObservableWgs(newLongitude, newLatitude))
-            } catch (e: Exception) {
-                alertsFactory.simpleExceptionAlert(e).show()
             }
         }
     }
