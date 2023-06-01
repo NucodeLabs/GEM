@@ -41,6 +41,7 @@ import java.util.prefs.Preferences
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.concurrent.thread
+import kotlin.math.round
 
 private const val MAP_IMAGE_SIZE = 350
 private const val DEFAULT_MAP_IMAGE_SCALE = 1.0
@@ -289,20 +290,43 @@ class AnisotropyMainViewController @Inject constructor(
                 if (mapImage != null) {
                     signalsMapAxisX.lowerBound = mapImage.xLowerBound
                     signalsMapAxisX.upperBound = mapImage.xUpperBound
-
-                    signalsMapAxisX.forceMarks.add(0.0)
-                    signalsMapAxisX.forceMarks.add(0.0)
+                    signalsMapAxisX.isForceMarksOnly = true
+                    val maxDist =
+                        appModel
+                            .selectedObservableSignals
+                            ?.signals
+                            ?.sortedSignals
+                            ?.get(appModel.selectedObservableSignals!!.signals.sortedSignals.size - 1)
+                            ?.ab2
+                    signalsMapAxisX.forceMarks.addAll(calculateTicks(maxDist))
 
                     signalsMapAxisY.lowerBound = mapImage.yLowerBound
                     signalsMapAxisY.upperBound = mapImage.yUpperBound
-
-                    signalsMapAxisY.forceMarks.add(0.0)
-                    signalsMapAxisY.forceMarks.add(0.0)
+                    signalsMapAxisY.isForceMarksOnly = true
+                    signalsMapAxisY.forceMarks.addAll(calculateTicks(maxDist))
                 }
 
                 signalsMap.image = mapImage?.image
             }
         }
+    }
+
+    private fun calculateTicks(maxDist: Double?): List<Double> {
+        var i = 0.0
+        val step = maxDist?.div(6)?.let { round(it) }
+        val values = LinkedList<Double>()
+        while (i < maxDist!!) {
+            values.add(i)
+            if (i != 0.0) {
+                values.add(-i)
+            }
+            if (step != null) {
+                i += step
+            }
+        }
+        values.add(maxDist)
+        values.add(-maxDist)
+        return values
     }
 
     private fun updatePointCenterTextFields() {
