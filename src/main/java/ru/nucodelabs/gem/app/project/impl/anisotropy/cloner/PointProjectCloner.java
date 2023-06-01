@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.control.DeepClone;
 import ru.nucodelabs.gem.app.project.Project;
-import ru.nucodelabs.geo.anisotropy.ModelLayer;
+import ru.nucodelabs.geo.anisotropy.FixableValue;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.geo.anisotropy.Signal;
 import ru.nucodelabs.geo.anisotropy.Signals;
@@ -23,9 +23,8 @@ public abstract class PointProjectCloner {
     @Mapping(target = "isHidden", source = "hidden")
     protected abstract Signal cloneSignal(Signal signal);
 
-    @Mapping(target = "isFixedPower", source = "fixedPower")
-    @Mapping(target = "isFixedResistance", source = "fixedResistance")
-    protected abstract ModelLayer cloneLayer(ModelLayer layer);
+    @Mapping(target = "isFixed", source = "fixed")
+    protected abstract FixableValue<Double> cloneFixableValue(FixableValue<Double> fixableValue);
 
     protected Signals cloneSignals(Signals signals) {
         return new Signals(

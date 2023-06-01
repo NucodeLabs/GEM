@@ -1,12 +1,13 @@
 package ru.nucodelabs.geo.ves.calc.initialModel
 
-import ru.nucodelabs.geo.target.SquareDiffTargetFunction
+import ru.nucodelabs.geo.forward.ForwardSolver
+import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter
 import ru.nucodelabs.geo.target.TargetFunction
-import ru.nucodelabs.geo.target.invoke
+import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.divide
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.geo.ves.calc.inverse.invoke
 import kotlin.math.log2
@@ -27,20 +28,20 @@ private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
 // сопр среднее по логарифму, потом обратно в степень, с 1 слоем
 
 fun multiLayerInitialModel(
-        signals: List<ExperimentalData>,
-        initialModel: List<ModelLayer> = initialModel(signals),
-        forwardSolver: ForwardSolver = ForwardSolver(),
-        targetFunction: TargetFunction.WithError = SquareDiffTargetFunction(),
-        inverseSolver: InverseSolver = InverseSolver(forwardSolver, targetFunction),
-        maxLayersCount: Int = MAX_LAYERS_COUNT,
-        maxEval: Int = MAX_EVAL_INVERSE,
-        minTargetFunctionValue: Double = MIN_TARGET_FUNCTION_VALUE,
-        breakAfterFoundResult: Boolean = true,
-        iterationInterceptor: (
-                model: List<ModelLayer>,
-                targetFunctionValue: Double,
-                isResult: Boolean,
-        ) -> Unit = { _, _, _ -> },
+    signals: List<ExperimentalData>,
+    initialModel: List<ModelLayer> = initialModel(signals),
+    forwardSolver: ForwardSolver = SonetForwardSolverAdapter(),
+    targetFunction: TargetFunction.WithError = SquareDiffTargetFunction(),
+    inverseSolver: InverseSolver = InverseSolver(forwardSolver, targetFunction),
+    maxLayersCount: Int = MAX_LAYERS_COUNT,
+    maxEval: Int = MAX_EVAL_INVERSE,
+    minTargetFunctionValue: Double = MIN_TARGET_FUNCTION_VALUE,
+    breakAfterFoundResult: Boolean = true,
+    iterationInterceptor: (
+        model: List<ModelLayer>,
+        targetFunctionValue: Double,
+        isResult: Boolean,
+    ) -> Unit = { _, _, _ -> },
 ): List<ModelLayer> {
     var model = initialModel
     val initialLayersCount = model.size

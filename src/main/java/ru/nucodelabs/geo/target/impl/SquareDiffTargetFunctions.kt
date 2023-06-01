@@ -1,13 +1,14 @@
-package ru.nucodelabs.geo.target
+package ru.nucodelabs.geo.target.impl
 
 import ru.nucodelabs.gem.util.std.fromPercent
+import ru.nucodelabs.geo.target.TargetFunction
 import kotlin.math.pow
 
 /**
  *
  */
 class SquareDiffTargetFunction : TargetFunction.WithError {
-    override fun apply(theoretical: List<Double>, experimental: List<Double>, relativeError: List<Double>): Double {
+    override fun invoke(theoretical: List<Double>, experimental: List<Double>, relativeError: List<Double>): Double {
         check(theoretical.size == experimental.size && experimental.size == relativeError.size) {
             "Lists sizes must be equal"
         }

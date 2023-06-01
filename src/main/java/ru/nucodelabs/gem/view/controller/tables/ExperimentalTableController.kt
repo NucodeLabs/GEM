@@ -30,6 +30,8 @@ import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController
+import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
+import ru.nucodelabs.gem.view.controller.util.indexCellFactory
 import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.*
 import java.net.URL

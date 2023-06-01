@@ -8,10 +8,10 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
+import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.TargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
 import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.FunctionValue;
 
 import javax.inject.Inject;

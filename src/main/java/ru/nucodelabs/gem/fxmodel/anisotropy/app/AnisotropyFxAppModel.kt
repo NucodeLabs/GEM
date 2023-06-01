@@ -1,14 +1,22 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import jakarta.validation.Validator
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.SimpleDoubleProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
+import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
+import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentLowerBoundByError
+import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -20,13 +28,28 @@ class AnisotropyFxAppModel @Inject constructor(
     private val projectFileService: ProjectFileService<Point>,
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
-    private val reloadService: ReloadService<Point>
+    private val reloadService: ReloadService<Point>,
+    private val forwardSolver: ForwardSolver,
 ) {
 
     private val project by projectContext::project
     private val point by project::data
 
     val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
+
+    private val selectedAzimuthProperty: DoubleProperty = SimpleDoubleProperty(0.0)
+    fun selectedAzimuthProperty(): ReadOnlyDoubleProperty = selectedAzimuthProperty
+    var selectedAzimuth: Double
+        get() = selectedAzimuthProperty.get()
+        private set(value) = selectedAzimuthProperty.set(value)
+
+    val selectedObservableSignals
+        get() = observablePoint.azimuthSignals.find { it.azimuth == selectedAzimuth }
+
+
+    private fun selectedSignals(): AzimuthSignals? {
+        return point.azimuthSignals.find { it.azimuth == selectedAzimuth }
+    }
 
     private fun updateObservable() {
         fxModelMapper.updateObservable(observablePoint, point)
@@ -84,7 +107,7 @@ class AnisotropyFxAppModel @Inject constructor(
     }
 
     /**
-     * Возвращает тот же объект, если значения валиды, IllegalStateException иначе
+     * Возвращает тот же объект, если значения валидно, IllegalStateException иначе
      */
     private fun <T> T.validated(): T {
         val violations = validator.validate(this)
@@ -102,6 +125,31 @@ class AnisotropyFxAppModel @Inject constructor(
     fun redo() {
         historyManager.redo()
         updateObservable()
+    }
+
+    fun selectAzimuth(new: Double): Double {
+        if (point.azimuthSignals.any { it.azimuth == new }) {
+            selectedAzimuth = new
+        }
+        return selectedAzimuth
+    }
+
+    fun upperErrorBoundSignals(): List<ObservableSignal> {
+        val selectedSignals = selectedSignals()
+        return selectedSignals?.signals?.effectiveSignals?.map {
+            it.copy(resistanceApparent = it.resistanceApparentUpperBoundByError)
+        }?.map {
+            fxModelMapper.toObservable(it)
+        } ?: emptyList()
+    }
+
+    fun lowerErrorBoundSignals(): List<ObservableSignal> {
+        val selectedSignals = selectedSignals()
+        return selectedSignals?.signals?.effectiveSignals?.map {
+            it.copy(resistanceApparent = it.resistanceApparentLowerBoundByError)
+        }?.map {
+            fxModelMapper.toObservable(it)
+        } ?: emptyList()
     }
 
     companion object Defaults {

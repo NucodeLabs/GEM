@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ModelLayerDto(
-    val power: Double,
-    val resistance: Double,
-    val isFixedPower: Boolean?,
-    val isFixedResistance: Boolean?,
-    var verticalAnisotropyCoefficient: Double,
+    val power: FixableDoubleValueDto,
+    val resistance: FixableDoubleValueDto,
+    var verticalAnisotropyCoefficient: FixableDoubleValueDto,
     var azimuth: Double,
-    var azimuthAnisotropyCoefficient: Double,
+    var azimuthAnisotropyCoefficient: FixableDoubleValueDto,
 )

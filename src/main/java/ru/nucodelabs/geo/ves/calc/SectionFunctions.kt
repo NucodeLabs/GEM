@@ -29,13 +29,13 @@ fun Section.picketsBounds(): List<Bounds> {
     }
 
     val res = mutableListOf<Bounds>()
-    var x = -maxAb2
+    var x = -pickets[1].offsetX / 2
     for (i in pickets.indices) {
         val leftX = x
         val rightX = if (i != pickets.lastIndex) {
             xOfPicket(i) + pickets[i + 1].offsetX / 2
         } else {
-            xOfPicket(i) + (pickets.last().sortedExperimentalData.maxOfOrNull { it.ab2 } ?: 0.0)
+            xOfPicket(i) + (pickets[i - 1].offsetX / 2)
         }
         res += Bounds(leftX, rightX)
         x = rightX
