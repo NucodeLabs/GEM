@@ -2,6 +2,7 @@ package ru.nucodelabs.geo.anisotropy.calc
 
 import jakarta.validation.Valid
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
+import ru.nucodelabs.geo.anisotropy.FixableValue
 import ru.nucodelabs.geo.anisotropy.ModelLayer
 import ru.nucodelabs.mathves.AnizotropyFunctions
 
@@ -101,4 +102,54 @@ fun inverseSolveAnizotropy(
         layer.azimuth.value = azimuth[i]
         layer.azimuthAnisotropyCoefficient.value = kanisotropy_azimuth[i]
     }
+}
+
+fun startModelAnizotropy(
+    models: MutableList<MutableList<@Valid ru.nucodelabs.geo.ves.ModelLayer>>,
+    azimuths: MutableList<Double>
+): MutableList<ModelLayer> {
+    val singleLayer = models.first()
+    val allLayers = models.flatten()
+
+    val n_layers = singleLayer.size
+    val h = singleLayer.map { it.power }.toDoubleArray()
+    val n_model = models.size
+    val model_azimuth = azimuths.toDoubleArray()
+    val ro_isotrop = allLayers.map { it.resistance }.toDoubleArray()
+
+    val ro_avg = List(n_layers) { 0.0 }.toDoubleArray()
+    val kanisotropy_vert = List(n_layers) { 0.0 }.toDoubleArray()
+    val azimuth = List(n_layers) { 0.0 }.toDoubleArray()
+    val kanisotropy_azimuth = List(n_layers) { 0.0 }.toDoubleArray()
+
+    val errorCode = AnizotropyFunctions.startModelWithAzimuthFromIsotrop(
+        n_layers.toShort(),
+        h,
+        n_model.toShort(),
+        model_azimuth,
+        ro_isotrop,
+        ro_avg,
+        kanisotropy_vert,
+        azimuth,
+        kanisotropy_azimuth
+    )
+
+    if (errorCode != 0) {
+        throw RuntimeException("inverseSolveAnizotropy error code is $errorCode")
+    }
+
+    val anizotropyModel: MutableList<ModelLayer> = arrayListOf()
+    for (i in 0 until n_layers) {
+        anizotropyModel.add(
+            ModelLayer(
+                power = FixableValue(h[i], false),
+                resistance = FixableValue(ro_avg[i], false),
+                verticalAnisotropyCoefficient = FixableValue(kanisotropy_vert[i], false),
+                azimuth = FixableValue(azimuth[i], false),
+                azimuthAnisotropyCoefficient = FixableValue(kanisotropy_azimuth[i], false)
+            )
+        )
+    }
+
+    return anizotropyModel
 }
