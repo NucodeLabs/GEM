@@ -3,25 +3,28 @@ package ru.nucodelabs.geo.anisotropy.calc
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.FixableValue
 import ru.nucodelabs.geo.anisotropy.ModelLayer
+import ru.nucodelabs.geo.anisotropy.Signals
 import ru.nucodelabs.mathves.AnizotropyFunctions
 
 fun forwardSolve(
-    azimuthSignals: MutableList<AzimuthSignals>,
+    azimuthSignalsList: MutableList<AzimuthSignals>,
     model: MutableList<ModelLayer>
-): List<Double> {
-    val signalsOut = azimuthSignals.map { it.signals.sortedSignals }.flatten().map { 0.0 }.toDoubleArray()
+): List<AzimuthSignals> {
+    val signalsOut = azimuthSignalsList.map { it.signals.effectiveSignals }.flatten().map { 0.0 }.toDoubleArray()
     val nSignals = signalsOut.size.toShort()
     if (AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
-            azimuthSignals.size.toShort(),
-            azimuthSignals.map { it.azimuth }.toDoubleArray(),
+            azimuthSignalsList.size.toShort(),
+            azimuthSignalsList.map { it.azimuth }.toDoubleArray(),
             nSignals,
-            azimuthSignals.mapIndexed { index, azimuthSignalsMap ->
+            azimuthSignalsList.mapIndexed { index, azimuthSignalsMap ->
                 List(azimuthSignalsMap.signals.effectiveSignals.size) { index }
             }.flatten().map {
                 it.toShort()
             }.toShortArray(),
-            azimuthSignals.map { it.signals.effectiveSignals.map { it.ab2 } }.flatten().toDoubleArray(),
-            azimuthSignals.map { it.signals.effectiveSignals.map { it.mn2 } }.flatten().toDoubleArray(),
+            azimuthSignalsList.map { azimuthSignals -> azimuthSignals.signals.effectiveSignals.map { it.ab2 } }
+                .flatten().toDoubleArray(),
+            azimuthSignalsList.map { azimuthSignals -> azimuthSignals.signals.effectiveSignals.map { it.mn2 } }
+                .flatten().toDoubleArray(),
             signalsOut,
             model.size.toShort(),
             model.map { it.power.value }.toDoubleArray(),
@@ -34,7 +37,18 @@ fun forwardSolve(
         throw RuntimeException("forwardSolveAnizotropy error")
     }
 
-    return signalsOut.toList()
+    var i = 0
+    return azimuthSignalsList.map {
+        it.copy(
+            signals = Signals(
+                it.signals.sortedSignals.map { signal ->
+                    val new = signal.copy(resistanceApparent = signalsOut[i])
+                    i++
+                    new
+                }
+            )
+        )
+    }
 }
 
 fun inverseSolveInPlace(
