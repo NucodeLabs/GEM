@@ -56,17 +56,17 @@ fun inverseSolveAnizotropy(
     val rel_error = signals.map { it.errorResistanceApparent / 100.0 }.toDoubleArray()
 
     val n_layers = model.size.toShort()
-    val fix_h = model.map { if (it.power.isFixed == true) 1.toByte() else 0.toByte() }.toByteArray()
+    val fix_h = model.map { if (it.power.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val h = model.map { it.power.value }.toDoubleArray()
-    val fix_ro = model.map { if (it.resistance.isFixed == true) 1.toByte() else 0.toByte() }.toByteArray()
+    val fix_ro = model.map { if (it.resistance.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val ro_avg = model.map { it.resistance.value }.toDoubleArray()
     val fix_kanisotropy_vert =
-        model.map { if (it.verticalAnisotropyCoefficient.isFixed == true) 1.toByte() else 0.toByte() }.toByteArray()
+        model.map { if (it.verticalAnisotropyCoefficient.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val kanisotropy_vert = model.map { it.verticalAnisotropyCoefficient.value }.toDoubleArray()
-    val fix_azimuth = model.map { if (it.azimuth.isFixed == true) 1.toByte() else 0.toByte() }.toByteArray()
+    val fix_azimuth = model.map { if (it.azimuth.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val azimuth = model.map { it.azimuth.value }.toDoubleArray()
     val fix_kanisotropy_azimuth =
-        model.map { if (it.azimuthAnisotropyCoefficient.isFixed == true) 1.toByte() else 0.toByte() }.toByteArray()
+        model.map { if (it.azimuthAnisotropyCoefficient.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val kanisotropy_azimuth = model.map { it.azimuthAnisotropyCoefficient.value }.toDoubleArray()
 
     val errorCode = AnizotropyFunctions.inversionWithAzimuthSchlumberger(
