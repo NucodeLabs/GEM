@@ -249,7 +249,7 @@ class AnisotropyMainViewController @Inject constructor(
                 appModel.observablePoint.azimuthSignals,
             )
         )
-        theoreticalSignals.installTooltips(::mapTooltipFactory)
+//        theoreticalSignals.installTooltips(::mapTooltipFactory)
     }
 
     private fun initAzimuthDropdown() {
@@ -273,6 +273,11 @@ class AnisotropyMainViewController @Inject constructor(
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
             appModel.selectedObservableSignals = new
         }
+        appModel.observablePoint.azimuthSignals.addListener(ListChangeListener {
+            while (it.next()) {
+                azimuthDropdown.selectionModel.selectFirst()
+            }
+        })
     }
 
     private fun initModelTable() {

@@ -3,11 +3,12 @@ package ru.nucodelabs.gem.view.controller.charts
 import javafx.beans.property.ObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.geometry.Side
 import javafx.scene.chart.XYChart.Data
 import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
-import javafx.scene.layout.VBox
+import javafx.scene.layout.Pane
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
@@ -20,7 +21,7 @@ import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
 import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
-import ru.nucodelabs.gem.view.controller.AbstractController
+import ru.nucodelabs.kfx.core.AbstractViewController
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
@@ -38,13 +39,10 @@ class ColorAxisController @Inject constructor(
     private val decimalFormat: DecimalFormat,
     @Named(ArgNames.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
-) : AbstractController() {
+) : AbstractViewController<Pane>() {
 
     private val minAndMaxRange = 0.1..100_000.0
     private val segmentsRange = 2..100
-
-    @FXML
-    private lateinit var root: VBox
 
     @FXML
     private lateinit var configWindow: Stage
@@ -79,9 +77,6 @@ class ColorAxisController @Inject constructor(
     @FXML
     private lateinit var logChart: PolygonChart
 
-    override val stage: Stage?
-        get() = root.scene.window as Stage?
-
     override fun initialize(location: URL, resources: ResourceBundle) {
         fileLbl.text = "Цветовая схема: ${clrFile.path}"
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
@@ -106,6 +101,10 @@ class ColorAxisController @Inject constructor(
         setupCharts()
         setupAxes()
         update()
+    }
+
+    private fun isVerticalAxis(): Boolean {
+        return axis.side == Side.LEFT || axis.side == Side.RIGHT
     }
 
     private fun setupAxes() {
@@ -193,12 +192,21 @@ class ColorAxisController @Inject constructor(
         with(if (isLogChkBox.isSelected) logChart else linearChart) {
             data.setAll(colorMapper.segments.map {
                 Series(
-                    observableListOf(
-                        Data(0.0, it.from),
-                        Data(100.0, it.from),
-                        Data(100.0, it.to),
-                        Data(0.0, it.to)
-                    )
+                    if (isVerticalAxis()) {
+                        observableListOf(
+                            Data(0.0, it.from),
+                            Data(100.0, it.from),
+                            Data(100.0, it.to),
+                            Data(0.0, it.to)
+                        )
+                    } else {
+                        observableListOf(
+                            Data(it.from, 0.0),
+                            Data(it.from, 100.0),
+                            Data(it.to, 100.0),
+                            Data(it.to, 0.0)
+                        )
+                    }
                 ) as Series<Number, Number>
                 // safe upcast Double : Number
             }.toObservableList())

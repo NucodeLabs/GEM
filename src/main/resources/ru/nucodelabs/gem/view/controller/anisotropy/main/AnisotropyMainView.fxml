@@ -202,7 +202,7 @@
                                 </SmartInterpolationMap>
                             </VBox>
                         </HBox>
-                        <Placeholder text="Цветовая шкала"/>
+                        <fx:include source="../../charts/HorizontalColorAxis.fxml"/>
                     </VBox>
                     <VBox alignment="TOP_CENTER">
                         <Label minWidth="30" textAlignment="CENTER" alignment="CENTER" wrapText="true"

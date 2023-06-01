@@ -99,9 +99,10 @@ class AnisotropyFxAppModel @Inject constructor(
 
     fun editCenter(center: ObservableWgs) {
         val newCenter = fxModelMapper.toModel(center).validated()
-        modelModification {
-            it.center = newCenter
+        historyManager.snapshotAfter {
+            point.center = newCenter
         }
+        observablePoint.center = center
     }
 
     /**
