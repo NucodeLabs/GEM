@@ -208,9 +208,6 @@ class AnisotropyMainViewController @Inject constructor(
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
             appModel.selectedObservableSignals = new
         }
-        azimuthDropdown.itemsProperty().addListener { _, _, _ ->
-            azimuthDropdown.selectionModel.selectFirst()
-        }
     }
 
     private fun initSignalsTable() {
@@ -239,7 +236,6 @@ class AnisotropyMainViewController @Inject constructor(
         vesCurves.dataProperty().bind(
             Bindings.createObjectBinding(
                 {
-                    println("TRIGGERED")
                     observableListOf(
                         mapSignals(appModel.experimentalSignals()).apply {
                             name = EXP_SIGNALS
