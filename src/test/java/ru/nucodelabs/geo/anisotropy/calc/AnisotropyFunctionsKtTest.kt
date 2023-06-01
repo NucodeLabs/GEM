@@ -6,7 +6,7 @@ import ru.nucodelabs.geo.anisotropy.*
 import ru.nucodelabs.mathves.AnizotropyFunctions
 import java.util.*
 
-class AnizotropyFunctionsKtTest {
+class AnisotropyFunctionsKtTest {
     @Test
     fun forwardSolveAnizotropy() {
         val n_azimuth: Short = 1
@@ -110,7 +110,7 @@ class AnizotropyFunctionsKtTest {
         val ro_avg = doubleArrayOf(27.0, 40.0, 285.0)
         val kanisotropy_vert = doubleArrayOf(0.2, 0.3, 0.4)
         val azimuth = doubleArrayOf(0.0, 45.0, 0.0)
-        val kanisotropy_azimuth = doubleArrayOf(1.0, 2.0, 1.0)
+        val kanisotropy_azimuth = doubleArrayOf(0.0, 0.0, 0.0)
 
         val azimuthSignals = arrayListOf<AzimuthSignals>()
         azimuthSignals.add(
