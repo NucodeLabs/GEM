@@ -1,12 +1,12 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
 import jakarta.validation.Validator
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.ReadOnlyDoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectFileService
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
@@ -17,6 +17,8 @@ import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.kfx.ext.getValue
+import ru.nucodelabs.kfx.ext.setValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -36,17 +38,14 @@ class AnisotropyFxAppModel @Inject constructor(
 
     val observablePoint: ObservablePoint = fxModelMapper.toObservable(point)
 
-    private val selectedAzimuthProperty: DoubleProperty = SimpleDoubleProperty(0.0)
-    fun selectedAzimuthProperty(): ReadOnlyDoubleProperty = selectedAzimuthProperty
-    var selectedAzimuth: Double
-        get() = selectedAzimuthProperty.get()
-        private set(value) = selectedAzimuthProperty.set(value)
+    private val selectedObservableSignalsProperty: ObjectProperty<ObservableAzimuthSignals> =
+        SimpleObjectProperty(null)
 
-    val selectedObservableSignals
-        get() = observablePoint.azimuthSignals.find { it.azimuth == selectedAzimuth }
+    fun selectedObservableSignalsProperty() = selectedObservableSignalsProperty
+    var selectedObservableSignals: ObservableAzimuthSignals? by selectedObservableSignalsProperty
 
     private fun selectedSignals(): AzimuthSignals? {
-        return point.azimuthSignals.find { it.azimuth == selectedAzimuth }
+        return point.azimuthSignals.find { it.azimuth == selectedObservableSignals?.azimuth }
     }
 
     private fun updateObservable() {
@@ -123,13 +122,6 @@ class AnisotropyFxAppModel @Inject constructor(
     fun redo() {
         historyManager.redo()
         updateObservable()
-    }
-
-    fun selectAzimuth(new: Double): Double {
-        if (point.azimuthSignals.any { it.azimuth == new }) {
-            selectedAzimuth = new
-        }
-        return selectedAzimuth
     }
 
     fun experimentalSignals(): List<ObservableSignal> {

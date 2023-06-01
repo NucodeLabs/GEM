@@ -17,13 +17,13 @@ import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
+import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.fxmodel.exception.validation
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.gem.util.fx.forCharts
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -72,7 +72,7 @@ class AnisotropyMainViewController @Inject constructor(
     private lateinit var vesCurvesAxisY: NucodeNumberAxis
 
     @FXML
-    lateinit var azimuthDropdown: ComboBox<Double>
+    lateinit var azimuthDropdown: ComboBox<ObservableAzimuthSignals>
 
     @FXML
     private lateinit var transparencySlider: Slider
@@ -188,16 +188,25 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun initAzimuthDropdown() {
-        azimuthDropdown.converter = doubleStringConverter
-        azimuthDropdown.items = appModel.observablePoint.azimuthSignals.map { it.azimuth }.toObservableList()
+        azimuthDropdown.converter = object : StringConverter<ObservableAzimuthSignals>() {
+            override fun toString(item: ObservableAzimuthSignals?): String {
+                return df.format(item?.azimuth ?: 0.0)
+            }
+
+            override fun fromString(string: String?): ObservableAzimuthSignals {
+                throw IllegalStateException()
+            }
+        }
+
+        azimuthDropdown.items = appModel.observablePoint.azimuthSignals
         azimuthDropdown.itemsProperty().bind(
             Bindings.createObjectBinding(
-                { appModel.observablePoint.azimuthSignals.map { it.azimuth }.toObservableList() },
+                { appModel.observablePoint.azimuthSignals },
                 appModel.observablePoint.azimuthSignals
             )
         )
         azimuthDropdown.selectionModel.selectedItemProperty().addListener { _, _, new ->
-            appModel.selectAzimuth(new ?: 0.0)
+            appModel.selectedObservableSignals = new
         }
         azimuthDropdown.itemsProperty().addListener { _, _, _ ->
             azimuthDropdown.selectionModel.selectFirst()
@@ -212,7 +221,7 @@ class AnisotropyMainViewController @Inject constructor(
             Bindings.createObjectBinding(
                 { appModel.selectedObservableSignals?.signals?.sortedSignals ?: observableListOf() },
                 appModel.observablePoint.azimuthSignals,
-                appModel.selectedAzimuthProperty()
+                appModel.selectedObservableSignalsProperty()
             )
         )
     }
@@ -230,6 +239,7 @@ class AnisotropyMainViewController @Inject constructor(
         vesCurves.dataProperty().bind(
             Bindings.createObjectBinding(
                 {
+                    println("TRIGGERED")
                     observableListOf(
                         mapSignals(appModel.experimentalSignals()).apply {
                             name = EXP_SIGNALS
@@ -249,7 +259,7 @@ class AnisotropyMainViewController @Inject constructor(
                     )
                 },
                 appModel.observablePoint.azimuthSignals,
-                appModel.selectedAzimuthProperty()
+                appModel.selectedObservableSignalsProperty()
             )
         )
 
@@ -378,6 +388,7 @@ class AnisotropyMainViewController @Inject constructor(
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             validation(alertsFactory) {
                 appModel.loadProject(file)
+                azimuthDropdown.selectionModel.selectFirst()
             }
         }
     }
