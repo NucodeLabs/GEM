@@ -188,4 +188,9 @@ class AnizotropyFunctionsKtTest {
 
         Assertions.assertArrayEquals(signals, signalsOut.toDoubleArray())
     }
+
+    @Test
+    fun inverseSolveAnizotropy() {
+        //TODO: мб в другой раз
+    }
 }
