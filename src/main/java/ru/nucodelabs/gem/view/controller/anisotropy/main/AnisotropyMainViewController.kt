@@ -20,6 +20,7 @@ import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
+import ru.nucodelabs.gem.fxmodel.exception.validation
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.fx.toObservableList
@@ -375,7 +376,9 @@ class AnisotropyMainViewController @Inject constructor(
         val file: File? = fileChooser.showOpenDialog(stage)
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
-            appModel.loadProject(file)
+            validation(alertsFactory) {
+                appModel.loadProject(file)
+            }
         }
     }
 
@@ -398,10 +401,8 @@ class AnisotropyMainViewController @Inject constructor(
         }
 
         if (newLatitude != null && newLongitude != null) {
-            try {
+            validation(alertsFactory) {
                 appModel.editCenter(ObservableWgs(newLongitude, newLatitude))
-            } catch (e: Exception) {
-                alertsFactory.simpleExceptionAlert(e).show()
             }
         }
     }

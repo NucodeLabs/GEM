@@ -10,13 +10,13 @@ import ru.nucodelabs.gem.app.project.ProjectFileService
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservablePoint
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableSignal
 import ru.nucodelabs.gem.fxmodel.anisotropy.mapper.AnisotropyFxModelMapper
+import ru.nucodelabs.gem.fxmodel.exception.DataValidationException
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
 import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.anisotropy.calc.resistanceApparentUpperBoundByError
-import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
 import javax.inject.Inject
@@ -29,7 +29,6 @@ class AnisotropyFxAppModel @Inject constructor(
     private val mapImageProvider: AnisotropyMapImageProvider,
     private val validator: Validator,
     private val reloadService: ReloadService<Point>,
-    private val forwardSolver: ForwardSolver,
 ) {
 
     private val project by projectContext::project
@@ -45,7 +44,6 @@ class AnisotropyFxAppModel @Inject constructor(
 
     val selectedObservableSignals
         get() = observablePoint.azimuthSignals.find { it.azimuth == selectedAzimuth }
-
 
     private fun selectedSignals(): AzimuthSignals? {
         return point.azimuthSignals.find { it.azimuth == selectedAzimuth }
@@ -112,7 +110,7 @@ class AnisotropyFxAppModel @Inject constructor(
     private fun <T> T.validated(): T {
         val violations = validator.validate(this)
         if (violations.isNotEmpty()) {
-            throw IllegalStateException(violations.toString())
+            throw DataValidationException("Данные некорректны", violations)
         }
         return this
     }
