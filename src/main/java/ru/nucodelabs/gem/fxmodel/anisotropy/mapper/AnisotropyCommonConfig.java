@@ -16,7 +16,7 @@ import ru.nucodelabs.geo.anisotropy.calc.map.Wgs;
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         unmappedSourcePolicy = ReportingPolicy.ERROR
 )
-public abstract class AnisotropyCommonMapper {
+public abstract class AnisotropyCommonConfig {
     public ObservableWgs toObservable(Wgs wgs) {
         if (wgs == null) {
             return null;

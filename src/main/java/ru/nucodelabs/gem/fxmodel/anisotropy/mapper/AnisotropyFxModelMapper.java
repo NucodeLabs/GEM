@@ -17,7 +17,7 @@ import ru.nucodelabs.geo.anisotropy.calc.map.Wgs;
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
 )
-public abstract class AnisotropyFxModelMapper extends AnisotropyCommonMapper {
+public abstract class AnisotropyFxModelMapper extends AnisotropyCommonConfig {
 
     public abstract ObservablePoint toObservable(Point point);
 

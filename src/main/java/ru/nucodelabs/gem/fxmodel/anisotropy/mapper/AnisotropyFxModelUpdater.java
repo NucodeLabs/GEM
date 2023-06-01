@@ -12,7 +12,7 @@ import ru.nucodelabs.geo.anisotropy.Point;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL,
         mappingControl = DeepClone.class
 )
-public abstract class AnisotropyFxModelUpdater extends AnisotropyCommonMapper {
+public abstract class AnisotropyFxModelUpdater extends AnisotropyCommonConfig {
 
     public abstract void updateObservable(@MappingTarget ObservablePoint observablePoint, Point src);
 
