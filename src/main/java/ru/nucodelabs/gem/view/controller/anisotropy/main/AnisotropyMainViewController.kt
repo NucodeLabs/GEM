@@ -218,6 +218,8 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun initSignalsRelation() {
+        signalsRelation.installTooltips(::relTooltipFactory)
+
         signalsRelationAxisX.tickLabelFormatter = formatter
         signalsRelationAxisY.tickLabelFormatter = formatter
 
@@ -537,6 +539,21 @@ class AnisotropyMainViewController @Inject constructor(
             Азимут = ${df.format(azimuth)} °
         """.trimIndent()
         return Tooltip(tooltipText).forCharts()
+    }
+
+    private fun relTooltipFactory(
+        seriesIndex: Int,
+        series: XYChart.Series<Number, Number>,
+        pointIndex: Int,
+        point: XYChart.Data<Number, Number>
+    ): Tooltip {
+        return Tooltip(
+            """
+               № ${pointIndex + 1}
+               AB/2 = ${df.format(point.xValue)} m
+               Отношение = ${df.format(point.yValue)} 
+            """.trimIndent()
+        ).forCharts()
     }
 
     private fun vesCurvesTooltipFactory(
