@@ -44,27 +44,27 @@ repositories {
 ext {
     jfxVersion = '19.0.2.1'
     // Platform Info
-    currentOS = DefaultNativePlatform.currentOperatingSystem
-    currentArch = DefaultNativePlatform.currentArchitecture
-    currentOSVer = System.getProperty("os.version").toString()
+    set 'currentOS', DefaultNativePlatform.currentOperatingSystem
+    set 'currentArch', DefaultNativePlatform.currentArchitecture
+    set 'currentOSVer', System.getProperty("os.version").toString()
     javaHome = Jvm.current().javaHome
 
     // For deps
     osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
     archName = currentArch.displayName.toLowerCase().contains("arm") ? "arm64" : "x86_64"
-    platform = "$osName-$archName"
+    set 'platform', "$osName-$archName"
 
-    runDir = "$projectDir/run"
+    set 'runDir', "$projectDir/.run"
 }
 
-task printPlatformInfo {
+tasks.register('printPlatformInfo') {
     println "OS:             ${currentOS.name}"
     println "OS VERSION:     ${currentOSVer}"
     println "ARCHITECTURE:   ${currentArch.name}"
     println "CLASSIFIER:     ${platform}"
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -125,34 +125,34 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 
-task prepareRunDir {
+tasks.register('prepareRunDir') {
     file(runDir).mkdirs()
 }
 
-task copyLibsToRunDir(type: Copy) {
+tasks.register('copyLibsToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/lib"
     into runDir
 }
 
-task copyDataToRunDir(type: Copy) {
+tasks.register('copyDataToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/data"
-    into "$projectDir/run/data"
+    into "$runDir/data"
 }
 
-task copyClrToRunDir(type: Copy) {
+tasks.register('copyClrToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
-    into "$projectDir/run/colormap"
+    into "$runDir/colormap"
     rename('002_ERT_Rainbow_2.clr', 'default.clr')
 }
 
-task cleanRunDir(type: Delete) {
+tasks.register('cleanRunDir', Delete) {
     delete fileTree(runDir) { exclude "err-trace*.txt" }
 }
 
-task distClr(type: Copy) {
+tasks.register('distClr', Copy) {
     doFirst {
         file('build/GEM/colormap').mkdirs()
     }
@@ -161,7 +161,7 @@ task distClr(type: Copy) {
 }
 
 
-tasks.withType(JavaExec) {
+tasks.withType(JavaExec).configureEach {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     allJvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath]
     workingDir = file(runDir)
@@ -197,7 +197,8 @@ javapackager {
     ]
 }
 
-task packageMacApp(type: PackageTask, dependsOn: build) {
+tasks.register('packageMacApp', PackageTask) {
+    dependsOn build
     generateInstaller = true
     macConfig {
         macStartup = MacStartup.UNIVERSAL
@@ -210,7 +211,8 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
             javapackager.additionalResources + [file("${projectDir}/colormap")]
 }
 
-task packageWindowsExe(type: PackageTask, dependsOn: build) {
+tasks.register('packageWindowsExe', PackageTask) {
+    dependsOn build
     generateInstaller = false
     winConfig {
         generateSetup = false
@@ -227,7 +229,8 @@ task packageWindowsExe(type: PackageTask, dependsOn: build) {
     finalizedBy distClr
 }
 
-task packageLinuxApplication(type: PackageTask, dependsOn: build) {
+tasks.register('packageLinuxApplication', PackageTask) {
+    dependsOn build
     generateInstaller = true
     linuxConfig {
         generateDeb = true
@@ -236,15 +239,4 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
         pngFile = file("src/main/resources/img/gem.png")
     }
     finalizedBy distClr
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }

@@ -24,9 +24,8 @@ class HistoryManager<T> @Inject constructor(private val originator: Originator<T
     /**
      * Makes a snapshot after executing block
      */
-    // TODO: () -> Unit instead of Runnable
-    fun snapshotAfter(block: Runnable) {
-        block.run()
+    fun snapshotAfter(block: () -> Unit) {
+        block()
         snapshot()
     }
 
