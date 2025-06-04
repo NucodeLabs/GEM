@@ -8,7 +8,7 @@ class PrimaryModel(private val experimentalData: List<ExperimentalData>) {
         if (experimentalData.size <= 3) {
             throw IllegalStateException("Для построения стартовой модели требуется ≥ 4 измерений, было ${experimentalData.size}")
         }
-        val logExperimentalData = experimentalData.map { ru.nucodelabs.geo.ves.JavaApi.copy(it).ab2(kotlin.math.ln(it.ab2)).build() }
+        val logExperimentalData = experimentalData.map { ru.nucodelabs.geo.ves.copy(it).ab2(kotlin.math.ln(it.ab2)).build() }
         val pointsCnt = logExperimentalData.size
         val ab2min = logExperimentalData[0].ab2
         val ab2max = logExperimentalData[pointsCnt - 1].ab2
@@ -26,7 +26,7 @@ class PrimaryModel(private val experimentalData: List<ExperimentalData>) {
             val prevLast = if (i > 0) kotlin.math.exp(logSplitData[i - 1].last().ab2) else 0.0
             modelLayers.add(ModelLayer(kotlin.math.exp(list.last().ab2) - prevLast, avg, false, false))
         }
-        modelLayers[modelLayers.size - 1] = ru.nucodelabs.geo.ves.JavaApi.copy(modelLayers.last()).power(0.0).build()
+        modelLayers[modelLayers.size - 1] = ru.nucodelabs.geo.ves.copy(modelLayers.last()).power(0.0).build()
         return modelLayers
     }
 }

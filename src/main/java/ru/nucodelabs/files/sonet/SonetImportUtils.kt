@@ -4,6 +4,7 @@ import java.io.File
 import java.util.*
 
 internal object SonetImportUtils {
+    @JvmStatic
     @Throws(Exception::class)
     fun readSTT(file: File): STTFile {
         val res = STTFile()
@@ -16,6 +17,7 @@ internal object SonetImportUtils {
         return res
     }
 
+    @JvmStatic
     @Throws(Exception::class)
     fun readEXP(file: File): EXPFile {
         val res = EXPFile()
@@ -37,6 +39,7 @@ internal object SonetImportUtils {
         return res
     }
 
+    @JvmStatic
     @Throws(Exception::class)
     fun readMOD(file: File): MODFile {
         val res = MODFile()
