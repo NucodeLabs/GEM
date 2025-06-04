@@ -12,7 +12,7 @@ internal class SonetImportManagerImpl : SonetImportManager {
         val expParsed = EXPFileParser(expFile).parse()
         val expFilePath = expFile.toPath()
         return expParsed to STTFileParser(
-            File("${expFilePath.parent}${File.separator}${expParsed.sttFileName}")
+            File("${expFilePath.parent}${File.separator}${expParsed.STTFileName}")
         ).parse()
     }
 
@@ -20,8 +20,8 @@ internal class SonetImportManagerImpl : SonetImportManager {
         val (expParsed, sttParsed) = parseExpWithStt(expFile)
 
         val minSize = listOf(
-            sttParsed.aB_2,
-            sttParsed.mN_2,
+            sttParsed.AB_2,
+            sttParsed.MN_2,
             expParsed.amperage,
             expParsed.voltage,
             expParsed.resistanceApparent,
@@ -31,8 +31,8 @@ internal class SonetImportManagerImpl : SonetImportManager {
         val expData: MutableList<ExperimentalData> = mutableListOf()
         for (i in 0 until minSize) {
             expData += ExperimentalData(
-                ab2 = sttParsed.aB_2[i],
-                mn2 = sttParsed.mN_2[i],
+                ab2 = sttParsed.AB_2[i],
+                mn2 = sttParsed.MN_2[i],
                 resistanceApparent = expParsed.resistanceApparent[i],
                 errorResistanceApparent = expParsed.errorResistanceApparent[i],
                 amperage = expParsed.amperage[i],

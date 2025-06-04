@@ -12,6 +12,7 @@ import jakarta.validation.Validator
 import javafx.fxml.FXMLLoader
 import javafx.stage.Stage
 import javafx.util.StringConverter
+import javafx.util.Callback
 import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
 import ru.nucodelabs.files.clr.ClrParser
 import ru.nucodelabs.files.clr.ColorNode
@@ -67,7 +68,8 @@ class AppModule : AbstractModule() {
         injector: Injector,
         @Named("MainView") url: URL
     ): FXMLLoader = FXMLLoader(url, uiProperties).apply {
-        controllerFactory = injector.createChildInjector(MainViewModule())::getInstance
+        val child = injector.createChildInjector(MainViewModule())
+        controllerFactory = Callback { clazz: Class<*>? -> child.getInstance(clazz) }
     }
 
     @Provides

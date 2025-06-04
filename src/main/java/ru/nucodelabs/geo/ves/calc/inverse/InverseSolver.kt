@@ -33,7 +33,7 @@ class InverseSolver @Inject constructor(private val forwardSolver: ForwardSolver
         val minPower = picket!!.effectiveExperimentalData.minOf { it.ab2 }
         val maxPower = picket!!.effectiveExperimentalData.maxOf { it.ab2 }
 
-        setLimitValues(modelResistance, 0.1, 1e5.0, modelPower, 0.1, maxPower)
+        setLimitValues(modelResistance, 0.1, 1e5, modelPower, 0.1, maxPower)
 
         val fixedModelResistance = modelData.filter { it.isFixedResistance }.map { it.resistance }
         val fixedModelPower = modelData.filter { it.isFixedPower }.map { it.power }
@@ -45,10 +45,10 @@ class InverseSolver @Inject constructor(private val forwardSolver: ForwardSolver
         val nelderMeadSimplex = NelderMeadSimplex(dimension, sideLength)
         val startPoint = DoubleArray(dimension)
         for (i in modelResistance.indices) {
-            startPoint[i] = kotlin.math.log(modelResistance[i])
+            startPoint[i] = kotlin.math.ln(modelResistance[i])
         }
         for (i in modelResistance.size until dimension) {
-            startPoint[i] = kotlin.math.log(modelPower[i - modelResistance.size])
+            startPoint[i] = kotlin.math.ln(modelPower[i - modelResistance.size])
         }
 
         val initialGuess = InitialGuess(startPoint)

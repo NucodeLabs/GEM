@@ -115,7 +115,7 @@ class MisfitStacksController @Inject constructor(
                 val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
                 val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
                 val targetFun = SquaresDiff()
-                val targetFunValue = targetFun.apply(
+                val targetFunValue = targetFun(
                     forwardSolver(picket.effectiveExperimentalData, picket.modelData),
                     picket.effectiveExperimentalData.map { it.resistanceApparent }
                 )

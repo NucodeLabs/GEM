@@ -8,7 +8,7 @@ class PrimaryModel(private val experimentalData: List<ExperimentalData>) {
         if (experimentalData.size <= 3) {
             throw IllegalStateException("Для построения стартовой модели требуется ≥ 4 измерений, было ${experimentalData.size}")
         }
-        val logExperimentalData = experimentalData.map { ru.nucodelabs.geo.ves.JavaApi.copy(it).ab2(kotlin.math.log(it.ab2)).build() }
+        val logExperimentalData = experimentalData.map { ru.nucodelabs.geo.ves.JavaApi.copy(it).ab2(kotlin.math.ln(it.ab2)).build() }
         val pointsCnt = logExperimentalData.size
         val ab2min = logExperimentalData[0].ab2
         val ab2max = logExperimentalData[pointsCnt - 1].ab2

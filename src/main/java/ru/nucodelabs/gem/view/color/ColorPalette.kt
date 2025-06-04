@@ -21,9 +21,9 @@ class ColorPalette(
     private var maxValueInternal: Double = 0.0
 
     init {
-        setMinValue(minValue)
-        setMaxValue(maxValue)
-        setNumberOfSegments(blocksCount)
+        minValueProperty.set(minValue)
+        maxValueProperty.set(maxValue)
+        blocksCountProperty.set(blocksCount)
         require(blocksCount >= 2) { "Число блоков меньше 2" }
         updateSegments()
         this.logScaleProperty.addListener { _, _, _ -> updateSegments() }
@@ -117,17 +117,24 @@ class ColorPalette(
         return blockFor(percentage).color
     }
 
-    override fun getMinValue(): Double = minValueProperty.get()
-    override fun setMinValue(value: Double) { minValueProperty.set(value) }
-    override fun getMaxValue(): Double = maxValueProperty.get()
-    override fun setMaxValue(value: Double) { maxValueProperty.set(value) }
+    override var minValue: Double
+        get() = minValueProperty.get()
+        set(value) { minValueProperty.set(value) }
+
+    override var maxValue: Double
+        get() = maxValueProperty.get()
+        set(value) { maxValueProperty.set(value) }
+
+    override var numberOfSegments: Int
+        get() = blocksCountProperty.get()
+        set(value) { blocksCountProperty.set(value) }
+
     override fun minValueProperty(): DoubleProperty = minValueProperty
     override fun maxValueProperty(): DoubleProperty = maxValueProperty
     override fun numberOfSegmentsProperty(): IntegerProperty = blocksCountProperty
-    override fun getNumberOfSegments(): Int = blocksCountProperty.get()
-    override fun setNumberOfSegments(value: Int) { blocksCountProperty.set(value) }
 
-    override fun getSegments(): List<ColorMapper.Segment> =
+    override val segments: List<ColorMapper.Segment>
+        get() =
         if (!logScaleProperty.get()) segmentList.map {
             ColorMapper.Segment(
                 it.from * (maxValueInternal - minValueInternal) + minValueInternal,
@@ -136,8 +143,8 @@ class ColorPalette(
             )
         } else segmentList.map {
             ColorMapper.Segment(
-                logValue(valueFor(it.from, getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
-                logValue(valueFor(it.to, getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                logValue(valueFor(it.from, minValue, maxValue), minValue, maxValue),
+                logValue(valueFor(it.to, minValue, maxValue), minValue, maxValue),
                 it.color
             )
         }
@@ -154,6 +161,7 @@ class ColorPalette(
     }
 
     override fun logScaleProperty(): BooleanProperty = logScaleProperty
-    override fun isLogScale(): Boolean = logScaleProperty.get()
-    override fun setLogScale(value: Boolean) { logScaleProperty.set(value) }
+    override var isLogScale: Boolean
+        get() = logScaleProperty.get()
+        set(value) { logScaleProperty.set(value) }
 }
