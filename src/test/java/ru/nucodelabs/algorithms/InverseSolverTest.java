@@ -14,10 +14,7 @@ public class InverseSolverTest {
     void inverseSolverTest_1() throws Exception {
         Picket picket = ShiraPicket.getPicket();
 
-        final double SIDE_LENGTH = 0.1;
-        final double RELATIVE_THRESHOLD = 1e-10;
-        double ABSOLUTE_THRESHOLD = 1e-30;
-        InverseSolver inverseSolver = new InverseSolver(SIDE_LENGTH, RELATIVE_THRESHOLD, ABSOLUTE_THRESHOLD, ForwardSolverKt.ForwardSolver());
+        InverseSolver inverseSolver = new InverseSolver(ForwardSolverKt.ForwardSolver());
         List<ModelLayer> modelData = inverseSolver.getOptimizedModelData(picket);
         modelData.forEach(System.out::println);
     }
