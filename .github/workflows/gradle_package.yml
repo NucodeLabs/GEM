@@ -9,14 +9,21 @@ name: Package Distribution with Gradle
 
 on:
   push:
-    branches: [ "main", "dev*" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
 
 jobs:
-  package_mac_app:
-    runs-on: macos-latest
+  package_app:
+    strategy:
+      matrix:
+        configuration: [
+          { runner: "macos-13-large", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
+          { runner: "macos-13-xlarge", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
+          { runner: "windows-2022", task: "packageWindowsExe", artifact_path: "build/GEM/*" }
+        ]
+    runs-on: ${{ matrix.configuration.runner }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -27,30 +34,10 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Build with Gradle
-        run: ./gradlew packageMacApp
+      - name: Package app with Gradle
+        run: ./gradlew ${{ matrix.configuration.task }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
-          path: build/*.dmg
-
-  package_windows_exe:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'liberica'
-          cache: 'gradle'
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Build with Gradle
-        run: ./gradlew packageWindowsExe
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
-          path: build/GEM/*
+          path: ${{ matrix.configuration.artifact-path }}

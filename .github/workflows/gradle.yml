@@ -2,9 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main", "dev*" ]
   pull_request:
-    branches: [ "main", "dev*" ]
 
 permissions:
   contents: read
@@ -13,7 +11,7 @@ jobs:
   gradle_build:
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest ]
+        os: [ macos-13-large, macos-13-xlarge, windows-2022 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
