@@ -19,8 +19,8 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13-large", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
-          { runner: "macos-13-xlarge", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
+          { runner: "macos-13", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
+          { runner: "macos-14", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
           { runner: "windows-2022", task: "packageWindowsExe", artifact_path: "build/GEM/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
