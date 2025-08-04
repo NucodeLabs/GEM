@@ -33,7 +33,7 @@ jobs:
           arguments: packageMacApp
       - name: Upload Artifact
         if: ${{ github.event_name == 'push' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
           path: build/*.dmg
@@ -54,7 +54,7 @@ jobs:
           arguments: packageWindowsExe
       - name: Upload Artifact
         if: ${{ github.event_name == 'push' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
           path: build/GEM/*
