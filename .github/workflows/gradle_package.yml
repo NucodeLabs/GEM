@@ -19,9 +19,9 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
-          { runner: "macos-14", task: "packageMacApp", artifact_path: "build/GEM_*.dmg" },
-          { runner: "windows-2022", task: "packageWindowsExe", artifact_path: "build/GEM/*" }
+          { runner: "macos-13", task: "packageMacApp", path: "build/GEM_*.dmg" },
+          { runner: "macos-14", task: "packageMacApp", path: "build/GEM_*.dmg" },
+          { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
     steps:
@@ -40,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
-          path: ${{ matrix.configuration.artifact-path }}
+          path: ${{ matrix.configuration.path }}
