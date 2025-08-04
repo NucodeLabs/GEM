@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
@@ -10,10 +9,10 @@
     <scene>
         <Scene>
             <VBox maxWidth="800" style="-fx-padding: 25;" spacing="5">
-                <HBox>
-                    <Label text="GeologyElectroMetry "/>
+                <VBox>
+                    <Label text="%appFullName"/>
                     <Label text="%version"/>
-                </HBox>
+                </VBox>
                 <Label style="-fx-font-size: 20;">
                     Авторы
                 </Label>

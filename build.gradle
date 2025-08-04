@@ -28,7 +28,7 @@ plugins {
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'ru.nucodelabs'
-version '1.0'
+version '2.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_19
@@ -203,7 +203,7 @@ javapackager {
     organizationName = "NucodeLabs"
     name = "GEM"
     applicationName = "GEM"
-    version = "1.0"
+    version = "2.0"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
     additionalResources = [
