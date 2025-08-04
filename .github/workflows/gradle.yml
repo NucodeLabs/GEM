@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  packageMacApp:
+  gradle_build:
     runs-on: [ macos-latest, windows-latest ]
     steps:
       - uses: actions/checkout@v4
