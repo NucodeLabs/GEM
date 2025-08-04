@@ -17,14 +17,14 @@ permissions:
   contents: read
 
 jobs:
-  packageMacApp_x64:
+  packageMacApp:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '19'
+          java-version: '21'
           distribution: 'liberica'
           cache: 'gradle'
       - name: Setup Gradle
@@ -38,14 +38,14 @@ jobs:
           name: gem_${{ runner.os }}-${{ runner.arch }}_${{ github.ref_name }}-${{ github.sha }}
           path: build/*.dmg
 
-  packageWindowsExe_x64:
+  packageWindowsExe:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '19'
+          java-version: '21'
           distribution: 'liberica'
           cache: 'gradle'
       - name: Setup Gradle
