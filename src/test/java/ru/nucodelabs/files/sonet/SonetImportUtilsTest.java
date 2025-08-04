@@ -7,7 +7,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
 
-public class SonetImportUtilsTest {
+class SonetImportUtilsTest {
     Function<Double, String> checkNull = d -> {
         if (d != null)
             return d.toString();
@@ -18,7 +18,7 @@ public class SonetImportUtilsTest {
     @Test
     void readSTT_test() throws Exception {
         System.out.println("SonetTest.readSTT_test");
-        File file = new File("data/CHITA.STT");
+        File file = new File("data/sonet_examples/CHITA.STT");
         STTFile stt = SonetImportUtils.readSTT(file);
         Assertions.assertEquals(stt.getAB_2().get(20), 1.5e+003);
         for (int i = 0; i < stt.getAB_2().size(); i++) {
@@ -31,7 +31,7 @@ public class SonetImportUtilsTest {
     @Test
     void readEXP_test() throws Exception {
         System.out.println("SonetTest.readEXP_test");
-        File file = new File("data/BURM1.EXP");
+        File file = new File("data/sonet_examples/BURM1.EXP");
         EXPFile exp = SonetImportUtils.readEXP(file);
         System.out.println(exp.getSTTFileName());
         System.out.println(exp.getNumber());
@@ -66,7 +66,7 @@ public class SonetImportUtilsTest {
     @Test
     void readMOD_test() throws Exception {
         System.out.println("SonetTest.readMOD_test");
-        File file = new File("data/KAZAN.MOD");
+        File file = new File("data/sonet_examples/KAZAN.MOD");
         MODFile mod = SonetImportUtils.readMOD(file);
         for (int i = 0; i < mod.getResistance().size(); i++) {
             System.out.println(
@@ -80,7 +80,7 @@ public class SonetImportUtilsTest {
     @Test
     void readEXP_test1() throws Exception {
         System.out.println("SonetTest.readEXP_test");
-        File file = new File("data/BURM4.EXP");
+        File file = new File("data/sonet_examples/BURM4.EXP");
         EXPFile exp = SonetImportUtils.readEXP(file);
         System.out.println("SonetTest.readEXP_test");
     }
