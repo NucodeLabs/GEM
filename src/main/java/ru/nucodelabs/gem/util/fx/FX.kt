@@ -176,7 +176,8 @@ fun decimalFilter(decimalFormat: DecimalFormat) = UnaryOperator<Change> { c ->
 /**
  * Allows only integer input
  */
-fun intFilter() = UnaryOperator<Change> { c ->
+fun intFilter() = UnaryOperator<Change?> { c ->
+    c!!
     if (c.controlNewText.isEmpty() || c.controlNewText == "-") {
         return@UnaryOperator c
     }

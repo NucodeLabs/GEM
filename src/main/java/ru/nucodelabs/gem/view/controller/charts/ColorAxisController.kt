@@ -131,17 +131,18 @@ class ColorAxisController @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun initConfig() {
-        maxValueTf.textFormatter.value = fxPreferences.bind(
+        (maxValueTf.textFormatter as TextFormatter<Double>).value = fxPreferences.bind(
             maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
             COLOR_MAX_VALUE.key,
             COLOR_MAX_VALUE.def
         )
-        minValueTf.textFormatter.value = fxPreferences.bind(
+
+        (minValueTf.textFormatter as TextFormatter<Double>).value = fxPreferences.bind(
             minValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
             COLOR_MIN_VALUE.key,
             COLOR_MIN_VALUE.def
         )
-        numberOfSegmentsTf.textFormatter.value = fxPreferences.bind(
+        (numberOfSegmentsTf.textFormatter as TextFormatter<Int>).value = fxPreferences.bind(
             numberOfSegmentsTf.textFormatter.valueProperty() as ObjectProperty<Int>,
             COLOR_SEGMENTS.key,
             COLOR_SEGMENTS.def
