@@ -2,9 +2,9 @@ package ru.nucodelabs.gem.app.project
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.file.dto.project.ProjectDto
 import java.io.File
-import javax.inject.Inject
 
 abstract class AbstractProjectFileServiceImpl<T> @Inject constructor(
     private val objectMapper: ObjectMapper

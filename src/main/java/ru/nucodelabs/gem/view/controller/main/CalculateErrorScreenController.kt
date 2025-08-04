@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.controller.main
 
 import com.google.inject.name.Named
+import jakarta.inject.Inject
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.IntegerProperty
 import javafx.beans.value.ObservableObjectValue
@@ -29,7 +30,6 @@ import ru.nucodelabs.geo.ves.calc.error.*
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 
 const val DEFAULT_DIST_A_ERROR = 0.5
 const val DEFAULT_DIST_B_ERROR = 1e-3 // m

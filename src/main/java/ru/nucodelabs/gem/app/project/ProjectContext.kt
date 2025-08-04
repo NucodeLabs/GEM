@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.app.project
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * Доступ к текущему проекту, над которым ведется работа

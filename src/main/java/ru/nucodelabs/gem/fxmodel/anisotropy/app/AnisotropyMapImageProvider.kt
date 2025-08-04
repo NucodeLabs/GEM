@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.fxmodel.map.MapImageData
 import ru.nucodelabs.gem.net.MapImageProvider
 import ru.nucodelabs.gem.net.MapImageRequest
@@ -7,7 +8,6 @@ import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.calc.map.MapSizer
 import ru.nucodelabs.geo.anisotropy.calc.map.Wgs
 import ru.nucodelabs.geo.anisotropy.calc.map.maxAb2WithAzimuth
-import javax.inject.Inject
 
 class AnisotropyMapImageProvider @Inject constructor(
     private val mapImageProvider: MapImageProvider

@@ -27,7 +27,7 @@ import ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewContr
 import ru.nucodelabs.gem.view.controller.main.MainViewController;
 import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter;
-import ru.nucodelabs.geo.target.TargetFunction;
+import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction;
 
 import java.io.File;
@@ -59,7 +59,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     private ResourceBundle provideUIProperties() {
-        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI", new Locale("ru"));
+        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI", Locale.of("ru"));
     }
 
     @Provides
@@ -84,10 +84,10 @@ public class AppModule extends AbstractModule {
     @Provides
     @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW)
     private Stage anisotropyMainViewWindow(
-            ResourceBundle uiProperties,
-            Injector injector,
-            @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) URL url,
-            @Named(ArgNames.View.MAIN_VIEW) Stage mainStage
+        ResourceBundle uiProperties,
+        Injector injector,
+        @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) URL url,
+        @Named(ArgNames.View.MAIN_VIEW) Stage mainStage
     ) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new AnisotropyProjectModule())::getInstance);
@@ -184,7 +184,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.parse(string).doubleValue();
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalArgumentException(e);
                 }
             }
         };
@@ -239,7 +239,7 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    TargetFunction.WithError targetFunction() {
+    RelativeErrorAwareTargetFunction targetFunction() {
         return new SquareDiffTargetFunction();
     }
 }

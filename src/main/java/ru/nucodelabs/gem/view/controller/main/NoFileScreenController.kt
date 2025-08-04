@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.main
 
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import javafx.beans.property.BooleanProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -19,8 +21,6 @@ import java.io.File
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Provider
 
 class NoFileScreenController @Inject constructor(
     private val fileOpenerProvider: Provider<FileOpener>,
@@ -46,10 +46,8 @@ class NoFileScreenController @Inject constructor(
         recentFiles.selectionModel.selectionMode = SelectionMode.SINGLE
 
         recentFiles.onMouseClicked = EventHandler { event ->
-            if (event.button == MouseButton.PRIMARY) {
-                if (recentFiles.selectionModel.selectedItems.size == 1) {
-                    openJsonSection(recentFiles.selectionModel.selectedItem)
-                }
+            if (event.button == MouseButton.PRIMARY && recentFiles.selectionModel.selectedItems.size == 1) {
+                openJsonSection(recentFiles.selectionModel.selectedItem)
             }
         }
 

@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.app.pref
 
+import jakarta.inject.Inject
 import javafx.beans.property.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
 
 /**
  * Helps to save properties values in Preferences object

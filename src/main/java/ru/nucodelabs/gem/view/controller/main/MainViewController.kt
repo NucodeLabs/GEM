@@ -1,6 +1,8 @@
 package ru.nucodelabs.gem.view.controller.main
 
 import com.google.inject.name.Named
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import jakarta.validation.Validator
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
@@ -47,8 +49,6 @@ import java.text.ParseException
 import java.util.*
 import java.util.prefs.PreferenceChangeEvent
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Provider
 
 class MainViewController @Inject constructor(
     @Named(ArgNames.View.MAIN_VIEW) private val mainViewProvider: Provider<Stage>,
@@ -174,14 +174,7 @@ class MainViewController @Inject constructor(
             useSystemMenu.selectedProperty().bindBidirectional(menuBar.useSystemMenuBarProperty())
             val prefKey = "USE_SYSTEM_MENU"
             val defVal = true
-            useSystemMenu.isSelected = preferences.getBoolean(prefKey, defVal)
-            useSystemMenu.selectedProperty()
-                .addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, newValue: Boolean? ->
-                    preferences.putBoolean(
-                        prefKey,
-                        newValue!!
-                    )
-                }
+            fxPreferences.setAndBind(useSystemMenu.selectedProperty(), prefKey, defVal)
             preferences.addPreferenceChangeListener { evt: PreferenceChangeEvent ->
                 Platform.runLater {
                     if (evt.key == prefKey) {
@@ -208,11 +201,9 @@ class MainViewController @Inject constructor(
         picketZ.textFormatter = TextFormatter(DoubleValidationConverter(decimalFormat), 0.0)
 
         commentTextArea.focusedProperty().addListener { _, _, isFocused ->
-            if (!isFocused) {
-                if (observableSection.pickets.isNotEmpty()) {
-                    historyManager.snapshotAfter {
-                        observableSection.pickets[picketIndex] = picket.copy(comment = commentTextArea.text)
-                    }
+            if (!isFocused && observableSection.pickets.isNotEmpty()) {
+                historyManager.snapshotAfter {
+                    observableSection.pickets[picketIndex] = picket.copy(comment = commentTextArea.text)
                 }
             }
         }
@@ -240,15 +231,6 @@ class MainViewController @Inject constructor(
         misfitStacksController.lineChartXAxis.upperBoundProperty().bind(
             vesCurvesController.xAxis.upperBoundProperty()
         )
-    }
-
-    private fun validateDoubleInput(s: String): Boolean {
-        try {
-            decimalFormat.parse(s)
-        } catch (e: ParseException) {
-            return false
-        }
-        return true
     }
 
     private fun initConfig() {

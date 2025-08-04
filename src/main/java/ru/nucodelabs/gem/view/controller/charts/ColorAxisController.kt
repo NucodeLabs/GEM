@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
+import jakarta.inject.Named
 import javafx.beans.property.ObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -27,8 +29,6 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Named
 
 
 class ColorAxisController @Inject constructor(
@@ -131,17 +131,18 @@ class ColorAxisController @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun initConfig() {
-        maxValueTf.textFormatter.value = fxPreferences.bind(
+        (maxValueTf.textFormatter as TextFormatter<Double>).value = fxPreferences.bind(
             maxValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
             COLOR_MAX_VALUE.key,
             COLOR_MAX_VALUE.def
         )
-        minValueTf.textFormatter.value = fxPreferences.bind(
+
+        (minValueTf.textFormatter as TextFormatter<Double>).value = fxPreferences.bind(
             minValueTf.textFormatter.valueProperty() as ObjectProperty<Double>,
             COLOR_MIN_VALUE.key,
             COLOR_MIN_VALUE.def
         )
-        numberOfSegmentsTf.textFormatter.value = fxPreferences.bind(
+        (numberOfSegmentsTf.textFormatter as TextFormatter<Int>).value = fxPreferences.bind(
             numberOfSegmentsTf.textFormatter.valueProperty() as ObjectProperty<Int>,
             COLOR_SEGMENTS.key,
             COLOR_SEGMENTS.def

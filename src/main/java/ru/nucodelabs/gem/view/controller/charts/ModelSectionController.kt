@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart.Data
@@ -26,7 +27,6 @@ import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 import kotlin.math.abs
 
 private const val LAST_COEF = 0.5
@@ -146,9 +146,11 @@ class ModelSectionController @Inject constructor(
             }
         }
     }
-     fun setupNames(boolean: Boolean){
-      chart.namesVisibleProperty().set(boolean)
-     }
+
+    fun setupNames(boolean: Boolean) {
+        chart.namesVisibleProperty().set(boolean)
+    }
+
     private fun setupXAxisMarks() {
         val section = observableSection.asSection()
         xAxis.forceMarks.setAll(

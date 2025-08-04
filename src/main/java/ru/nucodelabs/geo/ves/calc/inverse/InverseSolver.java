@@ -1,5 +1,6 @@
 package ru.nucodelabs.geo.ves.calc.inverse;
 
+import jakarta.inject.Inject;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
@@ -9,15 +10,13 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.geo.forward.ForwardSolver;
-import ru.nucodelabs.geo.target.TargetFunction;
+import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
 import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.FunctionValue;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class InverseSolver {
@@ -35,10 +34,10 @@ public class InverseSolver {
     private final double relativeThreshold;
     private final double absoluteThreshold;
     private final ForwardSolver forwardSolver;
-    private final TargetFunction.WithError targetFunction;
+    private final RelativeErrorAwareTargetFunction targetFunction;
 
     @Inject
-    public InverseSolver(ForwardSolver forwardSolver, TargetFunction.WithError targetFunction) {
+    public InverseSolver(ForwardSolver forwardSolver, RelativeErrorAwareTargetFunction targetFunction) {
         this(
                 SIDE_LENGTH_DEFAULT,
                 RELATIVE_THRESHOLD_DEFAULT,
@@ -53,7 +52,7 @@ public class InverseSolver {
             double relativeThreshold,
             double absoluteThreshold,
             ForwardSolver forwardSolver,
-            TargetFunction.WithError targetFunction
+            RelativeErrorAwareTargetFunction targetFunction
     ) {
         this.sideLength = sideLength;
         this.relativeThreshold = relativeThreshold;
@@ -93,16 +92,11 @@ public class InverseSolver {
                 .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
-        double minPower = experimentalData.stream()
-                .map(ExperimentalData::getAb2)
-                .mapToDouble(Double::doubleValue)
-                .min()
-                .orElseThrow(NoSuchElementException::new);
         double maxPower = experimentalData.stream()
                 .map(ExperimentalData::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow();
 
         setLimitValues(
                 modelResistance, 0.1, 1e5,

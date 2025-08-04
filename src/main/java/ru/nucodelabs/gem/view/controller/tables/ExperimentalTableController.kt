@@ -1,6 +1,8 @@
 package ru.nucodelabs.gem.view.controller.tables
 
 import com.google.inject.name.Named
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import jakarta.validation.Validator
 import javafx.beans.property.IntegerProperty
 import javafx.beans.value.ObservableObjectValue
@@ -32,13 +34,16 @@ import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
-import ru.nucodelabs.geo.ves.*
-import ru.nucodelabs.geo.ves.calc.*
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.k
+import ru.nucodelabs.geo.ves.calc.u
+import ru.nucodelabs.geo.ves.calc.withCalculatedResistanceApparent
+import ru.nucodelabs.geo.ves.toTabulatedTable
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
-import javax.inject.Provider
 
 @JvmField
 val EXP_HELP_PASTE = """
@@ -144,7 +149,8 @@ class ExperimentalTableController @Inject constructor(
             when (e.code) {
                 KeyCode.DELETE, KeyCode.BACK_SPACE -> deleteSelected()
                 KeyCode.C -> if (e.isShortcutDown) copySelected()
-                else -> {}
+                else -> { /* ignore */
+                }
             }
         }
 
