@@ -1,11 +1,11 @@
 package ru.nucodelabs.gem.app.project.impl.anisotropy
 
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.gem.app.project.ProjectContext
 import ru.nucodelabs.gem.app.project.ProjectSnapshotService
 import ru.nucodelabs.gem.app.project.impl.anisotropy.cloner.PointProjectCloner
 import ru.nucodelabs.geo.anisotropy.Point
-import javax.inject.Inject
 
 class PointProjectSnapshotServiceImpl @Inject constructor(
     projectContext: ProjectContext<Point>,

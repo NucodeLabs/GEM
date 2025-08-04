@@ -15,11 +15,7 @@ class Signals(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Signals
-
-        if (sortedSignals != other.sortedSignals) return false
-
-        return true
+        return sortedSignals == (other as Signals).sortedSignals
     }
 
     override fun hashCode(): Int {

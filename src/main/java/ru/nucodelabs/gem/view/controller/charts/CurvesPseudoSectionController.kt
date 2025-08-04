@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
@@ -17,7 +18,6 @@ import ru.nucodelabs.geo.ves.calc.graph.CurvesChartParser
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 
 class CurvesPseudoSectionController @Inject constructor(
     formatter: StringConverter<Number>,

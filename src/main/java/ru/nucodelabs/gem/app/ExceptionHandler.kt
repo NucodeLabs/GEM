@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.app
 
+import org.slf4j.LoggerFactory
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.kfx.core.OS
 import java.io.File
@@ -13,6 +14,8 @@ class ExceptionHandler(
     private val printTrace: Boolean
 ) : UncaughtExceptionHandler {
     override fun uncaughtException(t: Thread, e: Throwable) {
+        LoggerFactory.getLogger(ExceptionHandler::class.java)
+            .error("Uncaught exception", e)
         handleUnexpectedException(e)
     }
 

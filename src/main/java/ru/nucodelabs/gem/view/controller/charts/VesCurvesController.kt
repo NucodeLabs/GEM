@@ -1,6 +1,7 @@
 package ru.nucodelabs.gem.view.controller.charts
 
 import com.google.inject.name.Named
+import jakarta.inject.Inject
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
@@ -36,17 +37,20 @@ import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.forward.ForwardSolver
-import ru.nucodelabs.geo.ves.*
-import ru.nucodelabs.geo.ves.calc.*
+import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
 import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
+import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
 import kotlin.math.log10
 
 private const val X_AXIS_PADDING_LOG = 0.1

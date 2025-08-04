@@ -2,7 +2,7 @@ package ru.nucodelabs.geo.ves.calc.inverse.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.geo.forward.ForwardSolver;
-import ru.nucodelabs.geo.target.TargetFunction;
+import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
 import ru.nucodelabs.geo.ves.calc.adapter.ForwardSolverAdapterKt;
@@ -14,7 +14,7 @@ public class FunctionValue implements MultivariateFunction {
     //Экспериментальные точки для FS
     private final List<ExperimentalData> experimentalData;
     //Функция для вычисления разности между exp и theoretical точками
-    private final TargetFunction.WithError targetFunction;
+    private final RelativeErrorAwareTargetFunction targetFunction;
     //Исходная модель
     private final List<ModelLayer> modelLayers;
     private final ForwardSolver forwardSolver;
@@ -22,7 +22,7 @@ public class FunctionValue implements MultivariateFunction {
     private double diffMinValue = Double.MAX_VALUE;
 
     public FunctionValue(List<ExperimentalData> experimentalData,
-                         TargetFunction.WithError targetFunction,
+                         RelativeErrorAwareTargetFunction targetFunction,
                          List<ModelLayer> modelLayers,
                          ForwardSolver forwardSolver) {
         this.experimentalData = experimentalData;

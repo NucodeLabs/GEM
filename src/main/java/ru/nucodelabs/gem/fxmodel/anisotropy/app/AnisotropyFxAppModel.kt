@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
+import jakarta.inject.Inject
 import jakarta.validation.Validator
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -22,7 +23,6 @@ import ru.nucodelabs.kfx.ext.getValue
 import ru.nucodelabs.kfx.ext.setValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.io.File
-import javax.inject.Inject
 
 class AnisotropyFxAppModel @Inject constructor(
     private val historyManager: HistoryManager<Project<Point>>,
@@ -152,7 +152,7 @@ class AnisotropyFxAppModel @Inject constructor(
     fun signalsRelations(): List<SignalRelation> {
         val selectedSignals = selectedSignals()
         return if (selectedSignals != null) {
-            ru.nucodelabs.geo.anisotropy.calc.signalsRelations(selectedSignals, point.azimuthSignals)
+            signalsRelations(selectedSignals, point.azimuthSignals)
         } else {
             emptyList()
         }

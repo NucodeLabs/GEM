@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
+import jakarta.inject.Named
 import javafx.beans.property.ObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -27,8 +29,6 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Named
 
 
 class ColorAxisController @Inject constructor(

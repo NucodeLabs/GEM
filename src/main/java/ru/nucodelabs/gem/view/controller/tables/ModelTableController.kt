@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.tables
 
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import jakarta.validation.Validator
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.Bindings.createStringBinding
@@ -41,8 +43,6 @@ import ru.nucodelabs.geo.ves.toTabulatedTable
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
-import javax.inject.Provider
 
 const val STYLE_FOR_FIXED = """
     -fx-text-fill: White;

@@ -1,17 +1,17 @@
 package ru.nucodelabs.gem.fxmodel.ves.app
 
+import jakarta.inject.Inject
 import ru.nucodelabs.geo.forward.ForwardSolver
-import ru.nucodelabs.geo.target.TargetFunction
+import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.graph.MisfitsFunction
-import javax.inject.Inject
 import kotlin.math.abs
 
 class MetricsService @Inject constructor(
     private val forwardSolver: ForwardSolver,
-    private val targetFunction: TargetFunction.WithError,
+    private val targetFunction: RelativeErrorAwareTargetFunction,
     private val misfitsFunction: MisfitsFunction
 ) {
 

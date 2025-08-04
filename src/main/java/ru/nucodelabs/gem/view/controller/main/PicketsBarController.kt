@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.main
 
+import jakarta.inject.Inject
 import javafx.beans.property.IntegerProperty
 import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
@@ -18,7 +19,6 @@ import ru.nucodelabs.geo.ves.calc.length
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import java.net.URL
 import java.util.*
-import javax.inject.Inject
 
 class PicketsBarController @Inject constructor(
     private val picketIndex: IntegerProperty,

@@ -1,10 +1,10 @@
 package ru.nucodelabs.gem.fxmodel.anisotropy.app
 
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.app.project.Project
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.kfx.snapshot.Snapshot
 import ru.nucodelabs.kfx.snapshot.snapshotOf
-import javax.inject.Inject
 
 class ReloadService<T> @Inject constructor(
     private val historyManager: HistoryManager<Project<T>>,

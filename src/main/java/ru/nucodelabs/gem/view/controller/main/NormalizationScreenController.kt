@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.main
 
+import jakarta.inject.Inject
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.*
 import javafx.beans.value.ObservableObjectValue
@@ -33,7 +34,6 @@ import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 
 class NormalizationScreenController @Inject constructor(
     private val observableSection: ObservableSection,

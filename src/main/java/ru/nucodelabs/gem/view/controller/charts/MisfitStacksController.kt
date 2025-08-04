@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ObservableList
@@ -27,7 +28,6 @@ import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 import kotlin.math.abs
 
 const val TARGET_FUNCTION_DESCRIPTION = "Целевая функция - это \n" +

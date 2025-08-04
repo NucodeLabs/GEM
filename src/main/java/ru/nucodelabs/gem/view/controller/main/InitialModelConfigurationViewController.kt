@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.main
 
+import jakarta.inject.Inject
 import javafx.fxml.FXML
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
@@ -12,7 +13,6 @@ import ru.nucodelabs.kfx.core.AbstractViewController
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 
 class InitialModelConfigurationViewController @Inject constructor(
     private val decimalFormat: DecimalFormat,

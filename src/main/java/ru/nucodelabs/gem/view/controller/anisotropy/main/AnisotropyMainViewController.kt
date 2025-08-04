@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.anisotropy.main
 
+import jakarta.inject.Inject
+import jakarta.inject.Named
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
@@ -42,8 +44,6 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Named
 import kotlin.concurrent.thread
 
 private const val MAP_IMAGE_SIZE = 350
@@ -234,7 +234,7 @@ class AnisotropyMainViewController @Inject constructor(
     }
 
     private fun initSignalsMap() {
-        mapOverlayType.items += MapOverlayType.values()
+        mapOverlayType.items += MapOverlayType.entries
         mapOverlayType.selectionModel.select(MapOverlayType.OVERLAY)
 
         signalsMapAxisY.tickLabelFormatter = formatter

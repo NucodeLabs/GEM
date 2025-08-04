@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.app.project
 
+import jakarta.inject.Inject
 import ru.nucodelabs.kfx.snapshot.Snapshot
 import ru.nucodelabs.kfx.snapshot.snapshotOf
-import javax.inject.Inject
 
 abstract class ProjectSnapshotService<T> @Inject constructor(
     private val projectContext: ProjectContext<T>

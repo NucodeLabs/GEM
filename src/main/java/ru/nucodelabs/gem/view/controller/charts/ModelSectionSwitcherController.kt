@@ -1,5 +1,7 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
+import jakarta.inject.Named
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.CheckMenuItem
@@ -16,8 +18,6 @@ import ru.nucodelabs.gem.view.controller.AbstractController
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences
-import javax.inject.Inject
-import javax.inject.Named
 
 class ModelSectionSwitcherController @Inject constructor(
     @Named(ArgNames.File.PNG) private val fc: FileChooser,

@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.view.controller.charts
 
+import jakarta.inject.Inject
 import javafx.fxml.FXML
 import javafx.scene.chart.XYChart
 import javafx.scene.chart.XYChart.Data
@@ -19,7 +20,6 @@ import ru.nucodelabs.geo.ves.calc.xOfPicket
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
-import javax.inject.Inject
 
 class MapPseudoSectionController @Inject constructor(
     private val colorMapper: ColorMapper,

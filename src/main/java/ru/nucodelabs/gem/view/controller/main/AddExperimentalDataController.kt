@@ -2,6 +2,7 @@ package ru.nucodelabs.gem.view.controller.main
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.inject.Inject
 import jakarta.validation.Validator
 import javafx.beans.property.IntegerProperty
 import javafx.fxml.FXML
@@ -14,7 +15,6 @@ import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.Section
-import javax.inject.Inject
 
 class AddExperimentalDataController @Inject constructor(
     private val objectMapper: ObjectMapper,

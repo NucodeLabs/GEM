@@ -1,12 +1,12 @@
 package ru.nucodelabs.gem.view
 
+import jakarta.inject.Inject
 import jakarta.validation.ConstraintViolation
 import javafx.scene.control.Alert
 import javafx.stage.Stage
 import ru.nucodelabs.gem.util.fx.JavaFX
 import ru.nucodelabs.gem.util.fx.get
 import java.util.*
-import javax.inject.Inject
 
 class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle) {
 

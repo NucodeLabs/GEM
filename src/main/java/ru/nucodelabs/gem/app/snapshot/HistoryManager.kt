@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.app.snapshot
 
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.app.snapshot.Snapshot.Originator
-import javax.inject.Inject
 
 class HistoryManager<T> @Inject constructor(private val originator: Originator<T>) {
     private var history: MutableList<Snapshot<T>> = mutableListOf()

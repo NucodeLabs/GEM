@@ -1,9 +1,9 @@
 package ru.nucodelabs.gem.app.io
 
-import ru.nucodelabs.geo.ves.Section
+import jakarta.inject.Inject
 import ru.nucodelabs.gem.app.snapshot.Snapshot
+import ru.nucodelabs.geo.ves.Section
 import java.io.File
-import javax.inject.Inject
 
 class StorageManager @Inject constructor(
     private val jsonFileManager: JsonFileManager,
