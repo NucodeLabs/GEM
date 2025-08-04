@@ -1,20 +1,20 @@
 package ru.nucodelabs.geo.ves.calc.inverse.inverse_functions;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver;
+import ru.nucodelabs.geo.forward.ForwardSolver;
+import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
+import ru.nucodelabs.geo.ves.calc.adapter.ForwardSolverAdapterKt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class FunctionValue implements MultivariateFunction {
     //Экспериментальные точки для FS
     private final List<ExperimentalData> experimentalData;
     //Функция для вычисления разности между exp и theoretical точками
-    private final BiFunction<List<Double>, List<Double>, Double> inverseFunction;
+    private final RelativeErrorAwareTargetFunction targetFunction;
     //Исходная модель
     private final List<ModelLayer> modelLayers;
     private final ForwardSolver forwardSolver;
@@ -22,11 +22,11 @@ public class FunctionValue implements MultivariateFunction {
     private double diffMinValue = Double.MAX_VALUE;
 
     public FunctionValue(List<ExperimentalData> experimentalData,
-                         BiFunction<List<Double>, List<Double>, Double> inverseFunction,
+                         RelativeErrorAwareTargetFunction targetFunction,
                          List<ModelLayer> modelLayers,
                          ForwardSolver forwardSolver) {
         this.experimentalData = experimentalData;
-        this.inverseFunction = inverseFunction;
+        this.targetFunction = targetFunction;
         this.modelLayers = modelLayers;
         this.forwardSolver = forwardSolver;
     }
@@ -78,10 +78,13 @@ public class FunctionValue implements MultivariateFunction {
             newModelLayers.add(new ModelLayer(newModelPower.get(i), newModelResistance.get(i), false, false));
         }
 
-        List<Double> solvedResistance = forwardSolver.invoke(experimentalData, newModelLayers);
+        List<Double> solvedResistance = ForwardSolverAdapterKt.invoke(forwardSolver, experimentalData, newModelLayers);
 
-        double diffValue = inverseFunction.apply(solvedResistance,
-                experimentalData.stream().map(ExperimentalData::getResistanceApparent).collect(Collectors.toList()));
+        double diffValue = targetFunction.invoke(
+                solvedResistance,
+                experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList(),
+                experimentalData.stream().map(ExperimentalData::getErrorResistanceApparent).toList()
+        );
 
         boolean flag = false;
 

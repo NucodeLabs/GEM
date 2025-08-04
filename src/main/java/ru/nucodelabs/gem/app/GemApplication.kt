@@ -1,34 +1,29 @@
 package ru.nucodelabs.gem.app
 
-import com.google.inject.Guice
 import com.google.inject.Inject
 import com.google.inject.Key
 import com.google.inject.name.Names
-import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
-import ru.nucodelabs.gem.util.OS
-import ru.nucodelabs.gem.util.OS.macOS
+import ru.nucodelabs.gem.config.AppModule
+import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.main.MainViewController
+import ru.nucodelabs.gem.view.controller.main.MainViewController
+import ru.nucodelabs.kfx.core.GuiceApplication
+import ru.nucodelabs.kfx.core.OS.macOS
 import java.io.File
-import java.time.LocalDate.now
-import java.time.format.DateTimeFormatter.ofPattern
 import java.util.logging.Logger
-import kotlin.random.Random
-import kotlin.random.nextUInt
 import com.sun.glass.ui.Application as LowLevelApplication
 
 /**
  * Приложение, создает главное окошко
  */
-class GemApplication : Application() {
+class GemApplication : GuiceApplication(AppModule()) {
 
     private val macOSHandledFiles: MutableList<String> = mutableListOf()
-    private val injector = Guice.createInjector(AppModule())
 
     @Inject
     lateinit var logger: Logger
@@ -61,25 +56,13 @@ class GemApplication : Application() {
     }
 
     @Throws(Exception::class)
-    override fun init() {
-        injector.injectMembers(this)
-        logger.info("Injected")
-    }
-
-    @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            alertsFactory.uncaughtExceptionAlert(e).show()
-            if (parameters.raw.contains("--print-trace")) {
-                e.printStackTrace()
-            } else {
-                val log =
-                    File(
-                        "err-trace_${OS.osNameClassifier}_${now().format(ofPattern("dd.MM.yyyy"))}_${Random.nextUInt()}.txt"
-                    ).also { it.createNewFile() }
-                log.writeText(e.stackTraceToString())
-            }
-        }
+        Thread.setDefaultUncaughtExceptionHandler(
+            ExceptionHandler(
+                alertsFactory,
+                parameters.raw.contains("--print-trace")
+            )
+        )
         val params: List<String> = parameters.raw + macOSHandledFiles
         if (
             params.any {
@@ -89,7 +72,7 @@ class GemApplication : Application() {
             processParams(params)
         } else {
             logger.info("Starting MainView without parameters")
-            injector.getInstance(Key.get(Stage::class.java, Names.named("MainView"))).show()
+            guiceInjector.getInstance(Key.get(Stage::class.java, Names.named(ArgNames.View.MAIN_VIEW))).show()
         }
     }
 
@@ -132,5 +115,6 @@ class GemApplication : Application() {
 
     private fun fxmlLoaderAfterShow(): FXMLLoader = mainViewFxmlLoader().also { it.load<Stage>().show() }
 
-    private fun mainViewFxmlLoader() = injector.getInstance(Key.get(FXMLLoader::class.java, Names.named("MainView")))
+    private fun mainViewFxmlLoader() =
+        guiceInjector.getInstance(Key.get(FXMLLoader::class.java, Names.named(ArgNames.View.MAIN_VIEW)))
 }

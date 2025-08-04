@@ -229,3 +229,7 @@
 .padded-chart {
     -fx-padding: -5 0 -5 -10;
 }
+
+.uc-header {
+    -fx-font-size: 18;
+}

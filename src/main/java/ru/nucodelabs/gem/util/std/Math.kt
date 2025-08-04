@@ -7,8 +7,7 @@ fun exp10(a: Double) = 10.0.pow(a)
 
 fun exp10(a: Int) = 10.0.pow(a)
 
-fun String.toNumber(decimalFormat: DecimalFormat) = decimalFormat.parse(this)
-fun String.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
+private fun String.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
     return try {
         decimalFormat.parse(this)
     } catch (_: Exception) {
@@ -18,6 +17,8 @@ fun String.toNumberOrNull(decimalFormat: DecimalFormat): Number? {
 
 fun String.toDoubleOrNullBy(decimalFormat: DecimalFormat) = toNumberOrNull(decimalFormat)?.toDouble()
 
+fun String.toIntOrNullBy(decimalFormat: DecimalFormat) = toNumberOrNull(decimalFormat)?.toInt()
+
 /**
  * e.g. 0.5 -> 50 (%)
  */
@@ -26,9 +27,4 @@ fun Double.asPercent(): Double = this * 100.0
 /**
  * e.g. 50 (%) -> 0.5
  */
-fun Double.asFraction(): Double = this / 100.0
-
-const val MILLI = 1e-3
-fun asMilli(value: Double) = value / MILLI
-
-fun fromMilli(value: Double) = value * MILLI
+fun Double.fromPercent(): Double = this / 100.0

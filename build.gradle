@@ -4,63 +4,81 @@ import io.github.fvarrui.javapackager.model.SetupMode
 import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 buildscript {
-    ext.kotlin_version = '1.7.22'
+    ext.kotlinVersion = '2.2.0'
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "io.github.fvarrui:javapackager:1.7.0"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.github.fvarrui:javapackager:1.7.6"
     }
 }
 
 plugins {
-    id "org.jetbrains.dokka" version "1.6.21"
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.11'
-    id "com.google.osdetector" version "1.7.0"
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'org.jetbrains.kotlin.plugin.lombok' version "$kotlinVersion"
+    id "org.jetbrains.dokka" version "2.0.0"
 }
 
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
-apply plugin: 'kotlin'
 
 group 'ru.nucodelabs'
-version '1.0'
+version '2.0'
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+java {
+    sourceCompatibility = JavaVersion.VERSION_19
+    targetCompatibility = JavaVersion.VERSION_19
+}
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 ext {
-    jfxVersion = '19'
+    set 'jfxVersion', '19'
+
     // Platform Info
-    currentOS = DefaultNativePlatform.currentOperatingSystem
-    currentArch = DefaultNativePlatform.currentArchitecture
-    currentOSVer = System.getProperty("os.version").toString()
+    def currentOS = DefaultNativePlatform.currentOperatingSystem
+    def currentArch = DefaultNativePlatform.currentArchitecture
+    def currentOSVer = System.getProperty("os.version").toString()
     javaHome = Jvm.current().javaHome
 
     // For deps
-    osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
-    archName = currentArch.displayName.toLowerCase().contains("arm") ? "arm64" : "x86_64"
-    platform = "$osName-$archName"
+    def osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
+    def archName = currentArch.displayName.toLowerCase().contains("aarch") ? "arm64" : "x86_64"
+    set 'platform', "$osName-$archName"
 
-    runDir = "$projectDir/run"
-}
-
-task printPlatformInfo {
     println "OS:             ${currentOS.name}"
     println "OS VERSION:     ${currentOSVer}"
     println "ARCHITECTURE:   ${currentArch.name}"
     println "CLASSIFIER:     ${platform}"
+
+    set 'runDir', "$projectDir/.run"
 }
 
-tasks.withType(JavaCompile) {
+tasks.register('printPlatformInfo') {
+
+}
+
+compileKotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_19
+    }
+}
+
+compileTestKotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_19
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -78,62 +96,78 @@ javafx {
 }
 
 dependencies {
+    final junitVersion = '5.9.2'
+    final lombokVersion = '1.18.38'
+    final jacksonVersion = '2.19.2'
+    final kotlinTestVersion = kotlinVersion
+
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")
+
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation 'org.glassfish.expressly:expressly:5.0.0'
-    implementation 'com.github.haifengl:smile-math:2.6.0'
-    implementation 'com.github.haifengl:smile-interpolation:2.6.0'
-    implementation 'com.github.haifengl:smile-core:3.0.0'
-    implementation 'com.github.haifengl:smile-data:2.6.0'
-    implementation 'com.github.haifengl:smile-plot:3.0.0'
-    implementation 'com.github.haifengl:smile-io:2.6.0'
-    implementation "org.bytedeco:openblas:0.3.13-1.5.8:$platform"
-    implementation "org.bytedeco:javacpp:1.5.8:$platform"
-    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8:$osName-x86_64"
-    implementation "org.bytedeco:arpack-ng:3.8.0-1.5.8"
-    implementation 'org.codehaus.groovy:groovy-all:3.0.13'
-//    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223:$kotlin_version")
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-    testImplementation "org.openjfx:javafx:${jfxVersion}"
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.1'
+    implementation 'com.github.haifengl:smile-core:4.4.0'
+
+    implementation "org.bytedeco:openblas:0.3.30-1.5.12:$platform"
+    implementation "org.bytedeco:javacpp:1.5.12:$platform"
+    implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12:$platform"
+    implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12"
+
+    implementation 'org.codehaus.groovy:groovy-jsr223:3.0.25'
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
-    implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
-    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.7'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0'
+    implementation group: 'com.google.inject', name: 'guice', version: '7.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation group: 'org.tinfour', name: 'TinfourCore', version: '2.1.8'
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+    implementation 'com.github.lilvadim:kfx-utils:0.1.1'
+    implementation 'org.apache.commons:commons-collections4:4.4'
+
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinTestVersion"
+    testImplementation "org.openjfx:javafx:$jfxVersion"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testImplementation 'io.mockk:mockk:1.13.4'
+
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
 
-task prepareRunDir {
+tasks.register('prepareRunDir') {
     file(runDir).mkdirs()
 }
 
-task copyLibsToRunDir(type: Copy) {
+tasks.register('copyLibsToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/lib"
     into runDir
 }
 
-task copyDataToRunDir(type: Copy) {
+tasks.register('copyDataToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/data"
-    into "$projectDir/run/data"
+    into "$runDir/data"
 }
 
-task copyClrToRunDir(type: Copy) {
+tasks.register('copyClrToRunDir', Copy) {
     dependsOn prepareRunDir
     from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
-    into "$projectDir/run/colormap"
+    into "$runDir/colormap"
     rename('002_ERT_Rainbow_2.clr', 'default.clr')
 }
 
-task cleanRunDir(type: Delete) {
+tasks.register('cleanRunDir', Delete) {
     delete fileTree(runDir) { exclude "err-trace*.txt" }
 }
 
-task distClr(type: Copy) {
+tasks.register('distClr', Copy) {
     doFirst {
         file('build/GEM/colormap').mkdirs()
     }
@@ -142,9 +176,8 @@ task distClr(type: Copy) {
 }
 
 
-tasks.withType(JavaExec) {
+tasks.withType(JavaExec).configureEach {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
-//    dependsOn forwardSolver, misfitFunctions
     allJvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath]
     workingDir = file(runDir)
     finalizedBy cleanRunDir
@@ -170,17 +203,17 @@ javapackager {
     organizationName = "NucodeLabs"
     name = "GEM"
     applicationName = "GEM"
-    version = "1.0"
+    version = "2.0"
     vmArgs = ["-Djava.library.path=."]
     administratorRequired = false
-    useResourcesAsWorkingDir = true
     additionalResources = [
             file("lib/${System.mapLibraryName("MathVES_JNI")}"),
             file("lib/${System.mapLibraryName("MathVES")}")
     ]
 }
 
-task packageMacApp(type: PackageTask, dependsOn: build) {
+tasks.register('packageMacApp', PackageTask) {
+    dependsOn build
     generateInstaller = true
     macConfig {
         macStartup = MacStartup.UNIVERSAL
@@ -193,7 +226,8 @@ task packageMacApp(type: PackageTask, dependsOn: build) {
             javapackager.additionalResources + [file("${projectDir}/colormap")]
 }
 
-task packageWindowsExe(type: PackageTask, dependsOn: build) {
+tasks.register('packageWindowsExe', PackageTask) {
+    dependsOn build
     generateInstaller = false
     winConfig {
         generateSetup = false
@@ -210,7 +244,8 @@ task packageWindowsExe(type: PackageTask, dependsOn: build) {
     finalizedBy distClr
 }
 
-task packageLinuxApplication(type: PackageTask, dependsOn: build) {
+tasks.register('packageLinuxApplication', PackageTask) {
+    dependsOn build
     generateInstaller = true
     linuxConfig {
         generateDeb = true
@@ -219,15 +254,4 @@ task packageLinuxApplication(type: PackageTask, dependsOn: build) {
         pngFile = file("src/main/resources/img/gem.png")
     }
     finalizedBy distClr
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }

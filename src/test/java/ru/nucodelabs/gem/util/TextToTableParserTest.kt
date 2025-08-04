@@ -39,5 +39,6 @@ internal class TextToTableParserTest {
 
         val textToTableParser = TextToTableParser(testString)
         val result = textToTableParser.parsedTable
+        println(result)
     }
 }

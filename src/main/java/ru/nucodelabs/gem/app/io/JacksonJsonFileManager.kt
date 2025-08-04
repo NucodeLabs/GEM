@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.app.io
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.inject.Inject
 import java.io.File
-import javax.inject.Inject
 
 internal class JacksonJsonFileManager @Inject constructor(
     private val objectMapper: ObjectMapper

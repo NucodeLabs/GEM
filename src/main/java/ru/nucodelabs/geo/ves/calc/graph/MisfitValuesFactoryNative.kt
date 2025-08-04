@@ -1,8 +1,9 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
-import ru.nucodelabs.geo.ves.calc.forward.ForwardSolver
+import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import kotlin.math.abs
 import kotlin.math.sign
 

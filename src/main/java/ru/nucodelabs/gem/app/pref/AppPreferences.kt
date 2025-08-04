@@ -1,3 +1,4 @@
+@file:JvmName("AppPreferences")
 package ru.nucodelabs.gem.app.pref
 
 private val USER_HOME: String = System.getProperty("user.home")

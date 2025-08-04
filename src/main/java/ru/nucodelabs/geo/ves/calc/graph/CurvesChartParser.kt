@@ -1,9 +1,9 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
-import ru.nucodelabs.geo.ves.calc.Bounds
+import jakarta.inject.Inject
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.Bounds
 import ru.nucodelabs.geo.ves.calc.picketsBounds
-import javax.inject.Inject
 import kotlin.math.min
 
 class CurvesChartParser @Inject constructor(inputSection: Section) {
