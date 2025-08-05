@@ -32,7 +32,7 @@ import java.util.prefs.Preferences
 
 
 class ColorAxisController @Inject constructor(
-    @Named(ArgNames.CLR) private val clrFile: File,
+    @Named(ArgNames.DEFAULT_CLR) private val clrFile: File,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val stringConverter: StringConverter<Number>,

@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.config
 object ArgNames {
     const val INITIAL = "initial"
     const val CSS = "CSS"
-    const val CLR = "CLR"
+    const val DEFAULT_CLR = "Default CLR"
     const val PRECISE = "Precise"
     const val SAVE = "SAVE"
     const val DIFF = "DIFF"
