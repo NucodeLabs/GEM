@@ -7,13 +7,12 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
-import javafx.scene.layout.*
-import ru.nucodelabs.gem.util.fx.*
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.gem.view.control.chart.ChartUtil.draw
 import ru.nucodelabs.geo.ves.calc.interpolation.ApacheInterpolator2D
 import ru.nucodelabs.geo.ves.calc.interpolation.RBFSpatialInterpolator
 import ru.nucodelabs.geo.ves.calc.interpolation.SmartInterpolator
+import tornadofx.getValue
+import tornadofx.setValue
 
 /**
  * График с двумя слоями,
@@ -70,7 +69,7 @@ class CombinedChart @JvmOverloads constructor(
     }
 
     private fun draw() {
-        draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
+        ChartUtil.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {

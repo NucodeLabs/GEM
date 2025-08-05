@@ -15,11 +15,7 @@ import javafx.scene.control.cell.TextFieldTableCell
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.tables.STYLE_FOR_FIXED
@@ -29,6 +25,10 @@ import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.FixableValue
 import ru.nucodelabs.geo.ves.calc.distinctMn2
 import ru.nucodelabs.geo.ves.calc.normalizeExperimentalData
+import ru.nucodelabs.kfx.ext.toObservableList
+import ru.nucodelabs.kfx.snapshot.HistoryManager
+import tornadofx.getValue
+import tornadofx.setValue
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL

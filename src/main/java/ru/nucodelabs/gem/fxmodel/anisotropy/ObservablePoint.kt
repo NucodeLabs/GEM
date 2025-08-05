@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.fxmodel.anisotropy
 import javafx.beans.property.*
 import javafx.collections.ObservableList
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
-import ru.nucodelabs.kfx.ext.getValue
-import ru.nucodelabs.kfx.ext.setValue
+import tornadofx.getValue
+import tornadofx.setValue
 
 class ObservablePoint(
     center: ObservableWgs?,

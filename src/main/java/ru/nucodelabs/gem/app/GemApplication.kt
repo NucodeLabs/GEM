@@ -9,9 +9,9 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
-import ru.nucodelabs.gem.app.io.slf4j
 import ru.nucodelabs.gem.config.AppModule
 import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.slf4j
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.main.MainViewController
 import ru.nucodelabs.kfx.core.GuiceApplication

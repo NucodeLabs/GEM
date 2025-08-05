@@ -10,13 +10,13 @@ import javafx.scene.effect.BlendMode
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.forCharts
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.xOfPicket
+import ru.nucodelabs.kfx.ext.forCharts
+import ru.nucodelabs.kfx.ext.toObservableList
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*

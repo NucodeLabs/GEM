@@ -4,8 +4,8 @@ import jakarta.inject.Inject
 import jakarta.validation.ConstraintViolation
 import javafx.scene.control.Alert
 import javafx.stage.Stage
-import ru.nucodelabs.gem.util.fx.JavaFX
-import ru.nucodelabs.gem.util.fx.get
+import ru.nucodelabs.kfx.ext.currentWindow
+import ru.nucodelabs.kfx.ext.get
 import java.util.*
 
 class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle) {
@@ -14,7 +14,7 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
         title: String = uiProperties["error"],
         headerText: String = "",
         text: String,
-        owner: Stage? = JavaFX.currentWindow
+        owner: Stage? = currentWindow()
     ) =
         Alert(Alert.AlertType.ERROR, text).apply {
             this.title = title
@@ -24,12 +24,12 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
 
     fun uncaughtExceptionAlert(e: Throwable) = Alert(Alert.AlertType.ERROR, e.message).apply {
         title = uiProperties["error"]
-        initOwner(JavaFX.currentWindow)
+        initOwner(currentWindow())
         headerText = "Сохраните важные данные и перезапустите программу"
     }
 
     @JvmOverloads
-    fun simpleExceptionAlert(e: Throwable, owner: Stage? = JavaFX.currentWindow): Alert =
+    fun simpleExceptionAlert(e: Throwable, owner: Stage? = currentWindow()): Alert =
         Alert(Alert.AlertType.ERROR, e.message).apply {
             title = uiProperties["error"]
             headerText = title
@@ -37,7 +37,7 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
         }
 
     @JvmOverloads
-    fun unsatisfiedLinkErrorAlert(e: UnsatisfiedLinkError, owner: Stage? = JavaFX.currentWindow): Alert =
+    fun unsatisfiedLinkErrorAlert(e: UnsatisfiedLinkError, owner: Stage? = currentWindow()): Alert =
         Alert(Alert.AlertType.ERROR, e.message).apply {
             title = uiProperties["noLib"]
             headerText = uiProperties["unableToDrawChart"]
@@ -46,13 +46,13 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
 
 
     @JvmOverloads
-    fun incorrectFileAlert(e: Exception, owner: Stage? = JavaFX.currentWindow): Alert =
+    fun incorrectFileAlert(e: Exception, owner: Stage? = currentWindow()): Alert =
         simpleExceptionAlert(e, owner).apply {
             headerText = uiProperties["fileError"]
         }
 
     @JvmOverloads
-    fun violationsAlert(violations: Set<ConstraintViolation<*>>, owner: Stage? = JavaFX.currentWindow): Alert {
+    fun violationsAlert(violations: Set<ConstraintViolation<*>>, owner: Stage? = currentWindow()): Alert {
         val message = violations.joinToString("\n") { it.message }
         return Alert(Alert.AlertType.ERROR, message).apply {
             initOwner(owner)

@@ -1,6 +1,6 @@
 package ru.nucodelabs.gem.app
 
-import ru.nucodelabs.gem.app.io.slf4j
+import ru.nucodelabs.gem.config.slf4j
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.kfx.core.OS
 import java.io.File

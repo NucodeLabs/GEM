@@ -19,7 +19,7 @@ buildscript {
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.11'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
     id "org.jetbrains.dokka" version "2.0.0"
 }
@@ -36,7 +36,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -101,11 +100,8 @@ dependencies {
     final kotlinTestVersion = kotlinVersion
     final mapstructVersion = '1.6.3'
 
-    /* Private Math Library JNI Bindings */
+    /* Closed-Source Math Library JNI Bindings */
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")
-
-    /* Project Utilities Library */
-    implementation 'com.github.lilvadim:kfx-utils:0.1.1'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
@@ -131,6 +127,9 @@ dependencies {
     implementation "org.bytedeco:javacpp:1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12"
+
+    /* Kotlin JavaFX Utils */
+    implementation project(":kfx-utils")
 
     /* Test Dependencies */
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

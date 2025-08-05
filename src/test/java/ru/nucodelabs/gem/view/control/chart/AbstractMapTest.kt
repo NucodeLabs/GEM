@@ -8,8 +8,8 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import ru.nucodelabs.gem.util.fx.clear
 import ru.nucodelabs.gem.view.FXTest
+import ru.nucodelabs.kfx.ext.clear
 
 internal class AbstractMapTest : FXTest() {
 

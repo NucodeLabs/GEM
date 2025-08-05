@@ -9,12 +9,12 @@ import javafx.fxml.FXML
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.kfx.snapshot.HistoryManager
 
 class AddExperimentalDataController @Inject constructor(
     private val objectMapper: ObjectMapper,

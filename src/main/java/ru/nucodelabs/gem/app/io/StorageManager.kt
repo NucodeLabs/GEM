@@ -1,8 +1,8 @@
 package ru.nucodelabs.gem.app.io
 
 import jakarta.inject.Inject
-import ru.nucodelabs.gem.app.snapshot.Snapshot
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.kfx.snapshot.Snapshot
 import java.io.File
 
 class StorageManager @Inject constructor(

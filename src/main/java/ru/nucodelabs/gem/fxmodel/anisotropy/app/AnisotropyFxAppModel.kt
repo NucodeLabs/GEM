@@ -19,9 +19,9 @@ import ru.nucodelabs.geo.anisotropy.AzimuthSignals
 import ru.nucodelabs.geo.anisotropy.Point
 import ru.nucodelabs.geo.anisotropy.Signals
 import ru.nucodelabs.geo.anisotropy.calc.*
-import ru.nucodelabs.kfx.ext.getValue
-import ru.nucodelabs.kfx.ext.setValue
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import tornadofx.getValue
+import tornadofx.setValue
 import java.io.File
 
 class AnisotropyFxAppModel @Inject constructor(

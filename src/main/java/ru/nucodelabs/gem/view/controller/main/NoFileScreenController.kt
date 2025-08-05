@@ -13,10 +13,10 @@ import javafx.scene.input.TransferMode
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.RECENT_FILES
-import ru.nucodelabs.gem.util.fx.emptyBinding
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.FileOpener
+import ru.nucodelabs.kfx.ext.emptyBinding
 import java.io.File
 import java.net.URL
 import java.util.*

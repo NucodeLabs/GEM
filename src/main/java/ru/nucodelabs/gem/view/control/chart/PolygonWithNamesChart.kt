@@ -8,9 +8,8 @@ import javafx.scene.effect.DropShadow
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.Text
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
-
+import tornadofx.getValue
+import tornadofx.setValue
 
 class PolygonWithNamesChart(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,

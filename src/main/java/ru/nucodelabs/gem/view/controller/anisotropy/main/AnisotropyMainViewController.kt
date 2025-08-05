@@ -15,7 +15,6 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.util.Callback
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.app.io.saveInitialDirectory
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
@@ -26,7 +25,6 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.fxmodel.exception.validation
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
-import ru.nucodelabs.gem.util.fx.forCharts
 import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
@@ -38,7 +36,9 @@ import ru.nucodelabs.gem.view.mapping.mapSignals
 import ru.nucodelabs.gem.view.mapping.mapSignalsRelations
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.bidirectionalNot
+import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.observableListOf
+import ru.nucodelabs.kfx.ext.saveInitialDirectory
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat

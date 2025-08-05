@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.snapshot
+package ru.nucodelabs.kfx.snapshot
 
 interface Snapshot<T> {
     val value: T

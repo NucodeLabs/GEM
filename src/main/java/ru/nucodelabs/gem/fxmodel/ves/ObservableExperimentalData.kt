@@ -2,8 +2,8 @@ package ru.nucodelabs.gem.fxmodel.ves
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
+import tornadofx.getValue
+import tornadofx.setValue
 
 class ObservableExperimentalData(
     ab2: Double,

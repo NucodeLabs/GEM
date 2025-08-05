@@ -6,9 +6,9 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.collections.ListChangeListener
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.observableListOf
-import ru.nucodelabs.gem.util.fx.setValue
+import ru.nucodelabs.kfx.ext.observableListOf
+import tornadofx.getValue
+import tornadofx.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -106,7 +106,7 @@ class NucodeNumberAxis @JvmOverloads constructor(
         return when {
             side.isVertical -> if (!inverted) height + res else -res
             side.isHorizontal -> if (!inverted) res else width - res
-            else -> throw IllegalStateException("что-то пошло не так")
+            else -> throw IllegalStateException()
         }
     }
 

@@ -9,7 +9,6 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.observableListOf
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
@@ -22,6 +21,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.geo.ves.calc.xOfPicket
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.kfx.ext.observableListOf
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL

@@ -3,7 +3,7 @@ package ru.nucodelabs.gem.net.external.calc
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
 import java.util.function.Function
 import kotlin.math.hypot
-import ru.nucodelabs.gem.util.fx.Point as PointFX
+import ru.nucodelabs.kfx.ext.Point as PointFX
 
 class DistanceToRectangle(private val points: List<Point>) : Function<Pair<PointFX<Double, Double>, PointFX<Double, Double>>, Double> {
     override fun apply(

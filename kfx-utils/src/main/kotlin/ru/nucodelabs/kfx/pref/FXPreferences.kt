@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.app.pref
+package ru.nucodelabs.kfx.pref
 
 import jakarta.inject.Inject
 import javafx.beans.property.*

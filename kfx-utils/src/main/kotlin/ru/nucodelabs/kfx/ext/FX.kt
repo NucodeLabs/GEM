@@ -1,8 +1,10 @@
-package ru.nucodelabs.gem.util.fx
+package ru.nucodelabs.kfx.ext
 
+import javafx.beans.Observable
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.BooleanProperty
+import javafx.beans.property.Property
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.ObservableValue
@@ -24,14 +26,17 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.transform.Transform
 import javafx.stage.FileChooser
+import javafx.stage.Stage
 import javafx.util.Duration
 import javafx.util.StringConverter
+import ru.nucodelabs.kfx.pref.Preference
 import java.io.File
 import java.lang.String.format
 import java.text.DecimalFormat
 import java.text.ParsePosition
 import java.util.*
 import java.util.function.UnaryOperator
+import java.util.prefs.Preferences
 import javax.imageio.ImageIO
 import kotlin.math.ceil
 
@@ -123,7 +128,7 @@ fun <X, Y> line(point1: Point<X, Y>, point2: Point<X, Y>): Line<X, Y> = Line(obs
 /**
  * Returns array of all bounds properties of nodes, so it can be passed in `create*Binding()` function as dependencies
  */
-fun Node.sizeObservables(): Array<javafx.beans.Observable> = arrayOf(
+fun Node.sizeObservables(): Array<Observable> = arrayOf(
     layoutBoundsProperty(),
     boundsInParentProperty(),
     boundsInLocalProperty()
@@ -235,4 +240,26 @@ fun generateImage(width: Int, height: Int, color: Color): Image {
     }
 
     return writableImg
+}
+
+/**
+ * Binds this property to an observable, automatically unbinding it before if already bound.
+ */
+infix fun <T> Property<T>.bindTo(observable: ObservableValue<T>) {
+    unbind()
+    bind(observable)
+}
+
+fun currentWindow(): Stage = Stage.getWindows().find { it.isFocused } as Stage
+
+fun saveInitialDirectory(
+    preferences: Preferences,
+    initDirPref: Preference<String>,
+    fileChooser: FileChooser,
+    file: File?,
+) {
+    if (file != null && file.parentFile.isDirectory) {
+        fileChooser.initialDirectory = file.parentFile
+        preferences.put(initDirPref.key, file.parentFile.absolutePath)
+    }
 }

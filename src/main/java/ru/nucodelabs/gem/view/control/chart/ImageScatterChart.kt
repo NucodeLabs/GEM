@@ -9,7 +9,11 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.image.Image
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import ru.nucodelabs.gem.util.fx.*
+import ru.nucodelabs.kfx.ext.generateImage
+import tornadofx.getValue
+import tornadofx.minus
+import tornadofx.plus
+import tornadofx.setValue
 
 
 open class ImageScatterChart @JvmOverloads constructor(
