@@ -4,8 +4,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
+import tornadofx.getValue
+import tornadofx.setValue
 
 class ObservableAzimuthSignals(
     azimuth: Double,

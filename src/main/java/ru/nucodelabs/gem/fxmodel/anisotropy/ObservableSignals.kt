@@ -3,8 +3,8 @@ package ru.nucodelabs.gem.fxmodel.anisotropy
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
+import tornadofx.getValue
+import tornadofx.setValue
 
 class ObservableSignals(
     sortedSignals: ObservableList<ObservableSignal>,

@@ -11,9 +11,9 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
-import ru.nucodelabs.gem.util.fx.bindTo
-import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
 import ru.nucodelabs.gem.view.controller.AbstractController
+import ru.nucodelabs.kfx.ext.bindTo
+import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences

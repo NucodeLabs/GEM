@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.fxmodel.map
 
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
-import ru.nucodelabs.kfx.ext.getValue
+import tornadofx.getValue
 
 class ObservableWgs(
     longitudeInDegrees: Double,

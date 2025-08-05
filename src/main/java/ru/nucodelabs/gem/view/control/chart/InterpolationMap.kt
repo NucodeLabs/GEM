@@ -7,12 +7,12 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
 import javafx.scene.paint.Color
-import ru.nucodelabs.gem.util.fx.clear
-import ru.nucodelabs.gem.util.fx.getValue
-import ru.nucodelabs.gem.util.fx.setValue
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
 import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
+import ru.nucodelabs.kfx.ext.clear
+import tornadofx.getValue
+import tornadofx.setValue
 import java.lang.Double.max
 import kotlin.math.min
 

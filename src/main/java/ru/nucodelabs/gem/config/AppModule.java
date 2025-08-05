@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.nucodelabs.files.clr.ClrParser;
 import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.gem.app.GemApplication;
@@ -41,13 +43,14 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 /**
  * Зависимости приложения, которое, по сути, создает MainView
  */
 public class AppModule extends AbstractModule {
+
+    private static final Logger log = LoggerFactory.getLogger(AppModule.class);
 
     @Override
     protected void configure() {
@@ -207,16 +210,21 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named(ArgNames.CLR)
+    @Named(ArgNames.DEFAULT_CLR)
     File clrFile() {
         return Paths.get("colormap/default.clr").toFile();
     }
 
     @Provides
+    @Named(ArgNames.DEFAULT_CLR)
+    ClrParser clrParser(@Named(ArgNames.DEFAULT_CLR) File clrFile) {
+        log.info("Colormap CLR file path: {}", clrFile.getAbsolutePath());
+        return new ClrParser(clrFile);
+    }
+
+    @Provides
     @Singleton
-    ColorMapper colorMapper(@Named(ArgNames.CLR) File clrFile, Logger log) {
-        ClrParser clrParser = new ClrParser(clrFile);
-        log.info("Colormap CLR file path: " + clrFile.getAbsolutePath());
+    ColorMapper colorMapper(@Named(ArgNames.DEFAULT_CLR) ClrParser clrParser) {
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 1500, 15);
     }
@@ -224,9 +232,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     @Named(ArgNames.DIFF)
-    ColorMapper diffColorMapper(@Named(ArgNames.CLR) File clrFile, Logger log) {
-        ClrParser clrParser = new ClrParser(clrFile);
-        log.info("Colormap CLR file path: " + clrFile.getAbsolutePath());
+    ColorMapper diffColorMapper(@Named(ArgNames.DEFAULT_CLR) ClrParser clrParser) {
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 2, 15);
     }

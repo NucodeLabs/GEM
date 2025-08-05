@@ -1,13 +1,15 @@
 package ru.nucodelabs.gem.app;
 
 import javafx.application.Application;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main, запускает приложение JavaFX
  */
-@Slf4j
 public class StartGemApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(StartGemApplication.class);
 
     public static void main(String[] args) {
         try {

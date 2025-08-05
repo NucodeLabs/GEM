@@ -1,6 +1,8 @@
 @file:JvmName("AppPreferences")
 package ru.nucodelabs.gem.app.pref
 
+import ru.nucodelabs.kfx.pref.Preference
+
 private val USER_HOME: String = System.getProperty("user.home")
 
 @JvmField

@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.net.external.calc
 
 import org.apache.commons.math3.analysis.MultivariateFunction
 import ru.nucodelabs.geo.anisotropy.calc.map.Point
-import ru.nucodelabs.gem.util.fx.Point as PointFX
+import ru.nucodelabs.kfx.ext.Point as PointFX
 
 class FunctionValue(redPoints: List<Point>) : MultivariateFunction {
 

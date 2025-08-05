@@ -1,6 +1,8 @@
 @file:JvmName("UIPreferences")
 package ru.nucodelabs.gem.app.pref
 
+import ru.nucodelabs.kfx.pref.Preference
+
 @JvmField
 val VES_CURVES_LEGEND_VISIBLE = Preference("VES_CURVES_LEGEND", false)
 

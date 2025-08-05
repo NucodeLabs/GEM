@@ -24,11 +24,9 @@ import javafx.stage.Screen
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
-import ru.nucodelabs.gem.app.snapshot.snapshotOf
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.*
+import ru.nucodelabs.gem.util.fx.FXUtils
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
@@ -42,6 +40,14 @@ import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.geo.ves.calc.xOfPicket
 import ru.nucodelabs.kfx.core.OS.macOS
+import ru.nucodelabs.kfx.ext.DoubleValidationConverter
+import ru.nucodelabs.kfx.ext.get
+import ru.nucodelabs.kfx.pref.FXPreferences
+import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.kfx.snapshot.snapshotOf
+import tornadofx.getValue
+import tornadofx.plus
+import tornadofx.setValue
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat

@@ -22,14 +22,9 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
-import ru.nucodelabs.gem.app.snapshot.HistoryManager
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.forCharts
-import ru.nucodelabs.gem.util.fx.get
-import ru.nucodelabs.gem.util.fx.saveSnapshotAsPng
-import ru.nucodelabs.gem.util.fx.toObservableList
 import ru.nucodelabs.gem.util.std.exp10
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.*
@@ -45,6 +40,11 @@ import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.kfx.ext.forCharts
+import ru.nucodelabs.kfx.ext.get
+import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
+import ru.nucodelabs.kfx.ext.toObservableList
+import ru.nucodelabs.kfx.snapshot.HistoryManager
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL

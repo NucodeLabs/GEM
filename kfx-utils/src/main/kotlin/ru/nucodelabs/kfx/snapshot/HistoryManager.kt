@@ -1,9 +1,8 @@
-package ru.nucodelabs.gem.app.snapshot
+package ru.nucodelabs.kfx.snapshot
 
 import jakarta.inject.Inject
-import ru.nucodelabs.gem.app.snapshot.Snapshot.Originator
 
-class HistoryManager<T> @Inject constructor(private val originator: Originator<T>) {
+class HistoryManager<T> @Inject constructor(private val originator: Snapshot.Originator<T>) {
     private var history: MutableList<Snapshot<T>> = mutableListOf()
     private var position = 0
 
