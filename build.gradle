@@ -19,8 +19,8 @@ buildscript {
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id "org.jetbrains.dokka" version "2.0.0"
 }
 
@@ -30,8 +30,8 @@ group 'ru.nucodelabs'
 version '2.0'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_19
-    targetCompatibility = JavaVersion.VERSION_19
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -39,7 +39,7 @@ repositories {
 }
 
 ext {
-    set 'jfxVersion', '19'
+    set 'jfxVersion', '23'
 
     // Platform Info
     def currentOS = DefaultNativePlatform.currentOperatingSystem
@@ -49,39 +49,36 @@ ext {
 
     // For deps
     def osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
-    def archName = currentArch.displayName.toLowerCase().contains("aarch") ? "arm64" : "x86_64"
+    def archName = currentArch.isArm64() && !currentOS.isWindows() ? "arm64" : "x86_64"
     set 'platform', "$osName-$archName"
 
-    println "OS:             ${currentOS.name}"
-    println "OS VERSION:     ${currentOSVer}"
-    println "ARCHITECTURE:   ${currentArch.name}"
-    println "CLASSIFIER:     ${platform}"
+    println "OS:           ${currentOS.name}"
+    println "OS VERSION:   ${currentOSVer}"
+    println "ARCHITECTURE: ${currentArch.name}"
+    println "CLASSIFIER:   ${platform}"
 
     set 'runDir', "$projectDir/.run"
 }
 
-tasks.register('printPlatformInfo') {
-
-}
+final moduleExportsJvmArgs = [
+        "--add-exports", "javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
+        "--add-exports", "javafx.controls/com.sun.javafx.charts=ALL-UNNAMED"
+]
 
 compileKotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_19
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
 compileTestKotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_19
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-configJavafxRun {
-    enabled = false
 }
 
 application {
@@ -103,7 +100,7 @@ dependencies {
     /* Closed-Source Math Library JNI Bindings */
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation 'ch.qos.logback:logback-classic:1.5.18'
 
@@ -174,10 +171,9 @@ tasks.register('distClr', Copy) {
     into 'build/GEM/colormap'
 }
 
-
 tasks.withType(JavaExec).configureEach {
     dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
-    allJvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath]
+    jvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath] + moduleExportsJvmArgs
     workingDir = file(runDir)
     finalizedBy cleanRunDir
 }
@@ -203,7 +199,7 @@ javapackager {
     name = "GEM"
     applicationName = "GEM"
     version = "2.0"
-    vmArgs = ["-Djava.library.path=."]
+    vmArgs = ["-Djava.library.path=."] + moduleExportsJvmArgs
     administratorRequired = false
     additionalResources = [
             file("lib/${System.mapLibraryName("MathVES_JNI")}"),

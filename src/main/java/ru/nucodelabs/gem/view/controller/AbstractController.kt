@@ -10,7 +10,7 @@ import java.util.*
  * Контроллер, который не только инициализируется FXML-загрузчиком, но и знает как добыть свою сцену
  */
 @Deprecated(
-    message = "Улучшенная версия вынесена в отдельной библиотеке https://github.com/lilvadim/kfx-utils",
+    message = "Use AbstractViewController",
     replaceWith = ReplaceWith(
         "AbstractViewController<T>()",
         "ru.nucodelabs.kfx.core.AbstractViewController"

@@ -4,24 +4,29 @@ package ru.nucodelabs.kfx.core
  * Utility object that tries to define current OS and offers some DSL syntax to run OS-specific blocks of code
  */
 object OS {
-    val osNameNormalized = System.getProperty("os.name").lowercase()
+
+    private val osName = System.getProperty("os.name").lowercase()
+    val osType: OsType = when {
+        setOf("mac os x", "osx", "darwin").any { osName.contains(it) } -> OsType.MAC_OS
+        osName.contains("windows") -> OsType.WINDOWS
+        osName.contains("linux") -> OsType.LINUX
+        else -> OsType.OTHER
+    }
 
     @JvmStatic
-    val isMacOS = osNameNormalized.contains("mac")
+    val isMacOS = osType == OsType.MAC_OS
 
     @JvmStatic
-    val isAarch64 = System.getProperty("os.arch").contains("aarch64", ignoreCase = true)
+    val isWindows = osType == OsType.MAC_OS
 
     @JvmStatic
-    val isWindows = osNameNormalized.contains("windows")
+    val isLinux = osType == OsType.LINUX
 
-    @JvmStatic
-    val isLinuxOrOther = !isMacOS && !isWindows
-
-    val osNameClassifier = if (isWindows) "windows" else if (isMacOS) "macosx" else "linux"
-
-    inline fun appleSilicon(block: () -> Unit) {
-        if (isMacOS && isAarch64) block()
+    val osNameClassifier = when (osType) {
+        OsType.MAC_OS -> "macosx"
+        OsType.WINDOWS -> "windows"
+        OsType.LINUX -> "linux"
+        OsType.OTHER -> NotImplementedError("Supported os types: ${OsType.entries}")
     }
 
     /**
@@ -35,7 +40,7 @@ object OS {
      * `block` runs only on Linux
      */
     inline fun linux(block: () -> Unit) {
-        if (isLinuxOrOther) block()
+        if (isLinux) block()
     }
 
     /**
@@ -44,4 +49,8 @@ object OS {
     inline fun windows(block: () -> Unit) {
         if (isWindows) block()
     }
+}
+
+enum class OsType {
+    MAC_OS, WINDOWS, LINUX, OTHER,
 }
