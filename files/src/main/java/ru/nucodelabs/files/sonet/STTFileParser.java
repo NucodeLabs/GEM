@@ -1,6 +1,9 @@
 package ru.nucodelabs.files.sonet;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public final class STTFileParser {
     private final File sttFile;
@@ -9,7 +12,7 @@ public final class STTFileParser {
         this.sttFile = sttFile;
     }
 
-    public STTFile parse() throws Exception {
+    public @NotNull STTFile parse() throws FileNotFoundException {
         return SonetImportUtils.readSTT(sttFile);
     }
 }

@@ -1,6 +1,9 @@
 package ru.nucodelabs.files.sonet;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public final class MODFileParser {
     private final File modFile;
@@ -9,7 +12,7 @@ public final class MODFileParser {
         this.modFile = modFile;
     }
 
-    public MODFile parse() throws Exception {
+    public @NotNull MODFile parse() throws FileNotFoundException {
         return SonetImportUtils.readMOD(modFile);
     }
 }

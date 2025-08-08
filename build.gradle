@@ -101,6 +101,7 @@ dependencies {
     implementation project(":kfx-utils")
 
     implementation project(":common-utils")
+    implementation project(":files")
 
     /* Closed-Source Math Library JNI Bindings */
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")

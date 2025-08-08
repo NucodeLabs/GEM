@@ -1,6 +1,5 @@
 package ru.nucodelabs.files.clr
 
-import javafx.scene.paint.Color
 import ru.nucodelabs.util.TextToTableParser
 import java.io.File
 
@@ -16,11 +15,11 @@ class ClrParser(
         for (i in 1 until parsedTable.size) {
             nodes += ColorNode(
                 (parsedTable[i][0]?.toDouble() ?: throw IllegalStateException()) / 100.0,
-                Color.rgb(
+                RgbaColor(
                     parsedTable[i][1]?.toInt() ?: throw IllegalStateException(),
                     parsedTable[i][2]?.toInt() ?: throw IllegalStateException(),
                     parsedTable[i][3]?.toInt() ?: throw IllegalStateException(),
-                    (parsedTable[i].getOrNull(4)?.toDouble() ?: 255.0) / 255.0
+                    parsedTable[i].getOrNull(4)?.toInt() ?: 255
                 )
             )
         }
