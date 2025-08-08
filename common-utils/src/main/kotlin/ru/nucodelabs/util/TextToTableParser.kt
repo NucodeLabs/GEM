@@ -1,12 +1,10 @@
-package ru.nucodelabs.gem.util
+package ru.nucodelabs.util
 
 class TextToTableParser(
     text: String
 ) {
     init {
-        if (text.isBlank()) {
-            throw IllegalArgumentException("String is blank")
-        }
+        require(text.isNotBlank()) { "String is blank" }
     }
 
     val parsedTable by lazy { convertToNullableArray(parseTabulation(text)) }

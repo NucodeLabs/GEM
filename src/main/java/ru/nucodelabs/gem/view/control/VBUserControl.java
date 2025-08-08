@@ -1,7 +1,6 @@
 package ru.nucodelabs.gem.view.control;
 
 import javafx.scene.layout.VBox;
-import ru.nucodelabs.gem.util.fx.FXUtils;
 
 /**
  * Abstract class of user control which have VBox as root container.
@@ -9,7 +8,7 @@ import ru.nucodelabs.gem.util.fx.FXUtils;
  */
 public abstract class VBUserControl extends VBox {
 
-    public VBUserControl() {
-        FXUtils.initFXMLControl(this);
+    protected VBUserControl() {
+        FxmlUtil.initFxmlControl(this);
     }
 }

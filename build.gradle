@@ -97,6 +97,11 @@ dependencies {
     final kotlinTestVersion = kotlinVersion
     final mapstructVersion = '1.6.3'
 
+    /* Kotlin JavaFX Utils */
+    implementation project(":kfx-utils")
+
+    implementation project(":common-utils")
+
     /* Closed-Source Math Library JNI Bindings */
     implementation files("$projectDir/lib/MathVesJ-1.0.jar")
 
@@ -124,9 +129,6 @@ dependencies {
     implementation "org.bytedeco:javacpp:1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12"
-
-    /* Kotlin JavaFX Utils */
-    implementation project(":kfx-utils")
 
     /* Test Dependencies */
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

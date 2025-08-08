@@ -1,8 +1,10 @@
-package ru.nucodelabs.gem.util
+package ru.nucodelabs.util
 
 import org.junit.jupiter.api.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
-internal class TextToTableParserTest {
+class TextToTableParserTest {
     @Test
     fun parse() {
         val testString = "1.5\t0.5\t187.77\n" +
@@ -39,6 +41,13 @@ internal class TextToTableParserTest {
 
         val textToTableParser = TextToTableParser(testString)
         val result = textToTableParser.parsedTable
-        println(result)
+
+        println(result.contentToString())
+
+        assertEquals(31, textToTableParser.rowsCount)
+        assertEquals(31, result.size)
+        assertEquals(3, textToTableParser.columnsCount)
+        assertContentEquals(IntArray(31) { 3 }, result.map { it.size }.toIntArray())
+        assertEquals("480", result.last().first())
     }
 }

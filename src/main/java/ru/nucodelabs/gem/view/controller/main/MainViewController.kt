@@ -26,7 +26,6 @@ import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.fx.FXUtils
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
@@ -42,6 +41,7 @@ import ru.nucodelabs.geo.ves.calc.xOfPicket
 import ru.nucodelabs.kfx.core.OS.macOS
 import ru.nucodelabs.kfx.ext.DoubleValidationConverter
 import ru.nucodelabs.kfx.ext.get
+import ru.nucodelabs.kfx.ext.unfocus
 import ru.nucodelabs.kfx.pref.FXPreferences
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.kfx.snapshot.snapshotOf
@@ -617,7 +617,7 @@ class MainViewController @Inject constructor(
             picketOffsetX.selectAll()
         } else {
             historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
-            FXUtils.unfocus(picketOffsetX)
+            unfocus(picketOffsetX)
         }
     }
 
@@ -626,7 +626,7 @@ class MainViewController @Inject constructor(
         historyManager.snapshotAfter {
             observableSection.pickets[picketIndex] = picket.copy(name = picketName.text)
         }
-        FXUtils.unfocus(picketName)
+        unfocus(picketName)
     }
 
     @FXML
@@ -645,7 +645,7 @@ class MainViewController @Inject constructor(
             picketZ.selectAll()
         } else {
             historyManager.snapshotAfter { observableSection.pickets[picketIndex] = modified }
-            FXUtils.unfocus(picketZ)
+            unfocus(picketZ)
         }
     }
 

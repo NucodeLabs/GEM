@@ -1,7 +1,7 @@
 package ru.nucodelabs.geo.target.impl
 
-import ru.nucodelabs.gem.util.std.fromPercent
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction
+import ru.nucodelabs.util.std.fromPercent
 import kotlin.math.pow
 
 /**

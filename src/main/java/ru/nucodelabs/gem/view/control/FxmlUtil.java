@@ -1,8 +1,7 @@
-package ru.nucodelabs.gem.util.fx;
+package ru.nucodelabs.gem.view.control;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -11,9 +10,9 @@ import java.util.ResourceBundle;
 /**
  * Static methods for initializing user controls and view
  */
-public class FXUtils {
+public class FxmlUtil {
 
-    private FXUtils() {
+    private FxmlUtil() {
     }
 
     /**
@@ -23,17 +22,17 @@ public class FXUtils {
      * @param <N>    class of root
      * @param locale locale
      */
-    public static <N extends Node> void initFXMLControl(N root, Locale locale) {
+    public static <N extends Node> void initFxmlControl(N root, Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI", locale);
-        initFXMLControl(root, bundle);
+        initFxmlControl(root, bundle);
     }
 
-    public static <N extends Node> void initFXMLControl(N root) {
+    public static <N extends Node> void initFxmlControl(N root) {
         ResourceBundle bundle = ResourceBundle.getBundle("ru/nucodelabs/gem/UI");
-        initFXMLControl(root, bundle);
+        initFxmlControl(root, bundle);
     }
 
-    private static <N extends Node> void initFXMLControl(N root, ResourceBundle bundle) {
+    private static <N extends Node> void initFxmlControl(N root, ResourceBundle bundle) {
         String fxmlFileName = root.getClass().getSimpleName() + ".fxml";
         FXMLLoader loader = new FXMLLoader(root.getClass().getResource(fxmlFileName), bundle);
         loader.setRoot(root);
@@ -43,24 +42,5 @@ public class FXUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void unfocus(Node... nodes) {
-        for (var node : nodes) {
-            if (node.isFocused()) {
-                node.getParent().requestFocus();
-            }
-        }
-    }
-
-    /**
-     * @return "rgba(%d, %d, %d, %f)"
-     */
-    public static String toWeb(Color color) {
-        return String.format("rgba(%d, %d, %d, %f)",
-                (int) Math.ceil(color.getRed() * 255),
-                (int) Math.ceil(color.getGreen() * 255),
-                (int) Math.ceil(color.getBlue() * 255),
-                color.getOpacity());
     }
 }

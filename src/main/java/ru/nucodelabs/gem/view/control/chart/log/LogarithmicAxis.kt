@@ -8,8 +8,8 @@ import javafx.beans.binding.Bindings.createDoubleBinding
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.util.Duration
-import ru.nucodelabs.gem.util.std.exp10
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
+import ru.nucodelabs.util.std.exp10
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10

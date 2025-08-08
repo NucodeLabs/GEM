@@ -4,7 +4,7 @@ import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.clr.ColorNode;
-import ru.nucodelabs.gem.util.std.MathKt;
+import ru.nucodelabs.util.std.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class ColorPalette implements ColorMapper {
         setMinValue(minValue);
         setMaxValue(maxValue);
         setNumberOfSegments(blocksCount);
-        if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
+        if (blocksCount < 2) throw new IllegalArgumentException("Число блоков меньше 2");
         checkLog();
         blocksInit();
         this.logScaleProperty.addListener((observable, oldValue, newValue) -> {
@@ -38,7 +38,7 @@ public class ColorPalette implements ColorMapper {
             blocksInit();
         });
         this.blocksCount.addListener((observable, oldValue, newValue) -> {
-            if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
+            if (newValue.intValue() < 2) throw new IllegalArgumentException("Число блоков меньше 2");
             segmentList.clear();
             checkLog();
             blocksInit();
@@ -111,12 +111,12 @@ public class ColorPalette implements ColorMapper {
             if (vcPercentage1 <= percentage && vcPercentage2 >= percentage)
                 return new ArrayList<>(Arrays.asList(valueColorList.get(i), valueColorList.get(i + 1)));
         }
-        throw new RuntimeException("Цвет не найден");
+        throw new IllegalStateException("Цвет не найден");
     }
 
     private void blocksInit() {
-        Color firstColor = valueColorList.get(0).getColor();
-        Color lastColor = valueColorList.get(valueColorList.size() - 1).getColor();
+        Color firstColor = valueColorList.getFirst().getColor();
+        Color lastColor = valueColorList.getLast().getColor();
 
         double blockSize = 1.0 / blocksCount.get();
         double currentFrom = 0;
@@ -138,7 +138,7 @@ public class ColorPalette implements ColorMapper {
     }
 
     private Segment blockFor(double percentage) {
-        if (percentage == 1.0) return segmentList.get(segmentList.size() - 1);
+        if (percentage == 1.0) return segmentList.getLast();
         return segmentList.get((int) Math.floor(percentage / (1.0 / segmentList.size())));
     }
 
