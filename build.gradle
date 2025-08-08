@@ -157,9 +157,8 @@ tasks.register('copyDataToRunDir', Copy) {
 
 tasks.register('copyClrToRunDir', Copy) {
     dependsOn prepareRunDir
-    from "$projectDir/data/clr/002_ERT_Rainbow_2.clr"
+    from "$projectDir/colormap/default.clr"
     into "$runDir/colormap"
-    rename('002_ERT_Rainbow_2.clr', 'default.clr')
 }
 
 tasks.register('cleanRunDir', Delete) {
@@ -186,12 +185,6 @@ test {
     workingDir = file(runDir)
     useJUnitPlatform()
     systemProperty "java.library.path", file(runDir).absolutePath
-    finalizedBy cleanRunDir
-}
-
-run {
-    dependsOn prepareRunDir, copyClrToRunDir, copyLibsToRunDir
-    workingDir = file(runDir)
     finalizedBy cleanRunDir
 }
 

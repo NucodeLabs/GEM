@@ -1,11 +1,12 @@
 package ru.nucodelabs.files.sonet;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SonetImportUtilsTest {
     Function<Double, String> checkNull = d -> {
@@ -20,7 +21,7 @@ class SonetImportUtilsTest {
         System.out.println("SonetTest.readSTT_test");
         File file = new File("data/sonet_examples/CHITA.STT");
         STTFile stt = SonetImportUtils.readSTT(file);
-        Assertions.assertEquals(stt.getAB_2().get(20), 1.5e+003);
+        assertEquals(1.5e+003, stt.getAB_2().get(20));
         for (int i = 0; i < stt.getAB_2().size(); i++) {
             System.out.println(
                     checkNull.apply(stt.getAB_2().get(i)) + "   "
@@ -61,6 +62,10 @@ class SonetImportUtilsTest {
                     checkNull.apply(stt.getAB_2().get(i)) + "   "
                             + checkNull.apply(stt.getMN_2().get(i)));
         }
+
+        assertEquals(31, exp.getAmperage().size());
+        assertEquals(31, exp.getResistanceApparent().size());
+        assertEquals(31, exp.getErrorResistanceApparent().size());
     }
 
     @Test
@@ -75,6 +80,9 @@ class SonetImportUtilsTest {
                             + checkNull.apply(mod.getPolarization().get(i))
             );
         }
+
+        assertEquals(3, mod.getPower().size());
+        assertEquals(3, mod.getResistance().size());
     }
 
     @Test
@@ -83,5 +91,9 @@ class SonetImportUtilsTest {
         File file = new File("data/sonet_examples/BURM4.EXP");
         EXPFile exp = SonetImportUtils.readEXP(file);
         System.out.println("SonetTest.readEXP_test");
+
+        assertEquals(28, exp.getAmperage().size());
+        assertEquals(28, exp.getResistanceApparent().size());
+        assertEquals(28, exp.getErrorResistanceApparent().size());
     }
 }

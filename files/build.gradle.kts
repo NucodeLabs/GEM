@@ -17,4 +17,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    workingDir(file(rootProject.ext["runDir"]!!))
+    dependsOn(":copyDataToRunDir")
+    finalizedBy(":cleanRunDir")
 }
