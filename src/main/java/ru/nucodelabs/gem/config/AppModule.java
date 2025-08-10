@@ -61,8 +61,9 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private ResourceBundle provideUIProperties() {
-        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI", Locale.of("ru"));
+    private ResourceBundle uiProperties() {
+        // TODO support en locale
+        return ResourceBundle.getBundle("ui", Locale.of("ru"));
     }
 
     @Provides

@@ -27,7 +27,6 @@ plugins {
 apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'ru.nucodelabs'
-version '2.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -58,6 +57,12 @@ ext {
     println "CLASSIFIER:   ${platform}"
 
     set 'runDir', "$projectDir/.run"
+}
+
+processResources {
+    filesMatching("**/*.properties") {
+        expand(project.properties)
+    }
 }
 
 final moduleExportsJvmArgs = [
