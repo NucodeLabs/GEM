@@ -38,11 +38,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Package app with Gradle
-        run: ./gradlew ${{ matrix.configuration.task }} -Pversion=${{ github.ref_name }}
+        run: ./gradlew ${{ matrix.configuration.task }} -Pversion="${{ github.ref_name }}"
       - name: Upload Asset
         shell: bash
         run: |
-          DIST_ARCHIVE=gem_${{ github.ref_name }}_${{ runner.os }}-${{ runner.arch }}.zip
+          DIST_ARCHIVE=gem_${{ runner.os }}-${{ runner.arch }}.zip
           7z a -tzip $DIST_ARCHIVE ${{ matrix.configuration.path }} 
           gh release upload ${{ github.ref_name }} $DIST_ARCHIVE
         env:
