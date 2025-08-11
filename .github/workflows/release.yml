@@ -22,9 +22,9 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "packageMacApp", path: "build/GEM/*.app" },
-          { runner: "macos-14", task: "packageMacApp", path: "build/GEM/*.app" },
-          { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM/*" }
+          { runner: "macos-13", task: "packageMacApp", path: "build/GEM" },
+          { runner: "macos-14", task: "packageMacApp", path: "build/GEM" },
+          { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
     steps:
@@ -43,7 +43,8 @@ jobs:
         shell: bash
         run: |
           DIST_ARCHIVE=gem_${{ runner.os }}-${{ runner.arch }}.zip
-          7z a -tzip $DIST_ARCHIVE ${{ matrix.configuration.path }} 
+          cd ${{ matrix.configuration.path }}
+          7z a -tzip $DIST_ARCHIVE *
           gh release upload ${{ github.ref_name }} $DIST_ARCHIVE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
