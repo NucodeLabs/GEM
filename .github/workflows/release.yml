@@ -1,0 +1,52 @@
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release
+        id: create_release
+        run: hub release create -m "${{ github.ref_name }}" ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  package_and_upload:
+    needs: release
+    strategy:
+      matrix:
+        configuration: [
+          { runner: "macos-13", task: "packageMacApp", path: "build/GEM_*.dmg" },
+          { runner: "macos-14", task: "packageMacApp", path: "build/GEM_*.dmg" },
+          { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM/*" }
+        ]
+    runs-on: ${{ matrix.configuration.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'liberica'
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Package app with Gradle
+        run: ./gradlew ${{ matrix.configuration.task }} -Pversion=${{ github.ref_name }}
+      - name: Upload Asset
+        shell: bash
+        run: |
+          set -x
+          assets=()
+          for asset in ${{ matrix.configuration.path }}; do
+            assets+=("-a" "$asset")
+          done
+          hub release edit "${assets[@]}" -m "${{ github.ref_name }}" ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
