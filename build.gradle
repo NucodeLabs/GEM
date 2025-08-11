@@ -199,7 +199,7 @@ javapackager {
     organizationName = "NucodeLabs"
     name = "GEM"
     applicationName = "GEM"
-    version = "2.0"
+    version = project.version
     vmArgs = ["-Djava.library.path=."] + moduleExportsJvmArgs
     administratorRequired = false
     additionalResources = [
