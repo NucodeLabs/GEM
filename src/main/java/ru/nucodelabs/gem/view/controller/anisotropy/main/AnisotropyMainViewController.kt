@@ -25,7 +25,6 @@ import ru.nucodelabs.gem.fxmodel.anisotropy.app.AnisotropyFxAppModel
 import ru.nucodelabs.gem.fxmodel.anisotropy.app.MapOverlayType
 import ru.nucodelabs.gem.fxmodel.exception.validation
 import ru.nucodelabs.gem.fxmodel.map.ObservableWgs
-import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.*
@@ -39,6 +38,7 @@ import ru.nucodelabs.kfx.ext.bidirectionalNot
 import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.observableListOf
 import ru.nucodelabs.kfx.ext.saveInitialDirectory
+import ru.nucodelabs.util.std.toDoubleOrNullBy
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
@@ -541,6 +541,7 @@ class AnisotropyMainViewController @Inject constructor(
         return Tooltip(tooltipText).forCharts()
     }
 
+    @Suppress("unused")
     private fun relTooltipFactory(
         seriesIndex: Int,
         series: XYChart.Series<Number, Number>,
@@ -556,6 +557,7 @@ class AnisotropyMainViewController @Inject constructor(
         ).forCharts()
     }
 
+    @Suppress("unused")
     private fun vesCurvesTooltipFactory(
         seriesIndex: Int,
         series: XYChart.Series<Number, Number>,

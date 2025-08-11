@@ -1,2 +1,3 @@
-rootProject.name = "GEM"
-include('kfx-utils')
+rootProject.name = "gem"
+include 'kfx-utils', 'common-utils'
+include 'files'

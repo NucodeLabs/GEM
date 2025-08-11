@@ -35,6 +35,7 @@ import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -42,6 +43,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -61,8 +63,9 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private ResourceBundle provideUIProperties() {
-        return ResourceBundle.getBundle("ru/nucodelabs/gem/UI", Locale.of("ru"));
+    private ResourceBundle uiProperties() {
+        // TODO support en locale
+        return ResourceBundle.getBundle("ui", Locale.of("ru"));
     }
 
     @Provides
@@ -211,8 +214,18 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named(ArgNames.DEFAULT_CLR)
-    File clrFile() {
-        return Paths.get("colormap/default.clr").toFile();
+    File clrFile() throws URISyntaxException {
+        // Firstly lookup next to executable
+        var externalFile = Paths.get("colormap/default.clr").toFile();
+        if (!externalFile.exists()) {
+            // Load default from resources if no external .clr file found
+            var defaultFile = Objects.requireNonNull(
+                this.getClass().getClassLoader().getResource("colormap/default.clr"),
+                "Resource colormap/default.clr is null"
+            );
+            return Paths.get(defaultFile.toURI()).toFile();
+        }
+        return externalFile;
     }
 
     @Provides

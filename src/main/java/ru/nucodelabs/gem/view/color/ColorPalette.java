@@ -4,7 +4,8 @@ import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.clr.ColorNode;
-import ru.nucodelabs.gem.util.std.MathKt;
+import ru.nucodelabs.files.clr.RgbaColor;
+import ru.nucodelabs.util.std.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public class ColorPalette implements ColorMapper {
         setMinValue(minValue);
         setMaxValue(maxValue);
         setNumberOfSegments(blocksCount);
-        if (blocksCount < 2) throw new RuntimeException("Число блоков меньше 2");
+        if (blocksCount < 2) throw new IllegalArgumentException("Число блоков меньше 2");
         checkLog();
         blocksInit();
         this.logScaleProperty.addListener((observable, oldValue, newValue) -> {
@@ -38,7 +39,7 @@ public class ColorPalette implements ColorMapper {
             blocksInit();
         });
         this.blocksCount.addListener((observable, oldValue, newValue) -> {
-            if (newValue.intValue() < 2) throw new RuntimeException("Число блоков меньше 2");
+            if (newValue.intValue() < 2) throw new IllegalArgumentException("Число блоков меньше 2");
             segmentList.clear();
             checkLog();
             blocksInit();
@@ -87,8 +88,8 @@ public class ColorPalette implements ColorMapper {
      * @return Interpolated rgba color between vc1.color() and vc2.color()
      */
     private Color vcInterpolate(ColorNode vc1, ColorNode vc2, double percentage) {
-        Color c1 = vc1.getColor();
-        Color c2 = vc2.getColor();
+        Color c1 = toFxColor(vc1.getColor());
+        Color c2 = toFxColor(vc2.getColor());
         double diff = (percentage - vc1.getPosition()) / (vc2.getPosition() - vc1.getPosition());
 
         return colorInterpolate(c1, c2, diff);
@@ -111,12 +112,12 @@ public class ColorPalette implements ColorMapper {
             if (vcPercentage1 <= percentage && vcPercentage2 >= percentage)
                 return new ArrayList<>(Arrays.asList(valueColorList.get(i), valueColorList.get(i + 1)));
         }
-        throw new RuntimeException("Цвет не найден");
+        throw new IllegalStateException("Цвет не найден");
     }
 
     private void blocksInit() {
-        Color firstColor = valueColorList.get(0).getColor();
-        Color lastColor = valueColorList.get(valueColorList.size() - 1).getColor();
+        Color firstColor = toFxColor(valueColorList.getFirst().getColor());
+        Color lastColor = toFxColor(valueColorList.getLast().getColor());
 
         double blockSize = 1.0 / blocksCount.get();
         double currentFrom = 0;
@@ -138,7 +139,7 @@ public class ColorPalette implements ColorMapper {
     }
 
     private Segment blockFor(double percentage) {
-        if (percentage == 1.0) return segmentList.get(segmentList.size() - 1);
+        if (percentage == 1.0) return segmentList.getLast();
         return segmentList.get((int) Math.floor(percentage / (1.0 / segmentList.size())));
     }
 
@@ -221,19 +222,19 @@ public class ColorPalette implements ColorMapper {
     @Override
     public List<ColorMapper.Segment> getSegments() {
         if (!logScaleProperty.get()) return segmentList
-                .stream()
-                .map(s -> new Segment(
-                        s.getFrom() * (maxValue - minValue) + minValue,
-                        s.getTo() * (maxValue - minValue) + minValue,
-                        s.getColor()
-                )).collect(Collectors.toList());
+            .stream()
+            .map(s -> new Segment(
+                s.getFrom() * (maxValue - minValue) + minValue,
+                s.getTo() * (maxValue - minValue) + minValue,
+                s.getColor()
+            )).collect(Collectors.toList());
         else return segmentList
-                .stream()
-                .map(s -> new Segment(
-                        logValue(valueFor(s.getFrom(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
-                        logValue(valueFor(s.getTo(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
-                        s.getColor()
-                )).collect(Collectors.toList());
+            .stream()
+            .map(s -> new Segment(
+                logValue(valueFor(s.getFrom(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                logValue(valueFor(s.getTo(), getMinValue(), getMaxValue()), getMinValue(), getMaxValue()),
+                s.getColor()
+            )).collect(Collectors.toList());
     }
 
     private Double valueFor(double percentage, double minValue, double maxValue) {
@@ -262,6 +263,15 @@ public class ColorPalette implements ColorMapper {
     @Override
     public void setLogScale(boolean value) {
         logScaleProperty.set(value);
+    }
+
+    private static Color toFxColor(RgbaColor rgbaColor) {
+        return Color.rgb(
+            rgbaColor.getR(),
+            rgbaColor.getG(),
+            rgbaColor.getB(),
+            rgbaColor.getOpacity()
+        );
     }
 }
 

@@ -1,8 +1,8 @@
 package ru.nucodelabs.geo.ves.calc.error
 
-import ru.nucodelabs.gem.util.std.asPercent
-import ru.nucodelabs.gem.util.std.fromPercent
 import ru.nucodelabs.mathves.SchlumbergerErrorFunctions
+import ru.nucodelabs.util.std.asPercent
+import ru.nucodelabs.util.std.fromPercent
 
 data class MinMax(val min: Double, val max: Double)
 

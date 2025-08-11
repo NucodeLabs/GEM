@@ -25,7 +25,6 @@ import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.std.exp10
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.*
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
@@ -45,6 +44,7 @@ import ru.nucodelabs.kfx.ext.get
 import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.util.std.exp10
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL

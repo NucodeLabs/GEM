@@ -3,7 +3,7 @@ package ru.nucodelabs.geo.ves.calc.interpolation
 import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
-import ru.nucodelabs.gem.util.std.exp10
+import ru.nucodelabs.util.std.exp10
 
 class Interpolator(
     private var interpolationParser: InterpolationParser

@@ -11,12 +11,12 @@ import javafx.scene.control.MenuItem
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.util.std.swap
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.length
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.util.std.swap
 import java.net.URL
 import java.util.*
 

@@ -19,7 +19,6 @@ import ru.nucodelabs.gem.app.pref.COLOR_MIN_VALUE
 import ru.nucodelabs.gem.app.pref.COLOR_SEGMENTS
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.ArgNames
-import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
@@ -28,6 +27,7 @@ import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.pref.FXPreferences
+import ru.nucodelabs.util.std.toDoubleOrNullBy
 import tornadofx.div
 import tornadofx.minus
 import java.io.File

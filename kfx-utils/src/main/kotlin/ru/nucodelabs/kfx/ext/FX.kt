@@ -263,3 +263,12 @@ fun saveInitialDirectory(
         preferences.put(initDirPref.key, file.parentFile.absolutePath)
     }
 }
+
+/**
+ * Move focus to parent node
+ */
+fun unfocus(node: Node) {
+    if (node.isFocused) {
+        node.parent.requestFocus()
+    }
+}

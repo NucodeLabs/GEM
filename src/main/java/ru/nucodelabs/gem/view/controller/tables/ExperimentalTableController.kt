@@ -24,8 +24,6 @@ import ru.nucodelabs.gem.config.ArgNames
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
-import ru.nucodelabs.gem.util.TextToTableParser
-import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
@@ -44,6 +42,8 @@ import ru.nucodelabs.kfx.ext.bidirectionalNot
 import ru.nucodelabs.kfx.ext.decimalFilter
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.util.TextToTableParser
+import ru.nucodelabs.util.std.toDoubleOrNullBy
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat

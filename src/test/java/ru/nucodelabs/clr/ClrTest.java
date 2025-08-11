@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 import ru.nucodelabs.files.clr.ClrParser;
 import ru.nucodelabs.files.clr.ColorNode;
+import ru.nucodelabs.files.clr.RgbaColor;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.io.File;
@@ -23,7 +24,11 @@ public class ClrTest {
 
         Comparator<ColorNode> c = Comparator.comparing(ColorNode::getPosition);
 
-        int vcIndex = Collections.binarySearch(valueColorList, new ColorNode(0.40369441, Color.BLACK), c);
+        int vcIndex = Collections.binarySearch(
+            valueColorList,
+            new ColorNode(0.40369441, new RgbaColor(0, 0, 0, 0)),
+            c
+        );
 
         System.out.println(valueColorList.get(vcIndex).toString());
     }

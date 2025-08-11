@@ -22,8 +22,6 @@ import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
-import ru.nucodelabs.gem.util.TextToTableParser
-import ru.nucodelabs.gem.util.std.toDoubleOrNullBy
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
@@ -39,6 +37,8 @@ import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.geo.ves.toTabulatedTable
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.util.TextToTableParser
+import ru.nucodelabs.util.std.toDoubleOrNullBy
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -127,7 +127,8 @@ class ModelTableController @Inject constructor(
             when (e.code) {
                 KeyCode.DELETE, KeyCode.BACK_SPACE -> deleteSelected()
                 KeyCode.C -> if (e.isShortcutDown) copySelected()
-                else -> {}
+                else -> { /* ignore*/
+                }
             }
         }
 

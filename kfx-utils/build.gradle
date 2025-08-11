@@ -3,20 +3,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.2.0'
     id 'java-library'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'maven-publish'
 }
 
 ext {
-    jfxVersion = '19'
+    jfxVersion = '23'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-configJavafxRun {
-    enabled = false
 }
 
 javafx {
@@ -35,12 +31,13 @@ java {
 }
 
 compileJava {
-    targetCompatibility = 19
-    sourceCompatibility = 19
+    targetCompatibility = 21
+    sourceCompatibility = 21
 }
+
 compileKotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_19
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
