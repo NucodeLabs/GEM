@@ -22,8 +22,8 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "packageMacApp", path: "build/GEM_*.dmg" },
-          { runner: "macos-14", task: "packageMacApp", path: "build/GEM_*.dmg" },
+          { runner: "macos-13", task: "packageMacApp", path: "build/GEM/*.app" },
+          { runner: "macos-14", task: "packageMacApp", path: "build/GEM/*.app" },
           { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
@@ -41,6 +41,9 @@ jobs:
         run: ./gradlew ${{ matrix.configuration.task }} -Pversion=${{ github.ref_name }}
       - name: Upload Asset
         shell: bash
-        run: gh release upload ${{ github.ref_name }} ${{ matrix.configuration.path }}
+        run: |
+          DIST_ARCHIVE=gem_${{ github.ref_name }}_${{ runner.os }}-${{ runner.arch }}.zip
+          7z a -tzip $DIST_ARCHIVE ${{ matrix.configuration.path }} 
+          gh release upload ${{ github.ref_name }} $DIST_ARCHIVE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

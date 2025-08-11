@@ -214,7 +214,7 @@ tasks.register('packageMacApp', PackageTask) {
     macConfig {
         macStartup = MacStartup.UNIVERSAL
         icnsFile = file("src/main/resources/img/gem.icns")
-        generateDmg = true
+        generateDmg = false
         generatePkg = false
         codesignApp = false
     }
