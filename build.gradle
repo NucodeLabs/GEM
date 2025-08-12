@@ -1,5 +1,4 @@
 import io.github.fvarrui.javapackager.gradle.PackageTask
-import io.github.fvarrui.javapackager.model.MacStartup
 import io.github.fvarrui.javapackager.model.SetupMode
 import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
@@ -110,13 +109,17 @@ dependencies {
     implementation project(":files")
 
     /* Closed-Source Math Library JNI Bindings */
-    implementation files("$projectDir/lib/MathVesJ-1.0.jar")
+    implementation files(
+            "$projectDir/lib/MathVesJ-1.0.jar",
+            "$projectDir/lib/${System.mapLibraryName("MathVES_JNI")}",
+            "$projectDir/lib/${System.mapLibraryName("MathVES")}"
+    )
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation "org.slf4j:slf4j-jdk14:${slf4jVersion}"
-//    implementation 'ch.qos.logback:logback-classic:1.5.18'
+//    implementation "org.slf4j:slf4j-jdk14:${slf4jVersion}"
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
 
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
@@ -182,22 +185,21 @@ tasks.register('distClr', Copy) {
 }
 
 tasks.withType(JavaExec).configureEach {
-    dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
-    jvmArgs = ["-Djava.library.path=" + file(runDir).absolutePath] + moduleExportsJvmArgs
+    dependsOn copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
+    jvmArgs = moduleExportsJvmArgs
     workingDir = file(runDir)
     finalizedBy cleanRunDir
 }
 
 test {
-    dependsOn prepareRunDir, copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
+    dependsOn copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     workingDir = file(runDir)
     useJUnitPlatform()
-    systemProperty "java.library.path", file(runDir).absolutePath
     finalizedBy cleanRunDir
 }
 
 javapackager {
-    mainClass = 'ru.nucodelabs.gem.app.StartGemApplication'
+    mainClass = application.mainClass
     bundleJre = true
     organizationName = "NucodeLabs"
     name = "GEM"
@@ -209,20 +211,6 @@ javapackager {
             file("lib/${System.mapLibraryName("MathVES_JNI")}"),
             file("lib/${System.mapLibraryName("MathVES")}")
     ]
-}
-
-tasks.register('packageMacApp', PackageTask) {
-    dependsOn build
-    generateInstaller = true
-    macConfig {
-        macStartup = MacStartup.UNIVERSAL
-        icnsFile = file("src/main/resources/img/gem.icns")
-        generateDmg = false
-        generatePkg = false
-        codesignApp = false
-    }
-    additionalResources =
-            javapackager.additionalResources + [file("${projectDir}/colormap")]
 }
 
 tasks.register('packageWindowsExe', PackageTask) {
@@ -253,4 +241,36 @@ tasks.register('packageLinuxApplication', PackageTask) {
         pngFile = file("src/main/resources/img/gem.png")
     }
     finalizedBy distClr
+}
+
+tasks.register("copyNativeDependencies", Copy) {
+    from file("$projectDir/lib/${System.mapLibraryName("MathVES_JNI")}"),
+            file("$projectDir/lib/${System.mapLibraryName("MathVES")}")
+    into(layout.buildDirectory.dir("jars"))
+}
+
+tasks.register("copyDependencies", Copy) {
+    from(configurations.runtimeClasspath)
+    into(layout.buildDirectory.dir("jars"))
+}
+
+tasks.register("copyJar", Copy) {
+    from(tasks.jar)
+    into(layout.buildDirectory.dir("jars"))
+}
+
+tasks.register("jpackageMac", Exec) {
+    dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
+    executable "bash"
+    args(["${rootDir.absolutePath}/jpackage_mac.sh"])
+    environment(
+            "APP_NAME": "GEM",
+            "APP_VERSION": project.version.toString().replaceAll(/[^0-9.]/, ""),
+            "DEST": layout.buildDirectory.dir("dist").get().asFile.absolutePath,
+            "INPUT": layout.buildDirectory.dir("jars").get().asFile.absolutePath,
+            "MAIN_CLASS": application.mainClass.get(),
+            "MAIN_JAR": tasks.jar.archiveFileName.get(),
+            "APP_CONTENT": file("src/main/resources").absolutePath,
+            "RESOURCE_DIR": file("package").absolutePath
+    )
 }

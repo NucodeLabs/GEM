@@ -1,13 +1,12 @@
 package ru.nucodelabs.files.clr
 
 import ru.nucodelabs.util.TextToTableParser
-import java.io.File
 
 class ClrParser(
-    file: File
+    clrFileContent: String
 ) {
 
-    private val parsedTable by TextToTableParser(file.readText())::parsedTable
+    private val parsedTable by TextToTableParser(clrFileContent)::parsedTable
     val name = parsedTable[0][0] ?: ""
 
     val colorNodes by lazy {

@@ -8,7 +8,9 @@ import ru.nucodelabs.files.clr.RgbaColor;
 import ru.nucodelabs.gem.view.color.ColorPalette;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,9 +18,9 @@ import java.util.List;
 public class ClrTest {
 
     @Test
-    public void test_parser() throws FileNotFoundException {
+    public void test_parser() {
         File file = new File("colormap/default.clr");
-        ClrParser clrParser = new ClrParser(file);
+        ClrParser clrParser = clrParser(file);
 
         List<ColorNode> valueColorList = clrParser.getColorNodes();
 
@@ -45,12 +47,21 @@ public class ClrTest {
 //    }
 
     @Test
-    public void colorFor_test() throws FileNotFoundException {
+    public void colorFor_test() {
         File file = new File("colormap/default.clr");
-        ClrParser clrParser = new ClrParser(file);
+        ClrParser clrParser = clrParser(file);
 
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         ColorPalette colorPalette = new ColorPalette(valueColorList, 0, 1500, 10);
         Color color = colorPalette.colorFor(1200);
+        System.out.println(color);
+    }
+
+    private static ClrParser clrParser(File file) {
+        try (var stream = new FileInputStream(file)) {
+            return new ClrParser(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

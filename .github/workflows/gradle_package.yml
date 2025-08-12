@@ -23,8 +23,8 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "packageMacApp", path: "build/GEM/*" },
-          { runner: "macos-14", task: "packageMacApp", path: "build/GEM/*" },
+          { runner: "macos-13", task: "jpackageMac", path: "build/dist/*" },
+          { runner: "macos-14", task: "jpackageMac", path: "build/dist/*" },
           { runner: "windows-2022", task: "packageWindowsExe", path: "build/GEM/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}

@@ -30,7 +30,6 @@ import ru.nucodelabs.kfx.pref.FXPreferences
 import ru.nucodelabs.util.std.toDoubleOrNullBy
 import tornadofx.div
 import tornadofx.minus
-import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*
@@ -38,7 +37,7 @@ import java.util.prefs.Preferences
 
 
 class ColorAxisController @Inject constructor(
-    @Named(ArgNames.DEFAULT_CLR) private val clrFile: File,
+    @Named(ArgNames.CLR_SOURCE) private val clrFilePath: String,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val stringConverter: StringConverter<Number>,
@@ -84,7 +83,7 @@ class ColorAxisController @Inject constructor(
     private lateinit var logChart: PolygonChart
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        fileLbl.text = "Цветовая схема: ${clrFile.path}"
+        fileLbl.text = "Цветовая схема: $clrFilePath"
         colorMapper.minValueProperty().addListener { _, _, _ -> update() }
         colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
         colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }

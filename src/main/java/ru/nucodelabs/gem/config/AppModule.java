@@ -32,11 +32,11 @@ import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -140,6 +140,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     private Preferences preferences() {
         return Preferences.userNodeForPackage(GemApplication.class);
     }
@@ -173,7 +174,6 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
     private StringConverter<Double> doubleStringConverter(DecimalFormat decimalFormat) {
         return new StringConverter<>() {
             @Override
@@ -197,7 +197,6 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
     StringConverter<Number> numberStringConverter(StringConverter<Double> doubleStringConverter) {
         return new StringConverter<>() {
             @Override
@@ -213,26 +212,43 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     @Named(ArgNames.DEFAULT_CLR)
-    File clrFile() throws URISyntaxException {
+    ClrInfo clrInfo() throws IOException {
         // Firstly lookup next to executable
         var externalFile = Paths.get("colormap/default.clr").toFile();
         if (!externalFile.exists()) {
             // Load default from resources if no external .clr file found
-            var defaultFile = Objects.requireNonNull(
-                this.getClass().getClassLoader().getResource("colormap/default.clr"),
+            var defaultResourceStream = Objects.requireNonNull(
+                this.getClass().getClassLoader().getResourceAsStream("colormap/default.clr"),
                 "Resource colormap/default.clr is null"
             );
-            return Paths.get(defaultFile.toURI()).toFile();
+            try (defaultResourceStream) {
+                return new ClrInfo(
+                    "Default",
+                    new String(defaultResourceStream.readAllBytes(), StandardCharsets.UTF_8)
+                );
+            }
         }
-        return externalFile;
+        try (var externalFileStream = new FileInputStream(externalFile)) {
+            return new ClrInfo(
+                externalFile.getAbsolutePath(),
+                new String(externalFileStream.readAllBytes(), StandardCharsets.UTF_8)
+            );
+        }
+    }
+
+    @Provides
+    @Singleton
+    @Named(ArgNames.CLR_SOURCE)
+    String clrSource(@Named(ArgNames.DEFAULT_CLR) ClrInfo clrInfo) {
+        return clrInfo.source();
     }
 
     @Provides
     @Named(ArgNames.DEFAULT_CLR)
-    ClrParser clrParser(@Named(ArgNames.DEFAULT_CLR) File clrFile) {
-        log.info("Colormap CLR file path: {}", clrFile.getAbsolutePath());
-        return new ClrParser(clrFile);
+    ClrParser clrParser(@Named(ArgNames.DEFAULT_CLR) ClrInfo clrInfo) {
+        return new ClrParser(clrInfo.content());
     }
 
     @Provides
@@ -260,5 +276,8 @@ public class AppModule extends AbstractModule {
     @Singleton
     RelativeErrorAwareTargetFunction targetFunction() {
         return new SquareDiffTargetFunction();
+    }
+
+    private record ClrInfo(String source, String content) {
     }
 }
