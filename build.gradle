@@ -101,6 +101,7 @@ dependencies {
     final jacksonVersion = '2.19.2'
     final kotlinTestVersion = kotlinVersion
     final mapstructVersion = '1.6.3'
+    final slf4jVersion = '2.0.17'
 
     /* Kotlin JavaFX Utils */
     implementation project(":kfx-utils")
@@ -113,7 +114,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
-    implementation 'ch.qos.logback:logback-classic:1.5.18'
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.slf4j:slf4j-jdk14:${slf4jVersion}"
+//    implementation 'ch.qos.logback:logback-classic:1.5.18'
 
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
