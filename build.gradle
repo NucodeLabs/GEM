@@ -243,34 +243,42 @@ tasks.register('packageLinuxApplication', PackageTask) {
     finalizedBy distClr
 }
 
+def jpackageInputDir = layout.buildDirectory.dir("jars")
 tasks.register("copyNativeDependencies", Copy) {
     from file("$projectDir/lib/${System.mapLibraryName("MathVES_JNI")}"),
             file("$projectDir/lib/${System.mapLibraryName("MathVES")}")
-    into(layout.buildDirectory.dir("jars"))
+    into(jpackageInputDir)
 }
 
 tasks.register("copyDependencies", Copy) {
     from(configurations.runtimeClasspath)
-    into(layout.buildDirectory.dir("jars"))
+    into(jpackageInputDir)
 }
 
 tasks.register("copyJar", Copy) {
     from(tasks.jar)
-    into(layout.buildDirectory.dir("jars"))
+    into(jpackageInputDir)
 }
 
-tasks.register("jpackage", Exec) {
+final Map<String, String> jpackageCommonOptions = [
+        "APP_NAME"    : "GEM",
+        "APP_VERSION" : project.version.toString().replaceAll(/[^0-9.]/, ""),
+        "DEST"        : layout.buildDirectory.dir("dist").get().asFile.absolutePath,
+        "INPUT"       : layout.buildDirectory.dir("jars").get().asFile.absolutePath,
+        "MAIN_CLASS"  : application.mainClass.get(),
+        "MAIN_JAR"    : tasks.jar.archiveFileName.get(),
+        "APP_CONTENT" : file("src/main/resources").absolutePath,
+        "RESOURCE_DIR": file("package").absolutePath
+]
+
+tasks.register("jpackageMac", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
-    executable "bash"
-    args(["${rootDir.absolutePath}/jpackage.sh"])
-    environment(
-            "APP_NAME": "GEM",
-            "APP_VERSION": project.version.toString().replaceAll(/[^0-9.]/, ""),
-            "DEST": layout.buildDirectory.dir("dist").get().asFile.absolutePath,
-            "INPUT": layout.buildDirectory.dir("jars").get().asFile.absolutePath,
-            "MAIN_CLASS": application.mainClass.get(),
-            "MAIN_JAR": tasks.jar.archiveFileName.get(),
-            "APP_CONTENT": file("src/main/resources").absolutePath,
-            "RESOURCE_DIR": file("package").absolutePath
-    )
+    executable "${rootDir.absolutePath}/jpackage.sh"
+    environment(jpackageCommonOptions)
+}
+
+tasks.register("jpackageWin", Exec) {
+    dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
+    executable "${rootDir.absolutePath}/jpackage.bat"
+    environment(jpackageCommonOptions)
 }

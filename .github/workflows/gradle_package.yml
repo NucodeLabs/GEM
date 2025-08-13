@@ -23,9 +23,9 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "jpackage", path: "build/dist/*" },
-          { runner: "macos-14", task: "jpackage", path: "build/dist/*" },
-          { runner: "windows-2022", task: "jpackage", path: "build/dist/*" }
+          { runner: "macos-13", task: "jpackageMac", path: "build/dist/*" },
+          { runner: "macos-14", task: "jpackageMac", path: "build/dist/*" },
+          { runner: "windows-2022", task: "jpackageWin", path: "build/dist/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
     steps:
