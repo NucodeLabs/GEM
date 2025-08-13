@@ -273,12 +273,14 @@ final Map<String, String> jpackageCommonOptions = [
 
 tasks.register("jpackageMac", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
-    executable "${rootDir.absolutePath}/jpackage.sh"
+    workingDir = projectDir
+    commandLine "bash", "jpackage_mac.sh"
     environment(jpackageCommonOptions)
 }
 
 tasks.register("jpackageWin", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
-    executable "${rootDir.absolutePath}/jpackage.bat"
+    workingDir = projectDir
+    commandLine "cmd", "/c", "jpackage_win.bat"
     environment(jpackageCommonOptions)
 }
