@@ -45,12 +45,27 @@
 
 ## Сборка дистрибутива
 
-### Windows
+Запускает утилиту **jpackage**, используя скрипт (macOS - `jpackage_mac.sh`, Windows - `jpackage_win.bat`).
+
 ```shell
-gradle packageWindowsExe
+./gradlew jpackage
 ```
 
-### macOS
+### Версия
+
+Версия, используемая при сборке по умолчанию, указана в `gradle.properties`.
+
+Можно указать версию программы опцией команды:
 ```shell
-gradle packageMacApp
+./gradlew jpackage -Pversion="2.0.0-development"
 ```
+
+Допустимый формат - `<X>.<Y>.<Z>[-<SUFFIX>]`, где X > 0.
+Обусловлено это форматом версий Windows, который требует jpackage на вход (суффикс обрезается для него, но отображается
+в самой программе).
+
+_Пример:_
+
+- `2.1.0`
+- `2.0.1-beta`
+- `1.0.0-SNAPSHOT`
