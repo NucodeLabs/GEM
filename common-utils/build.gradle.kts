@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "ru.nucodelabs"
-version = "2.0"
+version = rootProject.version
 
 repositories {
     mavenCentral()

@@ -4,8 +4,9 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.2.0'
     id 'java-library'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'maven-publish'
 }
+
+version = rootProject.version
 
 ext {
     jfxVersion = '23'

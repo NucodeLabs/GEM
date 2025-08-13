@@ -259,10 +259,10 @@ tasks.register("copyJar", Copy) {
     into(layout.buildDirectory.dir("jars"))
 }
 
-tasks.register("jpackageMac", Exec) {
+tasks.register("jpackage", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
     executable "bash"
-    args(["${rootDir.absolutePath}/jpackage_mac.sh"])
+    args(["${rootDir.absolutePath}/jpackage.sh"])
     environment(
             "APP_NAME": "GEM",
             "APP_VERSION": project.version.toString().replaceAll(/[^0-9.]/, ""),
