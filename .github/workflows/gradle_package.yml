@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Package Distribution with Gradle
+name: Package Distribution Artifacts
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
       version:
         description: "Version"
         required: false
-        default: SNAPSHOT
+        default: 1.0.0-SNAPSHOT
 
 permissions:
   contents: read
@@ -23,9 +23,9 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "jpackageMac", path: "build/dist/*" },
-          { runner: "macos-14", task: "jpackageMac", path: "build/dist/*" },
-          { runner: "windows-2022", task: "jpackageWin", path: "build/dist/*" }
+          { runner: "macos-13", path: "build/dist/*" },
+          { runner: "macos-14", path: "build/dist/*" },
+          { runner: "windows-2022", path: "build/dist/*" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
     steps:
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Package app with Gradle
-        run: ./gradlew ${{ matrix.configuration.task }}
+        run: ./gradlew jpackage
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

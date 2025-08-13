@@ -1,3 +1,5 @@
+name: Release on Tag
+
 on:
   push:
     tags:
@@ -22,9 +24,9 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", task: "jpackageMac", path: "build/dist" },
-          { runner: "macos-14", task: "jpackageMac", path: "build/dist" },
-          { runner: "windows-2022", task: "jpackageWin", path: "build/dist" }
+          { runner: "macos-13", path: "build/dist" },
+          { runner: "macos-14", path: "build/dist" },
+          { runner: "windows-2022", path: "build/dist" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
     steps:
@@ -38,7 +40,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Package app with Gradle
-        run: ./gradlew ${{ matrix.configuration.task }} -Pversion="${{ github.ref_name }}"
+        run: ./gradlew jpackage -Pversion="${{ github.ref_name }}"
       - name: Upload Asset
         shell: bash
         run: |

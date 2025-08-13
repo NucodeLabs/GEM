@@ -1,6 +1,3 @@
-import io.github.fvarrui.javapackager.gradle.PackageTask
-import io.github.fvarrui.javapackager.model.SetupMode
-import io.github.fvarrui.javapackager.model.WindowsExeCreationTool
 import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -9,9 +6,6 @@ buildscript {
     ext.kotlinVersion = '2.2.0'
     repositories {
         mavenCentral()
-    }
-    dependencies {
-        classpath "io.github.fvarrui:javapackager:1.7.6"
     }
 }
 
@@ -22,8 +16,6 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id "org.jetbrains.dokka" version "2.0.0"
 }
-
-apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 group 'ru.nucodelabs'
 
@@ -198,52 +190,10 @@ test {
     finalizedBy cleanRunDir
 }
 
-javapackager {
-    mainClass = application.mainClass
-    bundleJre = true
-    organizationName = "NucodeLabs"
-    name = "GEM"
-    applicationName = "GEM"
-    version = project.version
-    vmArgs = ["-Djava.library.path=."] + moduleExportsJvmArgs
-    administratorRequired = false
-    additionalResources = [
-            file("lib/${System.mapLibraryName("MathVES_JNI")}"),
-            file("lib/${System.mapLibraryName("MathVES")}")
-    ]
-}
+/* jpackage */
 
-tasks.register('packageWindowsExe', PackageTask) {
-    dependsOn build
-    generateInstaller = false
-    winConfig {
-        generateSetup = false
-        generateMsi = false
-        exeCreationTool = WindowsExeCreationTool.launch4j
-        icoFile = file("src/main/resources/img/gem.ico")
-        setupMode = SetupMode.askTheUser
-        removeOldLibs = true
-        disableDirPage = false
-        disableFinishedPage = false
-        disableWelcomePage = false
-        createDesktopIconTask = false
-    }
-    finalizedBy distClr
-}
+def jpackageInputDir = layout.buildDirectory.dir("jars").get().asFile.absolutePath
 
-tasks.register('packageLinuxApplication', PackageTask) {
-    dependsOn build
-    generateInstaller = true
-    linuxConfig {
-        generateDeb = true
-        generateRpm = true
-        wrapJar = true
-        pngFile = file("src/main/resources/img/gem.png")
-    }
-    finalizedBy distClr
-}
-
-def jpackageInputDir = layout.buildDirectory.dir("jars")
 tasks.register("copyNativeDependencies", Copy) {
     from file("$projectDir/lib/${System.mapLibraryName("MathVES_JNI")}"),
             file("$projectDir/lib/${System.mapLibraryName("MathVES")}")
@@ -264,23 +214,24 @@ final Map<String, String> jpackageCommonOptions = [
         "APP_NAME"    : "GEM",
         "APP_VERSION" : project.version.toString().replaceAll(/[^0-9.]/, ""),
         "DEST"        : layout.buildDirectory.dir("dist").get().asFile.absolutePath,
-        "INPUT"       : layout.buildDirectory.dir("jars").get().asFile.absolutePath,
+        "INPUT"       : jpackageInputDir,
         "MAIN_CLASS"  : application.mainClass.get(),
         "MAIN_JAR"    : tasks.jar.archiveFileName.get(),
-        "APP_CONTENT" : file("src/main/resources").absolutePath,
-        "RESOURCE_DIR": file("package").absolutePath
+        "APP_CONTENT" : file("$projectDir/src/main/resources").absolutePath,
+        "RESOURCE_DIR": file("$projectDir/package_resources").absolutePath
 ]
 
-tasks.register("jpackageMac", Exec) {
+tasks.register("jpackage", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
     workingDir = projectDir
-    commandLine "bash", "jpackage_mac.sh"
     environment(jpackageCommonOptions)
-}
 
-tasks.register("jpackageWin", Exec) {
-    dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
-    workingDir = projectDir
-    commandLine "cmd", "/c", "jpackage_win.bat"
-    environment(jpackageCommonOptions)
+    def os = DefaultNativePlatform.currentOperatingSystem
+    if (os.isMacOsX()) {
+        commandLine "bash", "jpackage_mac.sh"
+    } else if (os.isWindows()) {
+        commandLine "cmd", "/c", "jpackage_win.bat"
+    } else {
+        throw new StopActionException("Platform is not supported: ${os}")
+    }
 }
