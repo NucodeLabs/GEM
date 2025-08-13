@@ -1,9 +1,6 @@
 package ru.nucodelabs.gem.file.dto.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValueMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import ru.nucodelabs.gem.file.dto.anisotropy.*;
 import ru.nucodelabs.geo.anisotropy.*;
 
@@ -12,7 +9,7 @@ import java.util.List;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Mapper(
-        componentModel = "jsr330",
+    componentModel = MappingConstants.ComponentModel.JSR330,
         unmappedSourcePolicy = ReportingPolicy.ERROR,
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT

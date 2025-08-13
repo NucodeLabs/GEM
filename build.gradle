@@ -1,4 +1,3 @@
-import org.gradle.internal.jvm.Jvm
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -29,21 +28,16 @@ repositories {
 }
 
 ext {
-    set 'jfxVersion', '23'
-
     // Platform Info
     def currentOS = DefaultNativePlatform.currentOperatingSystem
     def currentArch = DefaultNativePlatform.currentArchitecture
-    def currentOSVer = System.getProperty("os.version").toString()
-    javaHome = Jvm.current().javaHome
-
     // For deps
     def osName = currentOS.isWindows() ? "windows" : currentOS.isMacOsX() ? "macosx" : "linux"
     def archName = currentArch.isArm64() && !currentOS.isWindows() ? "arm64" : "x86_64"
     set 'platform', "$osName-$archName"
 
     println "OS:           ${currentOS.name}"
-    println "OS VERSION:   ${currentOSVer}"
+    println "OS VERSION:   ${System.getProperty("os.version")}"
     println "ARCHITECTURE: ${currentArch.name}"
     println "CLASSIFIER:   ${platform}"
 
@@ -82,7 +76,7 @@ application {
 }
 
 javafx {
-    version = jfxVersion
+    version = '23'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.swing']
 }
 
@@ -94,9 +88,7 @@ dependencies {
     final mapstructVersion = '1.6.3'
     final slf4jVersion = '2.0.17'
 
-    /* Kotlin JavaFX Utils */
     implementation project(":kfx-utils")
-
     implementation project(":common-utils")
     implementation project(":files")
 
@@ -139,8 +131,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinTestVersion"
-    testImplementation "org.openjfx:javafx:$jfxVersion"
+    testImplementation "org.openjfx:javafx:${javafx.version}"
 }
+
+/* Setup Runtime */
 
 tasks.register('prepareRunDir') {
     file(runDir).mkdirs()
@@ -168,14 +162,6 @@ tasks.register('cleanRunDir', Delete) {
     delete fileTree(runDir) { exclude "err-trace*.txt" }
 }
 
-tasks.register('distClr', Copy) {
-    doFirst {
-        file('build/GEM/colormap').mkdirs()
-    }
-    from 'colormap'
-    into 'build/GEM/colormap'
-}
-
 tasks.withType(JavaExec).configureEach {
     dependsOn copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     jvmArgs = moduleExportsJvmArgs
@@ -190,9 +176,9 @@ test {
     finalizedBy cleanRunDir
 }
 
-/* jpackage */
+/* Package */
 
-def jpackageInputDir = layout.buildDirectory.dir("jars").get().asFile.absolutePath
+final jpackageInputDir = layout.buildDirectory.dir("jars").get().asFile.absolutePath
 
 tasks.register("copyNativeDependencies", Copy) {
     from file("$projectDir/lib/${System.mapLibraryName("MathVES_JNI")}"),
