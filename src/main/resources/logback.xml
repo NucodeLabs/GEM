@@ -1,18 +1,30 @@
 <configuration>
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>gem.log</file>
+    <propertiesConfigurator resource="logback.properties"/>
+    <variable resource="logback.properties"/>
+
+    <if condition='${stdout}'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+            <root>
+                <appender-ref ref="STDOUT"/>
+            </root>
+        </then>
+    </if>
+
+    <appender name="APP_FILE" class="ru.nucodelabs.logback.appender.AppLogFileAppender">
+        <appName>ru.nucodelabs.gem</appName>
+        <append>false</append>
+        <logFileName>last_session.log</logFileName>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="stdout"/>
+    <root>
+        <appender-ref ref="APP_FILE"/>
     </root>
-    <logger name="ru.nucodelabs" level="INFO"/>
 </configuration>

@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.app
 
 import ru.nucodelabs.gem.config.slf4j
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.kfx.core.OS
+import ru.nucodelabs.util.OS
 import java.io.File
 import java.lang.Thread.UncaughtExceptionHandler
 import java.time.LocalDateTime

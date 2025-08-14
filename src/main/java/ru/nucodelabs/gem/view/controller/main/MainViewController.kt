@@ -38,13 +38,13 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
 import ru.nucodelabs.geo.ves.calc.xOfPicket
-import ru.nucodelabs.kfx.core.OS.macOS
 import ru.nucodelabs.kfx.ext.DoubleValidationConverter
 import ru.nucodelabs.kfx.ext.get
 import ru.nucodelabs.kfx.ext.unfocus
 import ru.nucodelabs.kfx.pref.FXPreferences
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.kfx.snapshot.snapshotOf
+import ru.nucodelabs.util.OS.macOS
 import tornadofx.getValue
 import tornadofx.plus
 import tornadofx.setValue

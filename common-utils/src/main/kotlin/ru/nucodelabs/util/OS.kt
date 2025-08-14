@@ -1,4 +1,4 @@
-package ru.nucodelabs.kfx.core
+package ru.nucodelabs.util
 
 /**
  * Utility object that tries to define current OS and offers some DSL syntax to run OS-specific blocks of code

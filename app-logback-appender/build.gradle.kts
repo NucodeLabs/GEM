@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("ch.qos.logback:logback-classic:${rootProject.properties["logbackVersion"]}")
     implementation(project(":common-utils"))
 
     testImplementation(kotlin("test"))
@@ -17,7 +18,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    workingDir(file(rootProject.properties["runDir"]!!))
-    dependsOn(":copyDataToRunDir")
-    finalizedBy(":cleanRunDir")
 }

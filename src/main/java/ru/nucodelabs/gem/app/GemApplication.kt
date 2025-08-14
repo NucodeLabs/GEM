@@ -15,7 +15,7 @@ import ru.nucodelabs.gem.config.slf4j
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.main.MainViewController
 import ru.nucodelabs.kfx.core.GuiceApplication
-import ru.nucodelabs.kfx.core.OS.macOS
+import ru.nucodelabs.util.OS.macOS
 import java.io.File
 
 /**

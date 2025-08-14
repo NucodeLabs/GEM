@@ -8,16 +8,12 @@ plugins {
 
 version = rootProject.version
 
-ext {
-    jfxVersion = '23'
-}
-
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
 javafx {
-    version = jfxVersion
+    version = rootProject['javafx']['version']
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.swing']
 }
 
@@ -48,9 +44,9 @@ dependencies {
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
-    testImplementation "org.openjfx:javafx:${jfxVersion}"
+    testImplementation "org.openjfx:javafx:${javafx.version}"
 
-    api "org.openjfx:javafx:${jfxVersion}"
-    api group: 'com.google.inject', name: 'guice', version: '7.0.0'
+    api "org.openjfx:javafx:${javafx.version}"
+    api group: 'com.google.inject', name: 'guice', version: rootProject.guiceVersion
     api 'no.tornado:tornadofx:1.7.20'
 }
