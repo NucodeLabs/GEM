@@ -211,7 +211,6 @@ final Map<String, String> jpackageCommonOptions = [
         "INPUT"       : jpackageInputDir,
         "MAIN_CLASS"  : application.mainClass.get(),
         "MAIN_JAR"    : tasks.jar.archiveFileName.get(),
-        "APP_CONTENT" : file("$projectDir/src/main/resources").absolutePath,
         "RESOURCE_DIR": file("$projectDir/package_resources").absolutePath
 ]
 

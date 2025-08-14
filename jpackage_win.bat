@@ -6,5 +6,4 @@
   --input "%INPUT%" ^
   --main-class "%MAIN_CLASS%" ^
   --main-jar "%MAIN_JAR%" ^
-  --app-content "%APP_CONTENT%" ^
   --resource-dir "%RESOURCE_DIR%"
