@@ -1,4 +1,5 @@
 rootProject.name = "gem"
-include 'kfx-utils', 'common-utils'
+include 'kfx-utils'
+include 'common-utils'
 include 'files'
 include 'app-logback-appender'

@@ -55,12 +55,7 @@ class GemApplication : GuiceApplication(AppModule()) {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
-        Thread.setDefaultUncaughtExceptionHandler(
-            UncaughtExceptionHandler(
-                alertsFactory,
-                parameters.raw.contains("--disable-uncaught-error-files")
-            )
-        )
+        Thread.setDefaultUncaughtExceptionHandler(UncaughtExceptionHandler(alertsFactory))
         val params: List<String> = parameters.raw + macOSHandledFiles
         if (
             params.any {
