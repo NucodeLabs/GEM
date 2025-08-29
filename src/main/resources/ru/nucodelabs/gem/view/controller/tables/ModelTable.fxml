@@ -9,7 +9,7 @@
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../../common.css"
+      stylesheets="/css/common.css"
       VBox.vgrow="ALWAYS" fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.tables.ModelTableController">
     <!--    <HBox alignment="CENTER_LEFT" maxWidth="Infinity" style="-fx-padding: 5" HBox.hgrow="ALWAYS">-->
@@ -76,7 +76,7 @@
                         <Button onAction="showInitialModelConfiguration()" contentDisplay="GRAPHIC_ONLY">
                             <graphic>
                                 <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                    <Image url="@../../../../../../img/ui_icons/settings.png"/>
+                                    <Image url="/img/ui_icons/settings.png"/>
                                 </ImageView>
                             </graphic>
                         </Button>

@@ -18,7 +18,7 @@ public class FileChoosersModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.File.EXP)
+    @Named(Name.File.EXP)
     private FileChooser provideEXPFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
@@ -34,7 +34,7 @@ public class FileChoosersModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.File.JSON)
+    @Named(Name.File.JSON)
     private FileChooser provideJSONFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
@@ -53,7 +53,7 @@ public class FileChoosersModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.File.MOD)
+    @Named(Name.File.MOD)
     private FileChooser provideMODFileChooser(ResourceBundle ui, Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(
@@ -69,7 +69,7 @@ public class FileChoosersModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.File.PNG)
+    @Named(Name.File.PNG)
     private FileChooser pngFileChooser(Preferences preferences) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(

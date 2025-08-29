@@ -1,6 +1,5 @@
 package ru.nucodelabs.gem.view.controller.tables
 
-import com.google.inject.name.Named
 import jakarta.inject.Inject
 import jakarta.inject.Provider
 import jakarta.validation.Validator
@@ -20,7 +19,7 @@ import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
@@ -73,7 +72,6 @@ class ExperimentalTableController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val doubleStringConverter: StringConverter<Double>,
     private val decimalFormat: DecimalFormat,
-    @Named(ArgNames.CSS) private val css: String,
     fileImporterProvider: Provider<FileImporter>,
     private val mapper: VesFxModelMapper
 ) : AbstractController(), FileImporter by fileImporterProvider.get() {
@@ -227,7 +225,7 @@ class ExperimentalTableController @Inject constructor(
                     MenuItem("Установить погрешность").apply {
                         val dialog = TextInputDialog().apply {
                             initOwner(stage)
-                            stylesheets += css
+                            stylesheets += Style.COMMON_STYLESHEET
                             headerText = "Введите значение погрешности [%]"
                             contentText = "δρₐ = "
                             editor.also { tf ->

@@ -1,12 +1,10 @@
 package ru.nucodelabs.gem.view.controller.charts
 
-import com.google.inject.name.Named
 import jakarta.inject.Inject
-import javafx.beans.property.BooleanProperty
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleBooleanProperty
+import jakarta.inject.Named
+import javafx.beans.property.*
 import javafx.beans.value.ObservableObjectValue
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -22,7 +20,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.AlertsFactory
@@ -55,20 +53,10 @@ import kotlin.math.log10
 
 private const val X_AXIS_PADDING_LOG = 0.1
 private const val Y_AXIS_PADDING_LOG = 0.1
-private const val X_MIN_LOG = -2.0
-private const val X_MIN = 1e-2
-private const val X_MAX_LOG = 10.0
-private const val X_MAX = 1e10
-private const val Y_MIN_LOG = -2.0
-private const val Y_MIN = 1e-2
-private const val Y_MAX_LOG = 10.0
-private const val Y_MAX = 1e10
-private const val ZOOM_DELTA_LOG = 0.1
-private const val ZOOM_DELTA_REL = 0.1
+private const val ZOOM_DELTA_LOG = 0.05
 
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
-    @Named("VESCurves") private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val _picketIndex: IntegerProperty,
     private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
@@ -76,9 +64,11 @@ class VesCurvesController @Inject constructor(
     private val decimalFormat: DecimalFormat,
     private val formatter: StringConverter<Number>,
     private val forwardSolver: ForwardSolver,
-    @Named(ArgNames.File.PNG) private val fc: FileChooser,
+    @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
+
+    private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>> = initData()
 
     private val picketIndex
         get() = _picketIndex.get()
@@ -150,6 +140,14 @@ class VesCurvesController @Inject constructor(
         )
 
         setupContextMenu()
+    }
+
+    private fun initData(): ObjectProperty<ObservableList<Series<Number, Number>>> {
+        return SimpleObjectProperty(
+            FXCollections.observableArrayList<Series<Number, Number>>().also {
+                for (i in 0..<TOTAL_COUNT) it += Series<Number, Number>()
+            }
+        )
     }
 
     private fun setupContextMenu() {
@@ -455,31 +453,11 @@ class VesCurvesController @Inject constructor(
 //        }
 //    }
 
-//    @FXML
-//    private fun zoomIn() = zoomSupport.zoomIn(ZOOM_DELTA_LOG)
-//
-//    @FXML
-//    private fun zoomOut() = zoomSupport.zoomOut(ZOOM_DELTA_LOG)
+    @FXML
+    private fun zoomIn() = zoom.zoom(1 + ZOOM_DELTA_LOG)
 
-//    fun zoomUsingScroll(scrollEvent: ScrollEvent) {
-//        if (scrollEvent.isShortcutDown) {
-//            val start = pointInSceneToValue(Point2D(scrollEvent.sceneX, scrollEvent.sceneY))
-//            val now = pointInSceneToValue(
-//                Point2D(scrollEvent.sceneY + scrollEvent.deltaY, scrollEvent.sceneX + scrollEvent.deltaX)
-//            )
-//
-//            val sensitivity = 0.1
-//            val distX = (now.xValue - start.xValue) * sensitivity
-//            val distY = (start.xValue - start.yValue) * sensitivity
-//
-//            lineChartXAxis.lowerBound += distX
-//            lineChartXAxis.upperBound -= distX
-//
-//            lineChartYAxis.lowerBound += distY
-//            lineChartYAxis.upperBound -= distY
-//        }
-//    }
-
+    @FXML
+    private fun zoomOut() = zoom.zoom(1 - ZOOM_DELTA_LOG)
 
     companion object Order {
         const val EXP_CURVE_SERIES_INDEX = 3

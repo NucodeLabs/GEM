@@ -12,7 +12,7 @@
        xmlns="http://javafx.com/javafx" fx:id="root"
        fx:controller="ru.nucodelabs.gem.view.controller.main.NormalizationScreenController" title="Нормализация кривых">
     <scene>
-        <Scene stylesheets="@NormalizationScreen.css, @../common.css">
+        <Scene stylesheets="@NormalizationScreen.css, /css/common.css">
             <VBox alignment="CENTER_LEFT" style="-fx-padding: 15;" spacing="15">
                 <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="10" VBox.vgrow="ALWAYS">
                     <LineChart fx:id="chart" HBox.hgrow="ALWAYS" styleClass="padded-chart" animated="false">

@@ -1,10 +1,10 @@
 package ru.nucodelabs.gem.config
 
-object ArgNames {
-    const val CSS = "CSS"
+object Name {
+
     const val CLR_SOURCE = "CLR_SOURCE"
     const val DEFAULT_CLR = "Default CLR"
-    const val PRECISE = "Precise"
+    const val PRECISE_FORMAT = "Precise"
     const val SAVE = "SAVE"
     const val DIFF = "DIFF"
 

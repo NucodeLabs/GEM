@@ -2,7 +2,9 @@ package ru.nucodelabs.gem.view.controller.charts
 
 import jakarta.inject.Inject
 import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableObjectValue
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
@@ -41,16 +43,17 @@ const val ERROR_DESCRIPTION = "Погрешность - это \n" +
         "экспериментальных в процентах, относительно \n" +
         "погрешности измерения \n"
 const val TARGET_FUNCTION_FORMULA_IMAGE_PATH = "/img/targetFunction.png"
-const val MISFIT_FORMULA_IMAGE_PATH ="/img/misfit.png"
+const val MISFIT_FORMULA_IMAGE_PATH = "/img/misfit.png"
 const val ERROR_FORMULA_IMAGE_PATH = "/img/error.png"
 
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val alertsFactory: AlertsFactory,
-    private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>>,
     private val decimalFormat: DecimalFormat,
     private val appModel: VesFxAppModel,
 ) : AbstractViewController<VBox>() {
+    private val dataProperty = emptyData()
+
     @FXML
     private lateinit var targetFunctionText: Label
 
@@ -138,11 +141,11 @@ class MisfitStacksController @Inject constructor(
         val imageForTargetFunction = Image(
             javaClass.getResourceAsStream(TARGET_FUNCTION_FORMULA_IMAGE_PATH)
         )
-        val  tooltipForTargetFunction = Tooltip()
+        val tooltipForTargetFunction = Tooltip()
         tooltipForTargetFunction.text = TARGET_FUNCTION_DESCRIPTION
         tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
         tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(targetFunctionText,  tooltipForTargetFunction.forCharts())
+        Tooltip.install(targetFunctionText, tooltipForTargetFunction.forCharts())
 
         val imageForMisfit = Image(
             javaClass.getResourceAsStream(MISFIT_FORMULA_IMAGE_PATH)
@@ -176,3 +179,9 @@ class MisfitStacksController @Inject constructor(
         }
     }
 }
+
+fun emptyData(): ObjectProperty<ObservableList<Series<Number, Number>>> = SimpleObjectProperty(
+    FXCollections.observableArrayList(
+        ArrayList()
+    )
+)

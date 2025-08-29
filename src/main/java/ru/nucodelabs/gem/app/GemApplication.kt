@@ -10,7 +10,7 @@ import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST
 import ru.nucodelabs.gem.config.AppModule
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.slf4j
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.main.MainViewController
@@ -56,16 +56,17 @@ class GemApplication : GuiceApplication(AppModule()) {
     @Throws(Exception::class)
     override fun start(primaryStage: Stage) {
         Thread.setDefaultUncaughtExceptionHandler(UncaughtExceptionHandler(alertsFactory))
+
         val params: List<String> = parameters.raw + macOSHandledFiles
-        if (
-            params.any {
-                it.endsWith(".EXP", ignoreCase = true) || it.endsWith(".json", ignoreCase = true)
-            }
-        ) {
-            processParams(params)
-        } else {
+        log.info("Parameters are $params")
+        if (!handleFileParameters(params)) {
             log.info("Starting MainView without parameters")
-            guiceInjector.getInstance(Key.get(Stage::class.java, Names.named(ArgNames.View.MAIN_VIEW))).show()
+            guiceInjector.getInstance(
+                Key.get(
+                    Stage::class.java,
+                    Names.named(Name.View.MAIN_VIEW)
+                )
+            ).show()
         }
     }
 
@@ -74,34 +75,30 @@ class GemApplication : GuiceApplication(AppModule()) {
         log.info("Exiting")
     }
 
-    private fun processParams(params: List<String>): Boolean {
-        log.info("Parameters are $params")
-        val expFiles = mutableListOf<File>()
-        for (param in params) {
-            if (param.endsWith(".EXP", ignoreCase = true)) {
-                expFiles += File(param)
-            } else if (param.endsWith(".json", ignoreCase = true)) {
-                loadMainViewWithJsonFile(File(param))
-                return true
-            }
-        }
-        if (expFiles.isNotEmpty()) {
-            loadMainViewWithEXPFiles(expFiles)
-            return true
-        }
-        return false
+    /**
+     * true if files handled, false if no files to open detected
+     */
+    private fun handleFileParameters(params: List<String>): Boolean {
+
+        val expFiles = params.filter { it.endsWith(".EXP", ignoreCase = true) }
+        val jsonFiles = params.filter { it.endsWith(".json", ignoreCase = true) }
+
+        loadMainViewWithEXPFiles(expFiles.map { File(it) })
+        jsonFiles.forEach { jsonFile -> loadMainViewWithJsonFile(File(jsonFile)) }
+
+        return expFiles.isNotEmpty() or jsonFiles.isNotEmpty()
     }
 
     private fun loadMainViewWithJsonFile(jsonFile: File) =
         fxmlLoaderAfterShow().getController<MainViewController>().run {
-            log.info("Open JSON Section, file: ${jsonFile.absolutePath}")
+            log.info("Starting - Open JSON Section, file: ${jsonFile.name}")
             openJsonSection(jsonFile)
         }
 
     private fun loadMainViewWithEXPFiles(expFiles: List<File>) =
         fxmlLoaderAfterShow().getController<MainViewController>().run {
-            expFiles.forEach {
-                log.info("Import EXP, file: ${it.absolutePath}")
+            expFiles.filter { it.exists() }.forEach {
+                log.info("Starting - Import EXP file: ${it.name}")
                 importEXP(it)
             }
         }
@@ -109,5 +106,5 @@ class GemApplication : GuiceApplication(AppModule()) {
     private fun fxmlLoaderAfterShow(): FXMLLoader = mainViewFxmlLoader().also { it.load<Stage>().show() }
 
     private fun mainViewFxmlLoader() =
-        guiceInjector.getInstance(Key.get(FXMLLoader::class.java, Names.named(ArgNames.View.MAIN_VIEW)))
+        guiceInjector.getInstance(Key.get(FXMLLoader::class.java, Names.named(Name.View.MAIN_VIEW)))
 }

@@ -12,7 +12,7 @@
       maxWidth="Infinity"
       minHeight="0"
       minWidth="0"
-      stylesheets="@../../common.css, @MisfitStacks.css"
+      stylesheets="/css/common.css, @MisfitStacks.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.MisfitStacksController" fx:id="root">
     <HBox maxWidth="Infinity">

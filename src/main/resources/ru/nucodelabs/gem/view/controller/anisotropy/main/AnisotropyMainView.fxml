@@ -8,7 +8,7 @@
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.anisotropy.main.AnisotropyMainViewController"
       maxHeight="Infinity" maxWidth="Infinity"
-      stylesheets="@../../../common.css, @AnisotropyMainView.css, @../../../controller/charts/VesCurves.css"
+      stylesheets="/css/common.css, @AnisotropyMainView.css, @../../../controller/charts/VesCurves.css"
       prefWidth="1280"
       prefHeight="720"
       fx:id="root">

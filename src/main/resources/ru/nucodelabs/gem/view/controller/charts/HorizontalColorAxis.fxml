@@ -17,7 +17,7 @@
     <fx:define>
         <Stage fx:id="configWindow" resizable="false" title="Настройки цветовой шкалы">
             <scene>
-                <Scene stylesheets="@../../common.css">
+                <Scene stylesheets="/css/common.css">
                     <VBox spacing="10" style="-fx-padding: 15;">
                         <HBox alignment="BASELINE_LEFT" spacing="5">
                             <Label text="Минимальное значение"/>

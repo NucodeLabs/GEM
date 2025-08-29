@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.kfx.ext.bindTo
 import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
@@ -19,7 +19,7 @@ import java.util.*
 import java.util.prefs.Preferences
 
 class PseudoSectionSwitcherController @Inject constructor(
-    @Named(ArgNames.File.PNG) private val fc: FileChooser,
+    @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractController() {
     @FXML

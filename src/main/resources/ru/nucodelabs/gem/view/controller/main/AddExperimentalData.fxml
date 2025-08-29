@@ -18,7 +18,7 @@
     <Button fx:id="addBtn" text="Добавить измерение" onAction="#add">
         <graphic>
             <ImageView fitWidth="15" fitHeight="15">
-                <Image url="@../../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                <Image url="/img/ui_icons/add/2x/round_add_black_24dp.png"/>
             </ImageView>
         </graphic>
     </Button>
