@@ -12,7 +12,7 @@
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../../common.css, @MapPseudoSection.css"
+      stylesheets="/css/common.css, @MapPseudoSection.css"
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.MapPseudoSectionController">
     <HBox alignment="CENTER_LEFT">

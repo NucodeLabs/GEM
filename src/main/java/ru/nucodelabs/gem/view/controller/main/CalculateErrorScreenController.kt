@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.controller.main
 
-import com.google.inject.name.Named
 import jakarta.inject.Inject
+import jakarta.inject.Named
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.IntegerProperty
 import javafx.beans.value.ObservableObjectValue
@@ -13,7 +13,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.stage.Stage
 import javafx.util.Callback
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
@@ -43,7 +43,7 @@ const val DEFAULT_I_B_ERROR = 0.5 // mA
 const val LEQ_SIGN = '≤'
 
 class CalculateErrorScreenController @Inject constructor(
-    @Named(ArgNames.PRECISE) private val preciseFormat: DecimalFormat,
+    @Named(Name.PRECISE_FORMAT) private val preciseFormat: DecimalFormat,
     private val df: DecimalFormat,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,

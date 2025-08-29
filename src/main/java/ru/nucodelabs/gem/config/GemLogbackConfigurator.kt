@@ -14,14 +14,14 @@ import ru.nucodelabs.logback.appender.AppLogFileAppender
 class GemLogbackConfigurator : ContextAwareBase(), Configurator {
 
     override fun configure(loggerContext: LoggerContext?): Configurator.ExecutionStatus? {
-        if (System.getProperty("app.gem.log.stdout", "false").toBoolean()) {
+        if (AppProps.logStdout) {
             BasicConfigurator().also { it.context = loggerContext }.configure(loggerContext)
         }
 
-        val appender = AppLogFileAppender<ILoggingEvent>().apply {
+        val appLogFileAppender = AppLogFileAppender<ILoggingEvent>().apply {
             context = loggerContext
             name = "APP_FILE"
-            appName = "ru.nucodelabs.gem"
+            appName = AppProps.FULL_APP_NAME
             logFileName = "last_session.log"
             isAppend = false
             encoder = LayoutWrappingEncoder<ILoggingEvent>().apply {
@@ -32,8 +32,8 @@ class GemLogbackConfigurator : ContextAwareBase(), Configurator {
 
         loggerContext?.getLogger(Logger.ROOT_LOGGER_NAME)?.let { root ->
             root.isAdditive = false
-            root.level = Level.valueOf(System.getProperty("app.gem.log.level", "INFO"))
-            root.addAppender(appender)
+            root.level = Level.toLevel(AppProps.logLevel, Level.INFO)
+            root.addAppender(appLogFileAppender)
         }
 
         return Configurator.ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY

@@ -16,7 +16,7 @@ import javafx.stage.FileChooser
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.JSON_FILES_DIR
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableAzimuthSignals
 import ru.nucodelabs.gem.fxmodel.anisotropy.ObservableModelLayer
@@ -55,11 +55,11 @@ private const val ERR_LOWER_SIGNALS = "Нижняя граница погреш�
 
 class AnisotropyMainViewController @Inject constructor(
     private val appModel: AnisotropyFxAppModel,
-    @Named(ArgNames.File.JSON) private val fileChooser: FileChooser,
+    @Named(Name.File.JSON) private val fileChooser: FileChooser,
     private val preferences: Preferences,
     private val colorMapper: ColorMapper,
-    @Named(ArgNames.DIFF) private val diffColorMapper: ColorMapper,
-    @Named(ArgNames.PRECISE) private val preciseDecimalFormat: DecimalFormat,
+    @Named(Name.DIFF) private val diffColorMapper: ColorMapper,
+    @Named(Name.PRECISE_FORMAT) private val preciseDecimalFormat: DecimalFormat,
     private val df: DecimalFormat,
     private val alertsFactory: AlertsFactory,
     private val formatter: StringConverter<Number>,

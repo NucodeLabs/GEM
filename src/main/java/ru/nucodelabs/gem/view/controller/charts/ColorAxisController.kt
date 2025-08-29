@@ -18,7 +18,7 @@ import ru.nucodelabs.gem.app.pref.COLOR_MAX_VALUE
 import ru.nucodelabs.gem.app.pref.COLOR_MIN_VALUE
 import ru.nucodelabs.gem.app.pref.COLOR_SEGMENTS
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
@@ -37,12 +37,12 @@ import java.util.prefs.Preferences
 
 
 class ColorAxisController @Inject constructor(
-    @Named(ArgNames.CLR_SOURCE) private val clrFilePath: String,
+    @Named(Name.CLR_SOURCE) private val clrFilePath: String,
     private val colorMapper: ColorMapper,
     private val fxPreferences: FXPreferences,
     private val stringConverter: StringConverter<Number>,
     private val decimalFormat: DecimalFormat,
-    @Named(ArgNames.File.PNG) private val fc: FileChooser,
+    @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
 ) : AbstractViewController<Pane>() {
 

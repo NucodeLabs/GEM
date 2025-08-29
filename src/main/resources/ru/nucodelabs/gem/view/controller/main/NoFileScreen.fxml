@@ -7,7 +7,7 @@
 <?import javafx.scene.text.TextFlow?>
 <VBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      stylesheets="@../../common.css, @NoFileScreen.css"
+      stylesheets="/css/common.css, @NoFileScreen.css"
       fx:controller="ru.nucodelabs.gem.view.controller.main.NoFileScreenController"
       onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle"
       maxWidth="Infinity" maxHeight="Infinity">
