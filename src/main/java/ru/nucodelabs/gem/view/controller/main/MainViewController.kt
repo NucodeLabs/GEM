@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.controller.main
 
-import com.google.inject.name.Named
 import jakarta.inject.Inject
+import jakarta.inject.Named
 import jakarta.inject.Provider
 import jakarta.validation.Validator
 import javafx.application.Platform
@@ -24,7 +24,8 @@ import javafx.stage.Screen
 import javafx.stage.Stage
 import ru.nucodelabs.gem.app.io.StorageManager
 import ru.nucodelabs.gem.app.pref.*
-import ru.nucodelabs.gem.config.ArgNames
+import ru.nucodelabs.gem.config.Name
+import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -57,13 +58,12 @@ import java.util.prefs.PreferenceChangeEvent
 import java.util.prefs.Preferences
 
 class MainViewController @Inject constructor(
-    @Named(ArgNames.View.MAIN_VIEW) private val mainViewProvider: Provider<Stage>,
-    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) private val anisotropyMainViewProvider: Provider<Stage>,
-    @Named(ArgNames.File.EXP) private val expFileChooser: FileChooser,
-    @Named(ArgNames.File.MOD) private val modFileChooser: FileChooser,
-    @Named(ArgNames.File.JSON) private val jsonFileChooser: FileChooser,
-    @Named(ArgNames.SAVE) private val saveDialogProvider: Provider<Dialog<ButtonType>>,
-    @Named(ArgNames.CSS) private val stylesheet: String,
+    @Named(Name.View.MAIN_VIEW) private val mainViewProvider: Provider<Stage>,
+    @Named(Name.View.ANISOTROPY_MAIN_VIEW) private val anisotropyMainViewProvider: Provider<Stage>,
+    @Named(Name.File.EXP) private val expFileChooser: FileChooser,
+    @Named(Name.File.MOD) private val modFileChooser: FileChooser,
+    @Named(Name.File.JSON) private val jsonFileChooser: FileChooser,
+    @Named(Name.SAVE) private val saveDialogProvider: Provider<Dialog<ButtonType>>,
     private val picketObservable: ObservableObjectValue<Picket>,
     private val picketIndexProperty: IntegerProperty,
     private val observableSection: ObservableSection,
@@ -73,7 +73,7 @@ class MainViewController @Inject constructor(
     private val validator: Validator,
     private val preferences: Preferences,
     private val decimalFormat: DecimalFormat,
-    @FXML private val fxPreferences: FXPreferences,
+    private val fxPreferences: FXPreferences,
     private val inverseSolver: InverseSolver
 ) : AbstractController(), FileImporter, FileOpener {
 
@@ -337,7 +337,7 @@ class MainViewController @Inject constructor(
                     onCloseRequest = EventHandler { menuViewSectionInSeparateWindow.isSelected = false }
                     prepareToSeparateSection()
                     scene = Scene(sectionBox).apply {
-                        stylesheets += stylesheet
+                        stylesheets += Style.COMMON_STYLESHEET
                     }
                 }.show()
             } else {
@@ -679,7 +679,7 @@ class MainViewController @Inject constructor(
             Stage().apply {
                 title = "Добавить измерение"
                 initOwner(this@MainViewController.stage)
-                addExperimentalData.stylesheets += stylesheet
+                addExperimentalData.stylesheets += Style.COMMON_STYLESHEET
                 scene = Scene(addExperimentalData)
                 isResizable = false
             }.show()

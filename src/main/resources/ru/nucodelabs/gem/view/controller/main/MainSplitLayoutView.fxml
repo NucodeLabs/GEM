@@ -83,10 +83,10 @@
         }
     </fx:script>
     <icons>
-        <Image url="@../../../../../../img/gem.png"/>
+        <Image url="/img/gem.png"/>
     </icons>
     <scene>
-        <Scene stylesheets="@../../common.css, @Main.css">
+        <Scene stylesheets="/css/common.css, @Main.css">
             <VBox maxWidth="Infinity" maxHeight="Infinity">
                 <MenuBar fx:id="menuBar">
                     <Menu text="%file">
@@ -160,7 +160,7 @@
                                                 </maxWidth>
                                                 <graphic>
                                                     <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
-                                                        <Image url="@../../../../../../img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                                                        <Image url="/img/ui_icons/add/2x/round_add_black_24dp.png"/>
                                                     </ImageView>
                                                 </graphic>
                                             </Button>
@@ -189,7 +189,7 @@
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
                                             <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                                <Image url="@../../../../../../img/ui_icons/arrow_left/2x/round_chevron_left_black_24dp.png"/>
+                                                <Image url="/img/ui_icons/arrow_left/2x/round_chevron_left_black_24dp.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -198,7 +198,7 @@
                                             contentDisplay="GRAPHIC_ONLY">
                                         <graphic>
                                             <ImageView fitHeight="15" fitWidth="15" preserveRatio="true">
-                                                <Image url="@../../../../../../img/ui_icons/arrow_right/2x/round_chevron_right_black_24dp.png"/>
+                                                <Image url="/img/ui_icons/arrow_right/2x/round_chevron_right_black_24dp.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
@@ -229,14 +229,14 @@
                                             fx:id="normalizationBtn">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">
-                                                <Image url="@../../../../../../img/ui_icons/discover_tune.png"/>
+                                                <Image url="/img/ui_icons/discover_tune.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>
                                     <Button text="%inverse" onAction="#inverseSolve" fx:id="inverseBtn">
                                         <graphic>
                                             <ImageView fitWidth="15" fitHeight="15">
-                                                <Image url="@../../../../../../img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
+                                                <Image url="/img/ui_icons/bolt/2x/round_bolt_black_24dp.png"/>
                                             </ImageView>
                                         </graphic>
                                     </Button>

@@ -7,9 +7,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 
 public class DialogsModule extends AbstractModule {
+
     @Provides
-    @Named(ArgNames.SAVE)
-    Dialog<ButtonType> provideSaveDialog(@Named(ArgNames.CSS) String stylesheet) {
+    @Named(Name.SAVE)
+    Dialog<ButtonType> provideSaveDialog() {
         Dialog<ButtonType> saveDialog = new Dialog<>();
         saveDialog.setTitle("Сохранение");
         saveDialog.setContentText("Сохранить изменения?");
@@ -17,7 +18,7 @@ public class DialogsModule extends AbstractModule {
                 .addAll(ButtonType.YES,
                         ButtonType.NO,
                         ButtonType.CANCEL);
-        saveDialog.getDialogPane().getStylesheets().add(stylesheet);
+        saveDialog.getDialogPane().getStylesheets().add(Style.COMMON_STYLESHEET);
         return saveDialog;
     }
 }

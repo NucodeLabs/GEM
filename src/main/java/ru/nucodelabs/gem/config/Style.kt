@@ -1,7 +1,8 @@
 package ru.nucodelabs.gem.config
 
 object Style {
-    const val SHEET = "ru/nucodelabs/gem/view/common.css"
+
+    const val COMMON_STYLESHEET = "css/common.css"
 
     object Class {
 

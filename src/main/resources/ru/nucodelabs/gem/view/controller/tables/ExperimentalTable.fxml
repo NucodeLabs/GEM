@@ -7,7 +7,7 @@
       alignment="CENTER"
       maxHeight="Infinity"
       maxWidth="Infinity"
-      stylesheets="@../../common.css"
+      stylesheets="/css/common.css"
       VBox.vgrow="ALWAYS" fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.tables.ExperimentalTableController">
     <fx:define>

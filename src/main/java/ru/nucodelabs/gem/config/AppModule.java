@@ -63,37 +63,35 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private ResourceBundle uiProperties() {
-        // TODO support en locale
-        return ResourceBundle.getBundle("ui", Locale.of("ru"));
+    private Locale currentLocale() {
+        return Locale.getDefault(Locale.Category.DISPLAY);
     }
 
     @Provides
-    @Named(ArgNames.CSS)
     @Singleton
-    private String provideStylesheet() {
-        return "ru/nucodelabs/gem/view/common.css";
+    private ResourceBundle uiProperties() {
+        return ResourceBundle.getBundle("ui", currentLocale());
     }
 
     @Provides
-    @Named(ArgNames.View.MAIN_VIEW)
+    @Named(Name.View.MAIN_VIEW)
     private URL provideMainViewFXML() {
         return MainViewController.class.getResource("MainSplitLayoutView.fxml");
     }
 
     @Provides
-    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW)
+    @Named(Name.View.ANISOTROPY_MAIN_VIEW)
     URL anisotropyMainView() {
         return AnisotropyMainViewController.class.getResource("AnisotropyMainView.fxml");
     }
 
     @Provides
-    @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW)
+    @Named(Name.View.ANISOTROPY_MAIN_VIEW)
     private Stage anisotropyMainViewWindow(
         ResourceBundle uiProperties,
         Injector injector,
-        @Named(ArgNames.View.ANISOTROPY_MAIN_VIEW) URL url,
-        @Named(ArgNames.View.MAIN_VIEW) Stage mainStage
+        @Named(Name.View.ANISOTROPY_MAIN_VIEW) URL url,
+        @Named(Name.View.MAIN_VIEW) Stage mainStage
     ) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new AnisotropyProjectModule())::getInstance);
@@ -105,22 +103,26 @@ public class AppModule extends AbstractModule {
         return stage;
     }
 
-
     @Provides
-    @Named(ArgNames.View.MAIN_VIEW)
-    private FXMLLoader provideFXMLLoader(ResourceBundle uiProperties, Injector injector, @Named(ArgNames.View.MAIN_VIEW) URL url) {
+    @Named(Name.View.MAIN_VIEW)
+    private FXMLLoader provideFXMLLoader(
+        ResourceBundle uiProperties,
+        Injector injector,
+        @Named(Name.View.MAIN_VIEW) URL url
+    ) {
         FXMLLoader fxmlLoader = new FXMLLoader(url, uiProperties);
         fxmlLoader.setControllerFactory(injector.createChildInjector(new MainViewModule())::getInstance);
         return fxmlLoader;
     }
 
     @Provides
-    @Named(ArgNames.View.MAIN_VIEW)
-    private Stage create(@Named(ArgNames.View.MAIN_VIEW) FXMLLoader loader) throws IOException {
+    @Named(Name.View.MAIN_VIEW)
+    private Stage create(@Named(Name.View.MAIN_VIEW) FXMLLoader loader) throws IOException {
         return loader.load();
     }
 
     @Provides
+    @Singleton
     private Validator provideValidator() {
         try (var factory = Validation.buildDefaultValidatorFactory()) {
             return factory.getValidator();
@@ -146,7 +148,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named(ArgNames.PRECISE)
+    @Named(Name.PRECISE_FORMAT)
     DecimalFormat preciseFormat() {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -190,7 +192,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.parse(string).doubleValue();
                 } catch (ParseException e) {
-                    throw new IllegalArgumentException(e);
+                    return Double.NaN;
                 }
             }
         };
@@ -213,7 +215,7 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.DEFAULT_CLR)
+    @Named(Name.DEFAULT_CLR)
     ClrInfo clrInfo() throws IOException {
         // Firstly lookup next to executable
         var externalFile = Paths.get("colormap/default.clr").toFile();
@@ -224,6 +226,7 @@ public class AppModule extends AbstractModule {
                 "Resource colormap/default.clr is null"
             );
             try (defaultResourceStream) {
+                log.info("Loading default .clr file from resources");
                 return new ClrInfo(
                     "Default",
                     new String(defaultResourceStream.readAllBytes(), StandardCharsets.UTF_8)
@@ -231,6 +234,7 @@ public class AppModule extends AbstractModule {
             }
         }
         try (var externalFileStream = new FileInputStream(externalFile)) {
+            log.info("Loading external .clr file");
             return new ClrInfo(
                 externalFile.getAbsolutePath(),
                 new String(externalFileStream.readAllBytes(), StandardCharsets.UTF_8)
@@ -240,28 +244,29 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    @Named(ArgNames.CLR_SOURCE)
-    String clrSource(@Named(ArgNames.DEFAULT_CLR) ClrInfo clrInfo) {
+    @Named(Name.CLR_SOURCE)
+    String clrSource(@Named(Name.DEFAULT_CLR) ClrInfo clrInfo) {
         return clrInfo.source();
     }
 
     @Provides
-    @Named(ArgNames.DEFAULT_CLR)
-    ClrParser clrParser(@Named(ArgNames.DEFAULT_CLR) ClrInfo clrInfo) {
+    @Named(Name.DEFAULT_CLR)
+    @Singleton
+    ClrParser clrParser(@Named(Name.DEFAULT_CLR) ClrInfo clrInfo) {
         return new ClrParser(clrInfo.content());
     }
 
     @Provides
     @Singleton
-    ColorMapper colorMapper(@Named(ArgNames.DEFAULT_CLR) ClrParser clrParser) {
+    ColorMapper colorMapper(@Named(Name.DEFAULT_CLR) ClrParser clrParser) {
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 1500, 15);
     }
 
     @Provides
     @Singleton
-    @Named(ArgNames.DIFF)
-    ColorMapper diffColorMapper(@Named(ArgNames.DEFAULT_CLR) ClrParser clrParser) {
+    @Named(Name.DIFF)
+    ColorMapper diffColorMapper(@Named(Name.DEFAULT_CLR) ClrParser clrParser) {
         List<ColorNode> valueColorList = clrParser.getColorNodes();
         return new ColorPalette(valueColorList, 0, 2, 15);
     }
