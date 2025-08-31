@@ -32,11 +32,11 @@ import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -69,8 +69,8 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private ResourceBundle uiProperties() {
-        return ResourceBundle.getBundle("ui", currentLocale());
+    private ResourceBundle uiProperties(Locale currentLocale) {
+        return ResourceBundle.getBundle("ui", currentLocale);
     }
 
     @Provides
@@ -149,6 +149,7 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named(Name.PRECISE_FORMAT)
+    @Singleton
     DecimalFormat preciseFormat() {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -162,6 +163,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     private DecimalFormat decimalFormat() {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
@@ -176,6 +178,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     private StringConverter<Double> doubleStringConverter(DecimalFormat decimalFormat) {
         return new StringConverter<>() {
             @Override
@@ -199,6 +202,7 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
+    @Singleton
     StringConverter<Number> numberStringConverter(StringConverter<Double> doubleStringConverter) {
         return new StringConverter<>() {
             @Override
@@ -216,44 +220,42 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     @Named(Name.DEFAULT_CLR)
-    ClrInfo clrInfo() throws IOException {
+    LoadedClr colormapFile() throws IOException {
         // Firstly lookup next to executable
-        var externalFile = Paths.get("colormap/default.clr").toFile();
-        if (!externalFile.exists()) {
+        var externalFile = Paths.get("colormap/default.clr");
+        if (Files.notExists(externalFile)) {
             // Load default from resources if no external .clr file found
             var defaultResourceStream = Objects.requireNonNull(
                 this.getClass().getClassLoader().getResourceAsStream("colormap/default.clr"),
-                "Resource colormap/default.clr is null"
+                "Resource colormap/default.clr must not be null"
             );
+            log.info("Loading default .clr file from resources");
             try (defaultResourceStream) {
-                log.info("Loading default .clr file from resources");
-                return new ClrInfo(
+                return new LoadedClr(
                     "Default",
                     new String(defaultResourceStream.readAllBytes(), StandardCharsets.UTF_8)
                 );
             }
         }
-        try (var externalFileStream = new FileInputStream(externalFile)) {
-            log.info("Loading external .clr file");
-            return new ClrInfo(
-                externalFile.getAbsolutePath(),
-                new String(externalFileStream.readAllBytes(), StandardCharsets.UTF_8)
-            );
-        }
+        log.info("Loading external .clr file");
+        return new LoadedClr(
+            externalFile.toAbsolutePath().toString(),
+            Files.readString(externalFile, StandardCharsets.UTF_8)
+        );
     }
 
     @Provides
     @Singleton
     @Named(Name.CLR_SOURCE)
-    String clrSource(@Named(Name.DEFAULT_CLR) ClrInfo clrInfo) {
-        return clrInfo.source();
+    String clrSource(@Named(Name.DEFAULT_CLR) LoadedClr loadedClr) {
+        return loadedClr.source();
     }
 
     @Provides
     @Named(Name.DEFAULT_CLR)
     @Singleton
-    ClrParser clrParser(@Named(Name.DEFAULT_CLR) ClrInfo clrInfo) {
-        return new ClrParser(clrInfo.content());
+    ClrParser clrParser(@Named(Name.DEFAULT_CLR) LoadedClr loadedClr) {
+        return new ClrParser(loadedClr.content());
     }
 
     @Provides
@@ -283,6 +285,6 @@ public class AppModule extends AbstractModule {
         return new SquareDiffTargetFunction();
     }
 
-    private record ClrInfo(String source, String content) {
+    private record LoadedClr(String source, String content) {
     }
 }

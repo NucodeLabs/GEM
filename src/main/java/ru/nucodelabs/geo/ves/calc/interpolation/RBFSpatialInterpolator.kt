@@ -1,8 +1,6 @@
 package ru.nucodelabs.geo.ves.calc.interpolation
 
 import smile.interpolation.RBFInterpolation2D
-import smile.math.rbf.GaussianRadialBasis
-import smile.math.rbf.MultiquadricRadialBasis
 import smile.math.rbf.ThinPlateRadialBasis
 
 class RBFSpatialInterpolator: SpatialInterpolator {

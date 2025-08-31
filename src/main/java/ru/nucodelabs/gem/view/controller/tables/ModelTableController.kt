@@ -477,7 +477,8 @@ class ModelTableController @Inject constructor(
             val parsedTable = parser.parsedTable.filter { row -> row.none { it == null } }
 
             fun String?.process(expected: String, row: Int, col: Int) =
-                this?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
+                this?.replace(',', '.')
+                    ?.toDoubleOrNullBy(decimalFormat)
                     ?: throw IllegalArgumentException("${a[col]}${row + 1} - Ожидалось $expected, было $this")
 
             val pastedItems: List<ModelLayer> = when (parser.columnsCount) {

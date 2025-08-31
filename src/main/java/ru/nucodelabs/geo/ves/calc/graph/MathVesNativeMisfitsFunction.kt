@@ -7,7 +7,7 @@ import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import kotlin.math.abs
 import kotlin.math.sign
 
-internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : MisfitsFunction {
+internal class MathVesNativeMisfitsFunction(val forwardSolver: ForwardSolver) : MisfitsFunction {
 
     override fun invoke(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Double> {
         if (experimentalData.isEmpty() || modelData.isEmpty()) {
@@ -18,7 +18,7 @@ internal class MisfitValuesFactoryNative(val forwardSolver: ForwardSolver) : Mis
         val errorResistanceApparent = experimentalData.map { it.errorResistanceApparent }
 
         val solvedResistance = forwardSolver(experimentalData, modelData)
-        val res = mutableListOf<Double>()
+        val res = ArrayList<Double>(experimentalData.size)
         for (i in experimentalData.indices) {
             val value = abs(
                 ru.nucodelabs.mathves.MisfitFunctions.calculateRelativeDeviationWithError(

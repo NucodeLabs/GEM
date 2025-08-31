@@ -13,7 +13,7 @@ import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
-import ru.nucodelabs.geo.ves.calc.inverse.inverse_functions.FunctionValue;
+import ru.nucodelabs.geo.ves.calc.inverse.func.FunctionValue;
 
 import java.util.ArrayList;
 import java.util.List;

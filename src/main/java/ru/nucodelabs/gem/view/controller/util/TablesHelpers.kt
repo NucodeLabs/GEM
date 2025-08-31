@@ -17,13 +17,3 @@ fun indexCellFactory(fromOne: Boolean = true): Callback<TableColumn<Any?, Int?>,
             )
         }
     }
-
-/**
- * Validating string containing index for list/array
- * @return true if string represents valid index
- */
-
-fun String.isIndexOrBlank() =
-    takeIf { it.isBlank() }?.let { true } ?: toIntOrNull()?.takeIf { it >= 0 }?.let { true } ?: false
-
-fun String.isIndex() = toIntOrNull()?.takeIf { it >= 0 }?.let { true } ?: false

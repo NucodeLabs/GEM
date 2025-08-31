@@ -1,5 +1,6 @@
 package ru.nucodelabs.geo.ves.calc.interpolation
 
+/*
 import org.tinfour.common.Vertex
 import org.tinfour.interpolation.IInterpolatorOverTin
 import org.tinfour.interpolation.TriangularFacetInterpolator
@@ -22,3 +23,4 @@ class TinSpatialInterpolator: SpatialInterpolator {
     }
 
 }
+*/

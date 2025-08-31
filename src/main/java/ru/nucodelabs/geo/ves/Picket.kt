@@ -18,12 +18,12 @@ import java.util.*
  */
 data class Picket(
     @JsonIgnore val id: UUID = UUID.randomUUID(),
-    val name: String = DEFAULT_PICKET_NAME,
+    val name: String = DEFAULT_NAME,
     private var experimentalData: List<@Valid ExperimentalData> = emptyList(),
     @field:Size(max = 40) var modelData: List<@Valid ModelLayer> = emptyList(),
-    @field:Min(0) val offsetX: Double = DEFAULT_PICKET_OFFSET_X,
-    val z: Double = DEFAULT_PICKET_Z,
-    val comment: String = DEFAULT_PICKET_COMMENT
+    @field:Min(0) val offsetX: Double = DEFAULT_OFFSET_X,
+    val z: Double = DEFAULT_Z,
+    val comment: String = DEFAULT_COMMENT
 ) {
     init {
         modelData = modelData.toMutableList().also {
@@ -78,5 +78,12 @@ data class Picket(
     @get:JsonIgnore
     val effectiveExperimentalData: List<ExperimentalData> by lazy {
         sortedExperimentalData.filter { !it.isHidden }
+    }
+
+    companion object Defaults {
+        const val DEFAULT_OFFSET_X = 100.0
+        const val DEFAULT_NAME = "Пикет"
+        const val DEFAULT_Z = 0.0
+        const val DEFAULT_COMMENT = ""
     }
 }

@@ -12,7 +12,7 @@ import java.util.*
 @Deprecated(
     message = "Use AbstractViewController",
     replaceWith = ReplaceWith(
-        "AbstractViewController<T>()",
+        "AbstractViewController()",
         "ru.nucodelabs.kfx.core.AbstractViewController"
     )
 )

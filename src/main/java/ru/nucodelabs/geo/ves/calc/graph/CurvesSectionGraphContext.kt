@@ -4,9 +4,10 @@ import jakarta.inject.Inject
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.Bounds
 import ru.nucodelabs.geo.ves.calc.picketsBounds
+import ru.nucodelabs.util.Point
 import kotlin.math.min
 
-class CurvesChartParser @Inject constructor(inputSection: Section) {
+class CurvesSectionGraphContext @Inject constructor(inputSection: Section) {
 
     private val section = inputSection.copy()
 

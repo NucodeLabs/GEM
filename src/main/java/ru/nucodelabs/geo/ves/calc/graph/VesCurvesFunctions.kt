@@ -5,6 +5,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.util.Point
 
 class VesCurvesContext(val picket: Picket) {
     val experimentalCurve by lazy {

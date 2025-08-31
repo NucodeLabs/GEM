@@ -24,4 +24,8 @@ data class ExperimentalData(
     @field:DecimalMin("0.1") val resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
     @field:Min(0) @field:Max(100) val errorResistanceApparent: Double = DEFAULT_ERROR,
     val isHidden: Boolean = false
-)
+) {
+    companion object Defaults {
+        const val DEFAULT_ERROR = 5.0
+    }
+}
