@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Side
 import javafx.scene.chart.ValueAxis
 import javafx.scene.text.Text
+import ru.nucodelabs.kfx.ext.childrenTextNodes
 
 abstract class InvertibleValueAxis<N : Number>(
     lowerBound: Double,
@@ -14,6 +15,7 @@ abstract class InvertibleValueAxis<N : Number>(
         get() = _inverted.get()
         set(value) = _inverted.set(value)
 
+    @Suppress("unused")
     fun invertedProperty() = _inverted
 
     val tickMarksTextNodes: Map<TickMark<N>, Text>

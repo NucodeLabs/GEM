@@ -1,4 +1,4 @@
-package ru.nucodelabs.gem.view.control.chart
+package ru.nucodelabs.kfx.ext
 
 import com.sun.javafx.charts.Legend
 import javafx.application.Platform

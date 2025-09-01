@@ -22,7 +22,6 @@ import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
 import ru.nucodelabs.gem.view.control.chart.PolygonChart
-import ru.nucodelabs.gem.view.control.chart.limitTickLabelsWidth
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*

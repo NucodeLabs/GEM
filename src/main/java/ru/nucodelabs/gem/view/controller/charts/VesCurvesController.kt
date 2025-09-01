@@ -24,7 +24,6 @@ import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.control.chart.*
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -36,10 +35,7 @@ import ru.nucodelabs.geo.ves.calc.graph.*
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
-import ru.nucodelabs.kfx.ext.forCharts
-import ru.nucodelabs.kfx.ext.get
-import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
-import ru.nucodelabs.kfx.ext.toObservableList
+import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.util.std.exp10
 import java.lang.Double.max
