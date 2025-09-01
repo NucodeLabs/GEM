@@ -32,8 +32,7 @@ import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
-import ru.nucodelabs.geo.ves.calc.graph.VesCurvesContext
-import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.graph.*
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
@@ -93,7 +92,6 @@ class VesCurvesController @Inject constructor(
 
     private val isModelVisible = SimpleBooleanProperty(true)
 
-    private lateinit var vesCurvesContext: VesCurvesContext
     private var effectiveToSortedMapping = intArrayOf()
 
     private lateinit var uiProperties: ResourceBundle
@@ -118,7 +116,6 @@ class VesCurvesController @Inject constructor(
 
         picketObservable.addListener { _, _, newValue: Picket? ->
             if (newValue != null) {
-                vesCurvesContext = picket.vesCurvesContext
                 if (isDraggingModel) {
                     updateTheoreticalCurve()
                     applyStyle()
@@ -144,8 +141,8 @@ class VesCurvesController @Inject constructor(
 
     private fun initData(): ObjectProperty<ObservableList<Series<Number, Number>>> {
         return SimpleObjectProperty(
-            FXCollections.observableArrayList<Series<Number, Number>>().also {
-                for (i in 0..<TOTAL_COUNT) it += Series<Number, Number>()
+            FXCollections.observableArrayList<Series<Number, Number>>().apply {
+                (0..<TOTAL_COUNT).forEach { _ -> add(Series<Number, Number>()) }
             }
         )
     }
@@ -277,7 +274,7 @@ class VesCurvesController @Inject constructor(
         val theorCurveSeries = Series<Number, Number>()
         try {
             theorCurveSeries.data.addAll(
-                vesCurvesContext.theoreticalCurveBy(forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
+                theoreticalCurve(picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
             )
         } catch (e: UnsatisfiedLinkError) {
             alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
@@ -289,7 +286,7 @@ class VesCurvesController @Inject constructor(
     private fun updateModelCurve() {
         val modelCurveSeries = Series<Number, Number>()
         modelCurveSeries.data.addAll(
-            vesCurvesContext.modelStepGraph().map { (x, y) -> Data(x as Number, y as Number) }
+            modelStepGraph(picket).map { (x, y) -> Data(x as Number, y as Number) }
         )
         modelCurveSeries.name = uiProperties["modCurve"]
         dataProperty.get()[MOD_CURVE_SERIES_INDEX] = modelCurveSeries
@@ -331,26 +328,26 @@ class VesCurvesController @Inject constructor(
 
     private fun updateExpCurves() {
         val expCurveSeries = Series(
-            vesCurvesContext.experimentalCurve.map { (x, y) -> Data(x as Number, y as Number) }.toObservableList()
+            experimentalCurve(picket).map { (x, y) -> Data(x as Number, y as Number) }.toObservableList()
         )
         expCurveSeries.name = uiProperties["expCurve"]
 
         val errUpperExp = Series(
-            vesCurvesContext.experimentalCurveErrorUpperBound.map { (x, y) ->
+            experimentalCurveErrorUpperBound(picket).map { (x, y) ->
                 Data(x as Number, y as Number)
             }.toObservableList()
         )
         errUpperExp.name = uiProperties["expCurveUpper"]
 
         val errLowerExp = Series(
-            vesCurvesContext.experimentalCurveErrorLowerBound.map { (x, y) ->
+            experimentalCurveErrorLowerBound(picket).map { (x, y) ->
                 Data(x as Number, y as Number)
             }.toObservableList()
         )
         errLowerExp.name = uiProperties["expCurveLower"]
 
         val hiddenPoints = Series(
-            vesCurvesContext.experimentalHiddenPoints.map { (x, y) ->
+            experimentalHiddenPoints(picket).map { (x, y) ->
                 Data(x as Number, y as Number)
             }.toObservableList()
         )
@@ -403,7 +400,7 @@ class VesCurvesController @Inject constructor(
                     picket.sortedExperimentalData[pointIndex].resistanceApparentUpperBoundByError
                 )
                 val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistanceApparent)
-                val theorRes = picket.vesCurvesContext.theoreticalCurveBy(forwardSolver).getOrNull(pointIndex)?.y
+                val theorRes = theoreticalCurve(picket, forwardSolver).getOrNull(pointIndex)?.y
                 Tooltip(
                     """
                     №${pointIndex + 1}

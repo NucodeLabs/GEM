@@ -20,7 +20,7 @@ import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.calc.graph.vesCurvesContext
+import ru.nucodelabs.geo.ves.calc.graph.experimentalCurve
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.Point
 import ru.nucodelabs.kfx.ext.forCharts
@@ -89,7 +89,7 @@ class MisfitStacksController @Inject constructor(
         var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
         try {
             val misfits = appModel.misfits()
-            val expPoints = picket.vesCurvesContext.experimentalCurve
+            val expPoints = experimentalCurve(picket)
 
             misfitStacksSeriesList = observableListOf()
 

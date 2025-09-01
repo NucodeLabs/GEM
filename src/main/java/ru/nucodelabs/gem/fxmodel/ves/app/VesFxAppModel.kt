@@ -10,7 +10,7 @@ import ru.nucodelabs.geo.ves.calc.initialModel.MIN_TARGET_FUNCTION_VALUE
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 
 /**
- * Сюда по-хорошему надо вынести функционал из контроллеров
+ * TODO: Сюда по-хорошему надо вынести функционал из контроллеров
  */
 class VesFxAppModel @Inject constructor(
     selectedIndexObservable: IntegerProperty,
