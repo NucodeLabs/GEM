@@ -1,7 +1,7 @@
 package ru.nucodelabs.geo.ves.calc.interpolation
 
-import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
+import ru.nucodelabs.util.Point
 import ru.nucodelabs.util.std.exp10
 import kotlin.math.log10
 
@@ -18,7 +18,7 @@ class SmartInterpolator(
 
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
-    fun build(unorderedPoints: List<XYChart.Data<Double, Double>>) {
+    fun build(unorderedPoints: List<Point>) {
         buildLeakyGrid(unorderedPoints)
         setXYRanges()
 
@@ -36,19 +36,19 @@ class SmartInterpolator(
         this.yRange = Pair(this.y.first(), this.y.last())
     }
 
-    private fun buildLeakyGrid(points: List<XYChart.Data<Double, Double>>) {
-        val xPoints = points.map { it.xValue }.distinct().sorted()
-        val yPoints = points.map { it.yValue }.distinct().sorted()
+    private fun buildLeakyGrid(points: List<Point>) {
+        val xPoints = points.map { it.x }.distinct().sorted()
+        val yPoints = points.map { it.y }.distinct().sorted()
 
         this.x = xPoints.toTypedArray()
         this.y = yPoints.toTypedArray()
         this.f = Array(x.size) { Array(y.size) { null } }
 
         for (point in points) {
-            val xIdx = x.indexOf(point.xValue)
-            val yIdx = y.indexOf(point.yValue)
+            val xIdx = x.indexOf(point.x)
+            val yIdx = y.indexOf(point.y)
 
-            this.f[xIdx][yIdx] = point.extraValue as Double
+            this.f[xIdx][yIdx] = point.z
         }
     }
 

@@ -24,10 +24,10 @@ class SmartInterpolationMap(
 
     init {
         colorMapperProperty().addListener { _, _, new ->
-            ChartUtil.startListening(new) { draw() }
+            startListening(new) { draw() }
             draw()
         }
-        ChartUtil.startListening(colorMapper) { draw() }
+        startListening(colorMapper) { draw() }
     }
 
     private val interpolator2D = SmartInterpolator(RBFSpatialInterpolator(), ApacheInterpolator2D())
@@ -57,10 +57,10 @@ class SmartInterpolationMap(
     }
 
     private fun initInterpolator() {
-        ChartUtil.initInterpolator(data, interpolator2D)
+        initInterpolator(data, interpolator2D)
     }
 
     private fun draw() {
-        ChartUtil.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
+        draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 }

@@ -33,7 +33,9 @@ internal class SmartInterpolationMapTest : FXTest() {
                             }
                         ).apply {
                             data = observableListOf(
-                                XYChart.Series(AnisotropyTestData.points.toObservableList())
+                                XYChart.Series(AnisotropyTestData.points.map { (x, y, z) ->
+                                    XYChart.Data(x as Number, y as Number, z)
+                                }.toObservableList())
                             )
                         }
                     )

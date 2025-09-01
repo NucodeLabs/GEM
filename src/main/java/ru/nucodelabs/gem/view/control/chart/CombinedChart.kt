@@ -46,12 +46,10 @@ class CombinedChart @JvmOverloads constructor(
         canvas.heightProperty().bind(plotArea.heightProperty())
         canvas.viewOrder = 1.0
         colorMapperProperty().addListener { _, _, new ->
-            ChartUtil.startListening(new) {
-                draw()
-            }
+            startListening(new) { draw() }
             draw()
         }
-        ChartUtil.startListening(colorMapper) { draw() }
+        startListening(colorMapper) { draw() }
     }
 
     override fun layoutPlotChildren() {
@@ -65,11 +63,11 @@ class CombinedChart @JvmOverloads constructor(
 
 
     private fun initInterpolator() {
-        ChartUtil.initInterpolator(data, interpolator2D)
+        initInterpolator(data, interpolator2D)
     }
 
     private fun draw() {
-        ChartUtil.draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
+        draw(canvas, xAxis, yAxis, interpolator2D, colorMapper)
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
