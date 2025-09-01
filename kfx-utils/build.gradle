@@ -1,24 +1,23 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.2.0'
-    id 'java-library'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id "org.jetbrains.kotlin.jvm" version "2.2.0"
+    id "java-library"
+    id "org.openjfx.javafxplugin" version "0.1.0"
 }
 
 version = rootProject.version
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
 }
 
 javafx {
-    version = rootProject['javafx']['version']
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.swing']
+    version = rootProject["javafx"]["version"]
+    modules = ["javafx.controls", "javafx.fxml", "javafx.graphics", "javafx.swing"]
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
@@ -39,14 +38,14 @@ compileKotlin {
 }
 
 dependencies {
-    implementation platform('org.jetbrains.kotlin:kotlin-bom')
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation platform("org.jetbrains.kotlin:kotlin-bom")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
     testImplementation "org.openjfx:javafx:${javafx.version}"
 
     api "org.openjfx:javafx:${javafx.version}"
-    api group: 'com.google.inject', name: 'guice', version: rootProject.guiceVersion
-    api 'no.tornado:tornadofx:1.7.20'
+    api group: "com.google.inject", name: "guice", version: rootProject.guiceVersion
+    api "no.tornado:tornadofx:1.7.20"
 }

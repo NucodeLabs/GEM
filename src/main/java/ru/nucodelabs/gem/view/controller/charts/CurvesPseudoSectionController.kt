@@ -12,7 +12,7 @@ import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.control.chart.installTooltips
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
-import ru.nucodelabs.geo.ves.calc.graph.CurvesChartParser
+import ru.nucodelabs.geo.ves.calc.graph.CurvesSectionGraphContext
 import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.toObservableList
 import java.net.URL
@@ -42,7 +42,8 @@ class CurvesPseudoSectionController @Inject constructor(
         pointMap.clear()
 
         chart.data.clear()
-        chart.data += CurvesChartParser(observableSection.asSection()).getPoints().mapIndexed { picketIndex, curve ->
+        chart.data += CurvesSectionGraphContext(observableSection.asSection()).getPoints()
+            .mapIndexed { picketIndex, curve ->
             val picket = observableSection.pickets[picketIndex]
             val indexMapping = picket.effectiveToSortedIndicesMapping()
             val sorted = picket.sortedExperimentalData

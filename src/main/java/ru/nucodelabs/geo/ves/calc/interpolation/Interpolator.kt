@@ -1,18 +1,18 @@
 package ru.nucodelabs.geo.ves.calc.interpolation
 
-import javafx.scene.chart.XYChart
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
+import ru.nucodelabs.util.Point
 import ru.nucodelabs.util.std.exp10
 
 class Interpolator(
-    private var interpolationParser: InterpolationParser
-): Interpolator2D {
-    private lateinit var grid: MutableList<MutableList<XYChart.Data<Double, Double>>>
+    private var interpolatorContext: InterpolatorContext
+) : Interpolator2D {
+    private lateinit var grid: MutableList<MutableList<Point>>
 
-    private lateinit var missedPoints: List<List<XYChart.Data<Double, Double>>>
+    private lateinit var missedPoints: List<List<Point>>
 
-    private var adjustedGrid: MutableList<MutableList<XYChart.Data<Double, Double>>> = arrayListOf()
+    private var adjustedGrid: MutableList<MutableList<Point>> = arrayListOf()
 
     private lateinit var bicubicInterpolatingFunction: BicubicInterpolatingFunction
 
@@ -26,7 +26,7 @@ class Interpolator(
 
     init {
         initGrid()
-        interpolationParser.gridToLogValues(grid)
+        interpolatorContext.gridToLogValues(grid)
         adjustGrid()
         checkInterpolated()
         if (leftSideInterpolated) leftSideSplineFunction = interpolateSide(adjustedGrid[0])
@@ -52,13 +52,14 @@ class Interpolator(
                 } else {
                     -1.0
                 }
+
             Side.MIDDLE -> exp10(bicubicInterpolatingFunction.value(x, y))
             Side.RIGHT ->
                 if (rightSideInterpolated) {
-                exp10(interpolateSidePoint(y, rightSideSplineFunction))
-            } else {
-                -1.0
-            }
+                    exp10(interpolateSidePoint(y, rightSideSplineFunction))
+                } else {
+                    -1.0
+                }
         }
     }
 
@@ -68,42 +69,42 @@ class Interpolator(
     }
 
     private fun initGrid() {
-        grid = interpolationParser.getGrid()
-        missedPoints = interpolationParser.getMissedPoints()
+        grid = interpolatorContext.getGrid()
+        missedPoints = interpolatorContext.getMissedPoints()
     }
 
     private fun adjustGrid() {
         val spatialInterpolator: SpatialInterpolator = RBFSpatialInterpolator()
         spatialInterpolator.build(
-            interpolationParser.getX(),
-            interpolationParser.getY(),
-            interpolationParser.getF()
+            interpolatorContext.getX(),
+            interpolatorContext.getY(),
+            interpolatorContext.getF()
         )
-        interpolationParser.copyData(grid, adjustedGrid)
+        interpolatorContext.copyData(grid, adjustedGrid)
 
-        val missedPoints = interpolationParser.getMissedPositions()
+        val missedPoints = interpolatorContext.getMissedPositions()
         for (point in missedPoints) {
             val xyPoint = adjustedGrid[point.first][point.second]
-            if (xyPoint.extraValue != -1.0)
+            if (xyPoint.z != -1.0)
                 throw RuntimeException("Missed point value != -1")
-            val f = spatialInterpolator.interpolate(xyPoint.xValue, xyPoint.yValue)
-            adjustedGrid[point.first][point.second] = XYChart.Data(xyPoint.xValue, xyPoint.yValue, f)
+            val f = spatialInterpolator.interpolate(xyPoint.x, xyPoint.y)
+            adjustedGrid[point.first][point.second] = Point(xyPoint.x, xyPoint.y, f)
         }
     }
 
     private fun interpolateGrid() {
-        interpolationParser = InterpolationParser(adjustedGrid)
+        interpolatorContext = InterpolatorContext(adjustedGrid)
         val regularGridInterpolator = ApacheInterpolator2D()
         bicubicInterpolatingFunction = regularGridInterpolator.interpolate(
-            interpolationParser.getGridX(),
-            interpolationParser.getGridY(),
-            interpolationParser.getGridF()
+            interpolatorContext.getGridX(),
+            interpolatorContext.getGridY(),
+            interpolatorContext.getGridF()
         )
     }
 
-    private fun interpolateSide(picket: List<XYChart.Data<Double, Double>>): PolynomialSplineFunction {
-        val y: DoubleArray = picket.map { point -> point.yValue }.toDoubleArray()
-        val f: DoubleArray = picket.map { point -> point.extraValue as Double }.toDoubleArray()
+    private fun interpolateSide(picket: List<Point>): PolynomialSplineFunction {
+        val y: DoubleArray = picket.map { point -> point.y }.toDoubleArray()
+        val f: DoubleArray = picket.map { point -> point.z }.toDoubleArray()
 
         val interpolator1D: Interpolator1D = ApacheInterpolator1D()
         return interpolator1D.interpolate(y, f)
@@ -114,9 +115,9 @@ class Interpolator(
     }
 
     private fun getRange(x: Double): Side {
-        if (x < adjustedGrid[0][0].xValue)
+        if (x < adjustedGrid[0][0].x)
             return Side.LEFT
-        if (x > adjustedGrid.last()[0].xValue)
+        if (x > adjustedGrid.last()[0].x)
             return Side.RIGHT
         return Side.MIDDLE
     }

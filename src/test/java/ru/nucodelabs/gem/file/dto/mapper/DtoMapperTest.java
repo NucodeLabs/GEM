@@ -11,7 +11,8 @@ import ru.nucodelabs.geo.anisotropy.AzimuthSignals;
 import ru.nucodelabs.geo.anisotropy.Point;
 import ru.nucodelabs.geo.anisotropy.Signal;
 import ru.nucodelabs.geo.anisotropy.Signals;
-import ru.nucodelabs.geo.ves.DefaultValuesKt;
+import ru.nucodelabs.geo.ves.ExperimentalData;
+import ru.nucodelabs.geo.ves.Picket;
 import ru.nucodelabs.geo.ves.calc.VesKt;
 
 import java.util.List;
@@ -50,7 +51,7 @@ class DtoMapperTest {
                         1.0,
                         1.0,
                         resistanceApparent,
-                        DefaultValuesKt.DEFAULT_ERROR,
+                    ExperimentalData.DEFAULT_ERROR,
                         false
                 ),
                 dtoMapper.fromDto(signalDto)
@@ -101,15 +102,15 @@ class DtoMapperTest {
                                                 amperage,
                                                 voltage,
                                                 resistanceApparent,
-                                                DefaultValuesKt.DEFAULT_ERROR,
+                                            ExperimentalData.DEFAULT_ERROR,
                                                 false
                                         )
                                 ))
                         )
                 ),
                 List.of(),
-                DefaultValuesKt.DEFAULT_PICKET_Z,
-                DefaultValuesKt.DEFAULT_PICKET_COMMENT
+            Picket.DEFAULT_Z,
+            Picket.DEFAULT_COMMENT
         );
 
         assertEquals(expected, dtoMapper.fromDto(pointDto));

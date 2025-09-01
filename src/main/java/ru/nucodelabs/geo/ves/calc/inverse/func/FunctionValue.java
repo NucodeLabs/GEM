@@ -1,4 +1,4 @@
-package ru.nucodelabs.geo.ves.calc.inverse.inverse_functions;
+package ru.nucodelabs.geo.ves.calc.inverse.func;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.geo.forward.ForwardSolver;

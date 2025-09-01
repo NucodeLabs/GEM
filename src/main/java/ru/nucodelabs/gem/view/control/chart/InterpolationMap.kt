@@ -6,31 +6,33 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
+import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import ru.nucodelabs.gem.view.color.ColorMapper
-import ru.nucodelabs.geo.ves.calc.interpolation.InterpolationParser
 import ru.nucodelabs.geo.ves.calc.interpolation.Interpolator
+import ru.nucodelabs.geo.ves.calc.interpolation.InterpolatorContext
 import ru.nucodelabs.kfx.ext.clear
+import ru.nucodelabs.util.Point
 import tornadofx.getValue
 import tornadofx.setValue
-import java.lang.Double.max
-import kotlin.math.min
 
 class InterpolationMap @JvmOverloads constructor(
-        @NamedArg("xAxis") xAxis: ValueAxis<Number>,
-        @NamedArg("yAxis") yAxis: ValueAxis<Number>,
-        @NamedArg("colorMapper") colorMapper: ColorMapper? = null
+    @NamedArg("xAxis") xAxis: ValueAxis<Number>,
+    @NamedArg("yAxis") yAxis: ValueAxis<Number>,
+    @NamedArg("colorMapper") colorMapper: ColorMapper? = null
 ) : AbstractMap(xAxis, yAxis) {
 
     var canvasBlendMode: BlendMode by canvas.blendModeProperty()
 
     private val _interpolateSeriesIndex = SimpleIntegerProperty(0)
 
-    private lateinit var interpolationParser: InterpolationParser
+    private lateinit var interpolatorContext: InterpolatorContext
 
     private var canBeInterpolated = true
 
-    private var interpolatorIsInitialized = false
+    private var needRedraw = false
+
+    private var snapshot: Image? = null
 
     fun interpolateSeriesIndexProperty() = _interpolateSeriesIndex
     var interpolateSeriesIndex
@@ -40,7 +42,7 @@ class InterpolationMap @JvmOverloads constructor(
     init {
         interpolateSeriesIndexProperty().addListener { _, _, _ ->
             initInterpolator()
-            draw(canvas)
+            redrawSnapshot()
         }
     }
 
@@ -53,45 +55,52 @@ class InterpolationMap @JvmOverloads constructor(
     init {
         colorMapperProperty().addListener { _, _, new ->
             startListening(new)
-            draw(canvas)
+            redrawSnapshot()
         }
         startListening(colorMapper)
     }
 
     private fun startListening(colorMapper: ColorMapper?) {
-        colorMapper?.minValueProperty()?.addListener { _, _, _ -> draw(canvas) }
-        colorMapper?.maxValueProperty()?.addListener { _, _, _ -> draw(canvas) }
-        colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> draw(canvas) }
-        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> draw(canvas) }
+        colorMapper?.minValueProperty()?.addListener { _, _, _ -> redrawSnapshot() }
+        colorMapper?.maxValueProperty()?.addListener { _, _, _ -> redrawSnapshot() }
+        colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> redrawSnapshot() }
+        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> redrawSnapshot() }
     }
 
     private lateinit var interpolator: Interpolator
-    private var preparedData: List<List<Data<Double, Double>>> = mutableListOf()
-
-    fun interpolatedValueAtPoint(x: Double, y: Double): Double = interpolator.getValue(x, y)
+    private var preparedData: List<List<Point>> = mutableListOf()
 
     override fun layoutPlotChildren() {
         super.layoutPlotChildren()
-        if (!interpolatorIsInitialized) {
-            initInterpolator()
-            interpolatorIsInitialized = true
-        }
-        draw(canvas)
+        if (needRedraw) redrawSnapshot() else layoutSnapshot()
+    }
+
+    private fun redrawSnapshot() {
+        initInterpolator()
+        needRedraw = false
+        val render = Canvas(1920.0, 1080.0) // FIXME: Remove hardcoded
+        draw(render)
+        snapshot = render.snapshot(null, null)
+        layoutSnapshot()
+    }
+
+    private fun layoutSnapshot() {
+        canvas.graphicsContext2D.drawImage(snapshot, 0.0, 0.0, canvas.width, canvas.height)
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
         super.dataItemAdded(series, itemIndex, item)
-        interpolatorIsInitialized = false
+        needRedraw = true
     }
 
     override fun dataItemRemoved(item: Data<Number, Number>?, series: Series<Number, Number>?) {
         super.dataItemRemoved(item, series)
-        interpolatorIsInitialized = false
+        needRedraw = true
     }
 
     override fun dataItemChanged(item: Data<Number, Number>?) {
         super.dataItemChanged(item)
-        interpolatorIsInitialized = false
+        needRedraw = true
     }
 
     private fun draw(canvas: Canvas) {
@@ -106,35 +115,29 @@ class InterpolationMap @JvmOverloads constructor(
         }
 
         val pw = canvas.graphicsContext2D.pixelWriter
-        val maxR = interpolationParser.maxResistance()
-        val minR = interpolationParser.minResistance()
+        val maxY = interpolatorContext.maxY()
+        val minY = interpolatorContext.minY()
+        val xCanvasScale = canvas.width / xAxis.width
+        val yCanvasScale = canvas.height / yAxis.height
         for (x in 0..canvas.width.toInt()) {
             for (y in 0..canvas.height.toInt()) {
-                val xValue = xAxis.getValueForDisplay(x.toDouble()).toDouble()
-                var yValue = yAxis.getValueForDisplay(y.toDouble()).toDouble()
-                yValue = min(max(yValue, minR), maxR)
+                val xValue = xAxis.getValueForDisplay(x.toDouble() / xCanvasScale).toDouble()
+                var yValue = yAxis.getValueForDisplay(y.toDouble() / yCanvasScale).toDouble()
                 if (xValue.isNaN() || yValue.isNaN()) {
                     continue
                 }
-                if (yValue > maxR) continue
+                yValue = yValue.coerceIn(minY, maxY)
                 val fValue = if (preparedData.size == 1) {
                     interpolator.getValue(yValue)
                 } else {
                     interpolator.getValue(xValue, yValue)
                 }
-                var color = Color.WHITE
-                try {
-                    if (fValue != -1.0) color = colorMapper?.colorFor(fValue)
-                } catch (e: RuntimeException) {
-                    println(fValue)
-                }
+                val color = if (fValue != -1.0) colorMapper?.colorFor(fValue) else Color.WHITE
                 pw.setColor(x, y, color)
             }
         }
     }
 
-
-    @Suppress("UNCHECKED_CAST")
     private fun initInterpolator() {
         if (data.isEmpty()) {
             return
@@ -143,28 +146,27 @@ class InterpolationMap @JvmOverloads constructor(
         if (series.data.isEmpty()) {
             return
         }
-        val groupByX = series.data.sortedBy { it.xValue.toDouble() }.groupBy { it.xValue }.values.toMutableList()
+        val groupByX = series.data.map {
+            Point(
+                it.xValue.toDouble(),
+                it.yValue.toDouble(),
+                it.extraValue as Double
+            )
+        }.sortedBy { it.x }.groupBy { it.x }.values.toMutableList()
 
         try {
-            groupByX[0] = groupByX[0].map {
-                Data(
-                        0.0,
-                    it.yValue,
-                    it.extraValue
-                )
-            }
+            groupByX[0] = groupByX[0].map { Point(x = .0, it.y, it.z) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        groupByX as List<List<Data<Double, Double>>>
         preparedData = groupByX
-        interpolationParser = InterpolationParser(preparedData)
-        if (interpolationParser.getGrid()[0].size < 2) {
+        interpolatorContext = InterpolatorContext(preparedData)
+        if (interpolatorContext.getGrid()[0].size < 2) {
             canBeInterpolated = false
             return
         } else {
             canBeInterpolated = true
         }
-        interpolator = Interpolator(interpolationParser)
+        interpolator = Interpolator(interpolatorContext)
     }
 }
