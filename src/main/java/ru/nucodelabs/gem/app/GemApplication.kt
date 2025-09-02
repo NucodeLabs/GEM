@@ -83,7 +83,7 @@ class GemApplication : GuiceApplication(AppModule()) {
         val expFiles = params.filter { it.endsWith(".EXP", ignoreCase = true) }
         val jsonFiles = params.filter { it.endsWith(".json", ignoreCase = true) }
 
-        loadMainViewWithEXPFiles(expFiles.map { File(it) })
+        if (expFiles.isNotEmpty()) loadMainViewWithEXPFiles(expFiles.map { File(it) })
         jsonFiles.forEach { jsonFile -> loadMainViewWithJsonFile(File(jsonFile)) }
 
         return expFiles.isNotEmpty() or jsonFiles.isNotEmpty()
