@@ -45,7 +45,8 @@
 
 ## Сборка дистрибутива
 
-Запускает утилиту **jpackage**, используя скрипт (macOS - `jpackage_mac.sh`, Windows - `jpackage_win.bat`).
+Задача `:jpackage` в `build.gradle` Запускает утилиту [**jpackage
+**](https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html).
 
 ```shell
 ./gradlew jpackage

@@ -202,27 +202,18 @@ tasks.register("copyJar", Copy) {
     into(jpackageInputDir)
 }
 
-final Map<String, String> jpackageCommonOptions = [
-        "APP_NAME"    : "GEM",
-        "APP_VERSION" : project.version.toString().replaceAll(/[^0-9.]/, ""),
-        "DEST"        : layout.buildDirectory.dir("dist").get().asFile.absolutePath,
-        "INPUT"       : jpackageInputDir,
-        "MAIN_CLASS"  : application.mainClass.get(),
-        "MAIN_JAR"    : tasks.jar.archiveFileName.get(),
-        "RESOURCE_DIR": file("$projectDir/package_resources").absolutePath
-]
-
 tasks.register("jpackage", Exec) {
     dependsOn "build", "copyJar", "copyDependencies", "copyNativeDependencies"
     workingDir = projectDir
-    environment(jpackageCommonOptions)
-
-    def os = DefaultNativePlatform.currentOperatingSystem
-    if (os.isMacOsX()) {
-        commandLine "bash", "jpackage_mac.sh"
-    } else if (os.isWindows()) {
-        commandLine "cmd", "/c", "jpackage_win.bat"
-    } else {
-        throw new StopActionException("Platform is not supported: ${os}")
-    }
+    executable "jpackage"
+    args(
+            "--type", "app-image",
+            "--name", "GEM",
+            "--app-version", project.version.toString().replaceAll(/[^0-9.]/, ""),
+            "--dest", layout.buildDirectory.dir("dist").get().asFile.absolutePath,
+            "--input", jpackageInputDir,
+            "--main-class", application.mainClass.get(),
+            "--main-jar", tasks.jar.archiveFileName.get(),
+            "--resource-dir", file("$projectDir/package_resources").absolutePath
+    )
 }
