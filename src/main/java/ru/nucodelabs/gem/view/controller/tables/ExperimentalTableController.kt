@@ -42,7 +42,7 @@ import ru.nucodelabs.kfx.ext.decimalFilter
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.util.TextToTableParser
-import ru.nucodelabs.util.std.toDoubleOrNullBy
+import ru.nucodelabs.util.toDoubleOrNullBy
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -261,7 +261,9 @@ class ExperimentalTableController @Inject constructor(
                     style = "-fx-font-size: $DEFAULT_FONT_SIZE;"
                 }
 
-                onContextMenuRequested = EventHandler { contextMenu.show(this, it.screenX, it.screenY) }
+                onContextMenuRequested = EventHandler {
+                    if (item != null) contextMenu.show(this, it.screenX, it.screenY)
+                }
             }
         }
     }

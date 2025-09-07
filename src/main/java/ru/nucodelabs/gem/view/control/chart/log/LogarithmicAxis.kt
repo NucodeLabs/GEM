@@ -9,7 +9,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.util.Duration
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10
@@ -88,8 +88,10 @@ open class LogarithmicAxis @JvmOverloads constructor(
         tickMarksTextNodes.forEach { (mark, node) -> node.isVisible = mark.isTextVisible }
     }
 
-    private fun checkBounds(lowerBound: Double, upperBound: Double) =
-        require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound) { "Lower: $lowerBound; Upper: $upperBound" }
+    /*
+        private fun checkBounds(lowerBound: Double, upperBound: Double) =
+            require(lowerBound > 0 && upperBound > 0 && lowerBound <= upperBound) { "Lower: $lowerBound; Upper: $upperBound" }
+    */
 
 
     override fun calculateMinorTickMarks(): List<Number> {
@@ -185,7 +187,7 @@ open class LogarithmicAxis @JvmOverloads constructor(
                     )
                     lowerRangeTimeline.play()
                     upperRangeTimeline.play()
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     lowerBoundProperty().set(lowerBound.toDouble())
                     upperBoundProperty().set(upperBound.toDouble())
                 }

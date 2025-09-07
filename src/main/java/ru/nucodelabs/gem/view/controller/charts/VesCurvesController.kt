@@ -37,7 +37,7 @@ import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL

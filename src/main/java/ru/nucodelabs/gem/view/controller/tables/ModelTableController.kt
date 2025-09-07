@@ -37,8 +37,10 @@ import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.geo.ves.toTabulatedTable
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import ru.nucodelabs.util.Err
+import ru.nucodelabs.util.Ok
 import ru.nucodelabs.util.TextToTableParser
-import ru.nucodelabs.util.std.toDoubleOrNullBy
+import ru.nucodelabs.util.toDoubleOrNullBy
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -238,7 +240,9 @@ class ModelTableController @Inject constructor(
                     }
                 }
 
-                onContextMenuRequested = EventHandler { createContextMenu().show(this, it.screenX, it.screenY) }
+                onContextMenuRequested = EventHandler {
+                    if (item != null) createContextMenu().show(this, it.screenX, it.screenY)
+                }
             }
         }
     }
@@ -277,6 +281,12 @@ class ModelTableController @Inject constructor(
                     modelData.add(index + 1, snd)
                 }
             }
+        }
+        if (modelData.size > Picket.MAX_MODEL_DATA_SIZE) {
+            alertsFactory.simpleAlert(
+                text = "Количество слоев модели не должно превышать ${Picket.MAX_MODEL_DATA_SIZE}"
+            ).show()
+            return
         }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
@@ -410,8 +420,17 @@ class ModelTableController @Inject constructor(
     private fun commitChanges() {
         val modelDataInTable = table.items.map { mapper.toModel(it) }
         if (modelDataInTable != picket.modelData) {
-            historyManager.snapshotAfter {
-                observableSection.pickets[picketIndex] = picket.copy(modelData = modelDataInTable)
+            val update = picket.copied(modelData = modelDataInTable)
+            when (update) {
+                is Err -> {
+                    alertsFactory.simpleAlert(text = update.error.joinToString(separator = "\n")).show()
+                }
+
+                is Ok -> {
+                    historyManager.snapshotAfter {
+                        observableSection.pickets[picketIndex] = update.value
+                    }
+                }
             }
         }
     }

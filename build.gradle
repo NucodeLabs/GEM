@@ -11,6 +11,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
     id "org.openjfx.javafxplugin" version "0.1.0"
     id "org.jetbrains.dokka" version "2.0.0"
+    id "me.champeau.jmh" version "0.7.3"
 }
 
 group "ru.nucodelabs"
@@ -100,6 +101,7 @@ dependencies {
             "$projectDir/lib/${System.mapLibraryName("MathVES")}"
     )
 
+    /* Slf4j Logging */
     implementation("org.slf4j:slf4j-api:${slf4jVersion}")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation project(":app-logback-appender")
@@ -114,11 +116,8 @@ dependencies {
     implementation "org.codehaus.groovy:groovy-jsr223:3.0.25"
 
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: jacksonVersion
-    implementation group: "org.apache.commons", name: "commons-math3", version: "3.6.1"
-
     implementation group: "com.google.inject", name: "guice", version: guiceVersion
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
-    implementation "org.apache.commons:commons-collections4:4.4"
 
     /* Math Libraries */
     implementation "org.glassfish.expressly:expressly:5.0.0"
@@ -127,6 +126,7 @@ dependencies {
     implementation "org.bytedeco:javacpp:1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12:$platform"
     implementation "org.bytedeco:arpack-ng:3.9.1-1.5.12"
+    implementation group: "org.apache.commons", name: "commons-math3", version: "3.6.1"
 
     /* Test Dependencies */
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -134,6 +134,8 @@ dependencies {
     testAnnotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinTestVersion"
     testImplementation "org.openjfx:javafx:${javafx.version}"
+
+    jmh "org.apache.commons:commons-lang3:3.18.0"
 }
 
 /* Setup Runtime */
@@ -164,7 +166,7 @@ tasks.register("cleanRunDir", Delete) {
     delete fileTree(runDir) { exclude "err-trace*.txt" }
 }
 
-tasks.withType(JavaExec).configureEach {
+run {
     dependsOn copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
     jvmArgs = moduleExportsJvmArgs
     systemProperty("app.gem.log.stdout", true)

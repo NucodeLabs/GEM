@@ -2,7 +2,7 @@ package ru.nucodelabs.geo.ves.calc.interpolation
 
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolatingFunction
 import ru.nucodelabs.util.Point
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import kotlin.math.log10
 
 class SmartInterpolator(

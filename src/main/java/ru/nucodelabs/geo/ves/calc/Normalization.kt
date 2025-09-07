@@ -2,7 +2,7 @@ package ru.nucodelabs.geo.ves.calc
 
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.mathves.Normalization
-import ru.nucodelabs.util.std.fromPercent
+import ru.nucodelabs.util.fromPercent
 
 data class FixableValue<T>(val value: T, val isFixed: Boolean)
 

@@ -26,7 +26,7 @@ import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.pref.FXPreferences
-import ru.nucodelabs.util.std.toDoubleOrNullBy
+import ru.nucodelabs.util.toDoubleOrNullBy
 import tornadofx.div
 import tornadofx.minus
 import java.net.URL

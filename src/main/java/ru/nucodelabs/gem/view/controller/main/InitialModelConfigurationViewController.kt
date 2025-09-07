@@ -8,8 +8,8 @@ import ru.nucodelabs.gem.fxmodel.ves.app.ArbitraryInitialModelParameters
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.kfx.core.AbstractViewController
-import ru.nucodelabs.util.std.toDoubleOrNullBy
-import ru.nucodelabs.util.std.toIntOrNullBy
+import ru.nucodelabs.util.toDoubleOrNullBy
+import ru.nucodelabs.util.toIntOrNullBy
 import java.net.URL
 import java.text.DecimalFormat
 import java.util.*

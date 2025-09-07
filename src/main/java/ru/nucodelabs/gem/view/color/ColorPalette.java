@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.files.clr.RgbaColor;
-import ru.nucodelabs.util.std.MathKt;
+import ru.nucodelabs.util.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -37,7 +37,7 @@ import ru.nucodelabs.gem.view.mapping.mapSignals
 import ru.nucodelabs.gem.view.mapping.mapSignalsRelations
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
-import ru.nucodelabs.util.std.toDoubleOrNullBy
+import ru.nucodelabs.util.toDoubleOrNullBy
 import java.io.File
 import java.net.URL
 import java.text.DecimalFormat
