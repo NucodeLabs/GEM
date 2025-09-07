@@ -18,18 +18,12 @@ inline fun <T, E> Result<T, E>.okOrThrow(
     }
 }
 
-inline fun <T, E> Result<T, E>.ifError(onError: (E) -> Unit): Result<T, E> {
-    when (this) {
-        is Err -> onError(error)
-        else -> return this
-    }
+inline fun <T, E> Result<T, E>.ifError(action: (E) -> Unit): Result<T, E> {
+    if (this is Err) action(error)
     return this
 }
 
-inline fun <T, E> Result<T, E>.ifOk(onOk: (T) -> Unit): Result<T, E> {
-    when (this) {
-        is Ok -> onOk(value)
-        else -> return this
-    }
+inline fun <T, E> Result<T, E>.ifOk(action: (T) -> Unit): Result<T, E> {
+    if (this is Ok) action(value)
     return this
 }
