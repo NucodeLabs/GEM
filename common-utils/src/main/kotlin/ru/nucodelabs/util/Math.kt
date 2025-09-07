@@ -1,4 +1,4 @@
-package ru.nucodelabs.util.std
+package ru.nucodelabs.util
 
 import java.text.DecimalFormat
 import kotlin.math.pow
