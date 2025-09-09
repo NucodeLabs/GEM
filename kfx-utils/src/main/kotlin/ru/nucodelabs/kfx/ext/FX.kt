@@ -12,6 +12,7 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.XYChart
@@ -271,4 +272,21 @@ fun unfocus(node: Node) {
     if (node.isFocused) {
         node.parent.requestFocus()
     }
+}
+
+fun switch(from: Parent, to: Parent) {
+    hide(from)
+    show(to)
+    to.requestLayout()
+    to.layout()
+}
+
+fun hide(node: Node) {
+    node.isVisible = false
+    node.isManaged = false
+}
+
+fun show(node: Node) {
+    node.isManaged = true
+    node.isVisible = true
 }

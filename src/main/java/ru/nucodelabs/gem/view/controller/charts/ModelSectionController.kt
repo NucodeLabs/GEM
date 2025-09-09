@@ -10,9 +10,9 @@ import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.gem.view.control.chart.CanvasRenderPolygonChart
 import ru.nucodelabs.gem.view.control.chart.InvertibleValueAxis
 import ru.nucodelabs.gem.view.control.chart.NucodeNumberAxis
-import ru.nucodelabs.gem.view.control.chart.PolygonWithNamesChart
 import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.charts.ModelSectionController.PicketDependencies.Factory.dependenciesOf
 import ru.nucodelabs.geo.ves.ExperimentalData
@@ -25,7 +25,6 @@ import ru.nucodelabs.kfx.ext.observableListOf
 import java.math.MathContext
 import java.math.RoundingMode
 import java.net.URL
-import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -34,8 +33,7 @@ private const val LAST_COEF = 0.5
 class ModelSectionController @Inject constructor(
     private val observableSection: ObservableSection,
     private val colorMapper: ColorMapper,
-    private val formatter: StringConverter<Number>,
-    private val df: DecimalFormat
+    private val formatter: StringConverter<Number>
 ) : AbstractController() {
 
     /**
@@ -67,12 +65,14 @@ class ModelSectionController @Inject constructor(
     private lateinit var xAxis: NucodeNumberAxis
 
     @FXML
-    private lateinit var chart: PolygonWithNamesChart
+    lateinit var chart: CanvasRenderPolygonChart
 
     override val stage: Stage?
         get() = chart.scene.window as Stage?
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        chart.colorMapper = this.colorMapper
+        chart.extraValueFormatter = formatter
         yAxis.tickLabelFormatter = formatter
         xAxis.tickLabelFormatter = formatter
 
@@ -89,11 +89,6 @@ class ModelSectionController @Inject constructor(
                 }
             }
         })
-
-        colorMapper.maxValueProperty().addListener { _, _, _ -> update() }
-        colorMapper.minValueProperty().addListener { _, _, _ -> update() }
-        colorMapper.numberOfSegmentsProperty().addListener { _, _, _ -> update() }
-        colorMapper.logScaleProperty().addListener { _, _, _ -> update() }
     }
 
     private fun update() {
@@ -109,6 +104,7 @@ class ModelSectionController @Inject constructor(
 
         val lowerBoundZ = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
 
+        val dataToAdd = ArrayList<Series<Number, Number>>()
         for ((index, bounds) in observableSection.asSection().picketsBounds().withIndex()) {
             val picket = observableSection.pickets[index]
             if (picket.modelData.isEmpty()) {
@@ -131,24 +127,21 @@ class ModelSectionController @Inject constructor(
                     picket.modelData[i].power
                 }
 
+                val resistance = picket.modelData[i].resistance
                 val series: Series<Number, Number> = Series(
                     observableListOf(
-                        Data(x, y),
-                        Data(x + width, y),
-                        Data(x + width, y - height),
-                        Data(x, y - height)
+                        Data(x, y, resistance),
+                        Data(x + width, y, resistance),
+                        Data(x + width, y - height, resistance),
+                        Data(x, y - height, resistance)
                     )
                 )
 
-                chart.data += series
-                series.name = df.format(picket.modelData[i].resistance)
-                chart.seriesPolygons[series]?.apply { fill = colorMapper.colorFor(picket.modelData[i].resistance) }
+                dataToAdd += series
             }
         }
-    }
 
-    fun setupNames(boolean: Boolean) {
-        chart.namesVisibleProperty().set(boolean)
+        chart.data += dataToAdd
     }
 
     private fun setupXAxisMarks() {

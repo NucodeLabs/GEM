@@ -9,12 +9,12 @@ import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
-import javafx.stage.Stage
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.Name
-import ru.nucodelabs.gem.view.controller.AbstractController
-import ru.nucodelabs.kfx.ext.bindTo
+import ru.nucodelabs.kfx.core.AbstractViewController
+import ru.nucodelabs.kfx.ext.hide
 import ru.nucodelabs.kfx.ext.saveSnapshotAsPng
+import ru.nucodelabs.kfx.ext.switch
 import java.net.URL
 import java.util.*
 import java.util.prefs.Preferences
@@ -22,7 +22,7 @@ import java.util.prefs.Preferences
 class ModelSectionSwitcherController @Inject constructor(
     @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
-) : AbstractController() {
+) : AbstractViewController<VBox>() {
     @FXML
     private lateinit var logSectionBox: VBox
 
@@ -35,30 +35,20 @@ class ModelSectionSwitcherController @Inject constructor(
     @FXML
     lateinit var linearSectionBoxController: ModelSectionController
 
-    override val stage: Stage?
-        get() = linearSectionBox.scene?.window as Stage?
-
     override fun initialize(location: URL, resources: ResourceBundle) {
-        logSectionBox.managedProperty() bindTo logSectionBox.visibleProperty()
-        linearSectionBox.managedProperty() bindTo linearSectionBox.visibleProperty()
+        logSectionBoxController.chart.extraValueVisibleProperty()
+            .bindBidirectional(linearSectionBoxController.chart.extraValueVisibleProperty())
 
-        logSectionBox.isVisible = false
-        logSectionBox.visibleProperty() bindTo linearSectionBox.visibleProperty().not()
-        linearSectionBox.isVisible = true
-
+        hide(logSectionBox)
         logSectionBox.apply {
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на линейный масштаб").apply {
-                    onAction = EventHandler { linearSectionBox.isVisible = true }
+                    onAction = EventHandler { switch(logSectionBox, linearSectionBox) }
                 },
-                CheckMenuItem("Показывать сопротивления").apply{
+                CheckMenuItem("Показывать сопротивления").apply {
                     isSelected = false
-                    onAction = if (!this.isSelected){
-                        EventHandler { logSectionBoxController.setupNames(this.isSelected)}
-
-                    }else {
-                        EventHandler { logSectionBoxController.setupNames(this.isSelected) }
-                    }
+                    selectedProperty()
+                        .bindBidirectional(logSectionBoxController.chart.extraValueVisibleProperty())
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {
@@ -77,16 +67,12 @@ class ModelSectionSwitcherController @Inject constructor(
         linearSectionBox.apply {
             val contextMenu = ContextMenu(
                 MenuItem("Переключить на псевдо-логарифмический масштаб").apply {
-                    onAction = EventHandler { linearSectionBox.isVisible = false }
+                    onAction = EventHandler { switch(linearSectionBox, logSectionBox) }
                 },
-                CheckMenuItem("Показывать сопротивления").apply{
+                CheckMenuItem("Показывать сопротивления").apply {
                     isSelected = false
-                    onAction = if (!this.isSelected){
-                        EventHandler { linearSectionBoxController.setupNames(this.isSelected)}
-
-                    }else {
-                        EventHandler { linearSectionBoxController.setupNames(this.isSelected) }
-                    }
+                    selectedProperty()
+                        .bindBidirectional(linearSectionBoxController.chart.extraValueVisibleProperty())
                 },
                 MenuItem("Сохранить как изображение").apply {
                     onAction = EventHandler {

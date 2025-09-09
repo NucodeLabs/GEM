@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.control.chart
 
 import javafx.beans.NamedArg
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.ValueAxis
 import javafx.scene.effect.BlendMode
@@ -20,9 +19,9 @@ class InterpolationMap @JvmOverloads constructor(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>,
     @NamedArg("colorMapper") colorMapper: ColorMapper? = null
-) : AbstractMap(xAxis, yAxis) {
+) : AbstractMap(xAxis, yAxis, colorMapper) {
 
-    var canvasBlendMode: BlendMode by canvas.blendModeProperty()
+    var canvasBlendMode: BlendMode by backgroundCanvas.blendModeProperty()
 
     private val _interpolateSeriesIndex = SimpleIntegerProperty(0)
 
@@ -46,27 +45,6 @@ class InterpolationMap @JvmOverloads constructor(
         }
     }
 
-    private val _colorMapper = SimpleObjectProperty<ColorMapper?>(colorMapper)
-    fun colorMapperProperty() = _colorMapper
-    var colorMapper: ColorMapper?
-        set(value) = _colorMapper.set(value)
-        get() = _colorMapper.get()
-
-    init {
-        colorMapperProperty().addListener { _, _, new ->
-            startListening(new)
-            redrawSnapshot()
-        }
-        startListening(colorMapper)
-    }
-
-    private fun startListening(colorMapper: ColorMapper?) {
-        colorMapper?.minValueProperty()?.addListener { _, _, _ -> redrawSnapshot() }
-        colorMapper?.maxValueProperty()?.addListener { _, _, _ -> redrawSnapshot() }
-        colorMapper?.numberOfSegmentsProperty()?.addListener { _, _, _ -> redrawSnapshot() }
-        colorMapper?.logScaleProperty()?.addListener { _, _, _ -> redrawSnapshot() }
-    }
-
     private lateinit var interpolator: Interpolator
     private var preparedData: List<List<Point>> = mutableListOf()
 
@@ -74,6 +52,8 @@ class InterpolationMap @JvmOverloads constructor(
         super.layoutPlotChildren()
         if (needRedraw) redrawSnapshot() else layoutSnapshot()
     }
+
+    override fun onColorMapperChange() = redrawSnapshot()
 
     private fun redrawSnapshot() {
         initInterpolator()
@@ -85,7 +65,13 @@ class InterpolationMap @JvmOverloads constructor(
     }
 
     private fun layoutSnapshot() {
-        canvas.graphicsContext2D.drawImage(snapshot, 0.0, 0.0, canvas.width, canvas.height)
+        backgroundCanvas.graphicsContext2D.drawImage(
+            snapshot,
+            0.0,
+            0.0,
+            backgroundCanvas.width,
+            backgroundCanvas.height
+        )
     }
 
     override fun dataItemAdded(series: Series<Number, Number>?, itemIndex: Int, item: Data<Number, Number>?) {
