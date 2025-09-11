@@ -17,7 +17,7 @@ class VesFxAppModel @Inject constructor(
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val initialModelService: InitialModelService,
-    private val metricsService: MetricsService,
+    private val metricsService: MetricsService
 ) {
     private val selectedIndex: Int by selectedIndexObservable::value
 
@@ -64,7 +64,7 @@ class VesFxAppModel @Inject constructor(
         return metricsService.errorAvgMax(picket.effectiveExperimentalData, picket.modelData)
     }
 
-    fun targetFunction(): Double {
+    fun targetFunctionValue(): Double {
         return metricsService.targetFunctionValue(picket.effectiveExperimentalData, picket.modelData)
     }
 

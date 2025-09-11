@@ -537,7 +537,7 @@ class AnisotropyMainViewController @Inject constructor(
             ρₐ = ${df.format(resistance)} Ω‧m
             Азимут = ${df.format(azimuth)} °
         """.trimIndent()
-        return Tooltip(tooltipText).forCharts()
+        return Tooltip(tooltipText).shownOnHover()
     }
 
     @Suppress("unused")
@@ -553,7 +553,7 @@ class AnisotropyMainViewController @Inject constructor(
                AB/2 = ${df.format(point.xValue)} m
                Отношение = ${df.format(point.yValue)} 
             """.trimIndent()
-        ).forCharts()
+        ).shownOnHover()
     }
 
     @Suppress("unused")
@@ -575,7 +575,7 @@ class AnisotropyMainViewController @Inject constructor(
                 MN/2 = ${df.format(mn2)} m
                 ρₐ = ${df.format(resistance)} Ω‧m
             """.trimIndent()
-        ).forCharts()
+        ).shownOnHover()
     }
 
     @FXML

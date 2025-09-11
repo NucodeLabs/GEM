@@ -96,15 +96,14 @@ class ModelSectionController @Inject constructor(
         setupXAxisMarks()
         setupYAxisBounds()
 
-        chart.data.clear()
-
         if (observableSection.pickets.isEmpty()) {
+            chart.data.clear()
             return
         }
 
         val lowerBoundZ = zWithVirtualLastLayers().minOfOrNull { it.minOrNull() ?: 0.0 } ?: 0.0
 
-        val dataToAdd = ArrayList<Series<Number, Number>>()
+        val chartData = ArrayList<Series<Number, Number>>()
         for ((index, bounds) in observableSection.asSection().picketsBounds().withIndex()) {
             val picket = observableSection.pickets[index]
             if (picket.modelData.isEmpty()) {
@@ -137,11 +136,11 @@ class ModelSectionController @Inject constructor(
                     )
                 )
 
-                dataToAdd += series
+                chartData += series
             }
         }
 
-        chart.data += dataToAdd
+        chart.data.setAll(chartData)
     }
 
     private fun setupXAxisMarks() {

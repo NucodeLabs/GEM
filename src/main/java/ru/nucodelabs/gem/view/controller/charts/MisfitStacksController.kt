@@ -1,11 +1,7 @@
 package ru.nucodelabs.gem.view.controller.charts
 
 import jakarta.inject.Inject
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableObjectValue
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
@@ -17,15 +13,13 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
-import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.calc.graph.experimentalCurve
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.Point
-import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.line
-import ru.nucodelabs.kfx.ext.observableListOf
+import ru.nucodelabs.kfx.ext.shownOnHover
 import java.math.RoundingMode
 import java.net.URL
 import java.text.DecimalFormat
@@ -48,11 +42,9 @@ const val ERROR_FORMULA_IMAGE_PATH = "/img/error.png"
 
 class MisfitStacksController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
-    private val alertsFactory: AlertsFactory,
     private val decimalFormat: DecimalFormat,
     private val appModel: VesFxAppModel,
 ) : AbstractViewController<VBox>() {
-    private val dataProperty = emptyData()
 
     @FXML
     private lateinit var targetFunctionText: Label
@@ -75,65 +67,53 @@ class MisfitStacksController @Inject constructor(
     private val picket: Picket
         get() = picketObservable.get()!!
 
+    private val format4FracDigits = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
+
     override fun initialize(location: URL, resources: ResourceBundle) {
         picketObservable.addListener { _, _, newValue: Picket? ->
             if (newValue != null) {
                 update()
             }
         }
-        lineChart.dataProperty().bind(dataProperty)
         installTooltipForTerms()
     }
 
     private fun update() {
-        var misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
-        try {
-            val misfits = appModel.misfits()
-            val expPoints = experimentalCurve(picket)
+        val misfitStacksSeriesList: MutableList<Series<Number, Number>> = ArrayList()
+        val misfits = appModel.misfits()
+        val expPoints = experimentalCurve(picket)
 
-            misfitStacksSeriesList = observableListOf()
+        if (picket.effectiveExperimentalData.isNotEmpty() && picket.modelData.isNotEmpty()) {
+            check(misfits.size == expPoints.size)
 
-            if (picket.effectiveExperimentalData.isNotEmpty() && picket.modelData.isNotEmpty()) {
-                check(misfits.size == expPoints.size)
-
-                for ((index, expPoint) in expPoints.withIndex()) {
-                    misfitStacksSeriesList += line(
-                        Point(expPoint.x as Number, 0.0 as Number),
-                        Point(expPoint.x as Number, misfits[index] as Number)
-                    )
-                }
-
-                val targetFunction = appModel.targetFunction()
-                val (misfitsAvg, misfitsMax) = appModel.misfitsAvgMax()
-                val (errorAvg, errorMax) = appModel.errorAvgMax()
-
-                val dfTwo = DecimalFormat("#.##").apply { roundingMode = RoundingMode.HALF_UP }
-                val dfFour = DecimalFormat("#.####").apply { roundingMode = RoundingMode.HALF_UP }
-
-                targetFunctionText.text =
-                    "целевая функция: f = ${dfFour.format(targetFunction)}"
-                misfitText.text =
-                    "отклонение: avg = ${dfTwo.format(misfitsAvg)}%, max = ${dfTwo.format(misfitsMax)}%"
-                errorText.text =
-                    "погрешность: avg = ${dfTwo.format(errorAvg)}% , max = ${dfTwo.format(errorMax)}%"
+            for ((index, expPoint) in expPoints.withIndex()) {
+                misfitStacksSeriesList += line(
+                    Point(expPoint.x as Number, 0.0 as Number),
+                    Point(expPoint.x as Number, misfits[index] as Number)
+                )
             }
 
-        } catch (e: UnsatisfiedLinkError) {
-            alertsFactory.unsatisfiedLinkErrorAlert(e, stage).show()
-        } catch (e: IllegalStateException) {
-            alertsFactory.simpleExceptionAlert(e, stage).show()
+            val targetFunction = appModel.targetFunctionValue()
+            val (misfitsAvg, misfitsMax) = appModel.misfitsAvgMax()
+            val (errorAvg, errorMax) = appModel.errorAvgMax()
+
+            targetFunctionText.text =
+                "целевая функция: f = ${format4FracDigits.format(targetFunction)}"
+            misfitText.text =
+                "отклонение: avg = ${decimalFormat.format(misfitsAvg)}%, max = ${decimalFormat.format(misfitsMax)}%"
+            errorText.text =
+                "погрешность: avg = ${decimalFormat.format(errorAvg)}% , max = ${decimalFormat.format(errorMax)}%"
         }
-        dataProperty.get().clear()
-        dataProperty.get() += misfitStacksSeriesList
+        lineChart.data.setAll(misfitStacksSeriesList)
         colorizeMisfitStacksSeries()
         installTooltips()
     }
 
     private fun installTooltips() {
-        dataProperty.get().forEach {
+        lineChart.data.forEach {
             val text = "${decimalFormat.format(it.data[1].yValue)}%"
-            Tooltip.install(it.node, Tooltip(text).forCharts())
-            it.data.forEach { p -> Tooltip.install(p.node, Tooltip(text).forCharts()) }
+            Tooltip.install(it.node, Tooltip(text).shownOnHover())
+            it.data.forEach { p -> Tooltip.install(p.node, Tooltip(text).shownOnHover()) }
         }
     }
 
@@ -145,7 +125,7 @@ class MisfitStacksController @Inject constructor(
         tooltipForTargetFunction.text = TARGET_FUNCTION_DESCRIPTION
         tooltipForTargetFunction.graphic = ImageView(imageForTargetFunction)
         tooltipForTargetFunction.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(targetFunctionText, tooltipForTargetFunction.forCharts())
+        Tooltip.install(targetFunctionText, tooltipForTargetFunction.shownOnHover())
 
         val imageForMisfit = Image(
             javaClass.getResourceAsStream(MISFIT_FORMULA_IMAGE_PATH)
@@ -154,7 +134,7 @@ class MisfitStacksController @Inject constructor(
         tooltipForMisfit.text = MISFIT_DESCRIPTION
         tooltipForMisfit.graphic = ImageView(imageForMisfit)
         tooltipForMisfit.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(misfitText, tooltipForMisfit.forCharts())
+        Tooltip.install(misfitText, tooltipForMisfit.shownOnHover())
 
         val imageForError = Image(
             javaClass.getResourceAsStream(ERROR_FORMULA_IMAGE_PATH)
@@ -163,11 +143,11 @@ class MisfitStacksController @Inject constructor(
         tooltipForError.text = ERROR_DESCRIPTION
         tooltipForError.graphic = ImageView(imageForError)
         tooltipForError.contentDisplay = ContentDisplay.BOTTOM
-        Tooltip.install(errorText, tooltipForError.forCharts())
+        Tooltip.install(errorText, tooltipForError.shownOnHover())
     }
 
     private fun colorizeMisfitStacksSeries() {
-        val data = dataProperty.get()
+        val data = lineChart.data
         for (series in data) {
             val nonZeroPoint = series.data[1]
             if (abs(nonZeroPoint.yValue.toDouble()) < 100.0) {
@@ -179,9 +159,3 @@ class MisfitStacksController @Inject constructor(
         }
     }
 }
-
-fun emptyData(): ObjectProperty<ObservableList<Series<Number, Number>>> = SimpleObjectProperty(
-    FXCollections.observableArrayList(
-        ArrayList()
-    )
-)

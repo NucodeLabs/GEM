@@ -23,7 +23,6 @@ import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
 import ru.nucodelabs.gem.view.controller.AbstractController
@@ -53,7 +52,6 @@ private const val ZOOM_DELTA_LOG = 0.05
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val _picketIndex: IntegerProperty,
-    private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val decimalFormat: DecimalFormat,
@@ -268,13 +266,11 @@ class VesCurvesController @Inject constructor(
 
     private fun updateTheoreticalCurve() {
         val theorCurveSeries = Series<Number, Number>()
-        try {
-            theorCurveSeries.data.addAll(
-                theoreticalCurve(picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
-            )
-        } catch (e: UnsatisfiedLinkError) {
-            alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
-        }
+
+        theorCurveSeries.data.addAll(
+            theoreticalCurve(picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
+        )
+
         theorCurveSeries.name = uiProperties["theorCurve"]
         dataProperty.get()[THEOR_CURVE_SERIES_INDEX] = theorCurveSeries
     }
@@ -384,7 +380,7 @@ class VesCurvesController @Inject constructor(
                     min ρₐ = $yLower
                     max ρₐ = $yUpper
                 """.trimIndent()
-                ).forCharts()
+                ).shownOnHover()
             }
 
             THEOR_CURVE_SERIES_INDEX -> {
@@ -406,7 +402,7 @@ class VesCurvesController @Inject constructor(
                     max ρₐ = $yUpper
                     ρₐ (теор.) = ${decimalFormat.format(theorRes)} Ω‧m
                 """.trimIndent()
-                ).forCharts()
+                ).shownOnHover()
             }
 
             else -> null

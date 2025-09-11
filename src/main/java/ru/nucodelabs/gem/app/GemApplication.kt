@@ -25,7 +25,7 @@ class GemApplication : GuiceApplication(AppModule()) {
 
     private val macOSHandledFiles: MutableList<String> = mutableListOf()
 
-    val log = slf4j(this)
+    val log = slf4j()
 
     @Inject
     lateinit var alertsFactory: AlertsFactory

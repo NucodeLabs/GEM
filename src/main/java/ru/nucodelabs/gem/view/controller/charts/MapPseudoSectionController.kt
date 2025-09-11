@@ -14,8 +14,8 @@ import ru.nucodelabs.gem.view.color.ColorMapper
 import ru.nucodelabs.gem.view.control.chart.InterpolationMap
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.xOfPicket
-import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.installTooltips
+import ru.nucodelabs.kfx.ext.shownOnHover
 import ru.nucodelabs.kfx.ext.toObservableList
 import java.net.URL
 import java.text.DecimalFormat
@@ -81,6 +81,6 @@ class MapPseudoSectionController @Inject constructor(
                 AB/2 = ${decimalFormat.format(point.yValue)} m
                 ρₐ = ${decimalFormat.format(point.extraValue)} Ω‧m
             """.trimIndent()
-        ).forCharts()
+        ).shownOnHover()
     }
 }

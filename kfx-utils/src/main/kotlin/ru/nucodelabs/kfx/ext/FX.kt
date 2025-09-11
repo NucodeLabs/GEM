@@ -211,7 +211,7 @@ fun Tooltip.noAutoHide() = apply { showDuration = Duration.INDEFINITE }
 
 fun Tooltip.noHideDelay() = apply { hideDelay = Duration.ZERO }
 
-fun Tooltip.forCharts() = this.noDelay().noAutoHide().noHideDelay()
+fun Tooltip.shownOnHover() = this.noDelay().noAutoHide().noHideDelay()
 
 /**
  * As PNG
