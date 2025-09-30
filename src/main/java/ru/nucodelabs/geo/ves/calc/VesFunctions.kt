@@ -1,3 +1,4 @@
+@file:JvmName("VesFunctions")
 package ru.nucodelabs.geo.ves.calc
 
 import kotlin.math.PI

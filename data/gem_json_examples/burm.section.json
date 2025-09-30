@@ -321,7 +321,7 @@
           "isFixedResistance": false
         },
         {
-          "power": "NaN",
+          "power": "0.0",
           "resistance": 1414.69,
           "isFixedPower": false,
           "isFixedResistance": false
@@ -652,7 +652,7 @@
           "isFixedResistance": false
         },
         {
-          "power": "NaN",
+          "power": "0.0",
           "resistance": 1882.95,
           "isFixedPower": false,
           "isFixedResistance": false
@@ -974,7 +974,7 @@
           "isFixedResistance": false
         },
         {
-          "power": "NaN",
+          "power": "0.0",
           "resistance": 1882.95,
           "isFixedPower": false,
           "isFixedResistance": false
@@ -1272,7 +1272,7 @@
           "isFixedResistance": false
         },
         {
-          "power": "NaN",
+          "power": "0.0",
           "resistance": 1062.88,
           "isFixedPower": false,
           "isFixedResistance": false

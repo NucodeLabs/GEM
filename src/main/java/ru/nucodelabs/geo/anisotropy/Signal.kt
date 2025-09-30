@@ -26,22 +26,27 @@ data class Signal(
     @field:DecimalMin(MIN_RESISTANCE.toString()) var resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
     @field:Min(0) @field:Max(100) var errorResistanceApparent: Double = DEFAULT_ERROR,
     val isHidden: Boolean = false
-)
+) {
+    companion object Factory {
+        @Suppress("unused")
+        @JvmStatic
+        fun withCalculatedVoltage(
+            ab2: Double,
+            mn2: Double,
+            resistanceApparent: Double,
+            amperage: Double = DEFAULT_AMPERAGE,
+            voltage: Double = u(resistanceApparent, amperage, k(ab2, mn2)),
+            errorResistanceApparent: Double = DEFAULT_ERROR,
+            isHidden: Boolean = false
+        ) = Signal(
+            ab2 = ab2,
+            mn2 = mn2,
+            amperage = amperage,
+            voltage = voltage,
+            resistanceApparent = resistanceApparent,
+            errorResistanceApparent = errorResistanceApparent,
+            isHidden = isHidden
+        )
+    }
+}
 
-fun signalWithOnlyRhoA(
-    ab2: Double,
-    mn2: Double,
-    resistanceApparent: Double,
-    amperage: Double = DEFAULT_AMPERAGE,
-    voltage: Double = u(resistanceApparent, amperage, k(ab2, mn2)),
-    errorResistanceApparent: Double = DEFAULT_ERROR,
-    isHidden: Boolean = false
-) = Signal(
-    ab2 = ab2,
-    mn2 = mn2,
-    amperage = amperage,
-    voltage = voltage,
-    resistanceApparent = resistanceApparent,
-    errorResistanceApparent = errorResistanceApparent,
-    isHidden = isHidden
-)

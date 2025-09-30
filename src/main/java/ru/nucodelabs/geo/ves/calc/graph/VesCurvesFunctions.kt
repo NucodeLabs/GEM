@@ -1,39 +1,41 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
 import ru.nucodelabs.geo.forward.ForwardSolver
-import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.ExperimentalDataSet
+import ru.nucodelabs.geo.ves.ModelDataSet
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.util.Point
 
-fun experimentalCurve(picket: Picket) =
+fun experimentalCurve(picket: ExperimentalDataSet) =
     picket.effectiveExperimentalData.map { Point(it.ab2, it.resistanceApparent) }
 
-
-fun experimentalCurveErrorUpperBound(picket: Picket) =
+fun experimentalCurveErrorUpperBound(picket: ExperimentalDataSet) =
     picket.effectiveExperimentalData.map { Point(it.ab2, it.resistanceApparentUpperBoundByError) }
 
-fun experimentalCurveErrorLowerBound(picket: Picket) =
+fun experimentalCurveErrorLowerBound(picket: ExperimentalDataSet) =
     picket.effectiveExperimentalData.map { Point(it.ab2, it.resistanceApparentLowerBoundByError) }
 
-fun experimentalHiddenPoints(picket: Picket) =
+fun experimentalHiddenPoints(picket: ExperimentalDataSet) =
     picket.sortedExperimentalData.filter { it.isHidden }.map { Point(it.ab2, it.resistanceApparent) }
 
-fun theoreticalCurve(picket: Picket, forwardSolver: ForwardSolver): List<Point> {
-    if (picket.sortedExperimentalData.isEmpty() || picket.modelData.isEmpty()) {
+fun theoreticalCurve(
+    experimental: ExperimentalDataSet,
+    modelDataSet: ModelDataSet,
+    forwardSolver: ForwardSolver
+): List<Point> {
+    val sortedExp = experimental.sortedExperimentalData
+    if (sortedExp.isEmpty() || modelDataSet.modelData.isEmpty()) {
         return listOf()
     }
-    val solvedResistance = forwardSolver(picket.sortedExperimentalData, picket.modelData)
-    return List(picket.sortedExperimentalData.size) { i ->
-        Point(picket.sortedExperimentalData[i].ab2, solvedResistance[i])
+    val solvedResistance = forwardSolver(sortedExp, modelDataSet.modelData)
+    return List(sortedExp.size) { i ->
+        Point(sortedExp[i].ab2, solvedResistance[i])
     }
 }
 
-fun misfits(picket: Picket, misfitsFunction: MisfitsFunction): List<Double> =
-    misfitsFunction(picket.effectiveExperimentalData, picket.modelData)
-
-fun modelStepGraph(picket: Picket, beginX: Double = 1e-3, endX: Double = 1e100): List<Point> {
+fun modelStepGraph(picket: ModelDataSet, beginX: Double = 1e-3, endX: Double = 1e100): List<Point> {
     val modelData = picket.modelData
 
     if (modelData.isEmpty()) {

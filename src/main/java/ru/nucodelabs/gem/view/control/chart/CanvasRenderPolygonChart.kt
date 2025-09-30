@@ -10,6 +10,7 @@ import javafx.scene.chart.ValueAxis
 import javafx.scene.paint.Color
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.view.color.ColorMapper
+import ru.nucodelabs.kfx.ext.clear
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -27,6 +28,8 @@ class CanvasRenderPolygonChart @JvmOverloads constructor(
         addListener { _, old, new -> render(backgroundCanvas) }
     }
     var extraValueFormatter: StringConverter<Number>? by extraValueFormatterProperty
+
+    @Suppress("unused")
     fun extraValueFormatterProperty(): ObjectProperty<StringConverter<Number>?> = extraValueFormatterProperty
 
     private val extraValueVisibleProperty = SimpleBooleanProperty(false).apply {
@@ -44,6 +47,7 @@ class CanvasRenderPolygonChart @JvmOverloads constructor(
 
     private fun render(canvas: Canvas) {
         val graphics = canvas.graphicsContext2D
+        canvas.clear()
         data.forEach { series ->
             if (series.data.isEmpty()) return@forEach
             val (xPoints, yPoints) = toPolygon(series)

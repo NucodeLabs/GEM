@@ -11,8 +11,9 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
-import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal;
+import ru.nucodelabs.geo.ves.ReadOnlyModelLayer;
 import ru.nucodelabs.geo.ves.calc.inverse.func.FunctionValue;
 
 import java.util.ArrayList;
@@ -80,20 +81,20 @@ public class InverseSolver {
     }
 
     public List<ModelLayer> getOptimizedModelData(
-            List<ExperimentalData> experimentalData,
-            List<ModelLayer> modelData,
+        List<ReadOnlyExperimentalSignal> experimentalData,
+        List<ReadOnlyModelLayer> modelData,
             final int maxEval
     ) {
 
         //Изменяемые сопротивления и мощности
         List<Double> modelResistance = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).collect(Collectors.toList());
+            .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ReadOnlyModelLayer::getResistance).collect(Collectors.toList());
         List<Double> modelPower = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
+            .filter(modelLayer -> !modelLayer.isFixedPower()).map(ReadOnlyModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
         double maxPower = experimentalData.stream()
-                .map(ExperimentalData::getAb2)
+            .map(ReadOnlyExperimentalSignal::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
             .orElseThrow();
@@ -105,9 +106,9 @@ public class InverseSolver {
 
         //Неизменяемые сопротивления и мощности
         List<Double> fixedModelResistance = modelData.stream()
-                .filter(ModelLayer::isFixedResistance).map(ModelLayer::getResistance).toList();
+            .filter(ReadOnlyModelLayer::isFixedResistance).map(ReadOnlyModelLayer::getResistance).toList();
         List<Double> fixedModelPower = modelData.stream()
-                .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
+            .filter(ReadOnlyModelLayer::isFixedPower).map(ReadOnlyModelLayer::getPower).toList();
 
         SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
 
@@ -148,7 +149,7 @@ public class InverseSolver {
 
         int cntFixedResistances = 0;
         int cntUnfixedResistances = 0;
-        for (ModelLayer modelLayer : modelData) {
+        for (var modelLayer : modelData) {
             if (modelLayer.isFixedResistance()) {
                 newModelResistance.add(fixedModelResistance.get(cntFixedResistances));
                 cntFixedResistances++;
@@ -161,7 +162,7 @@ public class InverseSolver {
         int cntFixedPowers = 0;
         int cntUnfixedPowers = 0;
         for (int i = 0; i < modelData.size() - 1; i++) {
-            ModelLayer modelLayer = modelData.get(i);
+            var modelLayer = modelData.get(i);
             int shift = modelResistance.size();
             if (modelLayer.isFixedPower()) {
                 newModelPower.add(fixedModelPower.get(cntFixedPowers));

@@ -13,7 +13,7 @@ import ru.nucodelabs.geo.anisotropy.Signal;
 import ru.nucodelabs.geo.anisotropy.Signals;
 import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.Picket;
-import ru.nucodelabs.geo.ves.calc.VesKt;
+import ru.nucodelabs.geo.ves.calc.VesFunctions;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ class DtoMapperTest {
                 null
         );
 
-        var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
+        var resistanceApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
 
         assertEquals(
                 new Signal(
@@ -88,7 +88,7 @@ class DtoMapperTest {
                 null
         );
 
-        var resistanceApparent = VesKt.rhoA(ab2, mn2, amperage, voltage);
+        var resistanceApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
 
         Point expected = new Point(
                 null,

@@ -3,8 +3,9 @@ package ru.nucodelabs.geo.ves.calc.inverse.func;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
-import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal;
+import ru.nucodelabs.geo.ves.ReadOnlyModelLayer;
 import ru.nucodelabs.geo.ves.calc.adapter.ForwardSolverAdapterKt;
 
 import java.util.ArrayList;
@@ -12,18 +13,18 @@ import java.util.List;
 
 public class FunctionValue implements MultivariateFunction {
     //Экспериментальные точки для FS
-    private final List<ExperimentalData> experimentalData;
+    private final List<ReadOnlyExperimentalSignal> experimentalData;
     //Функция для вычисления разности между exp и theoretical точками
     private final RelativeErrorAwareTargetFunction targetFunction;
     //Исходная модель
-    private final List<ModelLayer> modelLayers;
+    private final List<ReadOnlyModelLayer> modelLayers;
     private final ForwardSolver forwardSolver;
 
     private double diffMinValue = Double.MAX_VALUE;
 
-    public FunctionValue(List<ExperimentalData> experimentalData,
+    public FunctionValue(List<ReadOnlyExperimentalSignal> experimentalData,
                          RelativeErrorAwareTargetFunction targetFunction,
-                         List<ModelLayer> modelLayers,
+                         List<ReadOnlyModelLayer> modelLayers,
                          ForwardSolver forwardSolver) {
         this.experimentalData = experimentalData;
         this.targetFunction = targetFunction;
@@ -54,7 +55,7 @@ public class FunctionValue implements MultivariateFunction {
         List<Double> newModelPower = new ArrayList<>();
 
         int cntUnfixedResistances = 0;
-        for (ModelLayer modelLayer : modelLayers) {
+        for (var modelLayer : modelLayers) {
             if (modelLayer.isFixedResistance()) {
                 newModelResistance.add(modelLayer.getResistance());
             } else {
@@ -64,7 +65,7 @@ public class FunctionValue implements MultivariateFunction {
         }
 
         int cntUnfixedPowers = 0;
-        for (ModelLayer modelLayer : modelLayers) {
+        for (var modelLayer : modelLayers) {
             if (modelLayer.isFixedPower()) {
                 newModelPower.add(modelLayer.getPower());
             } else {
@@ -82,8 +83,8 @@ public class FunctionValue implements MultivariateFunction {
 
         double diffValue = targetFunction.invoke(
                 solvedResistance,
-                experimentalData.stream().map(ExperimentalData::getResistanceApparent).toList(),
-                experimentalData.stream().map(ExperimentalData::getErrorResistanceApparent).toList()
+            experimentalData.stream().map(ReadOnlyExperimentalSignal::getResistanceApparent).toList(),
+            experimentalData.stream().map(ReadOnlyExperimentalSignal::getErrorResistanceApparent).toList()
         );
 
         boolean flag = false;
@@ -92,7 +93,7 @@ public class FunctionValue implements MultivariateFunction {
             if (modelLayer.getResistance() < 0.1 ||
                     modelLayer.getResistance() > 1e5 ||
                     (modelLayer.getPower() != 0.0 && modelLayer.getPower() < 0.1) ||
-                    modelLayer.getPower() > experimentalData.get(experimentalData.size() - 1).getAb2()) {
+                modelLayer.getPower() > experimentalData.getLast().getAb2()) {
                 diffValue = Math.max(diffMinValue * (1.1 + 0.1 * Math.random()), diffValue);
                 flag = true;
                 break;

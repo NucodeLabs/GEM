@@ -13,6 +13,7 @@
       maxWidth="Infinity"
       stylesheets="/css/common.css, @VesCurves.css"
       VBox.vgrow="ALWAYS"
+      fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.VesCurvesController">
     <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
         <Label fx:id="title" styleClass="chart-label" text="%ves" VBox.vgrow="NEVER"/>

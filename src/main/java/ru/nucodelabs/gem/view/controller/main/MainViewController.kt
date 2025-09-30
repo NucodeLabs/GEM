@@ -74,7 +74,8 @@ class MainViewController @Inject constructor(
     private val preferences: Preferences,
     private val decimalFormat: DecimalFormat,
     private val fxPreferences: FXPreferences,
-    private val inverseSolver: InverseSolver
+    private val inverseSolver: InverseSolver,
+    private val ui: ResourceBundle,
 ) : AbstractController(), FileImporter, FileOpener {
 
     private val windowTitle: StringProperty = SimpleStringProperty("GEM")
@@ -293,7 +294,7 @@ class MainViewController @Inject constructor(
             if (newValue != null) {
                 picketOffsetX.text = decimalFormat.format(newValue.offsetX)
                 picketZ.text = decimalFormat.format(newValue.z)
-                xCoordLbl.text = decimalFormat.format(observableSection.asSection().xOfPicket(picket))
+                xCoordLbl.text = decimalFormat.format(observableSection.asSection().xOfPicket(picketIndex))
             }
         }
     }
@@ -677,11 +678,11 @@ class MainViewController @Inject constructor(
     private fun openAddExpData() {
         if (addExperimentalData.scene == null) {
             Stage().apply {
-                title = "Добавить измерение"
+                title = ui["addSignal"]
                 initOwner(this@MainViewController.stage)
                 addExperimentalData.stylesheets += Style.COMMON_STYLESHEET
                 scene = Scene(addExperimentalData)
-                isResizable = false
+                isResizable = true
             }.show()
         } else {
             (addExperimentalData.scene.window as Stage).show()

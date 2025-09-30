@@ -4,8 +4,8 @@ import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.forward.impl.SonetForwardSolverAdapter
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction
 import ru.nucodelabs.geo.target.impl.SquareDiffTargetFunction
-import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import ru.nucodelabs.geo.ves.calc.divide
 import ru.nucodelabs.geo.ves.calc.inverse.InverseSolver
@@ -17,7 +17,7 @@ const val MAX_LAYERS_COUNT = 10
 const val MAX_EVAL_INVERSE = 10_000_000
 const val MIN_TARGET_FUNCTION_VALUE = 1.0
 
-private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
+private fun initialModel(signals: List<ReadOnlyExperimentalSignal>): List<ModelLayer> =
         listOf(
                 ModelLayer(
                         power = 0.0,
@@ -28,7 +28,7 @@ private fun initialModel(signals: List<ExperimentalData>): List<ModelLayer> =
 // сопр среднее по логарифму, потом обратно в степень, с 1 слоем
 
 fun multiLayerInitialModel(
-    signals: List<ExperimentalData>,
+    signals: List<ReadOnlyExperimentalSignal>,
     initialModel: List<ModelLayer> = initialModel(signals),
     forwardSolver: ForwardSolver = SonetForwardSolverAdapter(),
     targetFunction: RelativeErrorAwareTargetFunction = SquareDiffTargetFunction(),

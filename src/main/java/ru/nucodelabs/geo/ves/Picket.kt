@@ -2,10 +2,6 @@ package ru.nucodelabs.geo.ves
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import jakarta.validation.Valid
-import jakarta.validation.constraints.DecimalMin
-import jakarta.validation.constraints.Size
-import ru.nucodelabs.geo.ves.calc.ExperimentalDataSort
 import ru.nucodelabs.util.*
 import java.util.*
 
@@ -20,38 +16,66 @@ import java.util.*
  */
 class Picket private constructor(
     val name: String,
-    experimentalData: List<@Valid ExperimentalData>,
-    modelData: List<@Valid ModelLayer>,
-    @get:DecimalMin(MIN_OFFSET_X.toString()) val offsetX: Double,
+    experimentalData: List<ExperimentalData>,
+    override val modelData: List<ModelLayer>,
+    override val offsetX: Double,
     val z: Double,
     val comment: String,
     skipExperimentalDataProcessing: Boolean = false,
-    skipModelDataProcessing: Boolean = false,
-) {
+) : ExperimentalDataSet, ModelDataSet {
+    constructor(
+        name: String = DEFAULT_NAME,
+        experimentalData: List<ExperimentalData> = emptyList(),
+        modelData: List<ModelLayer> = emptyList(),
+        offsetX: Double = DEFAULT_X_OFFSET,
+        z: Double = DEFAULT_Z,
+        comment: String = DEFAULT_COMMENT
+    ) : this(
+        name,
+        experimentalData,
+        modelData,
+        offsetX,
+        z,
+        comment,
+        skipExperimentalDataProcessing = false,
+    )
+
+    init {
+        val errors = listOfNotNull(
+            validate(isValidModelDataSize(modelData.size)) {
+                InvalidPropertyValue(
+                    "modelData.size",
+                    "Model layers count must be ≤ $MAX_MODEL_DATA_SIZE layers",
+                    modelData.size
+                )
+            },
+            validate(isValidOffsetX(offsetX)) {
+                InvalidPropertyValue("offsetX", "X-Offset must be >= $MIN_OFFSET_X", offsetX)
+            },
+        )
+        if (errors.isNotEmpty()) throw InvalidPropertiesException(errors)
+    }
+
+
+    override val modelZ: Double = z
 
     @JsonIgnore
-    val id: UUID = UUID.randomUUID()
-
-    @get:Size(max = MAX_MODEL_DATA_SIZE)
-    val modelData by lazy {
-        if (skipModelDataProcessing) return@lazy modelData
-        preprocessModelData(modelData)
-    }
+    val id: UUID = UUID.randomUUID() // todo remove, make name unique
 
     /**
      * Полевые(экспериментальные) данные, отсортированы по AB/2 затем по MN/2
      */
     @get:JsonGetter("experimentalData")
-    val sortedExperimentalData: List<ExperimentalData> by lazy {
+    override val sortedExperimentalData: List<ExperimentalData> by lazy {
         if (skipExperimentalDataProcessing) return@lazy experimentalData
-        preprocessExperimentalData(experimentalData)
+        toSortedExperimentalData(experimentalData)
     }
 
     /**
      * Без отключенных и если одинаковые AB/2, то с наибольшим MN/2
      */
     @get:JsonIgnore
-    val effectiveExperimentalData: List<ExperimentalData> by lazy {
+    override val effectiveExperimentalData: List<ExperimentalData> by lazy {
         this.sortedExperimentalData.filter { !it.isHidden }
     }
 
@@ -89,14 +113,15 @@ class Picket private constructor(
         offsetX: Double = this.offsetX,
         z: Double = this.z,
         comment: String = this.comment
-    ): Picket = copied(
+    ): Picket = Picket(
         name,
         experimentalData,
         modelData,
         offsetX,
         z,
-        comment
-    ).okOrThrow { IllegalArgumentException(it.joinToString()) }
+        comment,
+        skipExperimentalDataProcessing = this.sortedExperimentalData == experimentalData,
+    )
 
     fun copied(
         name: String = this.name,
@@ -105,57 +130,21 @@ class Picket private constructor(
         offsetX: Double = this.offsetX,
         z: Double = this.z,
         comment: String = this.comment
-    ): Result<Picket, List<String>> = internalNew(
-        name,
-        experimentalData,
-        modelData,
-        offsetX,
-        z,
-        comment,
-        skipExperimentalDataProcessing = this.sortedExperimentalData === experimentalData,
-        skipModelDataProcessing = this.modelData === modelData
-    )
-
-    private fun preprocessExperimentalData(experimentalData: List<ExperimentalData>): List<ExperimentalData> {
-        val acc = mutableListOf<ExperimentalData>()
-
-        // Группируем по AB
-        val dupGroups = experimentalData.groupBy { it.ab2 }
-        for ((_, group) in dupGroups) {
-            // Если больше одного не отключенного дубликата в группе
-            acc += if (group.filter { !it.isHidden }.size > 1) {
-                val sortedGroup = group.sortedWith(ExperimentalDataSort.orderByDistances)
-                List(sortedGroup.size) {
-                    // Отключаем все кроме последнего (с наиб. MN)
-                    if (it < sortedGroup.lastIndex) {
-                        sortedGroup[it].copy(isHidden = true)
-                    } else {
-                        sortedGroup[it].copy(isHidden = false)
-                    }
-                }
-            } else {
-                group
-            }
-        }
-
-        return acc.sortedWith(ExperimentalDataSort.orderByDistances)
+    ): Result<Picket, List<InvalidPropertyValue>> = try {
+        copy(
+            name,
+            experimentalData,
+            modelData,
+            offsetX,
+            z,
+            comment,
+        ).toOkResult()
+    } catch (e: InvalidPropertiesException) {
+        e.errors.toErrorResult()
     }
 
-    fun preprocessModelData(raw: List<ModelLayer>): List<ModelLayer> {
-        return raw.toMutableList().also {
-            if (it.isNotEmpty()) {
-                for (i in it.indices) {
-                    if (it[i].power.isNaN()) {
-                        it[i] = it[i].copy(power = 0.0)
-                    }
-                }
-                it[it.lastIndex] = it.last().copy(power = Double.NaN)
-            }
-        }
-    }
-
-    companion object {
-        const val DEFAULT_OFFSET_X = 100.0
+    companion object Meta {
+        const val DEFAULT_X_OFFSET = 100.0
         const val DEFAULT_NAME = "Пикет"
         const val DEFAULT_Z = 0.0
         const val DEFAULT_COMMENT = ""
@@ -163,74 +152,30 @@ class Picket private constructor(
         const val MAX_MODEL_DATA_SIZE = 40
         const val MIN_OFFSET_X = 0.0
 
-        /**
-         * Validate and create
-         */
+        fun isValidOffsetX(offsetX: Double): Boolean = offsetX >= MIN_OFFSET_X
+
+        fun isValidModelDataSize(modelDataSize: Int): Boolean = modelDataSize <= MAX_MODEL_DATA_SIZE
+
         fun new(
             name: String = DEFAULT_NAME,
             experimentalData: List<ExperimentalData> = emptyList(),
             modelData: List<ModelLayer> = emptyList(),
-            offsetX: Double = DEFAULT_OFFSET_X,
+            offsetX: Double = DEFAULT_X_OFFSET,
             z: Double = DEFAULT_Z,
             comment: String = DEFAULT_COMMENT
-        ): Result<Picket, List<String>> {
-            return internalNew(
-                name,
-                experimentalData,
-                modelData,
-                offsetX,
-                z,
-                comment
-            )
+        ): Result<Picket, List<InvalidPropertyValue>> {
+            return try {
+                Picket(
+                    name,
+                    experimentalData,
+                    modelData,
+                    offsetX,
+                    z,
+                    comment
+                ).toOkResult()
+            } catch (e: InvalidPropertiesException) {
+                e.errors.toErrorResult()
+            }
         }
-
-        private fun internalNew(
-            name: String,
-            experimentalData: List<ExperimentalData>,
-            modelData: List<ModelLayer>,
-            offsetX: Double,
-            z: Double,
-            comment: String,
-            skipExperimentalDataProcessing: Boolean = false,
-            skipModelDataProcessing: Boolean = false
-        ): Result<Picket, List<String>> {
-            val errors = ArrayList<String>()
-            validate(modelData.size <= MAX_MODEL_DATA_SIZE) {
-                "Model layers count must be ≤ $MAX_MODEL_DATA_SIZE layers"
-            }?.let { errors += it }
-            validate(offsetX >= MIN_OFFSET_X) { "X-Offset must be zero or positive" }?.let { errors += it }
-            if (errors.isNotEmpty()) return Err(errors)
-            return Picket(
-                name,
-                experimentalData,
-                modelData,
-                offsetX,
-                z,
-                comment,
-                skipExperimentalDataProcessing,
-                skipModelDataProcessing
-            ).toOkResult()
-        }
-
-        /**
-         * Classic style initialization. Throws on invalid input.
-         *
-         * Backwards compatibility.
-         */
-        operator fun invoke(
-            name: String = DEFAULT_NAME,
-            experimentalData: List<ExperimentalData> = emptyList(),
-            modelData: List<ModelLayer> = emptyList(),
-            offsetX: Double = DEFAULT_OFFSET_X,
-            z: Double = DEFAULT_Z,
-            comment: String = DEFAULT_COMMENT
-        ): Picket = new(
-            name,
-            experimentalData,
-            modelData,
-            offsetX,
-            z,
-            comment
-        ).okOrThrow { IllegalArgumentException(it.joinToString()) }
     }
 }

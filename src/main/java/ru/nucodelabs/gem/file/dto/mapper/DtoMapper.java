@@ -18,7 +18,7 @@ public abstract class DtoMapper {
 
     @Mapping(
         target = "resistanceApparent",
-        defaultExpression = "java(ru.nucodelabs.geo.ves.calc.VesKt.rhoA(dto.getAb2(), dto.getMn2(), dto.getAmperage(), dto.getVoltage()))"
+        defaultExpression = "java(ru.nucodelabs.geo.ves.calc.VesFunctions.rhoA(dto.getAb2(), dto.getMn2(), dto.getAmperage(), dto.getVoltage()))"
     )
     @Mapping(target = "errorResistanceApparent", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_ERROR)")
     @Mapping(target = "isHidden", source = "hidden", defaultValue = "false")

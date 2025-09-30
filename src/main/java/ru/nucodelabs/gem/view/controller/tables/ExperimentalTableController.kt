@@ -16,6 +16,7 @@ import javafx.scene.input.Clipboard
 import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
@@ -24,7 +25,6 @@ import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
@@ -36,10 +36,8 @@ import ru.nucodelabs.geo.ves.calc.k
 import ru.nucodelabs.geo.ves.calc.u
 import ru.nucodelabs.geo.ves.calc.withCalculatedResistanceApparent
 import ru.nucodelabs.geo.ves.toTabulatedTable
-import ru.nucodelabs.kfx.ext.DoubleValidationConverter
-import ru.nucodelabs.kfx.ext.bidirectionalNot
-import ru.nucodelabs.kfx.ext.decimalFilter
-import ru.nucodelabs.kfx.ext.toObservableList
+import ru.nucodelabs.kfx.core.AbstractViewController
+import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.util.TextToTableParser
 import ru.nucodelabs.util.toDoubleOrNullBy
@@ -70,11 +68,12 @@ class ExperimentalTableController @Inject constructor(
     picketIndexProperty: IntegerProperty,
     private val historyManager: HistoryManager<Section>,
     private val alertsFactory: AlertsFactory,
-    private val doubleStringConverter: StringConverter<Double>,
+    private val converter: StringConverter<Number>,
     private val decimalFormat: DecimalFormat,
     fileImporterProvider: Provider<FileImporter>,
-    private val mapper: VesFxModelMapper
-) : AbstractController(), FileImporter by fileImporterProvider.get() {
+    private val mapper: VesFxModelMapper,
+    private val uiProps: ResourceBundle
+) : AbstractViewController<VBox>(), FileImporter by fileImporterProvider.get() {
 
     @FXML
     private lateinit var calculateErrorScreen: Stage
@@ -92,28 +91,25 @@ class ExperimentalTableController @Inject constructor(
     private lateinit var indexCol: TableColumn<Any, Int>
 
     @FXML
-    private lateinit var ab2Col: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var ab2Col: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var mn2Col: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var mn2Col: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var resistanceApparentCol: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var resistanceApparentCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var errorResistanceCol: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var errorResistanceCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var amperageCol: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var amperageCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var voltageCol: TableColumn<ObservableExperimentalData, Double>
+    private lateinit var voltageCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
     private lateinit var table: TableView<ObservableExperimentalData>
-
-    override val stage: Stage
-        get() = table.scene.window as Stage
 
     private val picket: Picket
         get() = picketObservable.get()!!
@@ -121,6 +117,7 @@ class ExperimentalTableController @Inject constructor(
     private val picketIndex by picketIndexProperty
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        table.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN
         picketObservable.addListener { _, oldValue: Picket?, newValue: Picket? ->
             if (newValue != null) {
                 if (oldValue != null
@@ -189,24 +186,39 @@ class ExperimentalTableController @Inject constructor(
         isHiddenCol.cellValueFactory = Callback { features -> features.value.hiddenProperty().bidirectionalNot() }
         isHiddenCol.cellFactory = CheckBoxTableCell.forTableColumn(isHiddenCol)
 
-        ab2Col.cellValueFactory = Callback { features -> features.value.ab2Property().asObject() }
-        mn2Col.cellValueFactory = Callback { features -> features.value.mn2Property().asObject() }
-        resistanceApparentCol.cellValueFactory =
-            Callback { features -> features.value.resistanceApparentProperty().asObject() }
-        errorResistanceCol.cellValueFactory =
-            Callback { features -> features.value.errorResistanceApparentProperty().asObject() }
-        amperageCol.cellValueFactory = Callback { features -> features.value.amperageProperty().asObject() }
-        voltageCol.cellValueFactory = Callback { features -> features.value.voltageProperty().asObject() }
+        ab2Col.cellValueFactory = Callback { features -> features.value.ab2Property() }
+        mn2Col.cellValueFactory = Callback { features -> features.value.mn2Property() }
+        resistanceApparentCol.cellValueFactory = Callback { features -> features.value.resistanceApparentProperty() }
+        errorResistanceCol.cellValueFactory = Callback { features -> features.value.errorResistanceApparentProperty() }
+        amperageCol.cellValueFactory = Callback { features -> features.value.amperageProperty() }
+        voltageCol.cellValueFactory = Callback { features -> features.value.voltageProperty() }
 
         val editableColumns = listOf(
-            ab2Col,
-            mn2Col,
-            resistanceApparentCol,
-            errorResistanceCol,
-            amperageCol,
-            voltageCol
+            ab2Col to ExperimentalData::validateAb2,
+            mn2Col to ExperimentalData::validateMn2,
+            resistanceApparentCol to ExperimentalData::validateResistApparent,
+            errorResistanceCol to ExperimentalData::validateErrResistApparent,
+            amperageCol to ExperimentalData::validateAmperage,
+            voltageCol to ExperimentalData::validateVoltage,
         )
-        editableColumns.forEach { it.cellFactory = TextFieldTableCell.forTableColumn(doubleStringConverter) }
+
+        editableColumns.forEach { (col, validate) ->
+            col.cellFactory = Callback { _ -> TextFieldTableCell(converter) }
+
+            val onEditCommitHandler = col.onEditCommit
+            col.onEditCommit = EventHandler { event ->
+                if (event.newValue == null) {
+                    event.consume()
+                    return@EventHandler
+                }
+                validate(event.newValue.toDouble())?.let { (prop, _) ->
+                    alertsFactory.invalidInputAlert(uiProps["invalid.exp.$prop"]).show()
+                    event.consume()
+                    return@EventHandler
+                }
+                onEditCommitHandler.handle(event)
+            }
+        }
     }
 
     private fun setupRowFactory() {
@@ -297,70 +309,12 @@ class ExperimentalTableController @Inject constructor(
 
     private fun listenToItemsProperties(items: List<ObservableExperimentalData>) {
         items.forEach { expData ->
-            expData.ab2Property().addListener { _, oldAb2, newAb2 ->
-                val violations = validator.validateValue(ExperimentalData::class.java, "ab2", newAb2)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                } else {
-                    expData.ab2 = oldAb2.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            expData.mn2Property().addListener { _, oldMn2, newMn2 ->
-                val violations = validator.validateValue(ExperimentalData::class.java, "mn2", newMn2)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                } else {
-                    expData.mn2 = oldMn2.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            expData.errorResistanceApparentProperty().addListener { _, oldErr, newErr ->
-                val violations = validator.validateValue(
-                    ExperimentalData::class.java,
-                    "errorResistanceApparent",
-                    newErr
-                )
-                if (violations.isEmpty()
-                ) {
-                    commitChanges()
-                } else {
-                    expData.errorResistanceApparent = oldErr.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            expData.amperageProperty().addListener { _, oldAmp, newAmp ->
-                val violations = validator.validateValue(ExperimentalData::class.java, "amperage", newAmp)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                } else {
-                    expData.amperage = oldAmp.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            expData.voltageProperty().addListener { _, oldVolt, newVolt ->
-                val violations = validator.validateValue(ExperimentalData::class.java, "voltage", newVolt)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                } else {
-                    expData.voltage = oldVolt.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            expData.resistanceApparentProperty().addListener { _, oldRes, newRes ->
-                val violations = validator.validateValue(
-                    ExperimentalData::class.java,
-                    "resistanceApparent",
-                    newRes
-                )
-                if (violations.isEmpty()
-                ) {
-                    commitChanges()
-                } else {
-                    expData.resistanceApparent = oldRes.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
+            expData.ab2Property().addListener { _, oldAb2, newAb2 -> commitChanges() }
+            expData.mn2Property().addListener { _, oldMn2, newMn2 -> commitChanges() }
+            expData.errorResistanceApparentProperty().addListener { _, oldErr, newErr -> commitChanges() }
+            expData.amperageProperty().addListener { _, oldAmp, newAmp -> commitChanges() }
+            expData.voltageProperty().addListener { _, oldVolt, newVolt -> commitChanges() }
+            expData.resistanceApparentProperty().addListener { _, oldRes, newRes -> commitChanges() }
             expData.hiddenProperty().addListener { _, _, isHidden ->
                 if (table.selectionModel.selectedItems.isEmpty()) {
                     toggleSingleHidden(expData, isHidden)
@@ -398,7 +352,7 @@ class ExperimentalTableController @Inject constructor(
         if (calculateErrorScreen.owner == null) {
             calculateErrorScreen.initOwner(stage)
         }
-        calculateErrorScreen.icons.setAll(stage.icons)
+        calculateErrorScreen.icons.setAll(stage?.icons)
     }
 
     private fun setIsHiddenOnSelected(isHidden: Boolean) {
@@ -457,7 +411,7 @@ class ExperimentalTableController @Inject constructor(
         val text = Clipboard.getSystemClipboard().string
         val parser = if (text != null) TextToTableParser(text) else return
         try {
-            val a = "abcdefghijklmnopqrstuvwxyz".uppercase().toCharArray()
+            val a = "abcdefghijksssddddmnopqrstuvwxyz".uppercase().toCharArray()
             val parsedTable = parser.parsedTable.filter { row -> row.none { it == null } }
 
             fun String?.process(expected: String, row: Int, col: Int) =

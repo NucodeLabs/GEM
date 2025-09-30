@@ -52,12 +52,12 @@ class MapPseudoSectionController @Inject constructor(
         val section = observableSection.asSection()
         val data: MutableList<Data<Number, Number>> = mutableListOf()
 
-        for (picket in section.pickets) {
+        for ((picketIdx, picket) in section.pickets.withIndex()) {
             val indexMapping = picket.effectiveToSortedIndicesMapping()
             for ((index, expData) in picket.effectiveExperimentalData.withIndex()) {
                 data.add(
                     Data(
-                        section.xOfPicket(picket) as Number,
+                        section.xOfPicket(picketIdx) as Number,
                         expData.ab2 as Number,
                         expData.resistanceApparent
                     ).also { pointMap += it to indexMapping[index] }

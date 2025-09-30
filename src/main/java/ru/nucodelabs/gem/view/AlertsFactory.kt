@@ -60,4 +60,11 @@ class AlertsFactory @Inject constructor(private val uiProperties: ResourceBundle
             initOwner(owner)
         }.also { log.warn("Validation violations alert: $message") }
     }
+
+    fun invalidInputAlert(message: String, owner: Stage? = currentWindow()): Alert {
+        return Alert(Alert.AlertType.WARNING, message).apply {
+            title = uiProperties["invalidInput"]
+            initOwner(owner)
+        }
+    }
 }

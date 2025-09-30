@@ -16,8 +16,8 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
-import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.Name
@@ -25,7 +25,6 @@ import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
@@ -34,6 +33,7 @@ import ru.nucodelabs.geo.ves.calc.graph.*
 import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
 import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
 import ru.nucodelabs.util.exp10
@@ -59,7 +59,7 @@ class VesCurvesController @Inject constructor(
     private val forwardSolver: ForwardSolver,
     @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
-) : AbstractController() {
+) : AbstractViewController<VBox>() {
 
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>> = initData()
 
@@ -77,9 +77,6 @@ class VesCurvesController @Inject constructor(
 
     @FXML
     private lateinit var yAxis: LogarithmicAxis
-
-    override val stage: Stage
-        get() = lineChart.scene.window as Stage
 
     private val picket
         get() = picketObservable.get()!!
@@ -268,7 +265,7 @@ class VesCurvesController @Inject constructor(
         val theorCurveSeries = Series<Number, Number>()
 
         theorCurveSeries.data.addAll(
-            theoreticalCurve(picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
+            theoreticalCurve(picket, picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
         )
 
         theorCurveSeries.name = uiProperties["theorCurve"]
@@ -392,7 +389,7 @@ class VesCurvesController @Inject constructor(
                     picket.sortedExperimentalData[pointIndex].resistanceApparentUpperBoundByError
                 )
                 val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistanceApparent)
-                val theorRes = theoreticalCurve(picket, forwardSolver).getOrNull(pointIndex)?.y
+                val theorRes = theoreticalCurve(picket, picket, forwardSolver).getOrNull(pointIndex)?.y
                 Tooltip(
                     """
                     №${pointIndex + 1}

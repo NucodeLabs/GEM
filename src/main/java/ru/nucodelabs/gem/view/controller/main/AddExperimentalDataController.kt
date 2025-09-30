@@ -1,29 +1,41 @@
 package ru.nucodelabs.gem.view.controller.main
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
-import jakarta.validation.Validator
+import javafx.beans.binding.Bindings
 import javafx.beans.property.IntegerProperty
 import javafx.fxml.FXML
+import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.control.TextFormatter
 import javafx.scene.layout.VBox
-import javafx.stage.Stage
+import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.InvalidPropertiesException
+import ru.nucodelabs.geo.ves.InvalidPropertyValue
 import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.calc.rhoA
+import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.snapshot.HistoryManager
+import tornadofx.get
+import java.net.URL
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.util.*
 
 class AddExperimentalDataController @Inject constructor(
-    private val objectMapper: ObjectMapper,
     private val alertsFactory: AlertsFactory,
     private val picketIndex: IntegerProperty,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
-    private val validator: Validator
-) : AbstractController() {
+    private val decimalFormat: DecimalFormat,
+    private val uiProps: ResourceBundle
+) : AbstractViewController<VBox>() {
+
+    @FXML
+    private lateinit var invalidMessageLabel: Label
+
     @FXML
     private lateinit var amperageTextField: TextField
 
@@ -42,63 +54,92 @@ class AddExperimentalDataController @Inject constructor(
     @FXML
     private lateinit var ab2TextField: TextField
 
-    @FXML
-    private lateinit var root: VBox
+    override fun initialize(location: URL, resources: ResourceBundle) {
+        super.initialize(location, resources)
+        val fields = listOf(
+            ab2TextField to ExperimentalData::validateAb2,
+            mn2TextField to ExperimentalData::validateMn2,
+            resAppTextField to ExperimentalData::validateResistApparent,
+            errResAppTextField to ExperimentalData::validateErrResistApparent,
+            voltageTextField to ExperimentalData::validateVoltage,
+            amperageTextField to ExperimentalData::validateAmperage
+        )
+        val converter = object : StringConverter<Double>() {
+            override fun toString(value: Double?): String? = value?.let {
+                decimalFormat.format(it)
+            }
 
-    override val stage: Stage?
-        get() = root.scene.window as Stage?
-
-    fun createJson(
-        ab2: String,
-        mn2: String,
-        amperage: String,
-        voltage: String,
-        errorResApp: String,
-        resApp: String
-    ): String {
-        return ("{" +
-                (if (ab2.isNotBlank()) "\"ab2\": $ab2," else "") +
-                (if (mn2.isNotBlank()) "\"mn2\": $mn2," else "") +
-                (if (amperage.isNotBlank()) "\"amperage\": $amperage," else "") +
-                (if (voltage.isNotBlank()) "\"voltage\": $voltage," else "") +
-                (if (errorResApp.isNotBlank()) "\"errorResistanceApparent\": $errorResApp," else "") +
-                (if (resApp.isNotBlank()) "\"resistanceApparent\": $resApp," else "") +
-                "}").let {
-            val idx = it.lastIndexOf(",")
-            it.removeRange(idx, idx + 1)
+            override fun fromString(value: String?): Double? {
+                if (value.isNullOrBlank()) return null
+                return try {
+                    decimalFormat.parse(value).toDouble()
+                } catch (_: ParseException) {
+                    null
+                }
+            }
         }
+        fields.forEach { (field, _) -> field.textFormatter = TextFormatter(converter) }
+        invalidMessageLabel.textProperty().bind(
+            Bindings.createStringBinding(
+                { invalidInputMessage(fields) },
+                *fields.map { (field, _) -> field.textProperty() }.toTypedArray()
+            )
+        )
+        invalidMessageLabel.visibleProperty().bind(invalidMessageLabel.textProperty().map { it.isNotBlank() })
     }
+
+    private fun invalidInputMessage(fields: List<Pair<TextField, (Double) -> InvalidPropertyValue?>>): String =
+        fields.map { (field, validate) ->
+            val value = field.textFormatter.value as Double?
+            return@map if (value == null) {
+                // Fill errorResistivityApparent default value if absent
+                if (field === errResAppTextField) {
+                    @Suppress("unchecked_cast")
+                    (field.textFormatter as TextFormatter<Double>).value = ExperimentalData.DEFAULT_ERROR
+                    return@map ""
+                }
+                // Fill resistivityApparent formula calculated default value if absent
+                if (field === resAppTextField) {
+                    val ab2 = ab2TextField.textFormatter.value as Double?
+                    val mn2 = mn2TextField.textFormatter.value as Double?
+                    val amperage = amperageTextField.textFormatter.value as Double?
+                    val voltage = voltageTextField.textFormatter.value as Double?
+                    if (ab2 != null && mn2 != null && amperage != null && voltage != null) {
+                        @Suppress("unchecked_cast")
+                        (field.textFormatter as TextFormatter<Double>)
+                            .value = rhoA(ab2, mn2, amperage, voltage)
+                        return@map ""
+                    }
+                }
+                "${field.promptText}: ${uiProps["invalidInput"]}"
+            } else {
+                validate(value)?.let { (prop, _, _) -> uiProps["invalid.exp.$prop"] } ?: ""
+            }
+        }.filter { it.isNotBlank() }.joinToString(separator = "\n")
 
     @FXML
     private fun add() {
         val newExpDataItem = try {
-            objectMapper.readValue<ExperimentalData>(
-                createJson(
-                    ab2 = ab2TextField.text,
-                    mn2 = mn2TextField.text,
-                    amperage = amperageTextField.text,
-                    voltage = voltageTextField.text,
-                    errorResApp = errResAppTextField.text,
-                    resApp = resAppTextField.text
-                )
+            ExperimentalData(
+                ab2 = ab2TextField.textFormatter.value as Double,
+                mn2 = mn2TextField.textFormatter.value as Double,
+                amperage = amperageTextField.textFormatter.value as Double,
+                resistanceApparent = resAppTextField.textFormatter.value as Double,
+                voltage = voltageTextField.textFormatter.value as Double,
+                errorResistanceApparent = errResAppTextField.textFormatter.value as Double
             )
-        } catch (e: Exception) {
+        } catch (e: InvalidPropertiesException) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
             return
         }
 
-        val violations = validator.validate(newExpDataItem)
-        if (violations.isEmpty()) {
-            historyManager.snapshotAfter {
-                val picket = observableSection.pickets[picketIndex.value]
-                val expData = picket.sortedExperimentalData
-                observableSection.pickets[picketIndex.value] =
-                    picket.copy(experimentalData = expData.toMutableList().apply {
-                        add(newExpDataItem)
-                    })
-            }
-        } else {
-            alertsFactory.violationsAlert(violations, stage).show()
+        historyManager.snapshotAfter {
+            val picket = observableSection.pickets[picketIndex.value]
+            val expData = picket.sortedExperimentalData
+            observableSection.pickets[picketIndex.value] =
+                picket.copy(experimentalData = expData.toMutableList().apply {
+                    add(newExpDataItem)
+                })
         }
     }
 }

@@ -9,13 +9,24 @@
       fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.main.AddExperimentalDataController"
       spacing="5" style="-fx-padding: 10">
+    <Label text="%ab2Full"/>
     <TextField fx:id="ab2TextField" promptText="%ab2"/>
+    <Label text="%mn2Full"/>
     <TextField fx:id="mn2TextField" promptText="%mn2"/>
+    <Label text="%resistanceApparentFull"/>
     <TextField fx:id="resAppTextField" promptText="%resistanceApparent"/>
+    <Label text="%errorResistanceApparentFull"/>
     <TextField fx:id="errResAppTextField" promptText="%errorResistanceApparent"/>
+    <Label text="%amperageFull"/>
     <TextField fx:id="amperageTextField" promptText="%amperage"/>
+    <Label text="%voltageFull"/>
     <TextField fx:id="voltageTextField" promptText="%voltage"/>
-    <Button fx:id="addBtn" text="Добавить измерение" onAction="#add">
+
+    <Label fx:id="invalidMessageLabel" textFill="darkred" VBox.vgrow="NEVER" wrapText="true" visible="false"
+           managed="${invalidMessageLabel.visible}"/>
+
+    <Button text="Добавить измерение" onAction="#add"
+            disable="${invalidMessageLabel.visible}">
         <graphic>
             <ImageView fitWidth="15" fitHeight="15">
                 <Image url="/img/ui_icons/add/2x/round_add_black_24dp.png"/>
