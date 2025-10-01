@@ -111,11 +111,21 @@ class AddExperimentalDataController @Inject constructor(
                         return@map ""
                     }
                 }
-                "${field.promptText}: ${uiProps["invalidInput"]}"
+                "${fullLabelForField(field)}: ${uiProps["invalidInput"]}"
             } else {
                 validate(value)?.let { (prop, _, _) -> uiProps["invalid.exp.$prop"] } ?: ""
             }
         }.filter { it.isNotBlank() }.joinToString(separator = "\n")
+
+    private fun fullLabelForField(field: TextField) = when (field) {
+        ab2TextField -> uiProps["ab2Full"]
+        mn2TextField -> uiProps["mn2Full"]
+        amperageTextField -> uiProps["amperageFull"]
+        voltageTextField -> uiProps["voltageFull"]
+        resAppTextField -> uiProps["resistanceApparentFull"]
+        errResAppTextField -> uiProps["errorResistanceApparentFull"]
+        else -> "Error"
+    }
 
     @FXML
     private fun add() {
