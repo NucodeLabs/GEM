@@ -22,6 +22,22 @@ inline fun <T, E> Result<T, E>.okOrThrow(
 }
 
 @Suppress("unused")
+fun <T, E> Result<T, E>.okOrNull(): T? {
+    return when (this) {
+        is Ok -> value
+        is Err -> null
+    }
+}
+
+@Suppress("unused")
+fun <T, E> Result<T, E>.errorOrNull(): E? {
+    return when (this) {
+        is Err -> error
+        is Ok -> null
+    }
+}
+
+@Suppress("unused")
 inline fun <T, E> Result<T, E>.ifError(action: (E) -> Unit): Result<T, E> {
     if (this is Err) action(error)
     return this

@@ -1,8 +1,5 @@
 package ru.nucodelabs.geo.ves
 
-import ru.nucodelabs.util.Result
-import ru.nucodelabs.util.toErrorResult
-import ru.nucodelabs.util.toOkResult
 import ru.nucodelabs.util.validate
 
 interface ReadOnlyModelLayer {
@@ -55,32 +52,5 @@ data class ModelLayer(
         }
 
         fun isValidResistivity(resist: Double) = resist >= MIN_RESIST
-
-        fun from(
-            modelLayer: ReadOnlyModelLayer
-        ) = new(
-            power = modelLayer.power,
-            resistivity = modelLayer.resistivity,
-            isFixedPower = modelLayer.isFixedPower,
-            isFixedResistivity = modelLayer.isFixedResistivity
-        )
-
-        fun new(
-            power: Double,
-            resistivity: Double,
-            isFixedPower: Boolean = false,
-            isFixedResistivity: Boolean = false
-        ): Result<ModelLayer, List<InvalidPropertyValue>> {
-            return try {
-                ModelLayer(
-                    power,
-                    resistivity,
-                    isFixedPower,
-                    isFixedResistivity
-                ).toOkResult()
-            } catch (e: InvalidPropertiesException) {
-                e.errors.toErrorResult()
-            }
-        }
     }
 }

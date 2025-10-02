@@ -2,7 +2,9 @@ package ru.nucodelabs.geo.ves
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import ru.nucodelabs.util.*
+import ru.nucodelabs.util.Equals
+import ru.nucodelabs.util.hash
+import ru.nucodelabs.util.validate
 import java.util.*
 
 /**
@@ -123,26 +125,6 @@ class Picket private constructor(
         skipExperimentalDataProcessing = this.sortedExperimentalData == experimentalData,
     )
 
-    fun copied(
-        name: String = this.name,
-        experimentalData: List<ExperimentalData> = this.sortedExperimentalData,
-        modelData: List<ModelLayer> = this.modelData,
-        offsetX: Double = this.offsetX,
-        z: Double = this.z,
-        comment: String = this.comment
-    ): Result<Picket, List<InvalidPropertyValue>> = try {
-        copy(
-            name,
-            experimentalData,
-            modelData,
-            offsetX,
-            z,
-            comment,
-        ).toOkResult()
-    } catch (e: InvalidPropertiesException) {
-        e.errors.toErrorResult()
-    }
-
     companion object Meta {
         const val DEFAULT_X_OFFSET = 100.0
         const val DEFAULT_NAME = "Пикет"
@@ -155,27 +137,5 @@ class Picket private constructor(
         fun isValidOffsetX(offsetX: Double): Boolean = offsetX >= MIN_OFFSET_X
 
         fun isValidModelDataSize(modelDataSize: Int): Boolean = modelDataSize <= MAX_MODEL_DATA_SIZE
-
-        fun new(
-            name: String = DEFAULT_NAME,
-            experimentalData: List<ExperimentalData> = emptyList(),
-            modelData: List<ModelLayer> = emptyList(),
-            offsetX: Double = DEFAULT_X_OFFSET,
-            z: Double = DEFAULT_Z,
-            comment: String = DEFAULT_COMMENT
-        ): Result<Picket, List<InvalidPropertyValue>> {
-            return try {
-                Picket(
-                    name,
-                    experimentalData,
-                    modelData,
-                    offsetX,
-                    z,
-                    comment
-                ).toOkResult()
-            } catch (e: InvalidPropertiesException) {
-                e.errors.toErrorResult()
-            }
-        }
     }
 }

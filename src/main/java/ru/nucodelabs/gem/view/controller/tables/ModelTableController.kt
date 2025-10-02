@@ -20,26 +20,21 @@ import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
+import ru.nucodelabs.gem.fxmodel.ves.toObservable
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.InitialModelConfigurationViewController
 import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
-import ru.nucodelabs.geo.ves.ModelLayer
-import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.divide
 import ru.nucodelabs.geo.ves.calc.join
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
-import ru.nucodelabs.geo.ves.toTabulatedTable
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.get
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.Err
-import ru.nucodelabs.util.Ok
-import ru.nucodelabs.util.TextToTableParser
-import ru.nucodelabs.util.toDoubleOrNullBy
+import ru.nucodelabs.util.*
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -482,10 +477,14 @@ class ModelTableController @Inject constructor(
                 2 -> parsedTable.mapIndexed { rowIdx, row ->
                     val pow = row[0].process("H", rowIdx, 0)
                     val res = row[1].process("ρ", rowIdx, 1)
-                    ModelLayer.new(
-                        resistivity = res,
-                        power = pow
-                    )
+                    try {
+                        ModelLayer(
+                            resistivity = res,
+                            power = pow
+                        ).toOkResult()
+                    } catch (e: InvalidPropertiesException) {
+                        e.errors.toErrorResult()
+                    }
                 }
 
                 else -> {
@@ -500,18 +499,18 @@ class ModelTableController @Inject constructor(
                     )
                 }
             }
-            val mapped = ArrayList<ObservableModelLayer>()
-            for (item in pastedItems) {
-                when (item) {
-                    is Err -> {
-                        alertsFactory.simpleAlert(text = item.error.joinToString())
-                        return
-                    }
-
-                    is Ok -> mapped.add(mapper.toObservable(item.value))
-                }
+            val invalidInputMessage = pastedItems
+                .mapNotNull { it.errorOrNull() }
+                .flatten()
+                .map { it.property }
+                .distinct()
+                .joinToString(separator = "\n") { uiProps["invalid.model.$it"] }
+                .takeIf { it.isNotBlank() }
+            if (invalidInputMessage != null) {
+                alertsFactory.invalidInputAlert(invalidInputMessage).show()
+            } else {
+                table.items.setAll(pastedItems.mapNotNull { it.okOrNull() }.map { it.toObservable() })
             }
-            table.items += mapped
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }

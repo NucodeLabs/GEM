@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.controller.tables
 
 import jakarta.inject.Inject
 import jakarta.inject.Provider
-import jakarta.validation.Validator
 import javafx.beans.property.IntegerProperty
 import javafx.beans.value.ObservableObjectValue
 import javafx.collections.ListChangeListener
@@ -24,23 +23,20 @@ import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
+import ru.nucodelabs.gem.fxmodel.ves.toObservable
 import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.CalculateErrorScreenController
 import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
-import ru.nucodelabs.geo.ves.ExperimentalData
-import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.k
 import ru.nucodelabs.geo.ves.calc.u
 import ru.nucodelabs.geo.ves.calc.withCalculatedResistivityApparent
-import ru.nucodelabs.geo.ves.toTabulatedTable
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.TextToTableParser
-import ru.nucodelabs.util.toDoubleOrNullBy
+import ru.nucodelabs.util.*
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -63,7 +59,6 @@ val EXP_HELP_PASTE = """
 
 class ExperimentalTableController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
-    private val validator: Validator,
     private val observableSection: ObservableSection,
     picketIndexProperty: IntegerProperty,
     private val historyManager: HistoryManager<Section>,
@@ -413,39 +408,51 @@ class ExperimentalTableController @Inject constructor(
                 this?.replace(',', '.')?.toDoubleOrNullBy(decimalFormat)
                     ?: throw IllegalArgumentException("${a[col]}${row + 1} - Ожидалось $expected, было $this")
 
-            val pastedItems: List<ExperimentalData> = when (parser.columnsCount) {
+            val pastedItems = when (parser.columnsCount) {
                 3 -> parsedTable.mapIndexed { rowIdx, row ->
                     val ab2 = row[0].process("AB/2", rowIdx, 0)
                     val mn2 = row[1].process("MN/2", rowIdx, 1)
                     val resApp = row[2].process("ρₐ", rowIdx, 2)
                     val amp = 100.0
                     val volt = u(resApp, 100.0, k(ab2, mn2))
-                    ExperimentalData(
-                        ab2 = ab2,
-                        mn2 = mn2,
-                        resistivityApparent = resApp,
-                        amperage = amp,
-                        voltage = volt
-                    )
+                    try {
+                        ExperimentalData(
+                            ab2 = ab2,
+                            mn2 = mn2,
+                            resistivityApparent = resApp,
+                            amperage = amp,
+                            voltage = volt
+                        ).toOkResult()
+                    } catch (e: InvalidPropertiesException) {
+                        e.errors.toErrorResult()
+                    }
                 }
 
                 4 -> parsedTable.mapIndexed { rowIdx, row ->
-                    ExperimentalData(
-                        ab2 = row[0].process("AB/2", rowIdx, 0),
-                        mn2 = row[1].process("MN/2", rowIdx, 1),
-                        voltage = row[2].process("U", rowIdx, 2),
-                        amperage = row[3].process("I", rowIdx, 3)
-                    )
+                    try {
+                        ExperimentalData(
+                            ab2 = row[0].process("AB/2", rowIdx, 0),
+                            mn2 = row[1].process("MN/2", rowIdx, 1),
+                            voltage = row[2].process("U", rowIdx, 2),
+                            amperage = row[3].process("I", rowIdx, 3)
+                        ).toOkResult()
+                    } catch (e: InvalidPropertiesException) {
+                        e.errors.toErrorResult()
+                    }
                 }
 
                 5 -> parsedTable.mapIndexed { rowIdx, row ->
-                    ExperimentalData(
-                        ab2 = row[0].process("AB/2", rowIdx, 0),
-                        mn2 = row[1].process("MN/2", rowIdx, 1),
-                        voltage = row[2].process("U", rowIdx, 2),
-                        amperage = row[3].process("I", rowIdx, 3),
-                        resistivityApparent = row[4].process("ρₐ", rowIdx, 4)
-                    )
+                    try {
+                        ExperimentalData(
+                            ab2 = row[0].process("AB/2", rowIdx, 0),
+                            mn2 = row[1].process("MN/2", rowIdx, 1),
+                            voltage = row[2].process("U", rowIdx, 2),
+                            amperage = row[3].process("I", rowIdx, 3),
+                            resistivityApparent = row[4].process("ρₐ", rowIdx, 4)
+                        ).toOkResult()
+                    } catch (e: InvalidPropertiesException) {
+                        e.errors.toErrorResult()
+                    }
                 }
 
                 else -> {
@@ -460,14 +467,17 @@ class ExperimentalTableController @Inject constructor(
                     )
                 }
             }
-            for (item in pastedItems) {
-                val violations = validator.validate(item)
-                if (violations.isNotEmpty()) {
-                    alertsFactory.violationsAlert(violations, stage).show()
-                    return
-                }
+            val invalidInputMessage = pastedItems.mapNotNull { it.errorOrNull() }
+                .flatten()
+                .map { it.property }
+                .distinct()
+                .joinToString(separator = "\n") { uiProps["invalid.exp.$it"] }
+                .takeIf { it.isNotBlank() }
+            if (invalidInputMessage != null) {
+                alertsFactory.invalidInputAlert(invalidInputMessage).show()
+            } else {
+                table.items.setAll(pastedItems.mapNotNull { it.okOrNull() }.map { it.toObservable() })
             }
-            table.items += pastedItems.map { mapper.toObservable(it) }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }
