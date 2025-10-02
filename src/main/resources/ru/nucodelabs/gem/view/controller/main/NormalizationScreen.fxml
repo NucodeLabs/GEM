@@ -20,7 +20,7 @@
                             <LogarithmicAxis fx:id="xAxis" label="%ab2" animated="false"/>
                         </xAxis>
                         <yAxis>
-                            <LogarithmicAxis fx:id="yAxis" label="%resistanceApparent" animated="false"/>
+                            <LogarithmicAxis fx:id="yAxis" label="%resistivityApparent" animated="false"/>
                         </yAxis>
                     </LineChart>
                     <TableView fx:id="mn2Table" maxWidth="300" prefWidth="300" minWidth="300">

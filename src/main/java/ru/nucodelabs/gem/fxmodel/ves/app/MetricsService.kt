@@ -18,8 +18,8 @@ class MetricsService @Inject constructor(
     fun targetFunctionValue(signals: List<ExperimentalData>, model: List<ModelLayer>): Double {
         return targetFunction(
             forwardSolver(signals, model),
-            signals.map { it.resistanceApparent },
-            signals.map { it.errorResistanceApparent }
+            signals.map { it.resistivityApparent },
+            signals.map { it.errorResistivityApparent }
         )
     }
 
@@ -36,7 +36,7 @@ class MetricsService @Inject constructor(
 
     fun misfitsValue(signals: List<ExperimentalData>, model: List<ModelLayer>): List<Double> {
         val theor = forwardSolver(signals, model)
-        val exp = signals.map { it.resistanceApparent }
+        val exp = signals.map { it.resistivityApparent }
         return exp.mapIndexed { idx, resApp -> ((resApp - theor[idx]) / resApp) * 100 }
     }
 

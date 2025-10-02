@@ -29,7 +29,7 @@ class ModelCurveDragger
     val yAxis: ValueAxis<Number>
 ) {
     // mapping: point on chart --> index of the value in data model arrays
-    private lateinit var pointResistanceMap: MutableMap<Data<*, *>, Int>
+    private lateinit var pointResistMap: MutableMap<Data<*, *>, Int>
     private lateinit var pointPowerMap: MutableMap<Data<*, *>, Int>
 
     // ends of line to be dragged
@@ -91,7 +91,7 @@ class ModelCurveDragger
         if (point1 != null && point2 != null) {
             val style = """
                     -fx-background-color: blue;
-                    """
+                    """.trim()
             point1!!.node.lookup(".chart-line-symbol").style = style
             point2!!.node.lookup(".chart-line-symbol").style = style
         }
@@ -147,11 +147,11 @@ class ModelCurveDragger
             } else if (point1!!.yValue == point2!!.yValue // горизонтальная линия
                 && mouseY > lowerLimitY
             ) {
-                val index = pointResistanceMap[point1!!]!!
+                val index = pointResistMap[point1!!]!!
 
                 point1!!.yValue = mouseY
                 point2!!.yValue = mouseY
-                mutableModelData[index] = mutableModelData[index].copy(resistance = mouseY)
+                mutableModelData[index] = mutableModelData[index].copy(resistivity = mouseY)
 
             }
         }
@@ -165,22 +165,22 @@ class ModelCurveDragger
      */
     private fun mapModelData(modelData: List<ModelLayer>) {
         val errMsg = "ModelData array size: %d does not match mapping size: %d"
-        pointResistanceMap = HashMap()
+        pointResistMap = HashMap()
         val points = vesCurvesData.get()[modelCurveIndex].data
         run {
             var i = 0
             var j = 0
             while (i < points.size) {
-                pointResistanceMap[points[i]] = j
-                pointResistanceMap[points[i + 1]] = j
+                pointResistMap[points[i]] = j
+                pointResistMap[points[i + 1]] = j
                 i += 2
                 j++
             }
         }
-        require(pointResistanceMap.values.stream().distinct().count() == modelData.size.toLong()) {
+        require(pointResistMap.values.stream().distinct().count() == modelData.size.toLong()) {
             String.format(
                 errMsg,
-                pointResistanceMap.values.stream().distinct().count(),
+                pointResistMap.values.stream().distinct().count(),
                 modelData.size
             )
         }

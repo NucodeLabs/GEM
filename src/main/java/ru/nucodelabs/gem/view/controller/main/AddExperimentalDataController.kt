@@ -81,14 +81,17 @@ class AddExperimentalDataController @Inject constructor(
         fields.forEach { (field, _) -> field.textFormatter = TextFormatter(converter) }
         invalidMessageLabel.textProperty().bind(
             Bindings.createStringBinding(
-                { invalidInputMessage(fields) },
+                { validateAndFillDefaults(fields) },
                 *fields.map { (field, _) -> field.textProperty() }.toTypedArray()
             )
         )
         invalidMessageLabel.visibleProperty().bind(invalidMessageLabel.textProperty().map { it.isNotBlank() })
     }
 
-    private fun invalidInputMessage(fields: List<Pair<TextField, (Double) -> InvalidPropertyValue?>>): String =
+    /**
+     * Returns error message
+     */
+    private fun validateAndFillDefaults(fields: List<Pair<TextField, (Double) -> InvalidPropertyValue?>>): String =
         fields.map { (field, validate) ->
             val value = field.textFormatter.value as Double?
             return@map if (value == null) {
@@ -122,8 +125,8 @@ class AddExperimentalDataController @Inject constructor(
         mn2TextField -> uiProps["mn2Full"]
         amperageTextField -> uiProps["amperageFull"]
         voltageTextField -> uiProps["voltageFull"]
-        resAppTextField -> uiProps["resistanceApparentFull"]
-        errResAppTextField -> uiProps["errorResistanceApparentFull"]
+        resAppTextField -> uiProps["resistivityApparentFull"]
+        errResAppTextField -> uiProps["errorResistivityApparentFull"]
         else -> "Error"
     }
 
@@ -134,9 +137,9 @@ class AddExperimentalDataController @Inject constructor(
                 ab2 = ab2TextField.textFormatter.value as Double,
                 mn2 = mn2TextField.textFormatter.value as Double,
                 amperage = amperageTextField.textFormatter.value as Double,
-                resistanceApparent = resAppTextField.textFormatter.value as Double,
+                resistivityApparent = resAppTextField.textFormatter.value as Double,
                 voltage = voltageTextField.textFormatter.value as Double,
-                errorResistanceApparent = errResAppTextField.textFormatter.value as Double
+                errorResistivityApparent = errResAppTextField.textFormatter.value as Double
             )
         } catch (e: InvalidPropertiesException) {
             alertsFactory.simpleExceptionAlert(e, stage).show()

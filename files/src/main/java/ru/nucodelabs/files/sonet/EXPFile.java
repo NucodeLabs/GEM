@@ -16,8 +16,8 @@ public class EXPFile {
 
     private ArrayList<Double> amperage; // Ток, мА
     private ArrayList<Double> voltage; // Напряжение, мВ
-    private ArrayList<Double> resistanceApparent; // Сопротивление кажущееся, Ом * м
-    private ArrayList<Double> errorResistanceApparent; // Погрешность, %
+    private ArrayList<Double> resistivityApparent; // Сопротивление кажущееся, Ом * м
+    private ArrayList<Double> errorResistivityApparent; // Погрешность, %
     private ArrayList<Double> polarizationApparent; // Поляризация кажущаяся, %
     private ArrayList<Double> errorPolarizationApparent; // Погрешность, %
 
@@ -31,8 +31,8 @@ public class EXPFile {
         checked = "";
         amperage = new ArrayList<>();
         voltage = new ArrayList<>();
-        resistanceApparent = new ArrayList<>();
-        errorResistanceApparent = new ArrayList<>();
+        resistivityApparent = new ArrayList<>();
+        errorResistivityApparent = new ArrayList<>();
         polarizationApparent = new ArrayList<>();
         errorPolarizationApparent = new ArrayList<>();
     }
@@ -98,12 +98,12 @@ public class EXPFile {
         return voltage;
     }
 
-    public ArrayList<Double> getResistanceApparent() {
-        return resistanceApparent;
+    public ArrayList<Double> getResistivityApparent() {
+        return resistivityApparent;
     }
 
-    public ArrayList<Double> getErrorResistanceApparent() {
-        return errorResistanceApparent;
+    public ArrayList<Double> getErrorResistivityApparent() {
+        return errorResistivityApparent;
     }
 
     public ArrayList<Double> getPolarizationApparent() {
@@ -134,12 +134,12 @@ public class EXPFile {
         this.voltage = voltage;
     }
 
-    public void setResistanceApparent(ArrayList<Double> resistanceApparent) {
-        this.resistanceApparent = resistanceApparent;
+    public void setResistivityApparent(ArrayList<Double> resistivityApparent) {
+        this.resistivityApparent = resistivityApparent;
     }
 
-    public void setErrorResistanceApparent(ArrayList<Double> errorResistanceApparent) {
-        this.errorResistanceApparent = errorResistanceApparent;
+    public void setErrorResistivityApparent(ArrayList<Double> errorResistivityApparent) {
+        this.errorResistivityApparent = errorResistivityApparent;
     }
 
     public void setPolarizationApparent(ArrayList<Double> polarizationApparent) {

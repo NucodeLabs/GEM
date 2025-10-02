@@ -67,7 +67,7 @@ class CurvesPseudoSectionController @Inject constructor(
         val pair = pointMap[point]
         val n = pair?.first?.plus(1)
         val ab2 = decimalFormat.format(pair?.second?.ab2)
-        val res = decimalFormat.format(pair?.second?.resistanceApparent)
+        val res = decimalFormat.format(pair?.second?.resistivityApparent)
         return Tooltip(
             """
                 №$n

@@ -13,8 +13,8 @@ class ObservableExperimentalData(
     mn2: Double,
     amperage: Double,
     voltage: Double,
-    resistanceApparent: Double,
-    errorResistanceApparent: Double,
+    resistivityApparent: Double,
+    errorResistivityApparent: Double,
     isHidden: Boolean
 ) : MutableExperimentalSignal {
     private val ab2Property = ConstrainedDoubleProperty(
@@ -49,21 +49,21 @@ class ObservableExperimentalData(
     fun voltageProperty() = voltageProperty
     override var voltage by voltageProperty
 
-    private val resistanceApparentProperty = ConstrainedDoubleProperty(
-        resistanceApparent,
+    private val resistivityApparentProperty = ConstrainedDoubleProperty(
+        resistivityApparent,
         ExperimentalData::isValidResistApparent
     )
 
-    fun resistanceApparentProperty() = resistanceApparentProperty
-    override var resistanceApparent by resistanceApparentProperty
+    fun resistivityApparentProperty() = resistivityApparentProperty
+    override var resistivityApparent by resistivityApparentProperty
 
-    private val errorResistanceApparentProperty = ConstrainedDoubleProperty(
-        errorResistanceApparent,
+    private val errorResistivityApparentProperty = ConstrainedDoubleProperty(
+        errorResistivityApparent,
         ExperimentalData::isValidErrResistApparent
     )
 
-    fun errorResistanceApparentProperty() = errorResistanceApparentProperty
-    override var errorResistanceApparent by errorResistanceApparentProperty
+    fun errorResistivityApparentProperty() = errorResistivityApparentProperty
+    override var errorResistivityApparent by errorResistivityApparentProperty
 
     private val hiddenProperty = SimpleBooleanProperty(isHidden)
     fun hiddenProperty() = hiddenProperty
@@ -71,4 +71,4 @@ class ObservableExperimentalData(
 }
 
 fun ReadOnlyExperimentalSignal.toObservable() =
-    ObservableExperimentalData(ab2, mn2, amperage, voltage, resistanceApparent, errorResistanceApparent, isHidden)
+    ObservableExperimentalData(ab2, mn2, amperage, voltage, resistivityApparent, errorResistivityApparent, isHidden)

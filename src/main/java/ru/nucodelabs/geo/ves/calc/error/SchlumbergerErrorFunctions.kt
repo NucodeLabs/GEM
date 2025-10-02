@@ -28,7 +28,7 @@ data class ValueMinMaxAvgError(
     val error: Double,
 )
 
-fun resistanceApparentWithError(
+fun resistivityApparentWithError(
     isNew: Boolean,
     k: ValueMinMax,
     u: ValueMinMax,
@@ -87,10 +87,10 @@ fun resistanceApparentWithError(
 //
 //    return ValueMinMaxAvgError(Rok, Rok_min, Rok_max, Rok_avg, Rok_err)
 
-fun resistanceApparentErrorForDistance(
+fun resistivityApparentErrorForDistance(
     isNew: Boolean, k: ValueMinMax, u: Double, i: Double
 ): Double {
-    return resistanceApparentWithError(
+    return resistivityApparentWithError(
         isNew,
         k,
         measureError(u, 0.0, 0.0).withValue(u),
@@ -98,10 +98,10 @@ fun resistanceApparentErrorForDistance(
     ).error
 }
 
-fun resistanceApparentErrorForAmperage(
+fun resistivityApparentErrorForAmperage(
     isNew: Boolean, i: ValueMinMax, ab2: Double, mn2: Double, u: Double
 ): Double {
-    return resistanceApparentWithError(
+    return resistivityApparentWithError(
         isNew,
         kWithError(ab2, mn2, 0.0, 0.0),
         measureError(u, 0.0, 0.0).withValue(u),
@@ -109,10 +109,10 @@ fun resistanceApparentErrorForAmperage(
     ).error
 }
 
-fun resistanceApparentErrorForVoltage(
+fun resistivityApparentErrorForVoltage(
     isNew: Boolean, u: ValueMinMax, ab2: Double, mn2: Double, i: Double
 ): Double {
-    return resistanceApparentWithError(
+    return resistivityApparentWithError(
         isNew,
         kWithError(ab2, mn2, 0.0, 0.0),
         u,

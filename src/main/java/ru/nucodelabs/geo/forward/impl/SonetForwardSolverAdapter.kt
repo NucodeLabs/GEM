@@ -10,10 +10,10 @@ class SonetForwardSolverAdapter : ForwardSolver {
         experimentalAb2: List<Double>,
         experimentalMn2: List<Double>,
         modelPower: List<Double>,
-        modelResistance: List<Double>
+        modelResistivity: List<Double>
     ): List<Double> {
         return solver.solve(
-            modelResistance.toDoubleArray(),
+            modelResistivity.toDoubleArray(),
             modelPower.toDoubleArray(),
             modelPower.size,
             experimentalAb2.toDoubleArray(),

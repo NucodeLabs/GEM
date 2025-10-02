@@ -97,11 +97,11 @@
             <TableColumn fx:id="indexCol" maxWidth="35" prefWidth="35" sortable="false" text="№"
                          styleClass="centered-column"
                          resizable="false" editable="false"/>
-            <TableColumn fx:id="resistanceCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0" sortable="false">
+            <TableColumn fx:id="resCol" maxWidth="Infinity" minWidth="20.0" prefWidth="100.0" sortable="false">
                 <graphic>
-                    <Label text="%resistance">
+                    <Label text="%resistivity">
                         <tooltip>
-                            <Tooltip text="%resistanceFull"/>
+                            <Tooltip text="%resistivityFull"/>
                         </tooltip>
                     </Label>
                 </graphic>

@@ -59,7 +59,7 @@ class MapPseudoSectionController @Inject constructor(
                     Data(
                         section.xOfPicket(picketIdx) as Number,
                         expData.ab2 as Number,
-                        expData.resistanceApparent
+                        expData.resistivityApparent
                     ).also { pointMap += it to indexMapping[index] }
                 )
             }

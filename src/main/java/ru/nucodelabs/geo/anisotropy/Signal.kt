@@ -14,8 +14,8 @@ import ru.nucodelabs.geo.ves.calc.u
  * @property mn2 MN/2, м
  * @property amperage Ток, мА
  * @property voltage Напряжение, мВ
- * @property resistanceApparent Сопротивление кажущееся, Ом * м
- * @property errorResistanceApparent Погрешность, %
+ * @property resistivityApparent Сопротивление кажущееся, Ом * м
+ * @property errorResistivityApparent Погрешность, %
  * @property isHidden Отключена для интерпретации
  */
 data class Signal(
@@ -23,8 +23,8 @@ data class Signal(
     @field:Positive val mn2: Double,
     @field:Min(0) var amperage: Double,
     @field:Min(0) var voltage: Double,
-    @field:DecimalMin(MIN_RESISTANCE.toString()) var resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
-    @field:Min(0) @field:Max(100) var errorResistanceApparent: Double = DEFAULT_ERROR,
+    @field:DecimalMin(MIN_RESISTIVITY.toString()) var resistivityApparent: Double = rhoA(ab2, mn2, amperage, voltage),
+    @field:Min(0) @field:Max(100) var errorResistivityApparent: Double = DEFAULT_ERROR,
     val isHidden: Boolean = false
 ) {
     companion object Factory {
@@ -33,18 +33,18 @@ data class Signal(
         fun withCalculatedVoltage(
             ab2: Double,
             mn2: Double,
-            resistanceApparent: Double,
+            resistivityApparent: Double,
             amperage: Double = DEFAULT_AMPERAGE,
-            voltage: Double = u(resistanceApparent, amperage, k(ab2, mn2)),
-            errorResistanceApparent: Double = DEFAULT_ERROR,
+            voltage: Double = u(resistivityApparent, amperage, k(ab2, mn2)),
+            errorResistivityApparent: Double = DEFAULT_ERROR,
             isHidden: Boolean = false
         ) = Signal(
             ab2 = ab2,
             mn2 = mn2,
             amperage = amperage,
             voltage = voltage,
-            resistanceApparent = resistanceApparent,
-            errorResistanceApparent = errorResistanceApparent,
+            resistivityApparent = resistivityApparent,
+            errorResistivityApparent = errorResistivityApparent,
             isHidden = isHidden
         )
     }

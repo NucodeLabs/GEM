@@ -34,7 +34,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.k
 import ru.nucodelabs.geo.ves.calc.u
-import ru.nucodelabs.geo.ves.calc.withCalculatedResistanceApparent
+import ru.nucodelabs.geo.ves.calc.withCalculatedResistivityApparent
 import ru.nucodelabs.geo.ves.toTabulatedTable
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
@@ -97,10 +97,10 @@ class ExperimentalTableController @Inject constructor(
     private lateinit var mn2Col: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var resistanceApparentCol: TableColumn<ObservableExperimentalData, Number>
+    private lateinit var resAppCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
-    private lateinit var errorResistanceCol: TableColumn<ObservableExperimentalData, Number>
+    private lateinit var errorResCol: TableColumn<ObservableExperimentalData, Number>
 
     @FXML
     private lateinit var amperageCol: TableColumn<ObservableExperimentalData, Number>
@@ -188,16 +188,16 @@ class ExperimentalTableController @Inject constructor(
 
         ab2Col.cellValueFactory = Callback { features -> features.value.ab2Property() }
         mn2Col.cellValueFactory = Callback { features -> features.value.mn2Property() }
-        resistanceApparentCol.cellValueFactory = Callback { features -> features.value.resistanceApparentProperty() }
-        errorResistanceCol.cellValueFactory = Callback { features -> features.value.errorResistanceApparentProperty() }
+        resAppCol.cellValueFactory = Callback { features -> features.value.resistivityApparentProperty() }
+        errorResCol.cellValueFactory = Callback { features -> features.value.errorResistivityApparentProperty() }
         amperageCol.cellValueFactory = Callback { features -> features.value.amperageProperty() }
         voltageCol.cellValueFactory = Callback { features -> features.value.voltageProperty() }
 
         val editableColumns = listOf(
             ab2Col to ExperimentalData::validateAb2,
             mn2Col to ExperimentalData::validateMn2,
-            resistanceApparentCol to ExperimentalData::validateResistApparent,
-            errorResistanceCol to ExperimentalData::validateErrResistApparent,
+            resAppCol to ExperimentalData::validateResistApparent,
+            errorResCol to ExperimentalData::validateErrResistApparent,
             amperageCol to ExperimentalData::validateAmperage,
             voltageCol to ExperimentalData::validateVoltage,
         )
@@ -243,16 +243,11 @@ class ExperimentalTableController @Inject constructor(
                             editor.also { tf ->
                                 tf.textFormatter = TextFormatter(
                                     DoubleValidationConverter(decimalFormat) { value ->
-                                        val violations = validator.validateValue(
-                                            ExperimentalData::class.java,
-                                            "errorResistanceApparent",
-                                            value
-                                        )
-                                        violations.isEmpty().also { valid ->
-                                            if (!valid) {
-                                                alertsFactory.violationsAlert(violations, stage).show()
-                                            }
+                                        ExperimentalData.validateErrResistApparent(value)?.let { (prop, _, _) ->
+                                            alertsFactory.invalidInputAlert(uiProps["invalid.exp.$prop"]).show()
+                                            return@DoubleValidationConverter false
                                         }
+                                        true
                                     },
                                     5.0,
                                     decimalFilter(decimalFormat)
@@ -311,10 +306,10 @@ class ExperimentalTableController @Inject constructor(
         items.forEach { expData ->
             expData.ab2Property().addListener { _, oldAb2, newAb2 -> commitChanges() }
             expData.mn2Property().addListener { _, oldMn2, newMn2 -> commitChanges() }
-            expData.errorResistanceApparentProperty().addListener { _, oldErr, newErr -> commitChanges() }
+            expData.errorResistivityApparentProperty().addListener { _, oldErr, newErr -> commitChanges() }
             expData.amperageProperty().addListener { _, oldAmp, newAmp -> commitChanges() }
             expData.voltageProperty().addListener { _, oldVolt, newVolt -> commitChanges() }
-            expData.resistanceApparentProperty().addListener { _, oldRes, newRes -> commitChanges() }
+            expData.resistivityApparentProperty().addListener { _, oldRes, newRes -> commitChanges() }
             expData.hiddenProperty().addListener { _, _, isHidden ->
                 if (table.selectionModel.selectedItems.isEmpty()) {
                     toggleSingleHidden(expData, isHidden)
@@ -385,7 +380,7 @@ class ExperimentalTableController @Inject constructor(
     private fun setErrorOnSelected(error: Double) {
         val items = table.items.map { mapper.toModel(it) }.toMutableList()
         for (i in table.selectionModel.selectedIndices) {
-            items[i] = items[i].copy(errorResistanceApparent = error)
+            items[i] = items[i].copy(errorResistivityApparent = error)
         }
         table.items.setAll(items.map { mapper.toObservable(it) })
     }
@@ -400,7 +395,7 @@ class ExperimentalTableController @Inject constructor(
         val experimentalData = table.items.map { mapper.toModel(it) }.toMutableList()
 
         for (i in table.selectionModel.selectedIndices) {
-            experimentalData[i] = experimentalData[i].withCalculatedResistanceApparent()
+            experimentalData[i] = experimentalData[i].withCalculatedResistivityApparent()
         }
 
         table.items.setAll(experimentalData.map { mapper.toObservable(it) })
@@ -428,7 +423,7 @@ class ExperimentalTableController @Inject constructor(
                     ExperimentalData(
                         ab2 = ab2,
                         mn2 = mn2,
-                        resistanceApparent = resApp,
+                        resistivityApparent = resApp,
                         amperage = amp,
                         voltage = volt
                     )
@@ -449,7 +444,7 @@ class ExperimentalTableController @Inject constructor(
                         mn2 = row[1].process("MN/2", rowIdx, 1),
                         voltage = row[2].process("U", rowIdx, 2),
                         amperage = row[3].process("I", rowIdx, 3),
-                        resistanceApparent = row[4].process("ρₐ", rowIdx, 4)
+                        resistivityApparent = row[4].process("ρₐ", rowIdx, 4)
                     )
                 }
 

@@ -13,6 +13,7 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.stage.Stage
 import javafx.util.Callback
+import javafx.util.StringConverter
 import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.fxmodel.ves.ObservableExperimentalData
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
@@ -24,6 +25,7 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.error.*
 import ru.nucodelabs.kfx.ext.DoubleValidationConverter
+import ru.nucodelabs.kfx.ext.get
 import ru.nucodelabs.kfx.ext.observableListOf
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
@@ -49,7 +51,8 @@ class CalculateErrorScreenController @Inject constructor(
     private val historyManager: HistoryManager<Section>,
     private val observablePicket: ObservableObjectValue<Picket>,
     private val picketIndexProp: IntegerProperty,
-    private val vesFxModelMapper: VesFxModelMapper
+    private val vesFxModelMapper: VesFxModelMapper,
+    private val uiProps: ResourceBundle
 ) : AbstractController() {
     @FXML
     private lateinit var errorFormula: ComboBox<ErrorFunctionType>
@@ -61,7 +64,7 @@ class CalculateErrorScreenController @Inject constructor(
     private lateinit var chart: LineChart<Number, Number>
 
     @FXML
-    private lateinit var errorResistanceCol: TableColumn<ObservableExperimentalData, String>
+    private lateinit var errorResCol: TableColumn<ObservableExperimentalData, String>
 
     @FXML
     private lateinit var resCol: TableColumn<ObservableExperimentalData, String>
@@ -114,12 +117,8 @@ class CalculateErrorScreenController @Inject constructor(
     val data = observableListOf<ExperimentalData>()
 
     private enum class ErrorFunctionType {
-        USING_VARIANCE {
-            override fun toString(): String = "По правилу трех сигма (по дисперсии)"
-        },
-        USING_TRUST_INTERVALS {
-            override fun toString(): String = "По доверительным интервалам"
-        }
+        USING_VARIANCE,
+        USING_TRUST_INTERVALS
     }
 
     private lateinit var errorFunctionVersion: ErrorFunctionType
@@ -148,25 +147,29 @@ class CalculateErrorScreenController @Inject constructor(
 
     private fun listenToItems() {
         table.items.forEach { item ->
-            item.resistanceApparentProperty().addListener { _, _, _ -> updateChart() }
-            item.errorResistanceApparentProperty().addListener { _, _, _ -> updateChart() }
+            item.resistivityApparentProperty().addListener { _, _, _ -> updateChart() }
+            item.errorResistivityApparentProperty().addListener { _, _, _ -> updateChart() }
         }
     }
 
     private fun Number.fmt(): String = df.format(this)
 
     private fun setupComboBox() {
-        errorFormula.items.setAll(ErrorFunctionType.USING_VARIANCE, ErrorFunctionType.USING_TRUST_INTERVALS)
-        errorFormula.selectionModel.selectedItemProperty().addListener { _, _, newValue: ErrorFunctionType ->
-            errorFunctionVersion = when (newValue) {
-                ErrorFunctionType.USING_VARIANCE -> {
-                    ErrorFunctionType.USING_VARIANCE
-                }
-
-                ErrorFunctionType.USING_TRUST_INTERVALS -> {
-                    ErrorFunctionType.USING_TRUST_INTERVALS
+        errorFormula.items.setAll(ErrorFunctionType.entries)
+        errorFormula.converter = object : StringConverter<ErrorFunctionType>() {
+            override fun toString(value: ErrorFunctionType?): String? {
+                return when (value) {
+                    ErrorFunctionType.USING_VARIANCE -> uiProps["errorFunction.usingVariance"]
+                    ErrorFunctionType.USING_TRUST_INTERVALS -> uiProps["errorFunction.usingTrustIntervals"]
+                    null -> null
                 }
             }
+
+            override fun fromString(value: String?): ErrorFunctionType? = null
+
+        }
+        errorFormula.selectionModel.selectedItemProperty().addListener { _, _, newValue: ErrorFunctionType ->
+            errorFunctionVersion = newValue
         }
         errorFormula.selectionModel.selectFirst()
     }
@@ -269,7 +272,7 @@ class CalculateErrorScreenController @Inject constructor(
             createStringBinding(
                 {
                     val (_, _, _, avg, _) = resAppWithError(vesFxModelMapper.toModel(f.value))
-                    f.value.resistanceApparent = avg
+                    f.value.resistivityApparent = avg
                     avg.fmt()
                 },
                 f.value.ab2Property(),
@@ -282,11 +285,11 @@ class CalculateErrorScreenController @Inject constructor(
                 errorFormula.selectionModel.selectedItemProperty()
             )
         }
-        errorResistanceCol.cellValueFactory = Callback { f ->
+        errorResCol.cellValueFactory = Callback { f ->
             createStringBinding(
                 {
                     val (_, _, _, _, error) = resAppWithError(vesFxModelMapper.toModel(f.value))
-                    f.value.errorResistanceApparent = error
+                    f.value.errorResistivityApparent = error
                     error.fmt()
                 },
                 f.value.ab2Property(),
@@ -318,11 +321,11 @@ class CalculateErrorScreenController @Inject constructor(
             iAErrorTf.textFormatter.value as Double,
             iBErrorTf.textFormatter.value as Double
         ).withValue(data.amperage)
-        return resistanceApparentWithError(errorFunctionVersion == ErrorFunctionType.USING_VARIANCE, k, u, i)
+        return resistivityApparentWithError(errorFunctionVersion == ErrorFunctionType.USING_VARIANCE, k, u, i)
     }
 
     private fun resAppErrorForDist(data: ExperimentalData) =
-        resistanceApparentErrorForDistance(
+        resistivityApparentErrorForDistance(
             errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             kWithError(
                 data.ab2,
@@ -335,7 +338,7 @@ class CalculateErrorScreenController @Inject constructor(
         )
 
     private fun resAppErrorForVolt(data: ExperimentalData) =
-        resistanceApparentErrorForVoltage(
+        resistivityApparentErrorForVoltage(
             errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             measureError(
                 data.voltage,
@@ -348,7 +351,7 @@ class CalculateErrorScreenController @Inject constructor(
         )
 
     private fun resAppErrorForAmp(data: ExperimentalData) =
-        resistanceApparentErrorForAmperage(
+        resistivityApparentErrorForAmperage(
             errorFunctionVersion == ErrorFunctionType.USING_VARIANCE,
             measureError(
                 data.amperage,
@@ -412,8 +415,8 @@ class CalculateErrorScreenController @Inject constructor(
         val modifiedData = observablePicket.get().sortedExperimentalData.toMutableList().also { list ->
             list.replaceAll {
                 if (it in data) it.copy(
-                    resistanceApparent = table.items[data.indexOf(it)].resistanceApparent,
-                    errorResistanceApparent = table.items[data.indexOf(it)].errorResistanceApparent
+                    resistivityApparent = table.items[data.indexOf(it)].resistivityApparent,
+                    errorResistivityApparent = table.items[data.indexOf(it)].errorResistivityApparent
                 ) else it
             }
         }

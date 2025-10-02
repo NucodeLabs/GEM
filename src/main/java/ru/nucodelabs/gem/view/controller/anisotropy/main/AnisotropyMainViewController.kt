@@ -93,7 +93,7 @@ class AnisotropyMainViewController @Inject constructor(
     private lateinit var zCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
-    private lateinit var resistanceCol: TableColumn<ObservableModelLayer, Double>
+    private lateinit var resistivityCol: TableColumn<ObservableModelLayer, Double>
 
     @FXML
     private lateinit var powerCol: TableColumn<ObservableModelLayer, Double>
@@ -126,7 +126,7 @@ class AnisotropyMainViewController @Inject constructor(
     private lateinit var vesCurvesAxisY: NucodeNumberAxis
 
     @FXML
-    lateinit var azimuthDropdown: ComboBox<ObservableAzimuthSignals>
+    private lateinit var azimuthDropdown: ComboBox<ObservableAzimuthSignals>
 
     @FXML
     private lateinit var transparencySlider: Slider
@@ -143,10 +143,10 @@ class AnisotropyMainViewController @Inject constructor(
     private lateinit var amperageCol: TableColumn<ObservableSignal, Double>
 
     @FXML
-    private lateinit var errorResistanceCol: TableColumn<ObservableSignal, Double>
+    private lateinit var errorResistivityCol: TableColumn<ObservableSignal, Double>
 
     @FXML
-    private lateinit var resistanceApparentCol: TableColumn<ObservableSignal, Double>
+    private lateinit var resistivityApparentCol: TableColumn<ObservableSignal, Double>
 
     @FXML
     private lateinit var mn2Col: TableColumn<ObservableSignal, Double>
@@ -332,7 +332,7 @@ class AnisotropyMainViewController @Inject constructor(
         )
         modelIndexCol.cellFactory = indexCellFactory()
         powerCol.cellValueFactory = Callback { features -> features.value.power.valueProperty() }
-        resistanceCol.cellValueFactory = Callback { features -> features.value.resistance.valueProperty() }
+        resistivityCol.cellValueFactory = Callback { features -> features.value.resistivity.valueProperty() }
         verticalAnisotropyCoefCol.cellValueFactory =
             Callback { features -> features.value.verticalAnisotropyCoefficient.valueProperty() }
         azimuthAnisotropyCoefCol.cellValueFactory =
@@ -361,7 +361,7 @@ class AnisotropyMainViewController @Inject constructor(
 
         val editableColumns = listOf(
             powerCol,
-            resistanceCol,
+            resistivityCol,
             verticalAnisotropyCoefCol,
             azimuthAnisotropyCoefCol,
             azimuthCol
@@ -380,9 +380,9 @@ class AnisotropyMainViewController @Inject constructor(
                             }
                         }
 
-                        resistanceCol -> indexProperty().addListener { _, _, _ ->
+                        resistivityCol -> indexProperty().addListener { _, _, _ ->
                             if (index >= 0 && index <= appModel.observablePoint.model.lastIndex) {
-                                style = if (appModel.observablePoint.model[index].resistance.isFixed) {
+                                style = if (appModel.observablePoint.model[index].resistivity.isFixed) {
                                     STYLE_FOR_FIXED
                                 } else {
                                     ""
@@ -451,10 +451,10 @@ class AnisotropyMainViewController @Inject constructor(
         isHiddenCol.cellValueFactory = Callback { features -> features.value.hiddenProperty().bidirectionalNot() }
         ab2Col.cellValueFactory = Callback { features -> features.value.ab2Property().asObject() }
         mn2Col.cellValueFactory = Callback { features -> features.value.mn2Property().asObject() }
-        resistanceApparentCol.cellValueFactory =
-            Callback { features -> features.value.resistanceApparentProperty().asObject() }
-        errorResistanceCol.cellValueFactory =
-            Callback { features -> features.value.errorResistanceApparentProperty().asObject() }
+        resistivityApparentCol.cellValueFactory =
+            Callback { features -> features.value.resistivityApparentProperty().asObject() }
+        errorResistivityCol.cellValueFactory =
+            Callback { features -> features.value.errorResistivityApparentProperty().asObject() }
         amperageCol.cellValueFactory = Callback { features -> features.value.amperageProperty().asObject() }
         voltageCol.cellValueFactory = Callback { features -> features.value.voltageProperty().asObject() }
     }
@@ -467,8 +467,8 @@ class AnisotropyMainViewController @Inject constructor(
         val editableColumns = listOf(
             ab2Col,
             mn2Col,
-            resistanceApparentCol,
-            errorResistanceCol,
+            resistivityApparentCol,
+            errorResistivityCol,
             amperageCol,
             voltageCol
         )
@@ -524,7 +524,7 @@ class AnisotropyMainViewController @Inject constructor(
         val index = pointIndex / 2
         val ab2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].ab2
         val mn2 = appModel.observablePoint.azimuthSignals[seriesIndex].signals.effectiveSignals[index].mn2
-        val resistance = point.extraValue as Double
+        val resistivity = point.extraValue as Double
         val azimuth: Double = if (pointIndex % 2 == 0) {
             appModel.observablePoint.azimuthSignals[seriesIndex].azimuth
         } else {
@@ -534,7 +534,7 @@ class AnisotropyMainViewController @Inject constructor(
             № ${index + 1}
             AB/2 = ${df.format(ab2)} m
             MN/2 = ${df.format(mn2)} m
-            ρₐ = ${df.format(resistance)} Ω‧m
+            ρₐ = ${df.format(resistivity)} Ω‧m
             Азимут = ${df.format(azimuth)} °
         """.trimIndent()
         return Tooltip(tooltipText).shownOnHover()
@@ -566,14 +566,14 @@ class AnisotropyMainViewController @Inject constructor(
         val signal = point.extraValue as ObservableSignal
         val ab2 = signal.ab2
         val mn2 = signal.mn2
-        val resistance = signal.resistanceApparent
+        val resistivity = signal.resistivityApparent
 
         return Tooltip(
             """
                 № ${pointIndex + 1}
                 AB/2 = ${df.format(ab2)} m
                 MN/2 = ${df.format(mn2)} m
-                ρₐ = ${df.format(resistance)} Ω‧m
+                ρₐ = ${df.format(resistivity)} Ω‧m
             """.trimIndent()
         ).shownOnHover()
     }

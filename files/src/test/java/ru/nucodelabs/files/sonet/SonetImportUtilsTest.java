@@ -41,12 +41,12 @@ class SonetImportUtilsTest {
         System.out.println(exp.getOperator());
         System.out.println(exp.getInterpreter());
         System.out.println(exp.getChecked());
-        for (int i = 0; i < exp.getResistanceApparent().size(); i++) {
+        for (int i = 0; i < exp.getResistivityApparent().size(); i++) {
             System.out.println(
                     checkNull.apply(exp.getAmperage().get(i)) + "   "
                             + checkNull.apply(exp.getVoltage().get(i)) + "   "
-                            + checkNull.apply(exp.getResistanceApparent().get(i)) + "   "
-                            + checkNull.apply(exp.getErrorResistanceApparent().get(i)) + "   "
+                        + checkNull.apply(exp.getResistivityApparent().get(i)) + "   "
+                        + checkNull.apply(exp.getErrorResistivityApparent().get(i)) + "   "
                             + checkNull.apply(exp.getPolarizationApparent().get(i)) + "   "
                             + checkNull.apply(exp.getErrorPolarizationApparent().get(i))
             );
@@ -64,8 +64,8 @@ class SonetImportUtilsTest {
         }
 
         assertEquals(31, exp.getAmperage().size());
-        assertEquals(31, exp.getResistanceApparent().size());
-        assertEquals(31, exp.getErrorResistanceApparent().size());
+        assertEquals(31, exp.getResistivityApparent().size());
+        assertEquals(31, exp.getErrorResistivityApparent().size());
     }
 
     @Test
@@ -73,16 +73,16 @@ class SonetImportUtilsTest {
         System.out.println("SonetTest.readMOD_test");
         File file = new File("data/sonet_examples/KAZAN.MOD");
         MODFile mod = SonetImportUtils.readMOD(file);
-        for (int i = 0; i < mod.getResistance().size(); i++) {
+        for (int i = 0; i < mod.getResistivity().size(); i++) {
             System.out.println(
-                    checkNull.apply(mod.getResistance().get(i)) + "   "
+                checkNull.apply(mod.getResistivity().get(i)) + "   "
                             + checkNull.apply(mod.getPower().get(i)) + "   "
                             + checkNull.apply(mod.getPolarization().get(i))
             );
         }
 
         assertEquals(3, mod.getPower().size());
-        assertEquals(3, mod.getResistance().size());
+        assertEquals(3, mod.getResistivity().size());
     }
 
     @Test
@@ -93,7 +93,7 @@ class SonetImportUtilsTest {
         System.out.println("SonetTest.readEXP_test");
 
         assertEquals(28, exp.getAmperage().size());
-        assertEquals(28, exp.getResistanceApparent().size());
-        assertEquals(28, exp.getErrorResistanceApparent().size());
+        assertEquals(28, exp.getResistivityApparent().size());
+        assertEquals(28, exp.getErrorResistivityApparent().size());
     }
 }

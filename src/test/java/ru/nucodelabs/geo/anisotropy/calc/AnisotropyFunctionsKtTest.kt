@@ -56,7 +56,7 @@ class AnisotropyFunctionsKtTest {
         val model = modelLayers(n_layers, h, ro_avg, kanisotropy_vert, azimuth, kanisotropy_azimuth)
 
         val signalsOut = forwardSolve(azimuthSignals, model)
-        println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
+        println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistivityApparent } }
             .flatten())
 
         AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
@@ -77,7 +77,7 @@ class AnisotropyFunctionsKtTest {
 
         Assertions.assertArrayEquals(
             signals,
-            signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
+            signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistivityApparent } }
                 .flatten().toDoubleArray())
     }
 
@@ -155,7 +155,7 @@ class AnisotropyFunctionsKtTest {
         jacksonObjectMapper().writeValueAsString(model.map { mapper.toDto(it) }).also { println(it) }
 
         val signalsOut = forwardSolve(azimuthSignals, model)
-        println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
+        println(signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistivityApparent } }
             .flatten())
 
         AnizotropyFunctions.signalModelingWithAzimuthSchlumberger(
@@ -176,7 +176,7 @@ class AnisotropyFunctionsKtTest {
 
         Assertions.assertArrayEquals(
             signals,
-            signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistanceApparent } }
+            signalsOut.map { aS -> aS.signals.effectiveSignals.map { it.resistivityApparent } }
                 .flatten().toDoubleArray())
     }
 

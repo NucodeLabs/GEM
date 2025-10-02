@@ -19,12 +19,12 @@ class MultiLayerInitialModelKtTest {
                 signals = signals,
                 breakAfterFoundResult = false
         ) { model, targetFunctionValue, isResult ->
-//            model.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistance}") }
+//            model.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistivity}") }
             println("${model.size}\t$targetFunctionValue\t$isResult")
         }
 
 //        println("RESULT:")
-//        result.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistance}") }
+//        result.forEachIndexed { idx, layer -> println("$idx: power = ${layer.power} :: res = ${layer.resistivity}") }
 
 //        println(objectMapper.writeValueAsString(result))
     }

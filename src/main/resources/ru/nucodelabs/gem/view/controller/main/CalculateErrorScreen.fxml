@@ -116,27 +116,27 @@
                         </TableColumn>
                         <TableColumn fx:id="resCol" sortable="false">
                             <graphic>
-                                <Label text="%resistanceApparent">
+                                <Label text="%resistivityApparent">
                                     <tooltip>
-                                        <Tooltip text="%resistanceApparentFull"/>
+                                        <Tooltip text="%resistivityApparentFull"/>
                                     </tooltip>
                                 </Label>
                             </graphic>
                         </TableColumn>
                         <TableColumn fx:id="resAvgCol" sortable="false">
                             <graphic>
-                                <Label text="%resistanceApparentAvg">
+                                <Label text="%resistivityApparentAvg">
                                     <tooltip>
-                                        <Tooltip text="%resistanceApparentFull"/>
+                                        <Tooltip text="%resistivityApparentFull"/>
                                     </tooltip>
                                 </Label>
                             </graphic>
                         </TableColumn>
-                        <TableColumn fx:id="errorResistanceCol" sortable="false">
+                        <TableColumn fx:id="errorResCol" sortable="false">
                             <graphic>
-                                <Label text="%errorResistanceApparent">
+                                <Label text="%errorResistivityApparent">
                                     <tooltip>
-                                        <Tooltip text="%errorResistanceApparentFull"/>
+                                        <Tooltip text="%errorResistivityApparentFull"/>
                                     </tooltip>
                                 </Label>
                             </graphic>

@@ -87,7 +87,7 @@ class ModelTableController @Inject constructor(
     private lateinit var powerCol: TableColumn<ObservableModelLayer, Number>
 
     @FXML
-    private lateinit var resistanceCol: TableColumn<ObservableModelLayer, Number>
+    private lateinit var resCol: TableColumn<ObservableModelLayer, Number>
 
     @FXML
     private lateinit var table: TableView<ObservableModelLayer>
@@ -155,10 +155,10 @@ class ModelTableController @Inject constructor(
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
-    private fun fixResistanceForSelected() {
+    private fun fixResistivityForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].copy(isFixedResistance = true)
+            modelData[index] = modelData[index].copy(isFixedResistivity = true)
         }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
@@ -171,10 +171,10 @@ class ModelTableController @Inject constructor(
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
-    private fun unfixResistanceForSelected() {
+    private fun unfixResistivityForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].copy(isFixedResistance = false)
+            modelData[index] = modelData[index].copy(isFixedResistivity = false)
         }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
@@ -196,12 +196,12 @@ class ModelTableController @Inject constructor(
                     ).apply {
                         if (table.selectionModel.selectedItems.size == 1) {
                             items += MenuItem().apply {
-                                if (item.isFixedResistance) {
+                                if (item.isFixedResistivity) {
                                     text = "Разблокировать сопротивление"
-                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                    onAction = EventHandler { unfixResistivityForSelected() }
                                 } else {
                                     text = "Зафиксировать сопротивление"
-                                    onAction = EventHandler { fixResistanceForSelected() }
+                                    onAction = EventHandler { fixResistivityForSelected() }
                                 }
                             }
                             items += MenuItem().apply {
@@ -219,10 +219,10 @@ class ModelTableController @Inject constructor(
                                     onAction = EventHandler { joinSelected() }
                                 },
                                 MenuItem("Зафиксировать сопротивление").apply {
-                                    onAction = EventHandler { fixResistanceForSelected() }
+                                    onAction = EventHandler { fixResistivityForSelected() }
                                 },
                                 MenuItem("Разблокировать сопротивление").apply {
-                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                    onAction = EventHandler { unfixResistivityForSelected() }
                                 },
                                 MenuItem("Зафиксировать мощность").apply {
                                     onAction = EventHandler { fixPowerForSelected() }
@@ -270,7 +270,7 @@ class ModelTableController @Inject constructor(
                 modelData.add(0, modelData[index].copy(power = 10.0))
             } else {
                 if (index == modelData.lastIndex) {
-                    modelData.add(index, modelData[index - 1].copy(resistance = modelData.last().resistance))
+                    modelData.add(index, modelData[index - 1].copy(resistivity = modelData.last().resistivity))
                 } else {
                     val (fst, snd) = modelData[index].divide()
                     modelData[index] = fst
@@ -290,7 +290,7 @@ class ModelTableController @Inject constructor(
     private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
         powerCol.cellValueFactory = Callback { features -> features.value.powerProperty() }
-        resistanceCol.cellValueFactory = Callback { features -> features.value.resistanceProperty() }
+        resCol.cellValueFactory = Callback { features -> features.value.resistivityProperty() }
         zCol.cellFactory = Callback {
             TableCell<ObservableModelLayer, Number>().apply {
                 textProperty().bind(
@@ -313,7 +313,7 @@ class ModelTableController @Inject constructor(
 
         val editableColumns = listOf(
             powerCol to ModelLayer::validatePower,
-            resistanceCol to ModelLayer::validateResistivity
+            resCol to ModelLayer::validateResistivity
         )
         editableColumns.forEach { (col, validate) ->
             col.cellFactory = Callback { _ ->
@@ -325,9 +325,9 @@ class ModelTableController @Inject constructor(
                             .addListener { _, _, isFixed -> style = if (isFixed ?: false) STYLE_FOR_FIXED else "" }
 
 
-                        resistanceCol -> tableRowProperty()
+                        resCol -> tableRowProperty()
                             .flatMap { it.itemProperty() }
-                            .flatMap { it.fixedResistanceProperty() }
+                            .flatMap { it.fixedResistivityProperty() }
                             .addListener { _, _, isFixed -> style = if (isFixed ?: false) STYLE_FOR_FIXED else "" }
 
                     }
@@ -397,9 +397,9 @@ class ModelTableController @Inject constructor(
     private fun listenToItemsProperties(items: List<ObservableModelLayer>) {
         items.forEach { layer ->
             layer.powerProperty().addListener { _, oldPow, newPow -> commitChanges() }
-            layer.resistanceProperty().addListener { _, oldRes, newRes -> commitChanges() }
+            layer.resistivityProperty().addListener { _, oldRes, newRes -> commitChanges() }
             layer.fixedPowerProperty().addListener { _, _, _ -> commitChanges() }
-            layer.fixedResistanceProperty().addListener { _, _, _ -> commitChanges() }
+            layer.fixedResistivityProperty().addListener { _, _, _ -> commitChanges() }
         }
     }
 
@@ -483,7 +483,7 @@ class ModelTableController @Inject constructor(
                     val pow = row[0].process("H", rowIdx, 0)
                     val res = row[1].process("ρ", rowIdx, 1)
                     ModelLayer.new(
-                        resistance = res,
+                        resistivity = res,
                         power = pow
                     )
                 }

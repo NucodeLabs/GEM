@@ -1,9 +1,6 @@
 package ru.nucodelabs.geo.ves
 
 import ru.nucodelabs.geo.ves.calc.rhoA
-import ru.nucodelabs.util.Result
-import ru.nucodelabs.util.toErrorResult
-import ru.nucodelabs.util.toOkResult
 import ru.nucodelabs.util.validate
 
 interface ReadOnlyExperimentalSignal {
@@ -11,8 +8,8 @@ interface ReadOnlyExperimentalSignal {
     val mn2: Double
     val amperage: Double
     val voltage: Double
-    val resistanceApparent: Double
-    val errorResistanceApparent: Double
+    val resistivityApparent: Double
+    val errorResistivityApparent: Double
     val isHidden: Boolean
 }
 
@@ -21,8 +18,8 @@ interface MutableExperimentalSignal : ReadOnlyExperimentalSignal {
     override var mn2: Double
     override var amperage: Double
     override var voltage: Double
-    override var resistanceApparent: Double
-    override var errorResistanceApparent: Double
+    override var resistivityApparent: Double
+    override var errorResistivityApparent: Double
     override var isHidden: Boolean
 }
 
@@ -32,8 +29,8 @@ interface MutableExperimentalSignal : ReadOnlyExperimentalSignal {
  * @property mn2 MN/2, м
  * @property amperage Ток, мА
  * @property voltage Напряжение, мВ
- * @property resistanceApparent Сопротивление кажущееся, Ом * м
- * @property errorResistanceApparent Погрешность, %
+ * @property resistivityApparent Сопротивление кажущееся, Ом * м
+ * @property errorResistivityApparent Погрешность, %
  * @property isHidden Отключена для интерпретации
  */
 data class ExperimentalData(
@@ -41,8 +38,8 @@ data class ExperimentalData(
     override val mn2: Double,
     override val amperage: Double,
     override val voltage: Double,
-    override val resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
-    override val errorResistanceApparent: Double = DEFAULT_ERROR,
+    override val resistivityApparent: Double = rhoA(ab2, mn2, amperage, voltage),
+    override val errorResistivityApparent: Double = DEFAULT_ERROR,
     override val isHidden: Boolean = false
 ) : ReadOnlyExperimentalSignal {
 
@@ -52,8 +49,8 @@ data class ExperimentalData(
             validateMn2(mn2),
             validateAmperage(amperage),
             validateVoltage(voltage),
-            validateResistApparent(resistanceApparent),
-            validateErrResistApparent(errorResistanceApparent),
+            validateResistApparent(resistivityApparent),
+            validateErrResistApparent(errorResistivityApparent),
         )
         if (errors.isNotEmpty()) throw InvalidPropertiesException(errors)
     }
@@ -113,29 +110,5 @@ data class ExperimentalData(
 
         fun isValidErrResistApparent(errResistApparent: Double) =
             errResistApparent in MIN_ERROR_RESIST_APP..MAX_ERROR_RESIST_APP
-
-        fun new(
-            ab2: Double,
-            mn2: Double,
-            amperage: Double,
-            voltage: Double,
-            resistanceApparent: Double = rhoA(ab2, mn2, amperage, voltage),
-            errorResistanceApparent: Double = DEFAULT_ERROR,
-            isHidden: Boolean = false
-        ): Result<ExperimentalData, List<InvalidPropertyValue>> {
-            return try {
-                ExperimentalData(
-                    ab2,
-                    mn2,
-                    amperage,
-                    voltage,
-                    resistanceApparent,
-                    errorResistanceApparent,
-                    isHidden
-                ).toOkResult()
-            } catch (e: InvalidPropertiesException) {
-                return e.errors.toErrorResult()
-            }
-        }
     }
 }

@@ -17,19 +17,19 @@ internal class MathVesNativeMisfitsFunction(val forwardSolver: ForwardSolver) : 
             return listOf()
         }
 
-        val resistanceApparent = experimentalData.map { it.resistanceApparent }
-        val errorResistanceApparent = experimentalData.map { it.errorResistanceApparent }
+        val resistivityApparent = experimentalData.map { it.resistivityApparent }
+        val errorResistivityApparent = experimentalData.map { it.errorResistivityApparent }
 
-        val solvedResistance = forwardSolver(experimentalData, modelData)
+        val solvedResistivity = forwardSolver(experimentalData, modelData)
         val res = ArrayList<Double>(experimentalData.size)
         for (i in experimentalData.indices) {
             val value = abs(
                 ru.nucodelabs.mathves.MisfitFunctions.calculateRelativeDeviationWithError(
-                    resistanceApparent[i],
-                    errorResistanceApparent[i] / 100f,
-                    solvedResistance[i]
+                    resistivityApparent[i],
+                    errorResistivityApparent[i] / 100f,
+                    solvedResistivity[i]
                 )
-            ) * sign(solvedResistance[i] - resistanceApparent[i]) * 100f
+            ) * sign(solvedResistivity[i] - resistivityApparent[i]) * 100f
 
             res.add(value)
         }

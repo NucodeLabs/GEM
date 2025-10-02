@@ -21,7 +21,7 @@ private fun initialModel(signals: List<ReadOnlyExperimentalSignal>): List<ModelL
         listOf(
                 ModelLayer(
                         power = 0.0,
-                        resistance = 2.0.pow(signals.map { log2(it.ab2) }.average())
+                    resistivity = 2.0.pow(signals.map { log2(it.ab2) }.average())
                 )
         )
 
@@ -54,8 +54,8 @@ fun multiLayerInitialModel(
 
         val targetFunctionValue = targetFunction(
             forwardSolver(signals, model),
-            signals.map { it.resistanceApparent },
-            signals.map { it.errorResistanceApparent }
+            signals.map { it.resistivityApparent },
+            signals.map { it.errorResistivityApparent }
         )
 
         val isResult = targetFunctionValue <= minTargetFunctionValue && result == null

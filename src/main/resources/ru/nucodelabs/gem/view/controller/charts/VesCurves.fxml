@@ -47,7 +47,7 @@
         </xAxis>
         <yAxis>
             <LogarithmicAxis fx:id="yAxis"
-                             label="%resistanceApparent"
+                             label="%resistivityApparent"
                              side="LEFT"
                              autoRanging="false"
                              lowerBound="1" upperBound="10e4">

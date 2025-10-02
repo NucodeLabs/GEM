@@ -9,7 +9,7 @@ fun ModelLayer.divide(): Pair<ModelLayer, ModelLayer> = copy(power = power / 2) 
 fun List<ReadOnlyModelLayer>.join(): ModelLayer =
     ModelFunctions.joinLayers(
         map { it.power }.toDoubleArray(),
-        map { it.resistance }.toDoubleArray()
+        map { it.resistivity }.toDoubleArray()
     ).let {
-        ModelLayer(power = it[0], resistance = it[1])
+        ModelLayer(power = it[0], resistivity = it[1])
     }

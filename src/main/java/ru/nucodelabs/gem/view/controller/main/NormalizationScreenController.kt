@@ -211,7 +211,7 @@ class NormalizationScreenController @Inject constructor(
                 }.map { (idxSrc, _) ->
                     picket.sortedExperimentalData[idxSrc]
                 }.map {
-                    XYChart.Data(it.ab2 as Number, it.resistanceApparent as Number)
+                    XYChart.Data(it.ab2 as Number, it.resistivityApparent as Number)
                 }.toObservableList()
             ).also { it.name = decimalFormat.format(mn2) }
         }
@@ -243,7 +243,7 @@ class NormalizationScreenController @Inject constructor(
     @FXML
     private fun apply() {
         val newExp = picket.sortedExperimentalData.mapIndexed { idx, exp ->
-            exp.copy(resistanceApparent = normalizationResult[idx])
+            exp.copy(resistivityApparent = normalizationResult[idx])
         }
 
         historyManager.snapshotAfter {

@@ -10,8 +10,8 @@ class ObservableSignal(
     mn2: Double,
     amperage: Double,
     voltage: Double,
-    resistanceApparent: Double,
-    errorResistanceApparent: Double,
+    resistivityApparent: Double,
+    errorResistivityApparent: Double,
     isHidden: Boolean
 ) {
     private val ab2Property = SimpleDoubleProperty(ab2)
@@ -30,13 +30,13 @@ class ObservableSignal(
     fun voltageProperty() = voltageProperty
     var voltage by voltageProperty
 
-    private val resistanceApparentProperty = SimpleDoubleProperty(resistanceApparent)
-    fun resistanceApparentProperty() = resistanceApparentProperty
-    var resistanceApparent by resistanceApparentProperty
+    private val resistivityApparentProperty = SimpleDoubleProperty(resistivityApparent)
+    fun resistivityApparentProperty() = resistivityApparentProperty
+    var resistivityApparent by resistivityApparentProperty
 
-    private val errorResistanceApparentProperty = SimpleDoubleProperty(errorResistanceApparent)
-    fun errorResistanceApparentProperty() = errorResistanceApparentProperty
-    var errorResistanceApparent by errorResistanceApparentProperty
+    private val errorResistivityApparentProperty = SimpleDoubleProperty(errorResistivityApparent)
+    fun errorResistivityApparentProperty() = errorResistivityApparentProperty
+    var errorResistivityApparent by errorResistivityApparentProperty
 
     private val hiddenProperty = SimpleBooleanProperty(isHidden)
     fun hiddenProperty() = hiddenProperty

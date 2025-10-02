@@ -10,26 +10,26 @@ import tornadofx.setValue
 
 class ObservableModelLayer(
     power: Double,
-    resistance: Double,
+    resistivity: Double,
     isFixedPower: Boolean,
-    isFixedResistance: Boolean
+    isFixedResistivity: Boolean
 ) : MutableModelLayer {
     private val powerProperty = ConstrainedDoubleProperty(power, ModelLayer::isValidPower)
     fun powerProperty() = powerProperty
     override var power by powerProperty
 
-    private val resistanceProperty = ConstrainedDoubleProperty(resistance, ModelLayer::isValidResist)
-    fun resistanceProperty() = resistanceProperty
-    override var resistance by resistanceProperty
+    private val resistivityProperty = ConstrainedDoubleProperty(resistivity, ModelLayer::isValidResistivity)
+    fun resistivityProperty() = resistivityProperty
+    override var resistivity by resistivityProperty
 
     private val fixedPowerProperty = SimpleBooleanProperty(isFixedPower)
     fun fixedPowerProperty() = fixedPowerProperty
     override var isFixedPower by fixedPowerProperty
 
-    private val fixedResistanceProperty = SimpleBooleanProperty(isFixedResistance)
-    fun fixedResistanceProperty() = fixedResistanceProperty
-    override var isFixedResistance by fixedResistanceProperty
+    private val fixedResistivityProperty = SimpleBooleanProperty(isFixedResistivity)
+    fun fixedResistivityProperty() = fixedResistivityProperty
+    override var isFixedResistivity by fixedResistivityProperty
 }
 
 fun ReadOnlyModelLayer.toObservable() =
-    ObservableModelLayer(power, resistance, isFixedPower, isFixedResistance)
+    ObservableModelLayer(power, resistivity, isFixedPower, isFixedResistivity)

@@ -8,8 +8,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 2148.8,
-          "resistanceApparent": 135.01,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 135.01,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -17,8 +17,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 1106.0,
-          "resistanceApparent": 130.3,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 130.3,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -26,8 +26,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 550.0,
-          "resistanceApparent": 151.19,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 151.19,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -35,8 +35,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 320.0,
-          "resistanceApparent": 158.34,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 158.34,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -44,8 +44,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 218.04,
-          "resistanceApparent": 169.54,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 169.54,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -53,8 +53,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 104.28,
-          "resistanceApparent": 159.71,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 159.71,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -62,8 +62,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 56.0,
-          "resistanceApparent": 142.06,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 142.06,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -71,8 +71,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 31.6,
-          "resistanceApparent": 142.71,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 142.71,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -80,8 +80,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 17.69,
-          "resistanceApparent": 124.9,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 124.9,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -89,8 +89,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 107.44,
-          "resistanceApparent": 125.4,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 125.4,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -98,8 +98,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 11.38,
-          "resistanceApparent": 142.92,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 142.92,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -107,8 +107,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 61.0,
-          "resistanceApparent": 128.77,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 128.77,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -116,8 +116,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 35.0,
-          "resistanceApparent": 116.78,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 116.78,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -125,8 +125,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 21.17,
-          "resistanceApparent": 116.4,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 116.4,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -134,8 +134,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 12.32,
-          "resistanceApparent": 106.52,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 106.52,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -143,8 +143,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 7.6,
-          "resistanceApparent": 103.02,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 103.02,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -152,8 +152,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 4.5,
-          "resistanceApparent": 103.23,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 103.23,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -161,8 +161,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 18.0,
-          "resistanceApparent": 96.156,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 96.156,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -170,8 +170,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 3.09,
-          "resistanceApparent": 107.29,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 107.29,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -179,8 +179,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 12.3,
-          "resistanceApparent": 100.73,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 100.73,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -188,8 +188,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 8.8,
-          "resistanceApparent": 113.53,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 113.53,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -197,8 +197,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 6.4,
-          "resistanceApparent": 125.54,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 125.54,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -206,8 +206,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 4.9,
-          "resistanceApparent": 143.39,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 143.39,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -215,8 +215,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 3.9,
-          "resistanceApparent": 164.67,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 164.67,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -224,8 +224,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 9.9,
-          "resistanceApparent": 164.67,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 164.67,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -233,8 +233,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 3.0,
-          "resistanceApparent": 189.5,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 189.5,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -242,8 +242,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 7.7,
-          "resistanceApparent": 193.8,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 193.8,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -251,8 +251,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 5.7,
-          "resistanceApparent": 226.33,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 226.33,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -260,8 +260,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 4.4,
-          "resistanceApparent": 268.94,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 268.94,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -269,8 +269,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 3.5,
-          "resistanceApparent": 312.53,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 312.53,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -278,53 +278,53 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 2.91,
-          "resistanceApparent": 357.27,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 357.27,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         }
       ],
       "modelData": [
         {
           "power": 0.66,
-          "resistance": 161.05,
+          "resistivity": 161.05,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 0.59,
-          "resistance": 80.53,
+          "resistivity": 80.53,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 2.63,
-          "resistance": 233.44,
+          "resistivity": 233.44,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 21.44,
-          "resistance": 111.0,
+          "resistivity": 111.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 23.1,
-          "resistance": 56.37,
+          "resistivity": 56.37,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 96.8,
-          "resistance": 200.0,
+          "resistivity": 200.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": "0.0",
-          "resistance": 1414.69,
+          "resistivity": 1414.69,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         }
       ],
       "offsetX": 100.0,
@@ -339,8 +339,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 3400.0,
-          "resistanceApparent": 221.09,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 221.09,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -348,8 +348,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 1327.0,
-          "resistanceApparent": 163.79,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 163.79,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -357,8 +357,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 580.0,
-          "resistanceApparent": 166.89,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 166.89,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -366,8 +366,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 330.0,
-          "resistanceApparent": 170.74,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 170.74,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -375,8 +375,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 221.2,
-          "resistanceApparent": 179.45,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 179.45,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -384,8 +384,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 110.6,
-          "resistanceApparent": 176.85,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 176.85,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -393,8 +393,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 63.0,
-          "resistanceApparent": 167.28,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 167.28,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -402,8 +402,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 30.02,
-          "resistanceApparent": 143.03,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 143.03,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -411,8 +411,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 17.38,
-          "resistanceApparent": 130.18,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 130.18,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -420,8 +420,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 126.4,
-          "resistanceApparent": 130.5,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 130.5,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -429,8 +429,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 9.2,
-          "resistanceApparent": 123.0,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 123.0,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -438,8 +438,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 66.0,
-          "resistanceApparent": 122.67,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 122.67,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -447,8 +447,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 38.0,
-          "resistanceApparent": 110.11,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 110.11,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -456,8 +456,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 22.12,
-          "resistanceApparent": 105.11,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 105.11,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -465,8 +465,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 12.96,
-          "resistanceApparent": 95.513,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 95.513,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -474,8 +474,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 8.3,
-          "resistanceApparent": 95.813,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 95.813,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -483,8 +483,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 4.9,
-          "resistanceApparent": 95.723,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 95.723,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -492,8 +492,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 18.96,
-          "resistanceApparent": 95.723,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 95.723,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -501,8 +501,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 3.3,
-          "resistanceApparent": 97.983,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 97.983,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -510,8 +510,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 12.96,
-          "resistanceApparent": 100.57,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 100.57,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -519,8 +519,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 9.3,
-          "resistanceApparent": 114.42,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 114.42,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -528,8 +528,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 7.0,
-          "resistanceApparent": 131.75,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 131.75,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -537,8 +537,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 5.2,
-          "resistanceApparent": 146.61,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 146.61,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -546,8 +546,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 4.2,
-          "resistanceApparent": 171.78,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 171.78,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -555,8 +555,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 10.0,
-          "resistanceApparent": 170.94,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 170.94,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -564,8 +564,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 3.3,
-          "resistanceApparent": 202.89,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 202.89,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -573,8 +573,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 8.0,
-          "resistanceApparent": 206.08,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 206.08,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -582,8 +582,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 6.0,
-          "resistanceApparent": 243.04,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 243.04,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -591,8 +591,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 4.6,
-          "resistanceApparent": 285.93,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 285.93,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -600,8 +600,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 3.7,
-          "resistanceApparent": 335.21,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 335.21,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -609,53 +609,53 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 3.07,
-          "resistanceApparent": 381.73,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 381.73,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         }
       ],
       "modelData": [
         {
           "power": 0.53,
-          "resistance": 459.49,
+          "resistivity": 459.49,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 0.59,
-          "resistance": 80.53,
+          "resistivity": 80.53,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 2.89,
-          "resistance": 233.44,
+          "resistivity": 233.44,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 19.3,
-          "resistance": 111.0,
+          "resistivity": 111.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 25.41,
-          "resistance": 56.37,
+          "resistivity": 56.37,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 87.12,
-          "resistance": 200.0,
+          "resistivity": 200.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": "0.0",
-          "resistance": 1882.95,
+          "resistivity": 1882.95,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         }
       ],
       "offsetX": 100.0,
@@ -670,8 +670,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 2212.0,
-          "resistanceApparent": 138.98,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 138.98,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -679,8 +679,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 1169.2,
-          "resistanceApparent": 137.74,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 137.74,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -688,8 +688,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 590.0,
-          "resistanceApparent": 162.18,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 162.18,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -697,8 +697,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 350.0,
-          "resistanceApparent": 173.18,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 173.18,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -706,8 +706,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 230.68,
-          "resistanceApparent": 179.36,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 179.36,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -715,8 +715,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 110.6,
-          "resistanceApparent": 169.39,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 169.39,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -724,8 +724,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 63.0,
-          "resistanceApparent": 159.82,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 159.82,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -733,8 +733,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 30.968,
-          "resistanceApparent": 139.85,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 139.85,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -742,8 +742,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 17.064,
-          "resistanceApparent": 120.48,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 120.48,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -751,8 +751,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 104.28,
-          "resistanceApparent": 117.94,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 117.94,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -760,8 +760,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 8.7,
-          "resistanceApparent": 109.26,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 109.26,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -769,8 +769,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 48.0,
-          "resistanceApparent": 98.269,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 98.269,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -778,8 +778,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 29.39,
-          "resistanceApparent": 94.793,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 94.793,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -787,8 +787,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 17.38,
-          "resistanceApparent": 92.366,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 92.366,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -796,8 +796,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 11.06,
-          "resistanceApparent": 92.135,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 92.135,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -805,8 +805,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 7.4,
-          "resistanceApparent": 96.517,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 96.517,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -814,8 +814,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 4.5,
-          "resistanceApparent": 99.337,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 99.337,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -823,8 +823,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 19.908,
-          "resistanceApparent": 99.337,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 99.337,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -832,8 +832,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 3.7,
-          "resistanceApparent": 123.81,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 123.81,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -841,8 +841,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 16.432,
-          "resistanceApparent": 127.55,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 127.55,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -850,8 +850,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 11.38,
-          "resistanceApparent": 139.81,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 139.81,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -859,8 +859,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 8.6,
-          "resistanceApparent": 161.68,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 161.68,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -868,8 +868,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 7.5,
-          "resistanceApparent": 212.47,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 212.47,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -877,8 +877,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 4.5,
-          "resistanceApparent": 182.99,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 182.99,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -886,8 +886,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 20.856,
-          "resistanceApparent": 356.51,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 356.51,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -895,8 +895,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 0.0,
-          "resistanceApparent": 1310.4,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 1310.4,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -904,8 +904,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 0.0,
-          "resistanceApparent": 243.04,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 243.04,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -913,8 +913,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 0.0,
-          "resistanceApparent": 285.93,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 285.93,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -922,8 +922,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 0.0,
-          "resistanceApparent": 335.21,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 335.21,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -931,53 +931,53 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 0.0,
-          "resistanceApparent": 381.73,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 381.73,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         }
       ],
       "modelData": [
         {
           "power": 0.35,
-          "resistance": 372.19,
+          "resistivity": 372.19,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 0.59,
-          "resistance": 80.53,
+          "resistivity": 80.53,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 3.18,
-          "resistance": 233.44,
+          "resistivity": 233.44,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 11.4,
-          "resistance": 99.9,
+          "resistivity": 99.9,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 20.58,
-          "resistance": 60.0,
+          "resistivity": 60.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 87.12,
-          "resistance": 220.0,
+          "resistivity": 220.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": "0.0",
-          "resistance": 1882.95,
+          "resistivity": 1882.95,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         }
       ],
       "offsetX": 100.0,
@@ -992,8 +992,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 1264.0,
-          "resistanceApparent": 79.419,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 79.419,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1001,8 +1001,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 620.0,
-          "resistanceApparent": 73.042,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 73.042,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1010,8 +1010,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 281.24,
-          "resistanceApparent": 77.31,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 77.31,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1019,8 +1019,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 158.0,
-          "resistanceApparent": 78.178,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 78.178,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1028,8 +1028,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 101.12,
-          "resistanceApparent": 78.625,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 78.625,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1037,8 +1037,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 48.0,
-          "resistanceApparent": 73.513,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 73.513,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1046,8 +1046,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 25.59,
-          "resistanceApparent": 64.918,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 64.918,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1055,8 +1055,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 12.96,
-          "resistanceApparent": 58.528,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 58.528,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1064,8 +1064,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 7.3,
-          "resistanceApparent": 51.543,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 51.543,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -1073,8 +1073,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 41.0,
-          "resistanceApparent": 51.806,
-          "errorResistanceApparent": 20.0,
+          "resistivityApparent": 51.806,
+          "errorResistivityApparent": 20.0,
           "isHidden": false
         },
         {
@@ -1082,8 +1082,8 @@
           "mn2": 0.5,
           "amperage": 100.0,
           "voltage": 4.8,
-          "resistanceApparent": 60.281,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 60.281,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -1091,8 +1091,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 29.7,
-          "resistanceApparent": 66.24,
-          "errorResistanceApparent": 20.8,
+          "resistivityApparent": 66.24,
+          "errorResistivityApparent": 20.8,
           "isHidden": false
         },
         {
@@ -1100,8 +1100,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 18.01,
-          "resistanceApparent": 63.525,
-          "errorResistanceApparent": 20.0,
+          "resistivityApparent": 63.525,
+          "errorResistivityApparent": 20.0,
           "isHidden": false
         },
         {
@@ -1109,8 +1109,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 9.1,
-          "resistanceApparent": 53.799,
-          "errorResistanceApparent": 20.0,
+          "resistivityApparent": 53.799,
+          "errorResistivityApparent": 20.0,
           "isHidden": false
         },
         {
@@ -1118,8 +1118,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 6.9,
-          "resistanceApparent": 62.916,
-          "errorResistanceApparent": 20.0,
+          "resistivityApparent": 62.916,
+          "errorResistivityApparent": 20.0,
           "isHidden": false
         },
         {
@@ -1127,8 +1127,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 4.4,
-          "resistanceApparent": 62.825,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 62.825,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1136,8 +1136,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 3.04,
-          "resistanceApparent": 72.544,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 72.544,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -1145,8 +1145,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 13.27,
-          "resistanceApparent": 70.889,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 70.889,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1154,8 +1154,8 @@
           "mn2": 3.0,
           "amperage": 100.0,
           "voltage": 2.34,
-          "resistanceApparent": 83.74,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 83.74,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -1163,8 +1163,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 10.428,
-          "resistanceApparent": 85.396,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 85.396,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1172,8 +1172,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 8.0,
-          "resistanceApparent": 103.21,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 103.21,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1181,8 +1181,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 6.0,
-          "resistanceApparent": 117.69,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 117.69,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1190,8 +1190,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 4.7,
-          "resistanceApparent": 137.54,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 137.54,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1199,8 +1199,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 4.6,
-          "resistanceApparent": 194.23,
-          "errorResistanceApparent": 99.9,
+          "resistivityApparent": 194.23,
+          "errorResistivityApparent": 99.9,
           "isHidden": true
         },
         {
@@ -1208,8 +1208,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 12.32,
-          "resistanceApparent": 210.6,
-          "errorResistanceApparent": 99.9,
+          "resistivityApparent": 210.6,
+          "errorResistivityApparent": 99.9,
           "isHidden": false
         },
         {
@@ -1217,8 +1217,8 @@
           "mn2": 12.0,
           "amperage": 100.0,
           "voltage": 3.002,
-          "resistanceApparent": 189.63,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 189.63,
+          "errorResistivityApparent": 5.0,
           "isHidden": true
         },
         {
@@ -1226,8 +1226,8 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 7.8,
-          "resistanceApparent": 200.93,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 200.93,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         },
         {
@@ -1235,47 +1235,47 @@
           "mn2": 29.0,
           "amperage": 100.0,
           "voltage": 6.0,
-          "resistanceApparent": 243.04,
-          "errorResistanceApparent": 5.0,
+          "resistivityApparent": 243.04,
+          "errorResistivityApparent": 5.0,
           "isHidden": false
         }
       ],
       "modelData": [
         {
           "power": 0.66,
-          "resistance": 100.0,
+          "resistivity": 100.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 0.73,
-          "resistance": 50.0,
+          "resistivity": 50.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 2.92,
-          "resistance": 108.9,
+          "resistivity": 108.9,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 21.0,
-          "resistance": 35.0,
+          "resistivity": 35.0,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": 40.0,
-          "resistance": 102.4,
+          "resistivity": 102.4,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         },
         {
           "power": "0.0",
-          "resistance": 1062.88,
+          "resistivity": 1062.88,
           "isFixedPower": false,
-          "isFixedResistance": false
+          "isFixedResistivity": false
         }
       ],
       "offsetX": 100.0,

@@ -30,8 +30,8 @@ import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.graph.*
-import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
-import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.ves.calc.resistivityApparentLowerBoundByError
+import ru.nucodelabs.geo.ves.calc.resistivityApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
 import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
@@ -244,12 +244,12 @@ class VesCurvesController @Inject constructor(
             || picket.sortedExperimentalData.isNotEmpty()
         ) {
             yAxis.lowerBound = min(
-                picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
-                picket.sortedExperimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
+                picket.modelData.minOfOrNull { it.resistivity } ?: Double.MAX_VALUE,
+                picket.sortedExperimentalData.minOfOrNull { it.resistivityApparent } ?: Double.MAX_VALUE
             )
             yAxis.upperBound = max(
-                picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
-                picket.sortedExperimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
+                picket.modelData.maxOfOrNull { it.resistivity } ?: Double.MIN_VALUE,
+                picket.sortedExperimentalData.maxOfOrNull { it.resistivityApparent } ?: Double.MIN_VALUE
             )
         } else {
             yAxis.lowerBound = 1.0
@@ -363,12 +363,12 @@ class VesCurvesController @Inject constructor(
             EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
-                    picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                    picket.effectiveExperimentalData[pointIndex].resistivityApparentLowerBoundByError
                 )
                 val yUpper = decimalFormat.format(
-                    picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                    picket.effectiveExperimentalData[pointIndex].resistivityApparentUpperBoundByError
                 )
-                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
+                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistivityApparent)
                 Tooltip(
                     """
                     №${effectiveToSortedMapping[pointIndex] + 1}
@@ -383,12 +383,12 @@ class VesCurvesController @Inject constructor(
             THEOR_CURVE_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
-                    picket.sortedExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                    picket.sortedExperimentalData[pointIndex].resistivityApparentLowerBoundByError
                 )
                 val yUpper = decimalFormat.format(
-                    picket.sortedExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                    picket.sortedExperimentalData[pointIndex].resistivityApparentUpperBoundByError
                 )
-                val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistanceApparent)
+                val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistivityApparent)
                 val theorRes = theoreticalCurve(picket, picket, forwardSolver).getOrNull(pointIndex)?.y
                 Tooltip(
                     """

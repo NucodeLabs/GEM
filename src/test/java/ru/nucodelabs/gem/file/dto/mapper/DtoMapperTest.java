@@ -42,7 +42,7 @@ class DtoMapperTest {
                 null
         );
 
-        var resistanceApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
+        var resistivityApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
 
         assertEquals(
                 new Signal(
@@ -50,7 +50,7 @@ class DtoMapperTest {
                         2.0,
                         1.0,
                         1.0,
-                        resistanceApparent,
+                    resistivityApparent,
                     ExperimentalData.DEFAULT_ERROR,
                         false
                 ),
@@ -88,7 +88,7 @@ class DtoMapperTest {
                 null
         );
 
-        var resistanceApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
+        var resistivityApparent = VesFunctions.rhoA(ab2, mn2, amperage, voltage);
 
         Point expected = new Point(
                 null,
@@ -101,7 +101,7 @@ class DtoMapperTest {
                                                 mn2,
                                                 amperage,
                                                 voltage,
-                                                resistanceApparent,
+                                            resistivityApparent,
                                             ExperimentalData.DEFAULT_ERROR,
                                                 false
                                         )

@@ -7,35 +7,35 @@ import ru.nucodelabs.util.validate
 
 interface ReadOnlyModelLayer {
     val power: Double
-    val resistance: Double
+    val resistivity: Double
     val isFixedPower: Boolean
-    val isFixedResistance: Boolean
+    val isFixedResistivity: Boolean
 }
 
 interface MutableModelLayer : ReadOnlyModelLayer {
     override var power: Double
-    override var resistance: Double
+    override var resistivity: Double
     override var isFixedPower: Boolean
-    override var isFixedResistance: Boolean
+    override var isFixedResistivity: Boolean
 }
 
 /**
  * Слой модели
  * @property power Мощность, м
- * @property resistance Сопротивление, Ом * м
+ * @property resistivity Сопротивление, Ом * м
  * @property isFixedPower Значение зафиксировано для обратной задачи
- * @property isFixedResistance Значение зафиксировано для обратной задачи
+ * @property isFixedResistivity Значение зафиксировано для обратной задачи
  */
 data class ModelLayer(
     override val power: Double,
-    override val resistance: Double,
+    override val resistivity: Double,
     override val isFixedPower: Boolean = false,
-    override val isFixedResistance: Boolean = false
+    override val isFixedResistivity: Boolean = false
 ) : ReadOnlyModelLayer {
     init {
         val errors = listOfNotNull(
             validatePower(power),
-            validateResistivity(resistance)
+            validateResistivity(resistivity)
         )
         if (errors.isNotEmpty()) throw InvalidPropertiesException(errors)
     }
@@ -50,33 +50,33 @@ data class ModelLayer(
 
         fun isValidPower(power: Double): Boolean = power >= MIN_POWER
 
-        fun validateResistivity(resist: Double) = validate(isValidResist(resist)) {
+        fun validateResistivity(resist: Double) = validate(isValidResistivity(resist)) {
             InvalidPropertyValue("resistivity", "Resistivity=$resist must be >= $MIN_RESIST", resist)
         }
 
-        fun isValidResist(resist: Double) = resist >= MIN_RESIST
+        fun isValidResistivity(resist: Double) = resist >= MIN_RESIST
 
         fun from(
             modelLayer: ReadOnlyModelLayer
         ) = new(
             power = modelLayer.power,
-            resistance = modelLayer.resistance,
+            resistivity = modelLayer.resistivity,
             isFixedPower = modelLayer.isFixedPower,
-            isFixedResistance = modelLayer.isFixedResistance
+            isFixedResistivity = modelLayer.isFixedResistivity
         )
 
         fun new(
             power: Double,
-            resistance: Double,
+            resistivity: Double,
             isFixedPower: Boolean = false,
-            isFixedResistance: Boolean = false
+            isFixedResistivity: Boolean = false
         ): Result<ModelLayer, List<InvalidPropertyValue>> {
             return try {
                 ModelLayer(
                     power,
-                    resistance,
+                    resistivity,
                     isFixedPower,
-                    isFixedResistance
+                    isFixedResistivity
                 ).toOkResult()
             } catch (e: InvalidPropertiesException) {
                 e.errors.toErrorResult()

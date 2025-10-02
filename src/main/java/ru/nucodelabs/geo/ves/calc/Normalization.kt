@@ -7,7 +7,7 @@ import ru.nucodelabs.util.fromPercent
 data class FixableValue<T>(val value: T, val isFixed: Boolean)
 
 /**
- * @return normalized resistance and additive coefficients
+ * @return normalized resistivity and additive coefficients
  */
 fun normalizeExperimentalData(
     experimentalData: List<ReadOnlyExperimentalSignal>,
@@ -20,8 +20,8 @@ fun normalizeExperimentalData(
         distinctMn2.map { it.isFixed }.toBooleanArray(),
         experimentalData.map { it.ab2 }.toDoubleArray(),
         idxMap.map { it.toShort() }.toShortArray(),
-        experimentalData.map { it.resistanceApparent }.toDoubleArray(),
-        experimentalData.map { it.errorResistanceApparent.fromPercent() }.toDoubleArray(),
+        experimentalData.map { it.resistivityApparent }.toDoubleArray(),
+        experimentalData.map { it.errorResistivityApparent.fromPercent() }.toDoubleArray(),
         add
     ).toList() to add.toList()
 }

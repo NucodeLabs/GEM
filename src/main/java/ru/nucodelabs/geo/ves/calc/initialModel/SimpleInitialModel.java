@@ -25,8 +25,8 @@ public class SimpleInitialModel {
                 data.getMn2(),
                 data.getAmperage(),
                 data.getVoltage(),
-                data.getResistanceApparent(),
-                data.getErrorResistanceApparent(),
+                data.getResistivityApparent(),
+                data.getErrorResistivityApparent(),
                 data.isHidden()
             ))
             .toList();
@@ -54,7 +54,7 @@ public class SimpleInitialModel {
             double prevLast;
             List<ExperimentalData> list = logSplitData.get(i);
             double avg = list.stream()
-                .map(ExperimentalData::getResistanceApparent)
+                .map(ExperimentalData::getResistivityApparent)
                 .mapToDouble(Double::doubleValue)
                 .average()
                 .orElse(0);

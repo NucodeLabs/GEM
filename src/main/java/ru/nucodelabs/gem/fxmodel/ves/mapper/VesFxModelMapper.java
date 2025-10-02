@@ -19,11 +19,11 @@ public abstract class VesFxModelMapper {
     @Mapping(target = "isHidden", source = "hidden")
     public abstract ExperimentalData toModel(ObservableExperimentalData experimentalData);
 
-    @Mapping(target = "isFixedResistance", source = "fixedResistance")
+    @Mapping(target = "isFixedResistivity", source = "fixedResistivity")
     @Mapping(target = "isFixedPower", source = "fixedPower")
     public abstract ObservableModelLayer toObservable(ModelLayer modelLayer);
 
-    @Mapping(target = "isFixedResistance", source = "fixedResistance")
+    @Mapping(target = "isFixedResistivity", source = "fixedResistivity")
     @Mapping(target = "isFixedPower", source = "fixedPower")
     public abstract ModelLayer toModel(ObservableModelLayer modelLayer);
 }

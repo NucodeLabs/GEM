@@ -17,10 +17,10 @@ import java.util.List;
 public abstract class DtoMapper {
 
     @Mapping(
-        target = "resistanceApparent",
+        target = "resistivityApparent",
         defaultExpression = "java(ru.nucodelabs.geo.ves.calc.VesFunctions.rhoA(dto.getAb2(), dto.getMn2(), dto.getAmperage(), dto.getVoltage()))"
     )
-    @Mapping(target = "errorResistanceApparent", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_ERROR)")
+    @Mapping(target = "errorResistivityApparent", defaultExpression = "java(ru.nucodelabs.geo.anisotropy.DefaultValues.DEFAULT_ERROR)")
     @Mapping(target = "isHidden", source = "hidden", defaultValue = "false")
     protected abstract Signal fromDto(SignalDto dto);
 

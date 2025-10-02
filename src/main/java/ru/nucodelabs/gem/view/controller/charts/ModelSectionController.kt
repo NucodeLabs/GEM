@@ -126,13 +126,13 @@ class ModelSectionController @Inject constructor(
                     picket.modelData[i].power
                 }
 
-                val resistance = picket.modelData[i].resistance
+                val resistivity = picket.modelData[i].resistivity
                 val series: Series<Number, Number> = Series(
                     observableListOf(
-                        Data(x, y, resistance),
-                        Data(x + width, y, resistance),
-                        Data(x + width, y - height, resistance),
-                        Data(x, y - height, resistance)
+                        Data(x, y, resistivity),
+                        Data(x + width, y, resistivity),
+                        Data(x + width, y - height, resistivity),
+                        Data(x, y - height, resistivity)
                     )
                 )
 

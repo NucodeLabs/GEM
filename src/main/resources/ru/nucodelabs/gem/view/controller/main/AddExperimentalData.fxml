@@ -13,10 +13,10 @@
     <TextField fx:id="ab2TextField" promptText="%ab2"/>
     <Label text="%mn2Full"/>
     <TextField fx:id="mn2TextField" promptText="%mn2"/>
-    <Label text="%resistanceApparentFull"/>
-    <TextField fx:id="resAppTextField" promptText="%resistanceApparent"/>
-    <Label text="%errorResistanceApparentFull"/>
-    <TextField fx:id="errResAppTextField" promptText="%errorResistanceApparent"/>
+    <Label text="%resistivityApparentFull"/>
+    <TextField fx:id="resAppTextField" promptText="%resistivityApparent"/>
+    <Label text="%errorResistivityApparentFull"/>
+    <TextField fx:id="errResAppTextField" promptText="%errorResistivityApparent"/>
     <Label text="%amperageFull"/>
     <TextField fx:id="amperageTextField" promptText="%amperage"/>
     <Label text="%voltageFull"/>

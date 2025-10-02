@@ -134,7 +134,7 @@ class AnisotropyFxAppModel @Inject constructor(
     fun upperErrorBoundSignals(): List<ObservableSignal> {
         val selectedSignals = selectedSignals()
         return selectedSignals?.signals?.effectiveSignals?.map {
-            it.copy(resistanceApparent = it.resistanceApparentUpperBoundByError)
+            it.copy(resistivityApparent = it.resistivityApparentUpperBoundByError)
         }?.map {
             fxModelMapper.toObservable(it)
         } ?: emptyList()
@@ -143,7 +143,7 @@ class AnisotropyFxAppModel @Inject constructor(
     fun lowerErrorBoundSignals(): List<ObservableSignal> {
         val selectedSignals = selectedSignals()
         return selectedSignals?.signals?.effectiveSignals?.map {
-            it.copy(resistanceApparent = it.resistanceApparentLowerBoundByError)
+            it.copy(resistivityApparent = it.resistivityApparentLowerBoundByError)
         }?.map {
             fxModelMapper.toObservable(it)
         } ?: emptyList()
@@ -170,7 +170,7 @@ class AnisotropyFxAppModel @Inject constructor(
         return exp.mapIndexed { aIdx, azimuthSignals ->
             azimuthSignals.copy(
                 signals = Signals(azimuthSignals.signals.sortedSignals.mapIndexed { index, signal ->
-                    signal.copy(resistanceApparent = theor[aIdx].signals.sortedSignals[index].resistanceApparent / signal.resistanceApparent)
+                    signal.copy(resistivityApparent = theor[aIdx].signals.sortedSignals[index].resistivityApparent / signal.resistivityApparent)
                 })
             )
         }.map {

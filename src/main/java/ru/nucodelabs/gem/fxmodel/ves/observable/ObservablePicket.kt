@@ -27,8 +27,8 @@ class ObservablePicket : MutableExperimentalDataSet<ObservableExperimentalData>,
                 experimentalData.mn2Property(),
                 experimentalData.amperageProperty(),
                 experimentalData.voltageProperty(),
-                experimentalData.resistanceApparentProperty(),
-                experimentalData.errorResistanceApparentProperty()
+                experimentalData.resistivityApparentProperty(),
+                experimentalData.errorResistivityApparentProperty()
             )
         }
 

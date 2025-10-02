@@ -22,7 +22,7 @@ fun signalsRelations(current: AzimuthSignals, all: List<AzimuthSignals>): List<S
             it.signals.effectiveSignals.mapIndexed { index, signal ->
                 Relation(
                     signal.ab2,
-                    current.signals.effectiveSignals[index].resistanceApparent / signal.resistanceApparent
+                    current.signals.effectiveSignals[index].resistivityApparent / signal.resistivityApparent
                 )
             })
     }

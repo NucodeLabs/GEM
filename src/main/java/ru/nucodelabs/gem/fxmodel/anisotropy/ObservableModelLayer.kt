@@ -7,7 +7,7 @@ import tornadofx.setValue
 
 class ObservableModelLayer(
     power: ObservableFixableValue<Double>,
-    resistance: ObservableFixableValue<Double>,
+    resistivity: ObservableFixableValue<Double>,
     verticalAnisotropyCoefficient: ObservableFixableValue<Double>,
     azimuth: ObservableFixableValue<Double>,
     azimuthAnisotropyCoefficient: ObservableFixableValue<Double>,
@@ -16,9 +16,9 @@ class ObservableModelLayer(
     fun powerProperty() = powerProperty
     var power: ObservableFixableValue<Double> by powerProperty
 
-    private val resistanceProperty: ObjectProperty<ObservableFixableValue<Double>> = SimpleObjectProperty(resistance)
-    fun resistanceProperty() = resistanceProperty
-    var resistance: ObservableFixableValue<Double> by resistanceProperty
+    private val resistivityProperty: ObjectProperty<ObservableFixableValue<Double>> = SimpleObjectProperty(resistivity)
+    fun resistivityProperty() = resistivityProperty
+    var resistivity: ObservableFixableValue<Double> by resistivityProperty
 
     private val verticalAnisotropyCoefficientProperty: ObjectProperty<ObservableFixableValue<Double>> =
         SimpleObjectProperty(verticalAnisotropyCoefficient)

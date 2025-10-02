@@ -12,6 +12,6 @@ operator fun ForwardSolver.invoke(
         experimentalData.map { it.ab2 },
         experimentalData.map { it.mn2 },
         modelData.map { it.power },
-        modelData.map { it.resistance },
+        modelData.map { it.resistivity },
     )
 }

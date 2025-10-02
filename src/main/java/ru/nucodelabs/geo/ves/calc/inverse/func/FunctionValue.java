@@ -35,32 +35,32 @@ public class FunctionValue implements MultivariateFunction {
     @Override
     public double value(double[] variables) {
         //Изменяемые сопротивления и мощности
-        List<Double> currentModelResistance = new ArrayList<>();
+        List<Double> currentModelResistivity = new ArrayList<>();
         List<Double> currentModelPower = new ArrayList<>();
 
-        int unfixedResistancesCnt = (int) modelLayers.stream()
-                .filter(modelLayer -> !modelLayer.isFixedResistance()).count();
+        int unfixedResistivityCnt = (int) modelLayers.stream()
+            .filter(modelLayer -> !modelLayer.isFixedResistivity()).count();
 
         //Восстановление изменяемых слоев до нормальной формы
-        for (int i = 0; i < unfixedResistancesCnt; i++) {
-            currentModelResistance.add(Math.exp(variables[i]));
+        for (int i = 0; i < unfixedResistivityCnt; i++) {
+            currentModelResistivity.add(Math.exp(variables[i]));
         }
-        for (int i = unfixedResistancesCnt; i < variables.length; i++) {
+        for (int i = unfixedResistivityCnt; i < variables.length; i++) {
             currentModelPower.add(Math.exp(variables[i]));
         }
         currentModelPower.add(0.0);
 
         //Объединение изменяемых и неизменяемых слоев (в нормальной форме)
-        List<Double> newModelResistance = new ArrayList<>();
+        List<Double> newModelResistivity = new ArrayList<>();
         List<Double> newModelPower = new ArrayList<>();
 
-        int cntUnfixedResistances = 0;
+        int cntUnfixedResistivity = 0;
         for (var modelLayer : modelLayers) {
-            if (modelLayer.isFixedResistance()) {
-                newModelResistance.add(modelLayer.getResistance());
+            if (modelLayer.isFixedResistivity()) {
+                newModelResistivity.add(modelLayer.getResistivity());
             } else {
-                newModelResistance.add(currentModelResistance.get(cntUnfixedResistances));
-                cntUnfixedResistances++;
+                newModelResistivity.add(currentModelResistivity.get(cntUnfixedResistivity));
+                cntUnfixedResistivity++;
             }
         }
 
@@ -76,22 +76,22 @@ public class FunctionValue implements MultivariateFunction {
 
         List<ModelLayer> newModelLayers = new ArrayList<>();
         for (int i = 0; i < modelLayers.size(); i++) {
-            newModelLayers.add(new ModelLayer(newModelPower.get(i), newModelResistance.get(i), false, false));
+            newModelLayers.add(new ModelLayer(newModelPower.get(i), newModelResistivity.get(i), false, false));
         }
 
-        List<Double> solvedResistance = ForwardSolverAdapterKt.invoke(forwardSolver, experimentalData, newModelLayers);
+        List<Double> solvedResistivity = ForwardSolverAdapterKt.invoke(forwardSolver, experimentalData, newModelLayers);
 
         double diffValue = targetFunction.invoke(
-                solvedResistance,
-            experimentalData.stream().map(ReadOnlyExperimentalSignal::getResistanceApparent).toList(),
-            experimentalData.stream().map(ReadOnlyExperimentalSignal::getErrorResistanceApparent).toList()
+            solvedResistivity,
+            experimentalData.stream().map(ReadOnlyExperimentalSignal::getResistivityApparent).toList(),
+            experimentalData.stream().map(ReadOnlyExperimentalSignal::getErrorResistivityApparent).toList()
         );
 
         boolean flag = false;
 
         for (ModelLayer modelLayer : newModelLayers) {
-            if (modelLayer.getResistance() < 0.1 ||
-                    modelLayer.getResistance() > 1e5 ||
+            if (modelLayer.getResistivity() < 0.1 ||
+                modelLayer.getResistivity() > 1e5 ||
                     (modelLayer.getPower() != 0.0 && modelLayer.getPower() < 0.1) ||
                 modelLayer.getPower() > experimentalData.getLast().getAb2()) {
                 diffValue = Math.max(diffMinValue * (1.1 + 0.1 * Math.random()), diffValue);
