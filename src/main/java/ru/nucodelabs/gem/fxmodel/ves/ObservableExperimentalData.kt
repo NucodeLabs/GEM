@@ -70,5 +70,14 @@ class ObservableExperimentalData(
     override var isHidden by hiddenProperty
 }
 
-fun ReadOnlyExperimentalSignal.toObservable() =
-    ObservableExperimentalData(ab2, mn2, amperage, voltage, resistivityApparent, errorResistivityApparent, isHidden)
+inline fun <reified T : ReadOnlyExperimentalSignal> T.toObservable(): ObservableExperimentalData =
+    if (T::class == ObservableExperimentalData::class) this as ObservableExperimentalData
+    else ObservableExperimentalData(
+        ab2,
+        mn2,
+        amperage,
+        voltage,
+        resistivityApparent,
+        errorResistivityApparent,
+        isHidden
+    )

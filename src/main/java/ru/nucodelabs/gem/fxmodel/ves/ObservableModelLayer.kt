@@ -31,5 +31,11 @@ class ObservableModelLayer(
     override var isFixedResistivity by fixedResistivityProperty
 }
 
-fun ReadOnlyModelLayer.toObservable() =
-    ObservableModelLayer(power, resistivity, isFixedPower, isFixedResistivity)
+inline fun <reified T : ReadOnlyModelLayer> T.toObservable(): ObservableModelLayer =
+    if (T::class == ObservableModelLayer::class) this as ObservableModelLayer
+    else ObservableModelLayer(
+        power,
+        resistivity,
+        isFixedPower,
+        isFixedResistivity
+    )
