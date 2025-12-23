@@ -251,7 +251,8 @@ infix fun <T> Property<T>.bindTo(observable: ObservableValue<T>) {
     bind(observable)
 }
 
-fun currentWindow(): Stage = Stage.getWindows().find { it.isFocused } as Stage
+fun currentWindow(): Stage = Stage.getWindows().filterIsInstance<Stage>().find { it.isFocused }
+    ?: throw IllegalStateException("No window focused")
 
 fun saveInitialDirectory(
     preferences: Preferences,

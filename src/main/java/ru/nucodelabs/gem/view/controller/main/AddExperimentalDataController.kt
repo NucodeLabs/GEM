@@ -55,7 +55,6 @@ class AddExperimentalDataController @Inject constructor(
     private lateinit var ab2TextField: TextField
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
         val fields = listOf(
             ab2TextField to ExperimentalData::validateAb2,
             mn2TextField to ExperimentalData::validateMn2,
@@ -142,7 +141,7 @@ class AddExperimentalDataController @Inject constructor(
                 errorResistivityApparent = errResAppTextField.textFormatter.value as Double
             )
         } catch (e: InvalidPropertiesException) {
-            alertsFactory.simpleExceptionAlert(e, stage).show()
+            alertsFactory.simpleExceptionAlert(e, rootStage()).show()
             return
         }
 

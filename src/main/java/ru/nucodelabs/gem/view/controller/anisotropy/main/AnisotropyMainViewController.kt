@@ -184,7 +184,6 @@ class AnisotropyMainViewController @Inject constructor(
     lateinit var signalsInterpolation: SmartInterpolationMap
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
         initControls()
         initAndSetupListeners()
     }
@@ -580,7 +579,7 @@ class AnisotropyMainViewController @Inject constructor(
 
     @FXML
     private fun loadProject() {
-        val file: File? = fileChooser.showOpenDialog(stage)
+        val file: File? = fileChooser.showOpenDialog(rootStage())
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             validation(alertsFactory) {
@@ -592,7 +591,7 @@ class AnisotropyMainViewController @Inject constructor(
 
     @FXML
     private fun saveProject() {
-        val file: File? = fileChooser.showSaveDialog(stage)
+        val file: File? = fileChooser.showSaveDialog(rootStage())
         if (file != null) {
             saveInitialDirectory(preferences, JSON_FILES_DIR, fileChooser, file)
             appModel.saveProject(file)

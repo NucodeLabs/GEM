@@ -17,6 +17,7 @@ import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -82,10 +83,14 @@ class MainViewController @Inject constructor(
     private val dirtyAsterisk: StringProperty = SimpleStringProperty("")
 
     private val noFileOpenedProperty: BooleanProperty = SimpleBooleanProperty(true)
+
+    @Suppress("unused")
     fun noFileOpenedProperty(): BooleanProperty = noFileOpenedProperty
     val noFileOpened: Boolean by noFileOpenedProperty
 
     private val vesNumberProperty: StringProperty = SimpleStringProperty()
+
+    @Suppress("unused")
     fun vesNumberProperty(): StringProperty = vesNumberProperty
     val vesNumber: String? by vesNumberProperty
 
@@ -167,14 +172,13 @@ class MainViewController @Inject constructor(
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
 
         stage.onCloseRequest = EventHandler { e ->
             if (!askToSave(e).isConsumed) {
                 menuViewSectionInSeparateWindow.isSelected = false
             }
         }
-//        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
+        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
         macOS {
             val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
             menuView.items.add(0, useSystemMenu)

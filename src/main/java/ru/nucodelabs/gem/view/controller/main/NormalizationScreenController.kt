@@ -92,7 +92,6 @@ class NormalizationScreenController @Inject constructor(
     private lateinit var additiveResult: List<Double>
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
 
         xAxis.tickLabelFormatter = numberStringConverter
         yAxis.tickLabelFormatter = numberStringConverter

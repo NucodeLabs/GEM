@@ -28,7 +28,6 @@ class InitialModelConfigurationViewController @Inject constructor(
     private lateinit var minTargetFunctionValueTextField: TextField
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
         minTargetFunctionValueTextField.text = decimalFormat.format(parameters.minTargetFunctionValue)
         maxLayersCountTextField.text = decimalFormat.format(parameters.maxLayersCount)
     }
@@ -39,7 +38,7 @@ class InitialModelConfigurationViewController @Inject constructor(
         val maxLayersCount = maxLayersCountTextField.text.toIntOrNullBy(decimalFormat)
 
         if (minTargetFunctionValue == null || maxLayersCount == null) {
-            alertsFactory.simpleAlert(text = "Неправильный ввод", owner = stage).show()
+            alertsFactory.simpleAlert(text = "Неправильный ввод", owner = rootStage()).show()
             return
         }
 
@@ -48,6 +47,6 @@ class InitialModelConfigurationViewController @Inject constructor(
             maxLayersCount = maxLayersCount
         )
 
-        stage?.close()
+        rootStage()?.close()
     }
 }
