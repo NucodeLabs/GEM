@@ -6,5 +6,5 @@ import ru.nucodelabs.geo.ves.SectionExperimentalDataSet
 
 class ObservableSection : SectionExperimentalDataSet {
     val pickets: ObservableList<ObservablePicket> = FXCollections.observableArrayList()
-    override fun pickets() = pickets
+    override fun pickets(): ObservableList<ObservablePicket> = pickets
 }
