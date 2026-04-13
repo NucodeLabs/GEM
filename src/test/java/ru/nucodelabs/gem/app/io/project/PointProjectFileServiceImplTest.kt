@@ -53,8 +53,8 @@ class PointProjectFileServiceImplTest {
                         "mn2" : 0.0,
                         "amperage" : 0.0,
                         "voltage" : 0.0,
-                        "resistanceApparent" : 0.0,
-                        "errorResistanceApparent" : 0.0,
+                        "resistivityApparent" : 0.0,
+                        "errorResistivityApparent" : 0.0,
                         "isHidden" : false
                       } ]
                     } ],

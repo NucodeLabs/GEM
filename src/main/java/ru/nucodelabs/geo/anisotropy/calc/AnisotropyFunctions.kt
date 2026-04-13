@@ -31,7 +31,7 @@ fun forwardSolve(
             signalsOut,
             model.size.toShort(),
             model.map { it.power.value }.toDoubleArray(),
-            model.map { it.resistance.value }.toDoubleArray(),
+            model.map { it.resistivity.value }.toDoubleArray(),
             model.map { it.verticalAnisotropyCoefficient.value }.toDoubleArray(),
             model.map { it.azimuth.value }.toDoubleArray(),
             model.map { it.azimuthAnisotropyCoefficient.value }.toDoubleArray()
@@ -45,7 +45,7 @@ fun forwardSolve(
         it.copy(
             signals = Signals(
                 it.signals.sortedSignals.map { signal ->
-                    val new = signal.copy(resistanceApparent = signalsOut[i])
+                    val new = signal.copy(resistivityApparent = signalsOut[i])
                     i++
                     new
                 }
@@ -69,13 +69,13 @@ fun inverseSolveInPlace(
     }.toByteArray()
     val AB2 = signals.map { it.ab2 }.toDoubleArray()
     val MN2 = signals.map { it.mn2 }.toDoubleArray()
-    val rel_error = signals.map { it.errorResistanceApparent / 100.0 }.toDoubleArray()
+    val rel_error = signals.map { it.errorResistivityApparent / 100.0 }.toDoubleArray()
 
     val n_layers = model.size.toShort()
     val fix_h = model.map { if (it.power.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val h = model.map { it.power.value }.toDoubleArray()
-    val fix_ro = model.map { if (it.resistance.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
-    val ro_avg = model.map { it.resistance.value }.toDoubleArray()
+    val fix_ro = model.map { if (it.resistivity.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
+    val ro_avg = model.map { it.resistivity.value }.toDoubleArray()
     val fix_kanisotropy_vert =
         model.map { if (it.verticalAnisotropyCoefficient.isFixed) 1.toByte() else 0.toByte() }.toByteArray()
     val kanisotropy_vert = model.map { it.verticalAnisotropyCoefficient.value }.toDoubleArray()
@@ -92,7 +92,7 @@ fun inverseSolveInPlace(
         idx_azimuth,
         AB2,
         MN2,
-        signals.map { it.resistanceApparent }.toDoubleArray(),
+        signals.map { it.resistivityApparent }.toDoubleArray(),
         rel_error,
         n_layers,
         fix_h,
@@ -113,7 +113,7 @@ fun inverseSolveInPlace(
 
     model.forEachIndexed { i, layer ->
         layer.power.value = h[i]
-        layer.resistance.value = ro_avg[i]
+        layer.resistivity.value = ro_avg[i]
         layer.verticalAnisotropyCoefficient.value = kanisotropy_vert[i]
         layer.azimuth.value = azimuth[i]
         layer.azimuthAnisotropyCoefficient.value = kanisotropy_azimuth[i]
@@ -131,7 +131,7 @@ fun convertModel(
     val h = singleLayer.map { it.power }.toDoubleArray()
     val n_model = models.size
     val model_azimuth = azimuths.toDoubleArray()
-    val ro_isotrop = allLayers.map { it.resistance }.toDoubleArray()
+    val ro_isotrop = allLayers.map { it.resistivity }.toDoubleArray()
 
     val ro_avg = List(n_layers) { 0.0 }.toDoubleArray()
     val kanisotropy_vert = List(n_layers) { 0.0 }.toDoubleArray()
@@ -159,7 +159,7 @@ fun convertModel(
         anizotropyModel.add(
             ModelLayer(
                 power = FixableValue(h[i], false),
-                resistance = FixableValue(ro_avg[i], false),
+                resistivity = FixableValue(ro_avg[i], false),
                 verticalAnisotropyCoefficient = FixableValue(kanisotropy_vert[i], false),
                 azimuth = FixableValue(azimuth[i], false),
                 azimuthAnisotropyCoefficient = FixableValue(kanisotropy_azimuth[i], false)

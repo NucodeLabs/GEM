@@ -1,11 +1,12 @@
 package ru.nucodelabs.geo.ves.calc
 
-import ru.nucodelabs.geo.ves.Picket
+import ru.nucodelabs.geo.ves.ExperimentalDataSet
+import ru.nucodelabs.geo.ves.ModelDataSet
 
-fun Picket.zOfModelLayers(): List<Double> {
+fun ModelDataSet.zOfModelLayers(): List<Double> {
     val heightList: MutableList<Double> = mutableListOf()
     val power = modelData.map { it.power }
-    var sum = z
+    var sum = modelZ
     for (p in power) {
         sum -= p
         heightList.add(sum)
@@ -18,10 +19,10 @@ fun Picket.zOfModelLayers(): List<Double> {
  *
  * Тогда верно следующее:
  *
- * `a[i] = j` `<=>` `effectiveExperimentalData[i] = sortedExperimentalData[j]`
+ * `a[i] = j <=> effectiveExperimentalData[i] = sortedExperimentalData[j]`
  */
-fun Picket.effectiveToSortedIndicesMapping(): IntArray {
-    return IntArray(effectiveExperimentalData.size) { i ->
-        sortedExperimentalData.indexOf(effectiveExperimentalData[i])
-    }
+fun ExperimentalDataSet.effectiveToSortedIndicesMapping(): IntArray {
+    val sorted = sortedExperimentalData
+    val effective = effectiveExperimentalData
+    return IntArray(effective.size) { i -> sorted.indexOf(effective[i]) }
 }

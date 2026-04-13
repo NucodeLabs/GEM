@@ -5,5 +5,7 @@ package ru.nucodelabs.geo.ves
  * @property pickets Список пикетов для данного разреза
  */
 data class Section(
-    val pickets: List<Picket> = listOf()
-)
+    val pickets: List<Picket> = emptyList()
+) : SectionExperimentalDataSet {
+    override fun pickets(): List<ExperimentalDataSet> = pickets
+}

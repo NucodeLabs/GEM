@@ -11,8 +11,9 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import ru.nucodelabs.geo.forward.ForwardSolver;
 import ru.nucodelabs.geo.target.RelativeErrorAwareTargetFunction;
-import ru.nucodelabs.geo.ves.ExperimentalData;
 import ru.nucodelabs.geo.ves.ModelLayer;
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal;
+import ru.nucodelabs.geo.ves.ReadOnlyModelLayer;
 import ru.nucodelabs.geo.ves.calc.inverse.func.FunctionValue;
 
 import java.util.ArrayList;
@@ -62,14 +63,14 @@ public class InverseSolver {
     }
 
     private void setLimitValues(
-            List<Double> resistances, double minResistance, double maxResistance,
+        List<Double> resistivity, double minResistivity, double maxResistivity,
             List<Double> powers, double minPower, double maxPower
     ) {
-        for (int i = 0; i < resistances.size(); i++) {
-            if (resistances.get(i) < minResistance)
-                resistances.set(i, minResistance);
-            else if (resistances.get(i) > maxResistance)
-                resistances.set(i, maxResistance);
+        for (int i = 0; i < resistivity.size(); i++) {
+            if (resistivity.get(i) < minResistivity)
+                resistivity.set(i, minResistivity);
+            else if (resistivity.get(i) > maxResistivity)
+                resistivity.set(i, maxResistivity);
         }
         for (int i = 0; i < powers.size(); i++) {
             if (powers.get(i) != 0 && powers.get(i) < minPower)
@@ -80,34 +81,34 @@ public class InverseSolver {
     }
 
     public List<ModelLayer> getOptimizedModelData(
-            List<ExperimentalData> experimentalData,
-            List<ModelLayer> modelData,
+        List<ReadOnlyExperimentalSignal> experimentalData,
+        List<ReadOnlyModelLayer> modelData,
             final int maxEval
     ) {
 
         //Изменяемые сопротивления и мощности
-        List<Double> modelResistance = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedResistance()).map(ModelLayer::getResistance).collect(Collectors.toList());
+        List<Double> modelResistivity = modelData.stream()
+            .filter(modelLayer -> !modelLayer.isFixedResistivity()).map(ReadOnlyModelLayer::getResistivity).collect(Collectors.toList());
         List<Double> modelPower = modelData.stream()
-                .filter(modelLayer -> !modelLayer.isFixedPower()).map(ModelLayer::getPower).collect(Collectors.toList());
+            .filter(modelLayer -> !modelLayer.isFixedPower()).map(ReadOnlyModelLayer::getPower).collect(Collectors.toList());
 
         //Установка ограничений для адекватности обратной задачи
         double maxPower = experimentalData.stream()
-                .map(ExperimentalData::getAb2)
+            .map(ReadOnlyExperimentalSignal::getAb2)
                 .mapToDouble(Double::doubleValue)
                 .max()
             .orElseThrow();
 
         setLimitValues(
-                modelResistance, 0.1, 1e5,
+            modelResistivity, 0.1, 1e5,
                 modelPower, 0.1, maxPower
         );
 
         //Неизменяемые сопротивления и мощности
-        List<Double> fixedModelResistance = modelData.stream()
-                .filter(ModelLayer::isFixedResistance).map(ModelLayer::getResistance).toList();
+        List<Double> fixedModelResistivity = modelData.stream()
+            .filter(ReadOnlyModelLayer::isFixedResistivity).map(ReadOnlyModelLayer::getResistivity).toList();
         List<Double> fixedModelPower = modelData.stream()
-                .filter(ModelLayer::isFixedPower).map(ModelLayer::getPower).toList();
+            .filter(ReadOnlyModelLayer::isFixedPower).map(ReadOnlyModelLayer::getPower).toList();
 
         SimplexOptimizer optimizer = new SimplexOptimizer(relativeThreshold, absoluteThreshold);
 
@@ -118,16 +119,16 @@ public class InverseSolver {
                 forwardSolver
         );
 
-        //anyArray = resistance.size...(model.size - 1)
-        int dimension = modelResistance.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
+        //anyArray = resistivity.size...(model.size - 1)
+        int dimension = modelResistivity.size() + modelPower.size() - 1; // -1 - мощность последнего слоя не передается как параметр
         NelderMeadSimplex nelderMeadSimplex = new NelderMeadSimplex(dimension, sideLength);
 
         double[] startPoint = new double[dimension]; //res_1, ..., res_n, power_1, ..., power_n-1
-        for (int i = 0; i < modelResistance.size(); i++) {
-            startPoint[i] = Math.log(modelResistance.get(i));
+        for (int i = 0; i < modelResistivity.size(); i++) {
+            startPoint[i] = Math.log(modelResistivity.get(i));
         }
-        for (int i = modelResistance.size(); i < dimension; i++) {
-            startPoint[i] = Math.log(modelPower.get(i - modelResistance.size()));
+        for (int i = modelResistivity.size(); i < dimension; i++) {
+            startPoint[i] = Math.log(modelPower.get(i - modelResistivity.size()));
         }
 
         InitialGuess initialGuess = new InitialGuess(startPoint);
@@ -144,25 +145,25 @@ public class InverseSolver {
         double[] key = pointValuePair.getKey();
 
         List<Double> newModelPower = new ArrayList<>();
-        List<Double> newModelResistance = new ArrayList<>();
+        List<Double> newModelResistivity = new ArrayList<>();
 
-        int cntFixedResistances = 0;
-        int cntUnfixedResistances = 0;
-        for (ModelLayer modelLayer : modelData) {
-            if (modelLayer.isFixedResistance()) {
-                newModelResistance.add(fixedModelResistance.get(cntFixedResistances));
-                cntFixedResistances++;
+        int cntFixedResistivity = 0;
+        int cntUnfixedResistivity = 0;
+        for (var modelLayer : modelData) {
+            if (modelLayer.isFixedResistivity()) {
+                newModelResistivity.add(fixedModelResistivity.get(cntFixedResistivity));
+                cntFixedResistivity++;
             } else {
-                newModelResistance.add(Math.exp(key[cntUnfixedResistances]));
-                cntUnfixedResistances++;
+                newModelResistivity.add(Math.exp(key[cntUnfixedResistivity]));
+                cntUnfixedResistivity++;
             }
         }
 
         int cntFixedPowers = 0;
         int cntUnfixedPowers = 0;
         for (int i = 0; i < modelData.size() - 1; i++) {
-            ModelLayer modelLayer = modelData.get(i);
-            int shift = modelResistance.size();
+            var modelLayer = modelData.get(i);
+            int shift = modelResistivity.size();
             if (modelLayer.isFixedPower()) {
                 newModelPower.add(fixedModelPower.get(cntFixedPowers));
                 cntFixedPowers++;
@@ -178,9 +179,9 @@ public class InverseSolver {
         for (int i = 0; i < modelData.size(); i++) {
             resultModel.add(new ModelLayer(
                     newModelPower.get(i),
-                    newModelResistance.get(i),
+                newModelResistivity.get(i),
                     modelData.get(i).isFixedPower(),
-                    modelData.get(i).isFixedResistance())
+                modelData.get(i).isFixedResistivity())
             );
         }
 

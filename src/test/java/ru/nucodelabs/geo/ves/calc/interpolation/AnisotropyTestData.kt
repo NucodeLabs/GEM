@@ -11,7 +11,7 @@ object AnisotropyTestData {
     init {
         val picket = ShiraPicket.picket
         val expData = picket.sortedExperimentalData
-        val points1 = expData.map { e -> Point(100.0, e.ab2, e.resistanceApparent) }
+        val points1 = expData.map { e -> Point(100.0, e.ab2, e.resistivityApparent) }
         var angle = 60.0
         val points2 = points1.map { e ->
             Point(

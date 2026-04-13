@@ -42,9 +42,9 @@ final class SonetImportUtils {
                 numbers.stream().map(s -> s.get(0)).toList());
             res.getVoltage().addAll(
                 numbers.stream().map(s -> s.get(1)).toList());
-            res.getResistanceApparent().addAll(
+            res.getResistivityApparent().addAll(
                 numbers.stream().map(s -> s.get(2)).toList());
-            res.getErrorResistanceApparent().addAll(
+            res.getErrorResistivityApparent().addAll(
                 numbers.stream().map(s -> s.get(3)).toList());
             res.getPolarizationApparent().addAll(
                 numbers.stream().map(s -> s.get(4)).toList());
@@ -60,7 +60,7 @@ final class SonetImportUtils {
         try (Scanner sc = new Scanner(file).useLocale(Locale.US)) {
             ArrayList<ArrayList<Double>> numbers = columnReader(sc, new MODFile().getColumnCnt());
 
-            res.getResistance().addAll(
+            res.getResistivity().addAll(
                 numbers.stream().map(s -> s.get(0)).toList());
             res.getPower().addAll(
                 numbers.stream().map(s -> s.get(1)).toList());

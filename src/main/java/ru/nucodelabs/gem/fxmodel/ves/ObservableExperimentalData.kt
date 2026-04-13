@@ -1,7 +1,10 @@
 package ru.nucodelabs.gem.fxmodel.ves
 
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
+import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.MutableExperimentalSignal
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal
+import ru.nucodelabs.kfx.observable.ConstrainedDoubleProperty
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -10,35 +13,71 @@ class ObservableExperimentalData(
     mn2: Double,
     amperage: Double,
     voltage: Double,
-    resistanceApparent: Double,
-    errorResistanceApparent: Double,
+    resistivityApparent: Double,
+    errorResistivityApparent: Double,
     isHidden: Boolean
-) {
-    private val ab2Property = SimpleDoubleProperty(ab2)
+) : MutableExperimentalSignal {
+    private val ab2Property = ConstrainedDoubleProperty(
+        ab2,
+        ExperimentalData::isValidDistance
+    )
+
     fun ab2Property() = ab2Property
-    var ab2 by ab2Property
+    override var ab2 by ab2Property
 
-    private val mn2Property = SimpleDoubleProperty(mn2)
+    private val mn2Property = ConstrainedDoubleProperty(
+        mn2,
+        ExperimentalData::isValidDistance
+    )
+
     fun mn2Property() = mn2Property
-    var mn2 by mn2Property
+    override var mn2 by mn2Property
 
-    private val amperageProperty = SimpleDoubleProperty(amperage)
+    private val amperageProperty = ConstrainedDoubleProperty(
+        amperage,
+        ExperimentalData::isValidAmperage
+    )
+
     fun amperageProperty() = amperageProperty
-    var amperage by amperageProperty
+    override var amperage by amperageProperty
 
-    private val voltageProperty = SimpleDoubleProperty(voltage)
+    private val voltageProperty = ConstrainedDoubleProperty(
+        voltage,
+        ExperimentalData::isValidVoltage
+    )
+
     fun voltageProperty() = voltageProperty
-    var voltage by voltageProperty
+    override var voltage by voltageProperty
 
-    private val resistanceApparentProperty = SimpleDoubleProperty(resistanceApparent)
-    fun resistanceApparentProperty() = resistanceApparentProperty
-    var resistanceApparent by resistanceApparentProperty
+    private val resistivityApparentProperty = ConstrainedDoubleProperty(
+        resistivityApparent,
+        ExperimentalData::isValidResistApparent
+    )
 
-    private val errorResistanceApparentProperty = SimpleDoubleProperty(errorResistanceApparent)
-    fun errorResistanceApparentProperty() = errorResistanceApparentProperty
-    var errorResistanceApparent by errorResistanceApparentProperty
+    fun resistivityApparentProperty() = resistivityApparentProperty
+    override var resistivityApparent by resistivityApparentProperty
+
+    private val errorResistivityApparentProperty = ConstrainedDoubleProperty(
+        errorResistivityApparent,
+        ExperimentalData::isValidErrResistApparent
+    )
+
+    fun errorResistivityApparentProperty() = errorResistivityApparentProperty
+    override var errorResistivityApparent by errorResistivityApparentProperty
 
     private val hiddenProperty = SimpleBooleanProperty(isHidden)
     fun hiddenProperty() = hiddenProperty
-    var isHidden by hiddenProperty
+    override var isHidden by hiddenProperty
 }
+
+inline fun <reified T : ReadOnlyExperimentalSignal> T.toObservable(): ObservableExperimentalData =
+    if (T::class == ObservableExperimentalData::class) this as ObservableExperimentalData
+    else ObservableExperimentalData(
+        ab2,
+        mn2,
+        amperage,
+        voltage,
+        resistivityApparent,
+        errorResistivityApparent,
+        isHidden
+    )

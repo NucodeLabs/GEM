@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 internal class PicketTest {
     @Test
     fun test() {
-        val data = ExperimentalData(1.0, 1.0, 1.0, 1.0)
+        val data = ExperimentalData(1.5, 1.0, 1.0, 1.0)
         val picket = Picket(
             experimentalData = listOf(
                 data,

@@ -33,8 +33,8 @@ fun processSignals(signals: List<Signal>): List<Signal> {
     return acc.sortedWith(orderSignalsByDistances())
 }
 
-val Signal.resistanceApparentUpperBoundByError
-    get() = (resistanceApparent + resistanceApparent * errorResistanceApparent / 100).coerceAtLeast(1.0)
+val Signal.resistivityApparentUpperBoundByError
+    get() = (resistivityApparent + resistivityApparent * errorResistivityApparent / 100).coerceAtLeast(1.0)
 
-val Signal.resistanceApparentLowerBoundByError
-    get() = (resistanceApparent - resistanceApparent * errorResistanceApparent / 100).coerceAtLeast(1.0)
+val Signal.resistivityApparentLowerBoundByError
+    get() = (resistivityApparent - resistivityApparent * errorResistivityApparent / 100).coerceAtLeast(1.0)

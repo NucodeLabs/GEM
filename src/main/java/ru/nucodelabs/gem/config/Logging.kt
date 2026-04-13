@@ -1,5 +1,6 @@
 package ru.nucodelabs.gem.config
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-fun slf4j(instance: Any) = LoggerFactory.getLogger(instance::class.java)!!
+inline fun <reified T> T.slf4j(): Logger = LoggerFactory.getLogger(T::class.java)!!

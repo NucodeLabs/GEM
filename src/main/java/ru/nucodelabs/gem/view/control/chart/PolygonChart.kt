@@ -9,6 +9,10 @@ import javafx.scene.shape.Polygon
  * Draws polygons using points of each series.
  * To get polygons references use `seriesPolygons` map view.
  */
+@Deprecated(
+    "Use CanvasRenderPolygonChart",
+    ReplaceWith("CanvasRenderPolygonChart(xAxis, yAxis)")
+)
 open class PolygonChart(
     @NamedArg("xAxis") xAxis: ValueAxis<Number>,
     @NamedArg("yAxis") yAxis: ValueAxis<Number>

@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import ru.nucodelabs.files.clr.ColorNode;
 import ru.nucodelabs.files.clr.RgbaColor;
-import ru.nucodelabs.util.std.MathKt;
+import ru.nucodelabs.util.MathKt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,10 +143,10 @@ public class ColorPalette implements ColorMapper {
         return segmentList.get((int) Math.floor(percentage / (1.0 / segmentList.size())));
     }
 
-    private double percentageFor(double resistance) {
-        if (resistance < minValue) return 0.0;
-        if (resistance > maxValue) return 1.0;
-        return (resistance - minValue) / (maxValue - minValue);
+    private double percentageFor(double value) {
+        if (value < minValue) return 0.0;
+        if (value > maxValue) return 1.0;
+        return (value - minValue) / (maxValue - minValue);
     }
 
     private void checkLog() {

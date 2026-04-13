@@ -7,7 +7,7 @@ internal class ExperimentalDataTest {
 
     @Test
     fun orderByDistances_() {
-        val data = ExperimentalData(1.0, 1.0, 1.0, 1.0)
+        val data = ExperimentalData(1.5, 1.0, 1.0, 1.0)
         val list = listOf(
             data,
             data.copy(ab2 = 2.0),

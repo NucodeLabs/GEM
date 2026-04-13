@@ -1,16 +1,16 @@
 package ru.nucodelabs.geo.ves.calc
 
-import ru.nucodelabs.geo.ves.ExperimentalData
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal
 import ru.nucodelabs.mathves.Normalization
-import ru.nucodelabs.util.std.fromPercent
+import ru.nucodelabs.util.fromPercent
 
 data class FixableValue<T>(val value: T, val isFixed: Boolean)
 
 /**
- * @return normalized resistance and additive coefficients
+ * @return normalized resistivity and additive coefficients
  */
 fun normalizeExperimentalData(
-    experimentalData: List<ExperimentalData>,
+    experimentalData: List<ReadOnlyExperimentalSignal>,
     distinctMn2: List<FixableValue<Double>>,
     idxMap: List<Int>
 ): Pair<List<Double>, List<Double>> {
@@ -20,14 +20,14 @@ fun normalizeExperimentalData(
         distinctMn2.map { it.isFixed }.toBooleanArray(),
         experimentalData.map { it.ab2 }.toDoubleArray(),
         idxMap.map { it.toShort() }.toShortArray(),
-        experimentalData.map { it.resistanceApparent }.toDoubleArray(),
-        experimentalData.map { it.errorResistanceApparent.fromPercent() }.toDoubleArray(),
+        experimentalData.map { it.resistivityApparent }.toDoubleArray(),
+        experimentalData.map { it.errorResistivityApparent.fromPercent() }.toDoubleArray(),
         add
     ).toList() to add.toList()
 }
 
 @JvmName("distinctMn2ForExpData")
-fun distinctMn2(experimentalData: List<ExperimentalData>) = distinctMn2(experimentalData.map { it.mn2 })
+fun distinctMn2(experimentalData: List<ReadOnlyExperimentalSignal>) = distinctMn2(experimentalData.map { it.mn2 })
 
 fun distinctMn2(mn2: List<Double>): Pair<List<Double>, List<Int>> {
     val idx = ShortArray(mn2.size)

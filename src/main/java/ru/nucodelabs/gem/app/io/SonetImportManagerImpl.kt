@@ -24,8 +24,8 @@ internal class SonetImportManagerImpl : SonetImportManager {
             sttParsed.mN_2,
             expParsed.amperage,
             expParsed.voltage,
-            expParsed.resistanceApparent,
-            expParsed.errorResistanceApparent
+            expParsed.resistivityApparent,
+            expParsed.errorResistivityApparent
         ).minOf { it.size }
 
         val expData: MutableList<ExperimentalData> = mutableListOf()
@@ -33,8 +33,8 @@ internal class SonetImportManagerImpl : SonetImportManager {
             expData += ExperimentalData(
                 ab2 = sttParsed.aB_2[i],
                 mn2 = sttParsed.mN_2[i],
-                resistanceApparent = expParsed.resistanceApparent[i],
-                errorResistanceApparent = expParsed.errorResistanceApparent[i],
+                resistivityApparent = expParsed.resistivityApparent[i],
+                errorResistivityApparent = expParsed.errorResistivityApparent[i],
                 amperage = expParsed.amperage[i],
                 voltage = expParsed.voltage[i]
             )
@@ -75,14 +75,14 @@ internal class SonetImportManagerImpl : SonetImportManager {
 
         val minSize = listOf(
             modParsed.power,
-            modParsed.resistance
+            modParsed.resistivity
         ).minOf { it.size }
 
         val modelData: MutableList<ModelLayer> = mutableListOf()
         for (i in 0 until minSize) {
             modelData += ModelLayer(
                 power = modParsed.power[i],
-                resistance = modParsed.resistance[i]
+                resistivity = modParsed.resistivity[i]
             )
         }
         return modelData

@@ -16,28 +16,27 @@ import javafx.scene.chart.XYChart.Series
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
-import javafx.stage.Stage
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.app.pref.PNG_FILES_DIR
 import ru.nucodelabs.gem.config.Name
 import ru.nucodelabs.gem.config.Style
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
-import ru.nucodelabs.gem.view.AlertsFactory
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicAxis
 import ru.nucodelabs.gem.view.control.chart.log.LogarithmicChartNavigationSupport
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.geo.forward.ForwardSolver
 import ru.nucodelabs.geo.ves.Picket
 import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.graph.*
-import ru.nucodelabs.geo.ves.calc.resistanceApparentLowerBoundByError
-import ru.nucodelabs.geo.ves.calc.resistanceApparentUpperBoundByError
+import ru.nucodelabs.geo.ves.calc.resistivityApparentLowerBoundByError
+import ru.nucodelabs.geo.ves.calc.resistivityApparentUpperBoundByError
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
+import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.*
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import java.lang.Double.max
 import java.lang.Double.min
 import java.net.URL
@@ -53,7 +52,6 @@ private const val ZOOM_DELTA_LOG = 0.05
 class VesCurvesController @Inject constructor(
     private val picketObservable: ObservableObjectValue<Picket>,
     private val _picketIndex: IntegerProperty,
-    private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
     private val historyManager: HistoryManager<Section>,
     private val decimalFormat: DecimalFormat,
@@ -61,7 +59,7 @@ class VesCurvesController @Inject constructor(
     private val forwardSolver: ForwardSolver,
     @Named(Name.File.PNG) private val fc: FileChooser,
     private val prefs: Preferences
-) : AbstractController() {
+) : AbstractViewController<VBox>() {
 
     private val dataProperty: ObjectProperty<ObservableList<Series<Number, Number>>> = initData()
 
@@ -79,9 +77,6 @@ class VesCurvesController @Inject constructor(
 
     @FXML
     private lateinit var yAxis: LogarithmicAxis
-
-    override val stage: Stage
-        get() = lineChart.scene.window as Stage
 
     private val picket
         get() = picketObservable.get()!!
@@ -249,12 +244,12 @@ class VesCurvesController @Inject constructor(
             || picket.sortedExperimentalData.isNotEmpty()
         ) {
             yAxis.lowerBound = min(
-                picket.modelData.minOfOrNull { it.resistance } ?: Double.MAX_VALUE,
-                picket.sortedExperimentalData.minOfOrNull { it.resistanceApparent } ?: Double.MAX_VALUE
+                picket.modelData.minOfOrNull { it.resistivity } ?: Double.MAX_VALUE,
+                picket.sortedExperimentalData.minOfOrNull { it.resistivityApparent } ?: Double.MAX_VALUE
             )
             yAxis.upperBound = max(
-                picket.modelData.maxOfOrNull { it.resistance } ?: Double.MIN_VALUE,
-                picket.sortedExperimentalData.maxOfOrNull { it.resistanceApparent } ?: Double.MIN_VALUE
+                picket.modelData.maxOfOrNull { it.resistivity } ?: Double.MIN_VALUE,
+                picket.sortedExperimentalData.maxOfOrNull { it.resistivityApparent } ?: Double.MIN_VALUE
             )
         } else {
             yAxis.lowerBound = 1.0
@@ -268,13 +263,11 @@ class VesCurvesController @Inject constructor(
 
     private fun updateTheoreticalCurve() {
         val theorCurveSeries = Series<Number, Number>()
-        try {
-            theorCurveSeries.data.addAll(
-                theoreticalCurve(picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
-            )
-        } catch (e: UnsatisfiedLinkError) {
-            alertsFactory.unsatisfiedLinkErrorAlert(e, stage)
-        }
+
+        theorCurveSeries.data.addAll(
+            theoreticalCurve(picket, picket, forwardSolver).map { (x, y) -> Data(x as Number, y as Number) }
+        )
+
         theorCurveSeries.name = uiProperties["theorCurve"]
         dataProperty.get()[THEOR_CURVE_SERIES_INDEX] = theorCurveSeries
     }
@@ -370,12 +363,12 @@ class VesCurvesController @Inject constructor(
             EXP_CURVE_ERROR_UPPER_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
-                    picket.effectiveExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                    picket.effectiveExperimentalData[pointIndex].resistivityApparentLowerBoundByError
                 )
                 val yUpper = decimalFormat.format(
-                    picket.effectiveExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                    picket.effectiveExperimentalData[pointIndex].resistivityApparentUpperBoundByError
                 )
-                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistanceApparent)
+                val y = decimalFormat.format(picket.effectiveExperimentalData[pointIndex].resistivityApparent)
                 Tooltip(
                     """
                     №${effectiveToSortedMapping[pointIndex] + 1}
@@ -384,19 +377,19 @@ class VesCurvesController @Inject constructor(
                     min ρₐ = $yLower
                     max ρₐ = $yUpper
                 """.trimIndent()
-                ).forCharts()
+                ).shownOnHover()
             }
 
             THEOR_CURVE_SERIES_INDEX -> {
                 val x = decimalFormat.format(point.xValue)
                 val yLower = decimalFormat.format(
-                    picket.sortedExperimentalData[pointIndex].resistanceApparentLowerBoundByError
+                    picket.sortedExperimentalData[pointIndex].resistivityApparentLowerBoundByError
                 )
                 val yUpper = decimalFormat.format(
-                    picket.sortedExperimentalData[pointIndex].resistanceApparentUpperBoundByError
+                    picket.sortedExperimentalData[pointIndex].resistivityApparentUpperBoundByError
                 )
-                val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistanceApparent)
-                val theorRes = theoreticalCurve(picket, forwardSolver).getOrNull(pointIndex)?.y
+                val y = decimalFormat.format(picket.sortedExperimentalData[pointIndex].resistivityApparent)
+                val theorRes = theoreticalCurve(picket, picket, forwardSolver).getOrNull(pointIndex)?.y
                 Tooltip(
                     """
                     №${pointIndex + 1}
@@ -406,7 +399,7 @@ class VesCurvesController @Inject constructor(
                     max ρₐ = $yUpper
                     ρₐ (теор.) = ${decimalFormat.format(theorRes)} Ω‧m
                 """.trimIndent()
-                ).forCharts()
+                ).shownOnHover()
             }
 
             else -> null

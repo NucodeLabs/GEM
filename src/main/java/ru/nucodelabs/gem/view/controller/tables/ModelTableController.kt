@@ -2,7 +2,6 @@ package ru.nucodelabs.gem.view.controller.tables
 
 import jakarta.inject.Inject
 import jakarta.inject.Provider
-import jakarta.validation.Validator
 import javafx.beans.binding.Bindings.createBooleanBinding
 import javafx.beans.binding.Bindings.createStringBinding
 import javafx.beans.property.IntegerProperty
@@ -15,30 +14,27 @@ import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTableCell
 import javafx.scene.input.*
 import javafx.scene.layout.VBox
-import javafx.stage.Stage
 import javafx.util.Callback
 import javafx.util.StringConverter
 import ru.nucodelabs.gem.fxmodel.ves.ObservableModelLayer
 import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.gem.fxmodel.ves.app.VesFxAppModel
 import ru.nucodelabs.gem.fxmodel.ves.mapper.VesFxModelMapper
+import ru.nucodelabs.gem.fxmodel.ves.toObservable
 import ru.nucodelabs.gem.view.AlertsFactory
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.main.InitialModelConfigurationViewController
 import ru.nucodelabs.gem.view.controller.util.DEFAULT_FONT_SIZE
 import ru.nucodelabs.gem.view.controller.util.indexCellFactory
-import ru.nucodelabs.geo.ves.ModelLayer
-import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.*
 import ru.nucodelabs.geo.ves.calc.divide
 import ru.nucodelabs.geo.ves.calc.join
 import ru.nucodelabs.geo.ves.calc.zOfModelLayers
-import ru.nucodelabs.geo.ves.toTabulatedTable
+import ru.nucodelabs.kfx.core.AbstractViewController
+import ru.nucodelabs.kfx.ext.get
 import ru.nucodelabs.kfx.ext.toObservableList
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.TextToTableParser
-import ru.nucodelabs.util.std.toDoubleOrNullBy
+import ru.nucodelabs.util.*
 import tornadofx.getValue
 import java.net.URL
 import java.text.DecimalFormat
@@ -62,13 +58,13 @@ class ModelTableController @Inject constructor(
     private val alertsFactory: AlertsFactory,
     private val observableSection: ObservableSection,
     private val picketIndexProperty: IntegerProperty,
-    private val validator: Validator,
     private val historyManager: HistoryManager<Section>,
-    private val doubleStringConverter: StringConverter<Double>,
+    private val converter: StringConverter<Number>,
     private val decimalFormat: DecimalFormat,
     private val mapper: VesFxModelMapper,
-    private val appModel: VesFxAppModel
-) : AbstractController(), FileImporter by fileImporterProvider.get() {
+    private val appModel: VesFxAppModel,
+    private val uiProps: ResourceBundle
+) : AbstractViewController<VBox>(), FileImporter by fileImporterProvider.get() {
 
     @FXML
     private lateinit var copyFromRightBtn: Button
@@ -77,16 +73,16 @@ class ModelTableController @Inject constructor(
     private lateinit var copyFromLeftBtn: Button
 
     @FXML
-    private lateinit var zCol: TableColumn<ObservableModelLayer, Double>
+    private lateinit var zCol: TableColumn<ObservableModelLayer, Number>
 
     @FXML
     private lateinit var indexCol: TableColumn<Any, Int>
 
     @FXML
-    private lateinit var powerCol: TableColumn<ObservableModelLayer, Double>
+    private lateinit var powerCol: TableColumn<ObservableModelLayer, Number>
 
     @FXML
-    private lateinit var resistanceCol: TableColumn<ObservableModelLayer, Double>
+    private lateinit var resCol: TableColumn<ObservableModelLayer, Number>
 
     @FXML
     private lateinit var table: TableView<ObservableModelLayer>
@@ -97,16 +93,13 @@ class ModelTableController @Inject constructor(
     @FXML
     private lateinit var initialModelConfigurationViewController: InitialModelConfigurationViewController
 
-    override val stage: Stage?
-        get() = table.scene.window as Stage?
-
-
     private val picket: Picket
         get() = picketObservable.get()!!
 
     private val picketIndex by picketIndexProperty
 
     override fun initialize(location: URL, resources: ResourceBundle) {
+        table.columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN
         picketObservable.addListener { _, oldValue, newValue ->
             newValue?.let {
                 if (oldValue != null
@@ -157,10 +150,10 @@ class ModelTableController @Inject constructor(
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
-    private fun fixResistanceForSelected() {
+    private fun fixResistivityForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].copy(isFixedResistance = true)
+            modelData[index] = modelData[index].copy(isFixedResistivity = true)
         }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
@@ -173,10 +166,10 @@ class ModelTableController @Inject constructor(
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
-    private fun unfixResistanceForSelected() {
+    private fun unfixResistivityForSelected() {
         val modelData = picket.modelData.toMutableList()
         for (index in table.selectionModel.selectedIndices) {
-            modelData[index] = modelData[index].copy(isFixedResistance = false)
+            modelData[index] = modelData[index].copy(isFixedResistivity = false)
         }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
@@ -198,12 +191,12 @@ class ModelTableController @Inject constructor(
                     ).apply {
                         if (table.selectionModel.selectedItems.size == 1) {
                             items += MenuItem().apply {
-                                if (item.isFixedResistance) {
+                                if (item.isFixedResistivity) {
                                     text = "Разблокировать сопротивление"
-                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                    onAction = EventHandler { unfixResistivityForSelected() }
                                 } else {
                                     text = "Зафиксировать сопротивление"
-                                    onAction = EventHandler { fixResistanceForSelected() }
+                                    onAction = EventHandler { fixResistivityForSelected() }
                                 }
                             }
                             items += MenuItem().apply {
@@ -221,10 +214,10 @@ class ModelTableController @Inject constructor(
                                     onAction = EventHandler { joinSelected() }
                                 },
                                 MenuItem("Зафиксировать сопротивление").apply {
-                                    onAction = EventHandler { fixResistanceForSelected() }
+                                    onAction = EventHandler { fixResistivityForSelected() }
                                 },
                                 MenuItem("Разблокировать сопротивление").apply {
-                                    onAction = EventHandler { unfixResistanceForSelected() }
+                                    onAction = EventHandler { unfixResistivityForSelected() }
                                 },
                                 MenuItem("Зафиксировать мощность").apply {
                                     onAction = EventHandler { fixPowerForSelected() }
@@ -238,7 +231,9 @@ class ModelTableController @Inject constructor(
                     }
                 }
 
-                onContextMenuRequested = EventHandler { createContextMenu().show(this, it.screenX, it.screenY) }
+                onContextMenuRequested = EventHandler {
+                    if (item != null) createContextMenu().show(this, it.screenX, it.screenY)
+                }
             }
         }
     }
@@ -270,7 +265,7 @@ class ModelTableController @Inject constructor(
                 modelData.add(0, modelData[index].copy(power = 10.0))
             } else {
                 if (index == modelData.lastIndex) {
-                    modelData.add(index, modelData[index - 1].copy(resistance = modelData.last().resistance))
+                    modelData.add(index, modelData[index - 1].copy(resistivity = modelData.last().resistivity))
                 } else {
                     val (fst, snd) = modelData[index].divide()
                     modelData[index] = fst
@@ -278,15 +273,21 @@ class ModelTableController @Inject constructor(
                 }
             }
         }
+        if (modelData.size > Picket.MAX_MODEL_DATA_SIZE) {
+            alertsFactory.simpleAlert(
+                text = "Количество слоев модели не должно превышать ${Picket.MAX_MODEL_DATA_SIZE}"
+            ).show()
+            return
+        }
         table.items.setAll(modelData.map { mapper.toObservable(it) })
     }
 
     private fun setupCellFactories() {
         indexCol.cellFactory = indexCellFactory()
-        powerCol.cellValueFactory = Callback { features -> features.value.powerProperty().asObject() }
-        resistanceCol.cellValueFactory = Callback { features -> features.value.resistanceProperty().asObject() }
+        powerCol.cellValueFactory = Callback { features -> features.value.powerProperty() }
+        resCol.cellValueFactory = Callback { features -> features.value.resistivityProperty() }
         zCol.cellFactory = Callback {
-            TableCell<ObservableModelLayer, Double>().apply {
+            TableCell<ObservableModelLayer, Number>().apply {
                 textProperty().bind(
                     createStringBinding(
                         {
@@ -306,34 +307,41 @@ class ModelTableController @Inject constructor(
         }
 
         val editableColumns = listOf(
-            powerCol,
-            resistanceCol
+            powerCol to ModelLayer::validatePower,
+            resCol to ModelLayer::validateResistivity
         )
-        editableColumns.forEach {
-            it.cellFactory = Callback { col ->
-                TextFieldTableCell.forTableColumn<ObservableModelLayer, Double>(doubleStringConverter).call(col).apply {
+        editableColumns.forEach { (col, validate) ->
+            col.cellFactory = Callback { _ ->
+                TextFieldTableCell<ObservableModelLayer, Number>(converter).apply {
                     when (col) {
-                        powerCol -> indexProperty().addListener { _, _, _ ->
-                            if (index >= 0 && index <= picket.modelData.lastIndex) {
-                                style = if (picket.modelData[index].isFixedPower) {
-                                    STYLE_FOR_FIXED
-                                } else {
-                                    ""
-                                }
-                            }
-                        }
+                        powerCol -> tableRowProperty()
+                            .flatMap { it.itemProperty() }
+                            .flatMap { it.fixedPowerProperty() }
+                            .addListener { _, _, isFixed -> style = if (isFixed ?: false) STYLE_FOR_FIXED else "" }
 
-                        resistanceCol -> indexProperty().addListener { _, _, _ ->
-                            if (index >= 0 && index <= picket.modelData.lastIndex) {
-                                style = if (picket.modelData[index].isFixedResistance) {
-                                    STYLE_FOR_FIXED
-                                } else {
-                                    ""
-                                }
-                            }
-                        }
+
+                        resCol -> tableRowProperty()
+                            .flatMap { it.itemProperty() }
+                            .flatMap { it.fixedResistivityProperty() }
+                            .addListener { _, _, isFixed -> style = if (isFixed ?: false) STYLE_FOR_FIXED else "" }
+
                     }
+
                 }
+            }
+
+            val onEditCommitHandler = col.onEditCommit
+            col.onEditCommit = EventHandler { event ->
+                if (event.newValue == null) {
+                    event.consume()
+                    return@EventHandler
+                }
+                validate(event.newValue.toDouble())?.let { (prop, _) ->
+                    alertsFactory.invalidInputAlert(uiProps["invalid.model.$prop"]).show()
+                    event.consume()
+                    return@EventHandler
+                }
+                onEditCommitHandler.handle(event)
             }
         }
 
@@ -383,35 +391,19 @@ class ModelTableController @Inject constructor(
 
     private fun listenToItemsProperties(items: List<ObservableModelLayer>) {
         items.forEach { layer ->
-            layer.powerProperty().addListener { _, oldPow, newPow ->
-                val violations = validator.validateValue(ModelLayer::class.java, "power", newPow)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                    update()
-                } else {
-                    layer.power = oldPow.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
-            layer.resistanceProperty().addListener { _, oldRes, newRes ->
-                val violations = validator.validateValue(ModelLayer::class.java, "resistance", newRes)
-                if (violations.isEmpty()) {
-                    commitChanges()
-                } else {
-                    layer.resistance = oldRes.toDouble()
-                    alertsFactory.violationsAlert(violations, stage).show()
-                }
-            }
+            layer.powerProperty().addListener { _, oldPow, newPow -> commitChanges() }
+            layer.resistivityProperty().addListener { _, oldRes, newRes -> commitChanges() }
             layer.fixedPowerProperty().addListener { _, _, _ -> commitChanges() }
-            layer.fixedResistanceProperty().addListener { _, _, _ -> commitChanges() }
+            layer.fixedResistivityProperty().addListener { _, _, _ -> commitChanges() }
         }
     }
 
     private fun commitChanges() {
-        val modelDataInTable = table.items.map { mapper.toModel(it) }
-        if (modelDataInTable != picket.modelData) {
+        val mappedModel = table.items.map { mapper.toModel(it) }
+        if (mappedModel != picket.modelData) {
+            val update = picket.copy(modelData = mappedModel)
             historyManager.snapshotAfter {
-                observableSection.pickets[picketIndex] = picket.copy(modelData = modelDataInTable)
+                observableSection.pickets[picketIndex] = update
             }
         }
     }
@@ -481,14 +473,18 @@ class ModelTableController @Inject constructor(
                     ?.toDoubleOrNullBy(decimalFormat)
                     ?: throw IllegalArgumentException("${a[col]}${row + 1} - Ожидалось $expected, было $this")
 
-            val pastedItems: List<ModelLayer> = when (parser.columnsCount) {
+            val pastedItems = when (parser.columnsCount) {
                 2 -> parsedTable.mapIndexed { rowIdx, row ->
                     val pow = row[0].process("H", rowIdx, 0)
                     val res = row[1].process("ρ", rowIdx, 1)
-                    ModelLayer(
-                        resistance = res,
-                        power = pow
-                    )
+                    try {
+                        ModelLayer(
+                            resistivity = res,
+                            power = pow
+                        ).toOkResult()
+                    } catch (e: InvalidPropertiesException) {
+                        e.errors.toErrorResult()
+                    }
                 }
 
                 else -> {
@@ -503,14 +499,18 @@ class ModelTableController @Inject constructor(
                     )
                 }
             }
-            for (item in pastedItems) {
-                val violations = validator.validate(item)
-                if (violations.isNotEmpty()) {
-                    alertsFactory.violationsAlert(violations, stage).show()
-                    return
-                }
+            val invalidInputMessage = pastedItems
+                .mapNotNull { it.errorOrNull() }
+                .flatten()
+                .map { it.property }
+                .distinct()
+                .joinToString(separator = "\n") { uiProps["invalid.model.$it"] }
+                .takeIf { it.isNotBlank() }
+            if (invalidInputMessage != null) {
+                alertsFactory.invalidInputAlert(invalidInputMessage).show()
+            } else {
+                table.items.setAll(pastedItems.mapNotNull { it.okOrNull() }.map { it.toObservable() })
             }
-            table.items += pastedItems.map { mapper.toObservable(it) }
         } catch (e: Exception) {
             alertsFactory.simpleExceptionAlert(e, stage).show()
         }

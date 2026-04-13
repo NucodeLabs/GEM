@@ -9,12 +9,16 @@ class UncaughtExceptionHandler(
     private val alertsFactory: AlertsFactory,
 ) : UncaughtExceptionHandler {
 
-    val log = slf4j(this)
+    val log = slf4j()
 
     override fun uncaughtException(t: Thread, e: Throwable) {
         log.error("Uncaught exception", e)
         if (Platform.isFxApplicationThread()) {
-            alertsFactory.uncaughtExceptionAlert(e).show()
+            if (e is UnsatisfiedLinkError) {
+                alertsFactory.unsatisfiedLinkErrorAlert(e).show()
+            } else {
+                alertsFactory.uncaughtExceptionAlert(e).show()
+            }
         }
     }
 }

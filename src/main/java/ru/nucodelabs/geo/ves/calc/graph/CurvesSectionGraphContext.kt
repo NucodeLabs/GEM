@@ -1,41 +1,39 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
-import jakarta.inject.Inject
-import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.SectionExperimentalDataSet
 import ru.nucodelabs.geo.ves.calc.Bounds
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.util.Point
 import kotlin.math.min
 
-class CurvesSectionGraphContext @Inject constructor(inputSection: Section) {
-
-    private val section = inputSection.copy()
+class CurvesSectionGraphContext(private val section: SectionExperimentalDataSet) {
 
     private val rightK = 1.0
 
-    private var resistanceK = 1.0
+    private var resistivityK = 1.0
 
-    private val resistances: MutableList<MutableList<Double>> = arrayListOf()
+    private val resistivityValues: MutableList<MutableList<Double>> = arrayListOf()
 
     init {
-        initResistances()
-        shiftResistances()
+        initResistivityValues()
+        shiftResistivityValues()
         setK()
-        recalculateResistances()
+        recalculateResistivityValues()
         addXValues()
     }
 
     fun getPoints(): List<List<Point>> {
         val pointsList: MutableList<MutableList<Point>> = arrayListOf()
-        for (picketIdx in section.pickets.indices) {
-            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
+        val pickets = section.pickets()
+        for (picketIdx in pickets.indices) {
+            if (pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
                 pointsList.add(arrayListOf())
                 continue
             }
             pointsList.add(arrayListOf())
-            for (abIdx in resistances[picketIdx].indices) {
-                val xValue = resistances[picketIdx][abIdx]
-                val yValue = section.pickets[picketIdx].effectiveExperimentalData[abIdx].ab2
+            for (abIdx in resistivityValues[picketIdx].indices) {
+                val xValue = resistivityValues[picketIdx][abIdx]
+                val yValue = pickets[picketIdx].effectiveExperimentalData[abIdx].ab2
                 pointsList[picketIdx].add(Point(xValue, yValue))
             }
         }
@@ -43,51 +41,59 @@ class CurvesSectionGraphContext @Inject constructor(inputSection: Section) {
     }
 
     private fun addXValues() {
-        for (picketIdx in resistances.indices) {
-            resistances[picketIdx] =
-                resistances[picketIdx].map { e -> e + section.picketsBounds()[picketIdx].leftX } as MutableList<Double>
-        }
-    }
-
-    private fun recalculateResistances() {
-        for (picketIdx in resistances.indices) {
-            resistances[picketIdx] =
-                resistances[picketIdx].map { e -> e * resistanceK * rightK } as MutableList<Double>
-        }
-    }
-
-    private fun initResistances() {
-        for (picketIdx in section.pickets.indices) {
-            if (section.pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
-                resistances.add(arrayListOf())
-                continue
-            }
-            resistances.add(arrayListOf())
-            for (ab in section.pickets[picketIdx].effectiveExperimentalData) {
-                resistances[picketIdx].add(ab.resistanceApparent)
+        val bounds = section.picketsBounds()
+        for (picketIdx in resistivityValues.indices) {
+            val resistSrc = resistivityValues[picketIdx]
+            resistivityValues[picketIdx] = resistSrc.mapTo(ArrayList(resistSrc.size)) { e ->
+                e + bounds[picketIdx].leftX
             }
         }
     }
 
-    private fun shiftResistances() {
-        for (picketIdx in resistances.indices) {
-            if (resistances[picketIdx].isEmpty())
+    private fun recalculateResistivityValues() {
+        for (picketIdx in resistivityValues.indices) {
+            val resistSrc = resistivityValues[picketIdx]
+            resistivityValues[picketIdx] = resistSrc.mapTo(ArrayList(resistSrc.size)) { e ->
+                e * resistivityK * rightK
+            }
+        }
+    }
+
+    private fun initResistivityValues() {
+        val pickets = section.pickets()
+        for (picketIdx in pickets.indices) {
+            if (pickets[picketIdx].effectiveExperimentalData.isEmpty()) {
+                resistivityValues.add(arrayListOf())
                 continue
-            val minResistance = resistances[picketIdx].min()
-            resistances[picketIdx] = resistances[picketIdx].map { e -> e - minResistance } as MutableList<Double>
+            }
+            resistivityValues.add(arrayListOf())
+            for (ab in pickets[picketIdx].effectiveExperimentalData) {
+                resistivityValues[picketIdx].add(ab.resistivityApparent)
+            }
+        }
+    }
+
+    private fun shiftResistivityValues() {
+        for (picketIdx in resistivityValues.indices) {
+            val resistSrc = resistivityValues[picketIdx]
+            if (resistSrc.isEmpty()) continue
+            val minResist = resistSrc.min()
+            resistivityValues[picketIdx] = resistSrc.mapTo(ArrayList(resistSrc.size)) { e ->
+                e - minResist
+            }
         }
     }
 
     private fun setK() {
-        for (picketIdx in resistances.indices) {
-            if (resistances[picketIdx].isEmpty())
-                continue
-            resistanceK = min(resistanceK, getKFor(resistances[picketIdx], section.picketsBounds()[picketIdx]))
+        val picketsBounds = section.picketsBounds()
+        for (picketIdx in resistivityValues.indices) {
+            if (resistivityValues[picketIdx].isEmpty()) continue
+            resistivityK = min(resistivityK, getKFor(resistivityValues[picketIdx], picketsBounds[picketIdx]))
         }
     }
 
-    private fun getKFor(resistances: List<Double>, bound: Bounds): Double {
-        val range = resistances.max() - resistances.min()
+    private fun getKFor(resistivity: List<Double>, bound: Bounds): Double {
+        val range = resistivity.max() - resistivity.min()
         val xSize = bound.rightX - bound.leftX
         return xSize / range
     }

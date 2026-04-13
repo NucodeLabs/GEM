@@ -17,6 +17,7 @@ import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
@@ -74,17 +75,22 @@ class MainViewController @Inject constructor(
     private val preferences: Preferences,
     private val decimalFormat: DecimalFormat,
     private val fxPreferences: FXPreferences,
-    private val inverseSolver: InverseSolver
+    private val inverseSolver: InverseSolver,
+    private val ui: ResourceBundle,
 ) : AbstractController(), FileImporter, FileOpener {
 
     private val windowTitle: StringProperty = SimpleStringProperty("GEM")
     private val dirtyAsterisk: StringProperty = SimpleStringProperty("")
 
     private val noFileOpenedProperty: BooleanProperty = SimpleBooleanProperty(true)
+
+    @Suppress("unused")
     fun noFileOpenedProperty(): BooleanProperty = noFileOpenedProperty
     val noFileOpened: Boolean by noFileOpenedProperty
 
     private val vesNumberProperty: StringProperty = SimpleStringProperty()
+
+    @Suppress("unused")
     fun vesNumberProperty(): StringProperty = vesNumberProperty
     val vesNumber: String? by vesNumberProperty
 
@@ -166,14 +172,13 @@ class MainViewController @Inject constructor(
         get() = root
 
     override fun initialize(location: URL, resources: ResourceBundle) {
-        super.initialize(location, resources)
 
         stage.onCloseRequest = EventHandler { e ->
             if (!askToSave(e).isConsumed) {
                 menuViewSectionInSeparateWindow.isSelected = false
             }
         }
-//        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
+        stage.scene.accelerators[KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN)] = Runnable { redo() }
         macOS {
             val useSystemMenu = CheckMenuItem(resources["useSystemMenu"])
             menuView.items.add(0, useSystemMenu)
@@ -293,7 +298,7 @@ class MainViewController @Inject constructor(
             if (newValue != null) {
                 picketOffsetX.text = decimalFormat.format(newValue.offsetX)
                 picketZ.text = decimalFormat.format(newValue.z)
-                xCoordLbl.text = decimalFormat.format(observableSection.asSection().xOfPicket(picket))
+                xCoordLbl.text = decimalFormat.format(observableSection.asSection().xOfPicket(picketIndex))
             }
         }
     }
@@ -677,11 +682,11 @@ class MainViewController @Inject constructor(
     private fun openAddExpData() {
         if (addExperimentalData.scene == null) {
             Stage().apply {
-                title = "Добавить измерение"
+                title = ui["addSignal"]
                 initOwner(this@MainViewController.stage)
                 addExperimentalData.stylesheets += Style.COMMON_STYLESHEET
                 scene = Scene(addExperimentalData)
-                isResizable = false
+                isResizable = true
             }.show()
         } else {
             (addExperimentalData.scene.window as Stage).show()

@@ -38,10 +38,11 @@
                     <fx:script>
                         import javafx.scene.control.Alert
                         import javafx.scene.layout.VBox
+                        import ru.nucodelabs.gem.view.controller.tables.ExperimentalTableControllerKt
 
                         def showHelp() {
                             Alert help = new Alert(Alert.AlertType.INFORMATION,
-                                    ru.nucodelabs.gem.view.controller.tables.ExperimentalTableControllerKt.EXP_HELP_PASTE)
+                                    ExperimentalTableControllerKt.EXP_HELP_PASTE)
                             help.title = "Допустимый формат данных"
                             help.headerText = "Допустимый формат данных"
                             help.initOwner((root as VBox).scene.window)
@@ -89,20 +90,20 @@
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="resistanceApparentCol" sortable="false">
+            <TableColumn fx:id="resAppCol" sortable="false">
                 <graphic>
-                    <Label text="%resistanceApparent">
+                    <Label text="%resistivityApparent">
                         <tooltip>
-                            <Tooltip text="%resistanceApparentFull"/>
+                            <Tooltip text="%resistivityApparentFull"/>
                         </tooltip>
                     </Label>
                 </graphic>
             </TableColumn>
-            <TableColumn fx:id="errorResistanceCol" sortable="false">
+            <TableColumn fx:id="errorResCol" sortable="false">
                 <graphic>
-                    <Label text="%errorResistanceApparent">
+                    <Label text="%errorResistivityApparent">
                         <tooltip>
-                            <Tooltip text="%errorResistanceApparentFull"/>
+                            <Tooltip text="%errorResistivityApparentFull"/>
                         </tooltip>
                     </Label>
                 </graphic>

@@ -16,7 +16,7 @@ import ru.nucodelabs.geo.ves.Section
 import ru.nucodelabs.geo.ves.calc.length
 import ru.nucodelabs.geo.ves.calc.picketsBounds
 import ru.nucodelabs.kfx.snapshot.HistoryManager
-import ru.nucodelabs.util.std.swap
+import ru.nucodelabs.util.swap
 import java.net.URL
 import java.util.*
 

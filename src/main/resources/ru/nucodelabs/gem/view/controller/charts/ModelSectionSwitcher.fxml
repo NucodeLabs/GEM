@@ -4,7 +4,7 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.ModelSectionSwitcherController"
-      maxWidth="Infinity" maxHeight="Infinity">
+      maxWidth="Infinity" maxHeight="Infinity" fx:id="root">
     <fx:include fx:id="linearSectionBox" source="LinearModelSection.fxml"/>
     <fx:include fx:id="logSectionBox" source="LogarithmicModelSection.fxml"/>
 </VBox>

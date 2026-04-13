@@ -1,24 +1,16 @@
 package ru.nucodelabs.geo.ves.calc
 
-import ru.nucodelabs.geo.ves.Picket
-import ru.nucodelabs.geo.ves.Section
+import ru.nucodelabs.geo.ves.SectionExperimentalDataSet
 
-fun Section.xOfPicket(picket: Picket): Double = xOfPicket(pickets.indexOf(picket))
-
-fun Section.xOfPicket(index: Int): Double {
-    require(index >= 0)
-    if (index == 0) return 0.0
-
-    var x = 0.0
-    for (i in 1..index) {
-        x += this.pickets[i].offsetX
-    }
-    return x
+fun SectionExperimentalDataSet.xOfPicket(picketIndex: Int): Double {
+    if (picketIndex == 0) return 0.0
+    return pickets().subList(1, picketIndex + 1).map { it.offsetX }.reduce(Double::plus)
 }
 
 data class Bounds(val leftX: Double, val rightX: Double)
 
-fun Section.picketsBounds(): List<Bounds> {
+fun SectionExperimentalDataSet.picketsBounds(): List<Bounds> {
+    val pickets = pickets()
     if (pickets.isEmpty()) {
         return emptyList()
     }
@@ -44,7 +36,7 @@ fun Section.picketsBounds(): List<Bounds> {
     return res
 }
 
-fun Section.length(): Double {
+fun SectionExperimentalDataSet.length(): Double {
     val bounds = picketsBounds()
     return bounds.last().rightX - bounds.first().leftX
 }

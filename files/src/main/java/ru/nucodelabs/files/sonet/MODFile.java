@@ -6,12 +6,12 @@ import java.util.ArrayList;
 public class MODFile {
     private File file;
 
-    private ArrayList<Double> resistance; // Сопротивление, Ом*м
+    private ArrayList<Double> resistivity; // Сопротивление, Ом*м
     private ArrayList<Double> polarization; // Поляризация, %
     private ArrayList<Double> power; // Мощность, м
 
     public MODFile() {
-        resistance = new ArrayList<>(0);
+        resistivity = new ArrayList<>(0);
         polarization = new ArrayList<>(0);
         power = new ArrayList<>(0);
     }
@@ -20,8 +20,8 @@ public class MODFile {
         return 3;
     }
 
-    public ArrayList<Double> getResistance() {
-        return resistance;
+    public ArrayList<Double> getResistivity() {
+        return resistivity;
     }
 
     public ArrayList<Double> getPolarization() {
@@ -36,8 +36,8 @@ public class MODFile {
         this.polarization = polarization;
     }
 
-    public void setResistance(ArrayList<Double> resistance) {
-        this.resistance = resistance;
+    public void setResistivity(ArrayList<Double> resistivity) {
+        this.resistivity = resistivity;
     }
 
     public void setPower(ArrayList<Double> power) {

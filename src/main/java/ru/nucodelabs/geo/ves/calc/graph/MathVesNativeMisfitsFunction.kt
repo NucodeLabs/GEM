@@ -1,32 +1,35 @@
 package ru.nucodelabs.geo.ves.calc.graph
 
 import ru.nucodelabs.geo.forward.ForwardSolver
-import ru.nucodelabs.geo.ves.ExperimentalData
-import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.ReadOnlyExperimentalSignal
+import ru.nucodelabs.geo.ves.ReadOnlyModelLayer
 import ru.nucodelabs.geo.ves.calc.adapter.invoke
 import kotlin.math.abs
 import kotlin.math.sign
 
 internal class MathVesNativeMisfitsFunction(val forwardSolver: ForwardSolver) : MisfitsFunction {
 
-    override fun invoke(experimentalData: List<ExperimentalData>, modelData: List<ModelLayer>): List<Double> {
+    override fun invoke(
+        experimentalData: List<ReadOnlyExperimentalSignal>,
+        modelData: List<ReadOnlyModelLayer>
+    ): List<Double> {
         if (experimentalData.isEmpty() || modelData.isEmpty()) {
             return listOf()
         }
 
-        val resistanceApparent = experimentalData.map { it.resistanceApparent }
-        val errorResistanceApparent = experimentalData.map { it.errorResistanceApparent }
+        val resistivityApparent = experimentalData.map { it.resistivityApparent }
+        val errorResistivityApparent = experimentalData.map { it.errorResistivityApparent }
 
-        val solvedResistance = forwardSolver(experimentalData, modelData)
+        val solvedResistivity = forwardSolver(experimentalData, modelData)
         val res = ArrayList<Double>(experimentalData.size)
         for (i in experimentalData.indices) {
             val value = abs(
                 ru.nucodelabs.mathves.MisfitFunctions.calculateRelativeDeviationWithError(
-                    resistanceApparent[i],
-                    errorResistanceApparent[i] / 100f,
-                    solvedResistance[i]
+                    resistivityApparent[i],
+                    errorResistivityApparent[i] / 100f,
+                    solvedResistivity[i]
                 )
-            ) * sign(solvedResistance[i] - resistanceApparent[i]) * 100f
+            ) * sign(solvedResistivity[i] - resistivityApparent[i]) * 100f
 
             res.add(value)
         }

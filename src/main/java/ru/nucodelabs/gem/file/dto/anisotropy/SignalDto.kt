@@ -8,7 +8,7 @@ data class SignalDto(
     var mn2: Double,
     var amperage: Double?,
     var voltage: Double?,
-    var resistanceApparent: Double?,
-    var errorResistanceApparent: Double?,
+    var resistivityApparent: Double?,
+    var errorResistivityApparent: Double?,
     var isHidden: Boolean?
 )

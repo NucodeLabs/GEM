@@ -22,12 +22,12 @@ fun mapAzimuthSignals(azimuthSignals: List<ObservableAzimuthSignals>): Observabl
                     Data<Number, Number>(
                         xFromCenter(signal.ab2, observableAzimuthSignals.azimuth),
                         yFromCenter(signal.ab2, observableAzimuthSignals.azimuth),
-                        signal.resistanceApparent
+                        signal.resistivityApparent
                     ),
                     Data<Number, Number>(
                         xFromCenter(signal.ab2, !observableAzimuthSignals.azimuth),
                         yFromCenter(signal.ab2, !observableAzimuthSignals.azimuth),
-                        signal.resistanceApparent
+                        signal.resistivityApparent
                     )
                 )
             }.flatMap { it.toList() }
@@ -41,9 +41,9 @@ fun mapAzimuthSignals(azimuthSignals: List<ObservableAzimuthSignals>): Observabl
 fun mapSignals(signals: List<ObservableSignal>): Series<Number, Number> {
     return Series(
         signals.map {
-            Data(it.ab2 as Number, it.resistanceApparent as Number, it).apply {
+            Data(it.ab2 as Number, it.resistivityApparent as Number, it).apply {
                 XValueProperty().bind(it.ab2Property())
-                YValueProperty().bind(it.resistanceApparentProperty())
+                YValueProperty().bind(it.resistivityApparentProperty())
             }
         }.toObservableList()
     )

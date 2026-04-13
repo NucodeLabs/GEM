@@ -22,13 +22,15 @@ internal class AbstractMapTest : FXTest() {
                 ) {
                     override fun layoutPlotChildren() {
                         super.layoutPlotChildren()
-                        canvas.clear()
-                        draw(canvas)
+                        backgroundCanvas.clear()
+                        draw(backgroundCanvas)
                     }
 
                     override fun layoutChildren() {
                         super.layoutChildren()
                     }
+
+                    override fun onColorMapperChange() {}
 
                     fun draw(canvas: Canvas) {
                         canvas.run {

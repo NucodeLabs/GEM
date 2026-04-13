@@ -12,8 +12,8 @@ import ru.nucodelabs.gem.fxmodel.ves.ObservableSection
 import ru.nucodelabs.geo.ves.ExperimentalData
 import ru.nucodelabs.geo.ves.calc.effectiveToSortedIndicesMapping
 import ru.nucodelabs.geo.ves.calc.graph.CurvesSectionGraphContext
-import ru.nucodelabs.kfx.ext.forCharts
 import ru.nucodelabs.kfx.ext.installTooltips
+import ru.nucodelabs.kfx.ext.shownOnHover
 import ru.nucodelabs.kfx.ext.toObservableList
 import java.net.URL
 import java.text.DecimalFormat
@@ -67,13 +67,13 @@ class CurvesPseudoSectionController @Inject constructor(
         val pair = pointMap[point]
         val n = pair?.first?.plus(1)
         val ab2 = decimalFormat.format(pair?.second?.ab2)
-        val res = decimalFormat.format(pair?.second?.resistanceApparent)
+        val res = decimalFormat.format(pair?.second?.resistivityApparent)
         return Tooltip(
             """
                 №$n
                 AB/2 = $ab2 m
                 ρₐ = $res Ω‧m
             """.trimIndent()
-        ).forCharts()
+        ).shownOnHover()
     }
 }

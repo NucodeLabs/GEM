@@ -1,29 +1,41 @@
 package ru.nucodelabs.gem.fxmodel.ves
 
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
+import ru.nucodelabs.geo.ves.ModelLayer
+import ru.nucodelabs.geo.ves.MutableModelLayer
+import ru.nucodelabs.geo.ves.ReadOnlyModelLayer
+import ru.nucodelabs.kfx.observable.ConstrainedDoubleProperty
 import tornadofx.getValue
 import tornadofx.setValue
 
 class ObservableModelLayer(
     power: Double,
-    resistance: Double,
+    resistivity: Double,
     isFixedPower: Boolean,
-    isFixedResistance: Boolean
-) {
-    private val powerProperty = SimpleDoubleProperty(power)
+    isFixedResistivity: Boolean
+) : MutableModelLayer {
+    private val powerProperty = ConstrainedDoubleProperty(power, ModelLayer::isValidPower)
     fun powerProperty() = powerProperty
-    var power by powerProperty
+    override var power by powerProperty
 
-    private val resistanceProperty = SimpleDoubleProperty(resistance)
-    fun resistanceProperty() = resistanceProperty
-    var resistance by resistanceProperty
+    private val resistivityProperty = ConstrainedDoubleProperty(resistivity, ModelLayer::isValidResistivity)
+    fun resistivityProperty() = resistivityProperty
+    override var resistivity by resistivityProperty
 
     private val fixedPowerProperty = SimpleBooleanProperty(isFixedPower)
     fun fixedPowerProperty() = fixedPowerProperty
-    var isFixedPower by fixedPowerProperty
+    override var isFixedPower by fixedPowerProperty
 
-    private val fixedResistanceProperty = SimpleBooleanProperty(isFixedResistance)
-    fun fixedResistanceProperty() = fixedResistanceProperty
-    var isFixedResistance by fixedResistanceProperty
+    private val fixedResistivityProperty = SimpleBooleanProperty(isFixedResistivity)
+    fun fixedResistivityProperty() = fixedResistivityProperty
+    override var isFixedResistivity by fixedResistivityProperty
 }
+
+inline fun <reified T : ReadOnlyModelLayer> T.toObservable(): ObservableModelLayer =
+    if (T::class == ObservableModelLayer::class) this as ObservableModelLayer
+    else ObservableModelLayer(
+        power,
+        resistivity,
+        isFixedPower,
+        isFixedResistivity
+    )

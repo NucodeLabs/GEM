@@ -15,7 +15,8 @@ interface Snapshot<T> {
         }
     }
 
-    private data class SnapshotImpl<T>(override val value: T) : Snapshot<T>
+    @JvmInline
+    private value class SnapshotImpl<T>(override val value: T) : Snapshot<T>
 }
 
 fun <T> snapshotOf(value: T) = Snapshot.of(value)

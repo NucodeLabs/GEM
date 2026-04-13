@@ -186,7 +186,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.format(object);
                 } catch (Exception e) {
-                    return "";
+                    return null;
                 }
             }
 
@@ -195,7 +195,7 @@ public class AppModule extends AbstractModule {
                 try {
                     return decimalFormat.parse(string).doubleValue();
                 } catch (ParseException e) {
-                    return Double.NaN;
+                    return null;
                 }
             }
         };

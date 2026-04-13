@@ -1,7 +1,7 @@
 package ru.nucodelabs.gem.view.control.chart.log
 
 import javafx.beans.NamedArg
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import kotlin.math.*
 
 class PseudoLogarithmicAxis @JvmOverloads constructor(
@@ -16,8 +16,10 @@ class PseudoLogarithmicAxis @JvmOverloads constructor(
 //        checkBounds(lowerBound, upperBound)
     }
 
-    private fun checkBounds(lowerBound: Double, upperBound: Double) =
-        require(upperBound >= lowerBound)
+    /*
+        private fun checkBounds(lowerBound: Double, upperBound: Double) =
+            require(upperBound >= lowerBound)
+    */
 
     @Suppress("UNCHECKED_CAST")
     override fun calculateTickValues(length: Double, range: Any?): List<Number> {

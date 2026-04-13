@@ -2,7 +2,7 @@ package ru.nucodelabs.gem.view.control.chart.log
 
 import javafx.scene.chart.ValueAxis
 import ru.nucodelabs.kfx.ext.length
-import ru.nucodelabs.util.std.exp10
+import ru.nucodelabs.util.exp10
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
