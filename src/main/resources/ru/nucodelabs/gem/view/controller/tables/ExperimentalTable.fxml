@@ -3,6 +3,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import ru.nucodelabs.gem.view.controller.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -10,6 +11,9 @@
       stylesheets="/css/common.css"
       VBox.vgrow="ALWAYS" fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.tables.ExperimentalTableController">
+    <minHeight>
+        <UIConstantsKt fx:constant="MIN_SIZE"/>
+    </minHeight>
     <fx:define>
         <fx:include fx:id="calculateErrorScreen" source="../main/CalculateErrorScreen.fxml"/>
     </fx:define>
@@ -31,6 +35,9 @@
     <!--    </HBox>-->
     <TableView fx:id="table" maxWidth="Infinity" minWidth="120" maxHeight="Infinity" VBox.vgrow="ALWAYS"
                editable="true">
+        <minHeight>
+            <UIConstantsKt fx:constant="MIN_SIZE"/>
+        </minHeight>
         <placeholder>
             <VBox alignment="CENTER" spacing="25">
                 <HBox alignment="CENTER" spacing="3">

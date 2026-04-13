@@ -16,6 +16,14 @@
     -fx-font-size: 16;
 }
 
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
 /*.list-cell {*/
 /*    -fx-pref-height: 40;*/
 /*    -fx-font-size: 16;*/
