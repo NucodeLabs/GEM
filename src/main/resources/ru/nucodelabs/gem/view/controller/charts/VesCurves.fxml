@@ -15,6 +15,9 @@
       VBox.vgrow="ALWAYS"
       fx:id="root"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.VesCurvesController">
+    <minHeight>
+        <UIConstantsKt fx:constant="MIN_SIZE"/>
+    </minHeight>
     <HBox maxWidth="Infinity" alignment="CENTER_RIGHT">
         <Label fx:id="title" styleClass="chart-label" text="%ves" VBox.vgrow="NEVER"/>
         <HBox maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
@@ -37,6 +40,9 @@
     </HBox>
     <LineChart fx:id="lineChart" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" animated="false"
                styleClass="padded-chart" onScroll="#zoom" onMousePressed="#pressed" onMouseDragged="#drugged">
+        <minHeight>
+            <UIConstantsKt fx:constant="MIN_SIZE"/>
+        </minHeight>
         <xAxis>
             <LogarithmicAxis fx:id="xAxis"
                              label="%ab2"

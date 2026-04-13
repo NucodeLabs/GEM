@@ -14,12 +14,18 @@
       VBox.vgrow="ALWAYS"
       fx:controller="ru.nucodelabs.gem.view.controller.charts.ModelSectionController"
       stylesheets="@ModelSection.css">
+    <minHeight>
+        <UIConstantsKt fx:constant="MIN_SIZE"/>
+    </minHeight>
     <HBox alignment="CENTER_LEFT">
         <Label fx:id="title" text="Модель, разрез" styleClass="chart-label"/>
     </HBox>
     <CanvasRenderPolygonChart fx:id="chart" maxWidth="Infinity"
                               maxHeight="Infinity" animated="false" legendVisible="false" styleClass="padded-chart"
                               VBox.vgrow="ALWAYS">
+        <minHeight>
+            <UIConstantsKt fx:constant="MIN_SIZE"/>
+        </minHeight>
         <xAxis>
             <NucodeNumberAxis fx:id="xAxis" label="%x" side="BOTTOM" autoRanging="false"
                               minorTickVisible="false" tickUnit="25" forceMarksOnly="true"/>

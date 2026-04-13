@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
 <?import javafx.stage.Stage?>
-<?import ru.nucodelabs.gem.view.controller.main.UIConstantsKt?>
+<?import ru.nucodelabs.gem.view.controller.main.*?>
 <Stage xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        maxWidth="Infinity" maxHeight="Infinity"
@@ -15,6 +15,12 @@
        width="1280"
        height="720"
        title="GEM" onShown="initLayoutConfig()">
+    <minHeight>
+        <UIConstantsKt fx:constant="MIN_WIN_SIZE"/>
+    </minHeight>
+    <minWidth>
+        <UIConstantsKt fx:constant="MIN_WIN_SIZE"/>
+    </minWidth>
     <fx:script>
         // TODO: Move this back to controller itself
         import javafx.scene.control.SplitPane
@@ -123,43 +129,66 @@
                     </Menu>
                 </MenuBar>
                 <StackPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                    <minHeight>
+                        <UIConstantsKt fx:constant="MIN_SIZE"/>
+                    </minHeight>
                     <VBox maxWidth="Infinity" maxHeight="Infinity" fx:id="vesSectionSplitContainer" VBox.vgrow="ALWAYS">
-                        <SplitPane orientation="VERTICAL" maxWidth="Infinity" maxHeight="Infinity"
+                        <minHeight>
+                            <UIConstantsKt fx:constant="MIN_SIZE"/>
+                        </minHeight>
+                        <HBox>
+                            <HBox>
+                                <prefWidth>
+                                    <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
+                                </prefWidth>
+                            </HBox>
+                            <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
+                            <HBox>
+                                <Button fx:id="addPicketBtn"
+                                        onAction="#addNewPicket" stylesheets="@PicketsBar.css"
+                                        HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
+                                    <prefWidth>
+                                        <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                    </prefWidth>
+                                    <minWidth>
+                                        <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                    </minWidth>
+                                    <maxWidth>
+                                        <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
+                                    </maxWidth>
+                                    <graphic>
+                                        <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
+                                            <Image url="/img/ui_icons/add/2x/round_add_black_24dp.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                        </HBox>
+                        <SplitPane orientation="VERTICAL" maxWidth="Infinity"
+                                   maxHeight="Infinity"
                                    fx:id="vesSectionSplit">
-                            <HBox fx:id="sectionContainer" maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+                            <minWidth>
+                                <UIConstantsKt fx:constant="MIN_SIZE"/>
+                            </minWidth>
+                            <minHeight>
+                                <UIConstantsKt fx:constant="MIN_SIZE"/>
+                            </minHeight>
+                            <HBox fx:id="sectionContainer" maxWidth="Infinity" maxHeight="Infinity"
+                                  VBox.vgrow="ALWAYS">
+                                <minHeight>
+                                    <UIConstantsKt fx:constant="MIN_SIZE"/>
+                                </minHeight>
                                 <VBox fx:id="sectionBox" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" maxWidth="Infinity"
                                       maxHeight="Infinity">
-                                    <HBox>
-                                        <HBox>
-                                            <prefWidth>
-                                                <UIConstantsKt fx:constant="LEFT_AXIS_WIDTH"/>
-                                            </prefWidth>
-                                        </HBox>
-                                        <fx:include fx:id="picketsBar" source="PicketsBar.fxml" HBox.hgrow="ALWAYS"/>
-                                        <HBox>
-                                            <Button fx:id="addPicketBtn"
-                                                    onAction="#addNewPicket" stylesheets="@PicketsBar.css"
-                                                    HBox.hgrow="NEVER" contentDisplay="GRAPHIC_ONLY">
-                                                <prefWidth>
-                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
-                                                </prefWidth>
-                                                <minWidth>
-                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
-                                                </minWidth>
-                                                <maxWidth>
-                                                    <UIConstantsKt fx:constant="TOP_CHARTS_RIGHT_OFFSET"/>
-                                                </maxWidth>
-                                                <graphic>
-                                                    <ImageView fitWidth="15" fitHeight="15" preserveRatio="true">
-                                                        <Image url="/img/ui_icons/add/2x/round_add_black_24dp.png"/>
-                                                    </ImageView>
-                                                </graphic>
-                                            </Button>
-                                        </HBox>
-                                    </HBox>
                                     <HBox VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                                        <minHeight>
+                                            <UIConstantsKt fx:constant="MIN_SIZE"/>
+                                        </minHeight>
                                         <SplitPane orientation="VERTICAL" maxHeight="Infinity" maxWidth="Infinity"
                                                    HBox.hgrow="ALWAYS" fx:id="sectionSplit">
+                                            <minHeight>
+                                                <UIConstantsKt fx:constant="MIN_SIZE"/>
+                                            </minHeight>
                                             <fx:include fx:id="pseudoSectionSwitcher"
                                                         source="../charts/PseudoSectionSwitcher.fxml"/>
                                             <fx:include fx:id="modelSectionSwitcher"
@@ -169,7 +198,7 @@
                                     </HBox>
                                 </VBox>
                             </HBox>
-                            <VBox maxWidth="Infinity"
+                            <VBox minWidth="10" maxWidth="Infinity"
                                   maxHeight="Infinity"
                                   VBox.vgrow="ALWAYS" fx:id="vesCurvesBox">
 
@@ -232,7 +261,8 @@
                                         </graphic>
                                     </Button>
                                 </HBox>
-                                <SplitPane dividerPositions="0.7" maxHeight="Infinity" maxWidth="Infinity"
+                                <SplitPane dividerPositions="0.7" minHeight="10" maxHeight="Infinity"
+                                           maxWidth="Infinity"
                                            VBox.vgrow="ALWAYS" fx:id="curvesTableSplit">
 
                                     <SplitPane orientation="VERTICAL" dividerPositions="0.3" maxHeight="Infinity"
@@ -242,7 +272,7 @@
                                         <fx:include fx:id="vesCurves" source="../charts/VesCurves.fxml"
                                                     VBox.vgrow="ALWAYS"/>
                                     </SplitPane>
-                                    <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                                    <TabPane VBox.vgrow="ALWAYS" maxHeight="Infinity" minHeight="10" tabMinHeight="10">
                                         <Tab text="%experimentalTable" closable="false">
                                             <fx:include fx:id="experimentalTable"
                                                         source="../tables/ExperimentalTable.fxml"/>
@@ -259,7 +289,7 @@
                         </SplitPane>
                     </VBox>
 
-                    <fx:include fx:id="noFileScreen" source="NoFileScreen.fxml"/>
+                    <fx:include fx:id="noFileScreen" minHeight="10" source="NoFileScreen.fxml"/>
                 </StackPane>
             </VBox>
         </Scene>

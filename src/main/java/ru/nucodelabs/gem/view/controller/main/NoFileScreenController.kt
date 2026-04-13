@@ -11,11 +11,11 @@ import javafx.scene.input.DragEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.VBox
-import javafx.stage.Stage
+import javafx.scene.text.TextFlow
 import ru.nucodelabs.gem.app.pref.RECENT_FILES
-import ru.nucodelabs.gem.view.controller.AbstractController
 import ru.nucodelabs.gem.view.controller.FileImporter
 import ru.nucodelabs.gem.view.controller.FileOpener
+import ru.nucodelabs.kfx.core.AbstractViewController
 import ru.nucodelabs.kfx.ext.emptyBinding
 import java.io.File
 import java.net.URL
@@ -26,19 +26,18 @@ class NoFileScreenController @Inject constructor(
     private val fileOpenerProvider: Provider<FileOpener>,
     private val fileImporterProvider: Provider<FileImporter>,
     private val preferences: Preferences
-) : AbstractController(), FileOpener by fileOpenerProvider.get(), FileImporter by fileImporterProvider.get() {
+) : AbstractViewController<VBox>(),
+    FileOpener by fileOpenerProvider.get(),
+    FileImporter by fileImporterProvider.get() {
+
+    @FXML
+    private lateinit var desc: TextFlow
 
     @FXML
     private lateinit var recentFiles: ListView<File>
 
     @FXML
     private lateinit var recentFilesContainer: VBox
-
-    @FXML
-    private lateinit var root: VBox
-
-    override val stage: Stage?
-        get() = root.scene.window as Stage?
 
     fun visibleProperty(): BooleanProperty = root.visibleProperty()
 

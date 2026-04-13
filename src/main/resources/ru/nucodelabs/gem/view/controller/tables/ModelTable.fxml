@@ -5,6 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import ru.nucodelabs.gem.view.controller.main.UIConstantsKt?>
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       alignment="CENTER"
       maxHeight="Infinity"
@@ -21,10 +22,16 @@
     <!--            </graphic>-->
     <!--        </Button>-->
     <!--    </HBox>-->
+    <minHeight>
+        <UIConstantsKt fx:constant="MIN_SIZE"/>
+    </minHeight>
     <fx:define>
         <fx:include source="../main/InitialModelConfigurationView.fxml" fx:id="initialModelConfigurationView"/>
     </fx:define>
     <TableView editable="true" fx:id="table" maxWidth="Infinity" minWidth="60" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+        <minHeight>
+            <UIConstantsKt fx:constant="MIN_SIZE"/>
+        </minHeight>
         <placeholder>
             <VBox alignment="CENTER" fx:id="dragDropPlaceholder" spacing="5" minHeight="0"
                   onDragOver="#dragOverHandle" onDragDropped="#dragDropHandle">
