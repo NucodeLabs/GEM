@@ -24,8 +24,8 @@ jobs:
     strategy:
       matrix:
         configuration: [
-          { runner: "macos-13", path: "build/dist" },
-          { runner: "macos-14", path: "build/dist" },
+          { runner: "macos-15-intel", path: "build/dist" },
+          { runner: "macos-15", path: "build/dist" },
           { runner: "windows-2022", path: "build/dist" }
         ]
     runs-on: ${{ matrix.configuration.runner }}
