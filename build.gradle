@@ -158,7 +158,7 @@ tasks.register("copyDataToRunDir", Copy) {
 
 tasks.register("copyClrToRunDir", Copy) {
     dependsOn prepareRunDir
-    from "$projectDir/colormap/default.clr"
+    from "$projectDir/src/main/resources/colormap/default.clr"
     into "$runDir/colormap"
 }
 
@@ -167,7 +167,7 @@ tasks.register("cleanRunDir", Delete) {
 }
 
 run {
-    dependsOn copyClrToRunDir, copyDataToRunDir, copyLibsToRunDir
+    dependsOn copyDataToRunDir, copyLibsToRunDir
     jvmArgs = moduleExportsJvmArgs
     systemProperty("app.gem.log.stdout", true)
     workingDir = file(runDir)
