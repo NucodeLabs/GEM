@@ -59,7 +59,6 @@ internal class JacksonJsonFileManager @Inject constructor(
         val isHidden: Boolean = false
     )
 
-
     @Throws(Exception::class)
     override fun <T> loadFromJson(jsonFile: File, type: Class<T>): T =
         objectMapper.readValue(jsonFile, type)
