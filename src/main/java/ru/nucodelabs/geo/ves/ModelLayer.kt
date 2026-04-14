@@ -1,5 +1,6 @@
 package ru.nucodelabs.geo.ves
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import ru.nucodelabs.util.validate
 
 interface ReadOnlyModelLayer {
@@ -25,8 +26,10 @@ interface MutableModelLayer : ReadOnlyModelLayer {
  */
 data class ModelLayer(
     override val power: Double,
+    @field:JsonAlias("resistance")
     override val resistivity: Double,
     override val isFixedPower: Boolean = false,
+    @field:JsonAlias("isFixedResistance")
     override val isFixedResistivity: Boolean = false
 ) : ReadOnlyModelLayer {
     init {
