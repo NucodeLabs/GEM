@@ -1,6 +1,5 @@
 package ru.nucodelabs.geo.ves
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import ru.nucodelabs.geo.ves.calc.rhoA
 import ru.nucodelabs.util.validate
 
@@ -39,9 +38,7 @@ data class ExperimentalData(
     override val mn2: Double,
     override val amperage: Double,
     override val voltage: Double,
-    @field:JsonAlias("resistanceApparent")
     override val resistivityApparent: Double = rhoA(ab2, mn2, amperage, voltage),
-    @field:JsonAlias("errorResistanceApparent")
     override val errorResistivityApparent: Double = DEFAULT_ERROR,
     override val isHidden: Boolean = false
 ) : ReadOnlyExperimentalSignal {
